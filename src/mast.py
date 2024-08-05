@@ -118,7 +118,6 @@ class MASTClient:
         pass
 
     def _get_client(self):
-
         client = pyuda.Client()
         client.set_property("get_meta", True)
         client.set_property("timeout", 10)

@@ -1,0 +1,11 @@
+numpy
+pandas
+h5py
+h5netcdf
+s3fs
+dask
+dask_mpi
+xarray
+pint
+pytest
+zarr

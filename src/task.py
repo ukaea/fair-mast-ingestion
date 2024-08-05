@@ -1,8 +1,3 @@
-from src.archive.transforms import PipelineRegistry
-from src.archive.mast import MASTClient
-from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
-from src.archive.writer import DatasetWriter
-from src.archive.uploader import UploadConfig
 from pathlib import Path
 import os
 import xarray as xr
@@ -10,6 +5,12 @@ import pandas as pd
 import shutil
 import subprocess
 import logging
+
+from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
+from src.mast import MASTClient
+from src.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
+from src.writer import DatasetWriter
+from src.uploader import UploadConfig
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,24 +34,27 @@ class UploadDatasetTask:
         self.local_file = local_file
 
     def __call__(self):
-        logging.info(f"Uploading {self.local_file}")
+        logging.info(f"Uploading {self.local_file} to {self.config.url}")
         env = os.environ.copy()
+        args = [
+            "s5cmd",
+            "--credentials-file",
+            self.config.credentials_file,
+            "--endpoint-url",
+            self.config.endpoint_url,
+            "cp",
+            "--acl",
+            "public-read",
+            str(self.local_file),
+            self.config.url,
+        ]
+        logging.debug(' ' .join(args))
         subprocess.run(
-            [
-                "s5cmd",
-                "--credentials-file",
-                self.config.credentials_file,
-                "--endpoint-url",
-                self.config.endpoint_url,
-                "cp",
-                "--acl",
-                "public-read",
-                self.local_file,
-                self.config.url,
-            ],
+            args,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             env=env,
+            check=True,
         )
 
 
@@ -63,14 +67,20 @@ class CreateDatasetTask:
         shot: int,
         signal_names: list[str] = [],
         source_names: list[str] = [],
+        file_format: str = 'zarr',
+        facility: str = 'MAST'
     ):
         self.shot = shot
         self.metadata_dir = Path(metadata_dir)
         self.reader = DatasetReader(shot)
-        self.writer = DatasetWriter(shot, dataset_dir)
+        self.writer = DatasetWriter(shot, dataset_dir, file_format)
         self.signal_names = signal_names
         self.source_names = source_names
-        self.pipelines = PipelineRegistry()
+
+        if facility == "MAST":
+            self.pipelines = MASTPipelineRegistry()
+        else:
+            self.pipelines = MASTUPipelineRegistry()
 
     def __call__(self):
         signal_infos = self.read_signal_info()
@@ -81,6 +91,7 @@ class CreateDatasetTask:
 
         if len(self.source_names) > 0:
             signal_infos = signal_infos.loc[signal_infos.source.isin(self.source_names)]
+
 
         self.writer.write_metadata()
 

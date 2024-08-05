@@ -1,8 +1,8 @@
 import argparse
 import logging
 from dask_mpi import initialize
-from src.archive.workflow import WorkflowManager, MetadataWorkflow
-from src.archive.utils import read_shot_file
+from src.workflow import WorkflowManager, MetadataWorkflow
+from src.utils import read_shot_file
 
 
 def main():

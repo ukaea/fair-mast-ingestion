@@ -2,7 +2,7 @@ import pandas as pd
 import xarray as xr
 from dataclasses import asdict
 
-from src.archive.mast import MASTClient, SignalInfo
+from src.mast import MASTClient, SignalInfo
 
 
 class SignalMetadataReader:

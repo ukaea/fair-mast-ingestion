@@ -8,9 +8,9 @@ import pandas as pd
 import xarray as xr
 from pathlib import Path
 
-DIMENSION_MAPPING_FILE = "mappings/dimensions.json"
-UNITS_MAPPING_FILE = "mappings/units.json"
-CUSTOM_UNITS_FILE = "mappings/custom_units.txt"
+DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
+UNITS_MAPPING_FILE = "mappings/mast/units.json"
+CUSTOM_UNITS_FILE = "mappings/mast/custom_units.txt"
 
 
 def get_dataset_item_uuid(name: str, shot: int) -> str:
@@ -36,8 +36,8 @@ class MapDict:
 
 class RenameDimensions:
 
-    def __init__(self) -> None:
-        with Path(DIMENSION_MAPPING_FILE).open("r") as handle:
+    def __init__(self, mapping_file = DIMENSION_MAPPING_FILE) -> None:
+        with Path(mapping_file).open("r") as handle:
             self.dimension_mapping = json.load(handle)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -94,7 +94,7 @@ class StandardiseSignalDataset:
             new_names["data"] = name
             new_names["error"] = "_".join([name, "error"])
         else:
-            name = name + "_" if name == "time" else name
+            name = name + "_" if name == "time" or name in dataset.data_vars or name in dataset.coords else name
             new_names["data"] = name
 
         dataset = dataset.rename(new_names)
@@ -349,8 +349,64 @@ class Pipeline:
             x = transform(x)
         return x
 
-
+        
 class PipelineRegistry:
+    
+    def __init__(self) -> None:
+        pass
+        
+    def get(self, name: str) -> Pipeline:
+        if name not in self.pipelines:
+            raise RuntimeError(f"{name} is not a registered source!")
+        return self.pipelines[name]
+
+
+class MASTUPipelineRegistry(PipelineRegistry):
+
+    def __init__(self) -> None:
+        dim_mapping_file = "mappings/mastu/dimensions.json"
+
+        self.pipelines = {
+            "ayc": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("ayc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "epm": Pipeline(
+                [
+                    # DropDatasets(
+                    #     [
+                    #         "efm/fcoil_n",
+                    #         "efm/fcoil_segs_n",
+                    #         "efm/limitern",
+                    #         "efm/magpr_n",
+                    #         "efm/silop_n",
+                    #         "efm/shot_number",
+                    #     ]
+                    # ),
+                    # MapDict(DropZeroDimensions()),
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("epm")),
+                    MergeDatasets(),
+                    # LCFSTransform(),
+                    TransformUnits(),
+                    # RenameVariables(
+                    #     {
+                    #         "plasma_currc": "plasma_current_c",
+                    #         "plasma_currx": "plasma_current_x",
+                    #         "plasma_currrz": "plasma_current_rz",
+                    #         "lcfsr_c": "lcfs_r",
+                    #         "lcfsz_c": "lcfs_z",
+                    #     }
+                    # )
+                ]
+            )
+        }
+
+class MASTPipelineRegistry(PipelineRegistry):
 
     def __init__(self) -> None:
         self.pipelines = {
@@ -988,7 +1044,3 @@ class PipelineRegistry:
             ),
         }
 
-    def get(self, name: str) -> Pipeline:
-        if name not in self.pipelines:
-            raise RuntimeError(f"{name} is not a registered source!")
-        return self.pipelines[name]

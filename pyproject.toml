@@ -1,0 +1,25 @@
+[project]
+name = "FAIR MAST Ingestor"
+version = "2024.0.0"
+dynamic = ["dependencies"]
+requires-python = ">=3.9"
+authors = [
+]
+maintainers = [
+  {name = "Samuel Jackson", email = "samuel.jackson@ukaea.uk"}
+]
+readme = "README.md"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+[tool.setuptools]
+packages = ["src"]
+py-modules = ["__init__"] #
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+
+[project.urls]

@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 from dask_mpi import initialize
 from dask.distributed import Client, as_completed
-from src.archive.utils import read_shot_file
+from src.utils import read_shot_file
 
 
 class SignalMetaDataParser:

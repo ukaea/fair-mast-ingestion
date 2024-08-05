@@ -22,7 +22,7 @@ def main():
     parser.add_argument("--credentials_file", default=".s5cfg.stfc")
     parser.add_argument("--serial", default=False, action='store_true')
     parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
-    parser.add_argument("--upload", default=False)
+    parser.add_argument("--upload", default=False, action="store_true")
     parser.add_argument("--metadata_dir", default="data/uda")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--signal_names", nargs="*", default=[])
@@ -33,10 +33,14 @@ def main():
     args = parser.parse_args()
 
     if args.upload:
+        bucket_path = args.bucket_path
+        # Bucket path must have trailing slash
+        bucket_path = bucket_path + '/' if not bucket_path.endswith('/') else bucket_path
+
         config = UploadConfig(
             credentials_file=args.credentials_file,
             endpoint_url=args.endpoint_url,
-            url=args.bucket_path,
+            url=bucket_path,
         )
         workflow_cls = partial(S3IngestionWorkflow, upload_config=config)
     else:
@@ -53,9 +57,9 @@ def main():
         workflow = workflow_cls(
             args.metadata_dir,
             args.dataset_path,
-            args.force,
-            args.signal_names,
-            [source],
+            force=args.force,
+            signal_names=args.signal_names,
+            source_names=[source],
             file_format=args.file_format,
             facility=args.facility
         )

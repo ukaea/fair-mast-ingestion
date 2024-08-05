@@ -34,24 +34,27 @@ class UploadDatasetTask:
         self.local_file = local_file
 
     def __call__(self):
-        logging.info(f"Uploading {self.local_file}")
+        logging.info(f"Uploading {self.local_file} to {self.config.url}")
         env = os.environ.copy()
+        args = [
+            "s5cmd",
+            "--credentials-file",
+            self.config.credentials_file,
+            "--endpoint-url",
+            self.config.endpoint_url,
+            "cp",
+            "--acl",
+            "public-read",
+            str(self.local_file),
+            self.config.url,
+        ]
+        logging.debug(' ' .join(args))
         subprocess.run(
-            [
-                "s5cmd",
-                "--credentials-file",
-                self.config.credentials_file,
-                "--endpoint-url",
-                self.config.endpoint_url,
-                "cp",
-                "--acl",
-                "public-read",
-                self.local_file,
-                self.config.url,
-            ],
+            args,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             env=env,
+            check=True,
         )
 
 
@@ -132,7 +135,6 @@ class CreateDatasetTask:
         return datasets
 
     def read_signal_info(self) -> pd.DataFrame:
-        print(self.metadata_dir)
         return pd.read_parquet(self.metadata_dir / f"signals/{self.shot}.parquet")
 
     def read_source_info(self) -> pd.DataFrame:

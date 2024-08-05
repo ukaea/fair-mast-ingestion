@@ -44,7 +44,7 @@ class S3IngestionWorkflow:
         signal_names: list[str] = [],
         source_names: list[str] = [],
         file_format: str = 'zarr',
-        facility: str = "MAST"
+        facility: str = "MAST",
     ):
         self.metadata_dir = metadata_dir
         self.data_dir = Path(data_dir)
@@ -74,8 +74,8 @@ class S3IngestionWorkflow:
         cleanup = CleanupDatasetTask(local_path)
 
         try:
-            url = self.upload_config.url + f"{shot}.zarr"
-            if self.force or not self.s3.exists(url):
+            url = self.upload_config.url + f"{shot}.{self.file_format}"
+            if self.force or not self.fs.exists(url):
                 create()
                 upload()
             else:

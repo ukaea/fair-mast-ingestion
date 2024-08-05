@@ -37,7 +37,7 @@ This will create the metadata for the tiny campaign. You may do the same for ful
 2. Run the ingestion pipleline by submitting the following job:
 
 ```sh
-qsub ./jobs/freia_write_datasets.qsub campaign_shots/tiny_campaign.csv s3://mast/level1/shots
+mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --bucket_path s3://mast/test/shots --source_names amc xsx --file_format zarr --upload --force
 ```
 
 This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.

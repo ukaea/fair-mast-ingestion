@@ -6,6 +6,7 @@ s3fs
 dask
 distributed
 dask_mpi
+mpi4py
 xarray
 pint
 pytest

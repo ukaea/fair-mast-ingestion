@@ -4,8 +4,10 @@ h5py
 h5netcdf
 s3fs
 dask
+distributed
 dask_mpi
 xarray
 pint
 pytest
+uda
 zarr

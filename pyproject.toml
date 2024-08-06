@@ -1,5 +1,5 @@
 [project]
-name = "FAIR MAST Ingestor"
+name = "fair-mast-ingestor"
 version = "2024.0.0"
 dynamic = ["dependencies"]
 requires-python = ">=3.9"

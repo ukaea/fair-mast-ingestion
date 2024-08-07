@@ -1,10 +1,49 @@
 ### FAIR MAST Data Ingestion
 
-## Installation
+## Installation on CSD3
+
+After logging into your CSD3 account (on Icelake node), first load the correct Python module:
 
 ```sh
+module load python/3.9.12/gcc/pdcqf4o5
+```
+
+Clone the repository:
+
+```sh
+git clone git@github.com:ukaea/fair-mast-ingestion.git
+cd fair-mast-ingestion
+```
+
+Create a virtual environment:
+
+```sh
+python -m venv venv
+source venv/bin/activate
+```
+
+Update pip and install required packages:
+
+```sh
+pip install --upgrade pip
 pip install -e .
 ```
+
+The final step to installation is to have mastcodes:
+
+```sh
+git clone git@git.ccfe.ac.uk:MAST-U/mastcodes.git
+cd mastcodes
+```
+
+Edit `uda/python/setup.py` and change the "version" to 1.3.9.
+
+```sh
+pip install uda/python
+source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
+```
+
+You should now be able to run the following commands.
 
 ## Local Ingestion
 

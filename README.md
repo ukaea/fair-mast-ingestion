@@ -18,8 +18,8 @@ cd fair-mast-ingestion
 Create a virtual environment:
 
 ```sh
-python -m venv venv
-source venv/bin/activate
+python -m venv fair-mast-ingestion
+source fair-mast-ingestion/bin/activate
 ```
 
 Update pip and install required packages:

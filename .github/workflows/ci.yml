@@ -1,0 +1,31 @@
+name: CI
+on: [ pull_request ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up environment
+      run: |
+        git lfs fetch && git lfs pull
+        sudo apt update && sudo apt install -y libopenmpi-dev
+        pip install uv
+        uv venv venv
+        source venv/bin/activate
+        uv pip install -r requirements.txt
+        uv pip install --upgrade --force-reinstall "numpy<2.0"
+  
+    - name: Run tests
+      run: |
+        source venv/bin/activate
+        python -m pytest -rsx tests/
+
+  ruff-code-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: chartboost/ruff-action@v1  

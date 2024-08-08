@@ -13,6 +13,7 @@ jobs:
         git lfs fetch
         git lfs pull
         pip install uv
+        sudo apt install libopenmpi-dev
         uv venv venv
         source venv/bin/activate
         uv pip install -r requirements.txt

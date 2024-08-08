@@ -2,7 +2,7 @@ name: CI
 on: [ push ]
 
 jobs:
-  build-and-run-tests:
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +17,7 @@ jobs:
         uv venv venv
         source venv/bin/activate
         uv pip install -r requirements.txt
+        uv pip install --upgrade numpy
   
     - name: Run tests
       run: |

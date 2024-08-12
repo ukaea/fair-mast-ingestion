@@ -171,7 +171,7 @@ class TensoriseChannels:
         dataset[self.stem] = dataset[self.stem].chunk("auto")
         dataset[self.stem] = self._update_attributes(dataset[self.stem], channels)
         dataset = dataset.drop_vars(group_keys)
-        dataset = dataset.compute()
+        dataset: xr.Dataset = dataset.compute()
         return dataset
 
     def _update_attributes(
@@ -300,13 +300,15 @@ class AddXSXCameraParams:
         cam_data.drop("name", inplace=True, axis=1)
         cam_data.drop("comment", inplace=True, axis=1)
         cam_data.columns = [stem + "_" + c for c in cam_data.columns]
-        name = stem.split("/")[-1]
-        cam_data.index.name = name + "_channel"
         self.stem = stem
+        self.index_name = f'{self.stem}_channel'
+        cam_data.index.name = self.index_name
         self.cam_data = cam_data.to_xarray()
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = xr.merge([dataset, self.cam_data], combine_attrs="drop_conflicts")
+        cam_data = self.cam_data.copy()
+        cam_data[self.index_name] = dataset[self.index_name]
+        dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts")
         dataset = dataset.compute()
         return dataset
 

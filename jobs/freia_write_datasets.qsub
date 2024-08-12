@@ -33,10 +33,4 @@ metadata_dir="/common/tmp/sjackson/data/uda/"
 
 # Run script
 time mpirun -np $num_workers \
-    python3 -m src.main $temp_dir $summary_file \
-        --metadata_dir $metadata_dir \
-        --bucket_path $bucket_path \ 
-        --source_names ${@:4}  \
-        --file_format zarr \
-        --upload \
-        --force
+    python3 -m src.main $temp_dir $summary_file --metadata_dir $metadata_dir --bucket_path $bucket_path --file_format zarr --upload --force --source_names ${@:4}

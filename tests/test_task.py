@@ -17,7 +17,7 @@ from src.task import (  # noqa: E402
     CreateSignalMetadataTask,  # noqa: E402
 )  # noqa: E402
 
-@pytest.mark.skip(reason="Uses MAST Client, not available on CSD3")
+@pytest.mark.skip(reason="Pyuda client unavailable")
 def test_create_dataset_task(tmpdir, mocker):
     metadata_dir = tmpdir / "uda"
     shot = 30420
@@ -47,7 +47,7 @@ def test_create_dataset_task(tmpdir, mocker):
     ds = xr.open_zarr(dataset_path, group="abm")
     assert len(ds.data_vars) == 3
 
-@pytest.mark.skip(reason="Uses MAST Client, not available on CSD3")
+@pytest.mark.skip(reason="Pyuda client unavailable")
 @pytest.mark.usefixtures("fake_dataset")
 def test_write_cleanup(tmpdir, fake_dataset):
     shot = 30420
@@ -59,7 +59,7 @@ def test_write_cleanup(tmpdir, fake_dataset):
     task()
     assert not writer.dataset_path.exists()
 
-@pytest.mark.skip(reason="Uses MAST Client, not available on CSD3")
+@pytest.mark.skip(reason="Pyuda client unavailable")
 def test_upload_dataset(mocker):
     mocker.patch("subprocess.run")
 
@@ -93,7 +93,7 @@ def test_upload_dataset(mocker):
         env=env,
     )
 
-@pytest.mark.skip(reason="Uses MAST Client, not available on CSD3")
+@pytest.mark.skip(reason="Pyuda client unavailable")
 def test_source_metadata_reader(tmpdir):
     shot = 30420
     task = CreateSourceMetadataTask(data_dir=tmpdir, shot=shot)
@@ -104,7 +104,7 @@ def test_source_metadata_reader(tmpdir):
     df = pd.read_parquet(path)
     assert isinstance(df, pd.DataFrame)
 
-@pytest.mark.skip(reason="Uses MAST Client, not available on CSD3")
+@pytest.mark.skip(reason="Pyuda client unavailable")
 def test_signal_metadata_reader(tmpdir):
     shot = 30420
     task = CreateSignalMetadataTask(data_dir=tmpdir, shot=shot)

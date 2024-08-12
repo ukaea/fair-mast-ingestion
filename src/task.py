@@ -97,6 +97,8 @@ class CreateDatasetTask:
 
         for key, group_index in signal_infos.groupby("source").groups.items():
             signal_infos_for_source = signal_infos.loc[group_index]
+            if key == 'xdc':
+                signal_infos_for_source = signal_infos_for_source.loc[signal_infos_for_source.name == 'xdc/ip_t_ipref']
             signal_datasets = self.load_source(signal_infos_for_source)
             pipeline = self.pipelines.get(key)
             dataset = pipeline(signal_datasets)

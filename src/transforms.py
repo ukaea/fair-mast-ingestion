@@ -158,10 +158,15 @@ class TensoriseChannels:
         self.assign_coords = assign_coords
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-
         group_keys = self._get_group_keys(dataset)
+
+        # If we couldn't find any matching keys, do nothing.
+        if len(group_keys) == 0:
+            return dataset
+
         channels = [dataset[key] for key in group_keys]
-        dataset[self.stem] = xr.combine_nested(channels, concat_dim=self.dim_name)
+        combined = xr.combine_nested(channels, concat_dim=self.dim_name)
+        dataset[self.stem] = combined
 
         if self.assign_coords:
             dataset[self.stem] = dataset[self.stem].assign_coords(
@@ -171,7 +176,7 @@ class TensoriseChannels:
         dataset[self.stem] = dataset[self.stem].chunk("auto")
         dataset[self.stem] = self._update_attributes(dataset[self.stem], channels)
         dataset = dataset.drop_vars(group_keys)
-        dataset = dataset.compute()
+        dataset: xr.Dataset = dataset.compute()
         return dataset
 
     def _update_attributes(
@@ -300,13 +305,18 @@ class AddXSXCameraParams:
         cam_data.drop("name", inplace=True, axis=1)
         cam_data.drop("comment", inplace=True, axis=1)
         cam_data.columns = [stem + "_" + c for c in cam_data.columns]
-        name = stem.split("/")[-1]
-        cam_data.index.name = name + "_channel"
         self.stem = stem
+        index_name = f'{self.stem}_channel'
+        cam_data[index_name] = [stem + '_' + str(index+1) for index in range(len(cam_data))]
+        cam_data = cam_data.set_index(index_name)
         self.cam_data = cam_data.to_xarray()
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = xr.merge([dataset, self.cam_data], combine_attrs="drop_conflicts")
+        cam_data = self.cam_data.copy()
+        # if camera data in not in dataset, then skip and do nothing
+        if self.stem not in dataset:
+            return dataset
+        dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts", join='left')
         dataset = dataset.compute()
         return dataset
 
@@ -696,318 +706,318 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(XDCRenameDimensions()),
                     MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
-                    TensoriseChannels(
-                        "ai_cpu1_ccbv",
-                        dim_name="ai_ccbv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_incon",
-                        dim_name="ai_incon_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_lhorw",
-                        dim_name="ai_lhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_mid",
-                        dim_name="ai_mid_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_obr",
-                        dim_name="ai_obr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_obv",
-                        dim_name="ai_obv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_ring",
-                        dim_name="ai_ring_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_rodgr",
-                        dim_name="ai_rodgr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_uhorw",
-                        dim_name="ai_uhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_vertw",
-                        dim_name="ai_vertw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_ccbv",
-                        dim_name="ai_ccbv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_incon",
-                        dim_name="ai_incon_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_lhorw",
-                        dim_name="ai_lhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_mid",
-                        dim_name="ai_mid_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_obr",
-                        dim_name="ai_obr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_obv",
-                        dim_name="ai_obv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_ring",
-                        dim_name="ai_ring_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_rodgr",
-                        dim_name="ai_rodgr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_uhorw",
-                        dim_name="ai_uhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu2_vertw",
-                        dim_name="ai_vertw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_ccbv",
-                        dim_name="ai_ccbv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_incon",
-                        dim_name="ai_incon_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_lhorw",
-                        dim_name="ai_lhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_mid",
-                        dim_name="ai_mid_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_obr",
-                        dim_name="ai_obr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_obv",
-                        dim_name="ai_obv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_ring",
-                        dim_name="ai_ring_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_rodgr",
-                        dim_name="ai_rodgr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_uhorw",
-                        dim_name="ai_uhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu3_vertw",
-                        dim_name="ai_vertw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_ccbv",
-                        dim_name="ai_ccbv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_incon",
-                        dim_name="ai_incon_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_lhorw",
-                        dim_name="ai_lhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_mid",
-                        dim_name="ai_mid_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_obr",
-                        dim_name="ai_obr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_obv",
-                        dim_name="ai_obv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_ring",
-                        dim_name="ai_ring_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_rodgr",
-                        dim_name="ai_rodgr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_uhorw",
-                        dim_name="ai_uhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu4_vertw",
-                        dim_name="ai_vertw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_ccbv", dim_name="ai_ccbv", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_obv", dim_name="ai_obv_channel", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_obr", dim_name="ai_obr_channel", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg",
-                        regex=r"equil_s_seg(\d+)$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_at",
-                        regex=r"equil_s_seg(\d+)at$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_rt",
-                        regex=r"equil_s_seg(\d+)rt$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_zt",
-                        regex=r"equil_s_seg(\d+)zt$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_segb",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_t_seg",
-                        regex=r"equil_t_seg(\d+)$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_t_seg_u",
-                        regex=r"equil_t_seg(\d+)u$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels("isoflux_e_seg"),
-                    TensoriseChannels(
-                        "isoflux_t_rpsh_n",
-                        regex=r"isoflux_t_rpsh(\d+)n",
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_rpsh_p",
-                        regex=r"isoflux_t_rpsh(\d+)p",
-                    ),
-                    TensoriseChannels("isoflux_t_seg", regex=r"isoflux_t_seg(\d+)$"),
-                    TensoriseChannels(
-                        "isoflux_t_seg_gd", regex=r"isoflux_t_seg(\d+)gd$"
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_seg_gi", regex=r"isoflux_t_seg(\d+)gi$"
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_seg_gp", regex=r"isoflux_t_seg(\d+)gp$"
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_seg_td", regex=r"isoflux_t_seg(\d+)td$"
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_seg_ti", regex=r"isoflux_t_seg(\d+)ti$"
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_seg_tp", regex=r"isoflux_t_seg(\d+)tp$"
-                    ),
-                    TensoriseChannels("isoflux_t_seg_u", regex=r"isoflux_t_seg(\d+)u$"),
-                    TensoriseChannels(
-                        "isoflux_t_zpsh_n",
-                        regex=r"isoflux_t_zpsh(\d+)n",
-                    ),
-                    TensoriseChannels(
-                        "isoflux_t_zpsh_p",
-                        regex=r"isoflux_t_zpsh(\d+)p",
-                    ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_ccbv",
+                    #     dim_name="ai_ccbv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_flcc",
+                    #     dim_name="ai_flcc_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_incon",
+                    #     dim_name="ai_incon_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_lhorw",
+                    #     dim_name="ai_lhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_mid",
+                    #     dim_name="ai_mid_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_obr",
+                    #     dim_name="ai_obr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_obv",
+                    #     dim_name="ai_obv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_ring",
+                    #     dim_name="ai_ring_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_rodgr",
+                    #     dim_name="ai_rodgr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_uhorw",
+                    #     dim_name="ai_uhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu1_vertw",
+                    #     dim_name="ai_vertw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_ccbv",
+                    #     dim_name="ai_ccbv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_flcc",
+                    #     dim_name="ai_flcc_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_incon",
+                    #     dim_name="ai_incon_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_lhorw",
+                    #     dim_name="ai_lhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_mid",
+                    #     dim_name="ai_mid_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_obr",
+                    #     dim_name="ai_obr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_obv",
+                    #     dim_name="ai_obv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_ring",
+                    #     dim_name="ai_ring_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_rodgr",
+                    #     dim_name="ai_rodgr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_uhorw",
+                    #     dim_name="ai_uhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu2_vertw",
+                    #     dim_name="ai_vertw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_ccbv",
+                    #     dim_name="ai_ccbv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_flcc",
+                    #     dim_name="ai_flcc_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_incon",
+                    #     dim_name="ai_incon_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_lhorw",
+                    #     dim_name="ai_lhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_mid",
+                    #     dim_name="ai_mid_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_obr",
+                    #     dim_name="ai_obr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_obv",
+                    #     dim_name="ai_obv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_ring",
+                    #     dim_name="ai_ring_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_rodgr",
+                    #     dim_name="ai_rodgr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_uhorw",
+                    #     dim_name="ai_uhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu3_vertw",
+                    #     dim_name="ai_vertw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_ccbv",
+                    #     dim_name="ai_ccbv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_flcc",
+                    #     dim_name="ai_flcc_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_incon",
+                    #     dim_name="ai_incon_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_lhorw",
+                    #     dim_name="ai_lhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_mid",
+                    #     dim_name="ai_mid_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_obr",
+                    #     dim_name="ai_obr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_obv",
+                    #     dim_name="ai_obv_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_ring",
+                    #     dim_name="ai_ring_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_rodgr",
+                    #     dim_name="ai_rodgr_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_uhorw",
+                    #     dim_name="ai_uhorw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_cpu4_vertw",
+                    #     dim_name="ai_vertw_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_raw_ccbv", dim_name="ai_ccbv", assign_coords=False
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_raw_flcc",
+                    #     dim_name="ai_flcc_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_raw_obv", dim_name="ai_obv_channel", assign_coords=False
+                    # ),
+                    # TensoriseChannels(
+                    #     "ai_raw_obr", dim_name="ai_obr_channel", assign_coords=False
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_s_seg",
+                    #     regex=r"equil_s_seg(\d+)$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_s_seg_at",
+                    #     regex=r"equil_s_seg(\d+)at$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_s_seg_rt",
+                    #     regex=r"equil_s_seg(\d+)rt$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_s_seg_zt",
+                    #     regex=r"equil_s_seg(\d+)zt$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_s_segb",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_t_seg",
+                    #     regex=r"equil_t_seg(\d+)$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels(
+                    #     "equil_t_seg_u",
+                    #     regex=r"equil_t_seg(\d+)u$",
+                    #     dim_name="equil_seg_channel",
+                    #     assign_coords=False,
+                    # ),
+                    # TensoriseChannels("isoflux_e_seg"),
+                    # TensoriseChannels(
+                    #     "isoflux_t_rpsh_n",
+                    #     regex=r"isoflux_t_rpsh(\d+)n",
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_rpsh_p",
+                    #     regex=r"isoflux_t_rpsh(\d+)p",
+                    # ),
+                    # TensoriseChannels("isoflux_t_seg", regex=r"isoflux_t_seg(\d+)$"),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_gd", regex=r"isoflux_t_seg(\d+)gd$"
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_gi", regex=r"isoflux_t_seg(\d+)gi$"
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_gp", regex=r"isoflux_t_seg(\d+)gp$"
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_td", regex=r"isoflux_t_seg(\d+)td$"
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_ti", regex=r"isoflux_t_seg(\d+)ti$"
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_seg_tp", regex=r"isoflux_t_seg(\d+)tp$"
+                    # ),
+                    # TensoriseChannels("isoflux_t_seg_u", regex=r"isoflux_t_seg(\d+)u$"),
+                    # TensoriseChannels(
+                    #     "isoflux_t_zpsh_n",
+                    #     regex=r"isoflux_t_zpsh(\d+)n",
+                    # ),
+                    # TensoriseChannels(
+                    #     "isoflux_t_zpsh_p",
+                    #     regex=r"isoflux_t_zpsh(\d+)p",
+                    # ),
                     TransformUnits(),
                 ]
             ),
@@ -1036,6 +1046,11 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
+                    TensoriseChannels("hcam_l", regex=r"hcaml#(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcamu#(\d+)"),
+                    TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
+                    TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
+                    TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
                     TransformUnits(),
                     AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
                     AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),

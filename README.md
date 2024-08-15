@@ -51,13 +51,13 @@ You should now be able to run the following commands.
 1. First submit a job to collect all the metadata:
 
 ```sh
-qsub ./jobs/metadata.csd3.slurm.sh
+sbatch ./jobs/metadata.csd3.slurm.sh
 ```
 
 2. Then submit an ingestion job
 
 ```sh
-qsub ./jobs/ingest.csd3.slurm.sh campaign_shots/tiny_campaign.csv s3://mast/test/shots/ amc
+sbatch ./jobs/ingest.csd3.slurm.sh campaign_shots/tiny_campaign.csv s3://mast/test/shots/ amc
 ```
 
 ## Manually Running Ingestor

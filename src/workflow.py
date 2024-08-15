@@ -122,8 +122,8 @@ class LocalIngestionWorkflow:
             create()
         except Exception as e:
             import traceback
-            print(traceback.format_exc())
-            logging.error(f"Failed to run workflow with error {type(e)}: {e}")
+            trace = traceback.format_exc()
+            logging.error(f"Failed to run workflow with error {type(e)}: {e}\n{trace}")
 
 
 

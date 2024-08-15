@@ -1,10 +1,11 @@
-from pathlib import Path
 import os
-import xarray as xr
-import pandas as pd
+import traceback
 import shutil
 import subprocess
 import logging
+from pathlib import Path
+import xarray as xr
+import pandas as pd
 
 from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
 from src.mast import MASTClient
@@ -90,29 +91,67 @@ class CreateDatasetTask:
             self.pipelines = MASTUPipelineRegistry()
 
     def __call__(self):
-        signal_infos = self.read_signal_info()
-        source_infos = self.read_source_info()
+        try:
+            self._main()
+        except Exception as e:
+            trace = traceback.format_exc()
+            logging.error(f"Error reading sources for shot {self.shot}: {e}\n{trace}")
+            
+    def _main(self):
+        signal_infos, source_infos = self._read_metadata()
 
+        if signal_infos is None or signal_infos is None:
+            return 
+
+        signal_infos = self._filter_signals(signal_infos)
+
+        self.writer.write_metadata()
+
+        for source_name, source_group_index in signal_infos.groupby("source").groups.items():
+            source_info = self._get_source_metadata(source_name, source_infos)
+            signal_infos_for_source = self._get_signals_for_source(source_name, source_group_index, signal_infos)
+            self._process_source(source_name, signal_infos_for_source, source_info)
+
+        self.writer.consolidate_dataset()
+
+    def _process_source(self, source_name: str, signal_infos: pd.DataFrame, source_info: dict):
+        signal_datasets = self.load_source(signal_infos)
+        pipeline = self.pipelines.get(source_name)
+        dataset = pipeline(signal_datasets)
+        dataset.attrs.update(source_info)
+        self.writer.write_dataset(dataset)
+
+    def _get_source_metadata(self, source_name, source_infos: pd.DataFrame) -> dict:
+        source_info = source_infos.loc[source_infos["name"] == source_name].iloc[0]
+        source_info = source_info.to_dict()
+        return source_info
+
+    def _get_signals_for_source(self, source_name: str, source_group_index: pd.Series, signal_infos: pd.DataFrame):
+        signal_infos_for_source = signal_infos.loc[source_group_index]
+        if source_name == 'xdc':
+            signal_infos_for_source = signal_infos_for_source.loc[signal_infos_for_source.name == 'xdc/ip_t_ipref']
+        return signal_infos_for_source
+
+    def _read_metadata(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        try:
+            signal_infos = self.read_signal_info()
+            source_infos = self.read_source_info()
+        except FileNotFoundError:
+            message = f"Could not find source/signal metadata file for shot {self.shot}"
+            logging.warning(message)
+            return None, None
+        
+        return signal_infos, source_infos
+
+
+    def _filter_signals(self, signal_infos: pd.DataFrame) -> pd.DataFrame:
         if len(self.signal_names) > 0:
             signal_infos = signal_infos.loc[signal_infos.name.isin(self.signal_names)]
 
         if len(self.source_names) > 0:
             signal_infos = signal_infos.loc[signal_infos.source.isin(self.source_names)]
 
-
-        self.writer.write_metadata()
-
-        for key, group_index in signal_infos.groupby("source").groups.items():
-            signal_infos_for_source = signal_infos.loc[group_index]
-            signal_datasets = self.load_source(signal_infos_for_source)
-            pipeline = self.pipelines.get(key)
-            dataset = pipeline(signal_datasets)
-            source_info = source_infos.loc[source_infos["name"] == key].iloc[0]
-            source_info = source_info.to_dict()
-            dataset.attrs.update(source_info)
-            self.writer.write_dataset(dataset)
-
-        self.writer.consolidate_dataset()
+        return signal_infos
 
     def load_source(self, group: pd.DataFrame) -> dict[str, xr.Dataset]:
         datasets = {}
@@ -133,7 +172,8 @@ class CreateDatasetTask:
                         shot_num=self.shot, name=info["uda_name"]
                     )
             except Exception as e:
-                logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
+                uda_name = info["uda_name"]
+                logging.warning(f"Could not read dataset {name} ({uda_name}) for shot {self.shot}: {e}")
                 continue
 
             dataset.attrs.update(info)

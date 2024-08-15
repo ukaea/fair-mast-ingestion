@@ -313,9 +313,10 @@ class AddXSXCameraParams:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         cam_data = self.cam_data.copy()
+        # if camera data in not in dataset, then skip and do nothing
+        if self.stem not in dataset:
+            return dataset
         dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts", join='left')
-        print(dataset)
-        print(dataset.dims)
         dataset = dataset.compute()
         return dataset
 

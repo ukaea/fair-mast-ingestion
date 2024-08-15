@@ -107,8 +107,6 @@ class LocalIngestionWorkflow:
 
     def __call__(self, shot: int):
         self.data_dir.mkdir(exist_ok=True, parents=True)
-        local_path = self.data_dir / f"{shot}.{self.file_format}"
-
 
         create = CreateDatasetTask(
             self.metadata_dir,
@@ -123,7 +121,7 @@ class LocalIngestionWorkflow:
         try:
             create()
         except Exception as e:
-            import traceback; traceback.print_exc();
+            import traceback
             print(traceback.format_exc())
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
 
@@ -145,7 +143,7 @@ class WorkflowManager:
     def _run_workflows_serial(self, shot_list: list[int]):
         n = len(shot_list)
         for i, shot in enumerate(shot_list):
-            result = self.workflow(shot)
+            self.workflow(shot)
             logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
 
     def _run_workflows_parallel(self, shot_list: list[int]):

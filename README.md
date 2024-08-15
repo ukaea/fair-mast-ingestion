@@ -19,15 +19,15 @@ cd fair-mast-ingestion
 Create a virtual environment:
 
 ```sh
-python -m venv venv
-source venv/bin/activate
+python -m venv fair-mast-ingestion
+source fair-mast-ingestion/bin/activate
 ```
 
 Update pip and install required packages:
 
 ```sh
-pip install --upgrade pip
-pip install -e .
+python -m pip install --U pip
+python -m pip install -e .
 ```
 
 The final step to installation is to have mastcodes:
@@ -40,7 +40,7 @@ cd mastcodes
 Edit `uda/python/setup.py` and change the "version" to 1.3.9.
 
 ```sh
-pip install uda/python
+python -m pip install uda/python
 source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
 ```
 

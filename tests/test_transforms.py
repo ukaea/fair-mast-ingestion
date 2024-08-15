@@ -1,3 +1,4 @@
+import numpy as np
 import xarray as xr
 from src.transforms import (
     AddXSXCameraParams,
@@ -85,7 +86,14 @@ def test_standardise_dataset(fake_dataset):
     assert "plasma_current_error" in dataset.data_vars
 
 
-def test_xsx_camera_params(fake_dataset):
+def test_xsx_camera_params():
+    fake_dataset = xr.Dataset(
+        data_vars=dict(
+            tcam=(("time", 'tcam_channels'), np.random.random((100, 18))),
+            time=("time", np.random.random(100)),
+        ),
+        attrs={"name": "xsx/tcam", "shot_id": 30420},
+    )
     transform = AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv")
     dataset = transform(fake_dataset)
 

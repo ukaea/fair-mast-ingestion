@@ -1,6 +1,7 @@
 ### FAIR MAST Data Ingestion
 
-## Installation on CSD3
+## Running on CSD3
+### Installation on CSD3
 
 After logging into your CSD3 account (on Icelake node), first load the correct Python module:
 
@@ -45,7 +46,23 @@ source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
 
 You should now be able to run the following commands.
 
-## Local Ingestion
+### Submitting runs on CSD3
+
+1. First submit a job to collect all the metadata:
+
+```sh
+qsub ./jobs/metadata.csd3.slurm.sh
+```
+
+2. Then submit an ingestion job
+
+```sh
+qsub ./jobs/ingest.csd3.slurm.sh campaign_shots/tiny_campaign.csv s3://mast/test/shots/ amc
+```
+
+## Manually Running Ingestor
+
+### Local Ingestion
 
 The following section details how to ingest data into a local folder on freia with UDA.
 
@@ -61,7 +78,7 @@ mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --
 
 Files will be output in the NetCDF format to `data/local`.
 
-## Ingestion to S3
+### Ingestion to S3
 
 The following section details how to ingest data into the s3 storage on freia with UDA.
 
@@ -80,3 +97,4 @@ mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --
 ```
 
 This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.
+

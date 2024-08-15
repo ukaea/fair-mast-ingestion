@@ -158,10 +158,15 @@ class TensoriseChannels:
         self.assign_coords = assign_coords
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-
         group_keys = self._get_group_keys(dataset)
+
+        # If we couldn't find any matching keys, do nothing.
+        if len(group_keys) == 0:
+            return dataset
+
         channels = [dataset[key] for key in group_keys]
-        dataset[self.stem] = xr.combine_nested(channels, concat_dim=self.dim_name)
+        combined = xr.combine_nested(channels, concat_dim=self.dim_name)
+        dataset[self.stem] = combined
 
         if self.assign_coords:
             dataset[self.stem] = dataset[self.stem].assign_coords(
@@ -301,14 +306,16 @@ class AddXSXCameraParams:
         cam_data.drop("comment", inplace=True, axis=1)
         cam_data.columns = [stem + "_" + c for c in cam_data.columns]
         self.stem = stem
-        self.index_name = f'{self.stem}_channel'
-        cam_data.index.name = self.index_name
+        index_name = f'{self.stem}_channel'
+        cam_data[index_name] = [stem + '_' + str(index+1) for index in range(len(cam_data))]
+        cam_data = cam_data.set_index(index_name)
         self.cam_data = cam_data.to_xarray()
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         cam_data = self.cam_data.copy()
-        cam_data[self.index_name] = dataset[self.index_name]
-        dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts")
+        dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts", join='left')
+        print(dataset)
+        print(dataset.dims)
         dataset = dataset.compute()
         return dataset
 
@@ -1038,6 +1045,11 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
+                    TensoriseChannels("hcam_l", regex=r"hcaml#(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcamu#(\d+)"),
+                    TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
+                    TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
+                    TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
                     TransformUnits(),
                     AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
                     AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),

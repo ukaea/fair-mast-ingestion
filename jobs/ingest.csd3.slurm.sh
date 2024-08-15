@@ -4,7 +4,7 @@
 #SBATCH --job-name=fair-mast-ingest
 #SBATCH --output=fair-mast-ingest_%A.out
 #SBATCH --time=5:00:00
-#SBATCH --mem=256G
+#SBATCH --mem=250G
 #SBATCH --ntasks=128
 #SBATCH -N 2
 

@@ -36,7 +36,12 @@ class UploadDatasetTask:
 
     def __call__(self):
         logging.info(f"Uploading {self.local_file} to {self.config.url}")
+
+        if not Path(self.config.credentials_file).exists():
+            raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
+
         env = os.environ.copy()
+
         args = [
             "s5cmd",
             "--credentials-file",
@@ -49,7 +54,9 @@ class UploadDatasetTask:
             str(self.local_file),
             self.config.url,
         ]
+
         logging.debug(' ' .join(args))
+
         subprocess.run(
             args,
             stdout=subprocess.DEVNULL,

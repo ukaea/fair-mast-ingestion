@@ -1,6 +1,7 @@
 ### FAIR MAST Data Ingestion
 
-## Installation on CSD3
+## Running on CSD3
+### Installation on CSD3
 
 After logging into your CSD3 account (on Icelake node), first load the correct Python module:
 
@@ -25,7 +26,7 @@ source fair-mast-ingestion/bin/activate
 Update pip and install required packages:
 
 ```sh
-python -m pip install --U pip
+python -m pip install -U pip
 python -m pip install -e .
 ```
 
@@ -40,12 +41,47 @@ Edit `uda/python/setup.py` and change the "version" to 1.3.9.
 
 ```sh
 python -m pip install uda/python
+cd ..
 source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
+```
+
+#### S3 Support (Optional)
+
+Finally, for uploading to S3 we need to install `s5cmd` and make sure it is on the path:
+
+```sh
+wget https://github.com/peak/s5cmd/releases/download/v2.2.2/s5cmd_2.2.2_Linux-64bit.tar.gz
+tar -xvzf s5cmd_2.2.2_Linux-64bit.tar.gz
+PATH=$PWD:$PATH
+```
+
+And add a config file for the bucket keys, by creating a file called `.s5cfg.stfc`:
+
+```
+[default]
+aws_access_key_id=<access-key>
+aws_secret_access_key=<secret-key>
 ```
 
 You should now be able to run the following commands.
 
-## Local Ingestion
+### Submitting runs on CSD3
+
+1. First submit a job to collect all the metadata:
+
+```sh
+sbatch ./jobs/metadata.csd3.slurm.sh
+```
+
+2. Then submit an ingestion job
+
+```sh
+sbatch ./jobs/ingest.csd3.slurm.sh campaign_shots/tiny_campaign.csv s3://mast/test/shots/ amc
+```
+
+## Manually Running Ingestor
+
+### Local Ingestion
 
 The following section details how to ingest data into a local folder on freia with UDA.
 
@@ -61,7 +97,7 @@ mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --
 
 Files will be output in the NetCDF format to `data/local`.
 
-## Ingestion to S3
+### Ingestion to S3
 
 The following section details how to ingest data into the s3 storage on freia with UDA.
 
@@ -80,3 +116,4 @@ mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --
 ```
 
 This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.
+

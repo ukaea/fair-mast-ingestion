@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--signal_names", nargs="*", default=[])
     parser.add_argument("--source_names", nargs="*", default=[])
-    parser.add_argument("--file_format", choices=['zarr', 'nc', 'h5'])
+    parser.add_argument("--file_format", choices=['zarr', 'nc', 'h5'], default='zarr')
     parser.add_argument("--facility", choices=['MAST', 'MASTU'], default='MAST')
 
     args = parser.parse_args()

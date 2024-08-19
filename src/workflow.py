@@ -143,6 +143,7 @@ class WorkflowManager:
     def _run_workflows_serial(self, shot_list: list[int]):
         n = len(shot_list)
         for i, shot in enumerate(shot_list):
+            self.workflow(shot)
             logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
 
     def _run_workflows_parallel(self, shot_list: list[int]):

@@ -37,7 +37,7 @@ def run_workflows_serial_source(data_dir, shot_list: list):
             logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
 
 default_args = {"start_date": datetime(2021, 1, 1)}
-with DAG('metadata_processing', default_args=default_args, schedule_interval='@daily') as dag:
+with DAG('metadata_processing', default_args=default_args) as dag:
     @task
     def read_shots(shot_file):
         shot_list = read_shot_file(shot_file)

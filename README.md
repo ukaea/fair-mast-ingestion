@@ -26,7 +26,7 @@ source fair-mast-ingestion/bin/activate
 Update pip and install required packages:
 
 ```sh
-python -m pip install --U pip
+python -m pip install -U pip
 python -m pip install -e .
 ```
 

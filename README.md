@@ -41,7 +41,26 @@ Edit `uda/python/setup.py` and change the "version" to 1.3.9.
 
 ```sh
 python -m pip install uda/python
+cd ..
 source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
+```
+
+#### S3 Support (Optional)
+
+Finally, for uploading to S3 we need to install `s5cmd` and make sure it is on the path:
+
+```sh
+wget https://github.com/peak/s5cmd/releases/download/v2.2.2/s5cmd_2.2.2_Linux-64bit.tar.gz
+tar -xvzf s5cmd_2.2.2_Linux-64bit.tar.gz
+PATH=$PWD:$PATH
+```
+
+And add a config file for the bucket keys, by creating a file called `.s5cfg.stfc`:
+
+```
+[default]
+aws_access_key_id=<access-key>
+aws_secret_access_key=<secret-key>
 ```
 
 You should now be able to run the following commands.

@@ -77,6 +77,40 @@ class S3IngestionWorkflow:
             url = self.upload_config.url + f"{shot}.{self.file_format}"
             if self.force or not self.fs.exists(url):
                 create()
+
+                # Do LakeFS stuff here, after the files have been created. This try block already checks whether the 
+                # file already exists on S3, and either skips or forces it. My LakeFS code skips if there is no diff
+                # so should catch everything. 
+                from lake_fs import LakeFSManager
+                import config
+                manager = LakeFSManager(
+                            host="http://127.0.0.1:8000/",
+                            username=config.username,
+                            password=config.password,
+                            repo_name="example-repo"
+                            )
+
+                # Create a new branch with a unique name
+                branch = manager.create_branch()
+            
+                # Upload a local file to the new branch
+                manager.upload_files_to_branch(
+                    branch_name=branch.id,
+                    local_folder="data"
+                )
+            
+                # Commit the uploaded files to the branch
+                manager.commit_branch(
+                    branch_name=branch.id,
+                    message="Uploaded new files."
+                )
+            
+                # Show differences between the main branch and the new branch
+                manager.show_diff(branch)
+            
+                # Merge the new branch into the main branch
+                manager.merge_branch(branch)
+
                 upload()
             else:
                 logging.info(f"Skipping shot {shot} as it already exists")

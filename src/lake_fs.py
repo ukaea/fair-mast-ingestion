@@ -1,14 +1,13 @@
 import os
 import glob
-import config
 from lakefs.client import Client
 import lakefs
 import subprocess
 from datetime import datetime
 
 class LakeFSManager:
-    def __init__(self, host, username, password, repo_name):
-        self.client = Client(host=host, username=username, password=password)
+    def __init__(self, repo_name):
+        self.client = Client()
         self.repo_name = repo_name
         self.repo = lakefs.Repository(repo_name, client=self.client)
 
@@ -23,13 +22,12 @@ class LakeFSManager:
             return e
 
     def create_branch(self):
-        # Generate a unique branch name based on the current date and time
         print("Creating branch for ingestion...")
         branch_name = datetime.now().strftime("branch-%Y%m%d-%H%M%S")
         branch = self.repo.branch(branch_name).create(source_reference="main")
         return branch
 
-    def upload_files_to_branch(self, branch_name, local_folder="data/local"):
+    def upload_files_to_branch(self, branch_name, local_folder):
         print("Uploading files from data directory to branch...")
         command = [
                 "lakectl", "fs", "upload",
@@ -72,32 +70,3 @@ class LakeFSManager:
             "--yes"
         ]
         self.execute_command(command)
-
-if __name__ == "__main__":
-    manager = LakeFSManager(
-        host="http://127.0.0.1:8000/",
-        username=config.username,
-        password=config.password,
-        repo_name="example-repo"
-    )
-
-    # Create a new branch with a unique name
-    branch = manager.create_branch()
-
-    # Upload a local file to the new branch
-    manager.upload_files_to_branch(
-        branch_name=branch.id,
-        local_folder="data"
-    )
-
-    # Commit the uploaded files to the branch
-    manager.commit_branch(
-        branch_name=branch.id,
-        message="Uploaded new files."
-    )
-
-    # Show differences between the main branch and the new branch
-    manager.show_diff(branch)
-
-    # Merge the new branch into the main branch
-    manager.merge_branch(branch)

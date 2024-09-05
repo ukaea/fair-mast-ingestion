@@ -81,42 +81,12 @@ class S3IngestionWorkflow:
                 # Do LakeFS stuff here, after the files have been created. This try block already checks whether the 
                 # file already exists on S3, and either skips or forces it. My LakeFS code skips if there is no diff
                 # so should catch everything. 
-                from lake_fs import LakeFSManager
-                import config
-                manager = LakeFSManager(
-                            host="http://127.0.0.1:8000/",
-                            username=config.username,
-                            password=config.password,
-                            repo_name="example-repo"
-                            )
-
-                # Create a new branch with a unique name
-                branch = manager.create_branch()
-            
-                # Upload a local file to the new branch
-                manager.upload_files_to_branch(
-                    branch_name=branch.id,
-                    local_folder="data"
-                )
-            
-                # Commit the uploaded files to the branch
-                manager.commit_branch(
-                    branch_name=branch.id,
-                    message="Uploaded new files."
-                )
-            
-                # Show differences between the main branch and the new branch
-                manager.show_diff(branch)
-            
-                # Merge the new branch into the main branch
-                manager.merge_branch(branch)
-
                 upload()
+
             else:
                 logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-
         cleanup()
 
 class LocalIngestionWorkflow:
@@ -154,6 +124,10 @@ class LocalIngestionWorkflow:
 
         try:
             create()
+            from src.task import VersionDataTask
+            repo_name = "example-repo"
+            version = VersionDataTask("data/local", repo_name)
+            version()
         except Exception as e:
             import traceback
             trace = traceback.format_exc()
@@ -168,7 +142,7 @@ class WorkflowManager:
     def __init__(self, workflow):
         self.workflow = workflow
 
-    def run_workflows(self, shot_list: list[int], parallel=True):
+    def run_workflows(self, shot_list: list[int], parallel=False):
         if parallel:
             self._run_workflows_parallel(shot_list)
         else:

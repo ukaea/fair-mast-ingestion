@@ -68,6 +68,16 @@ def main():
         workflow_manager.run_workflows(shot_list, parallel = not args.serial)
         logging.info(f"Finished source {source}")
 
+    from mpi4py import MPI
+    # Ensure only the process with rank 0 versions the data
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    if rank == 1:
+        from src.task import VersionDataTask
+        repo_name = "example-repo"
+        version = VersionDataTask(args.dataset_path, repo_name)
+        version()
 
 if __name__ == "__main__":
     main()

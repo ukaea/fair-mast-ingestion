@@ -71,23 +71,21 @@ class S3IngestionWorkflow:
         )
 
         upload = UploadDatasetTask(local_path, self.upload_config)
-        cleanup = CleanupDatasetTask(local_path)
+        #cleanup = CleanupDatasetTask(local_path)
 
         try:
             url = self.upload_config.url + f"{shot}.{self.file_format}"
             if self.force or not self.fs.exists(url):
                 create()
 
-                # Do LakeFS stuff here, after the files have been created. This try block already checks whether the 
-                # file already exists on S3, and either skips or forces it. My LakeFS code skips if there is no diff
-                # so should catch everything. 
+
                 upload()
 
             else:
                 logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-        cleanup()
+        #cleanup()
 
 class LocalIngestionWorkflow:
 
@@ -124,10 +122,7 @@ class LocalIngestionWorkflow:
 
         try:
             create()
-            from src.task import VersionDataTask
-            repo_name = "example-repo"
-            version = VersionDataTask("data/local", repo_name)
-            version()
+
         except Exception as e:
             import traceback
             trace = traceback.format_exc()
@@ -142,7 +137,7 @@ class WorkflowManager:
     def __init__(self, workflow):
         self.workflow = workflow
 
-    def run_workflows(self, shot_list: list[int], parallel=False):
+    def run_workflows(self, shot_list: list[int], parallel=True):
         if parallel:
             self._run_workflows_parallel(shot_list)
         else:

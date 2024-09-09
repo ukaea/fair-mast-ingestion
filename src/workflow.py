@@ -5,7 +5,6 @@ from dask.distributed import Client, as_completed
 from src.task import (
     CreateDatasetTask,
     UploadDatasetTask,
-    CleanupDatasetTask,
     CreateSignalMetadataTask,
     CreateSourceMetadataTask,
 )
@@ -71,21 +70,17 @@ class S3IngestionWorkflow:
         )
 
         upload = UploadDatasetTask(local_path, self.upload_config)
-        #cleanup = CleanupDatasetTask(local_path)
 
         try:
             url = self.upload_config.url + f"{shot}.{self.file_format}"
             if self.force or not self.fs.exists(url):
                 create()
-
-
                 upload()
 
             else:
                 logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-        #cleanup()
 
 class LocalIngestionWorkflow:
 

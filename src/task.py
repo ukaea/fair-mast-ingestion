@@ -12,37 +12,8 @@ from src.mast import MASTClient
 from src.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.writer import DatasetWriter
 from src.uploader import UploadConfig
-from src.lake_fs import LakeFSManager
 
 logging.basicConfig(level=logging.INFO)
-
-class VersionDataTask:
-    def __init__(self, local_path, repo_name):
-        self.local_path = local_path
-        self.lakefs_manager = LakeFSManager(repo_name)
-        self.branch = None
-
-    def __call__(self):
-        # 1. Create a new branch
-        self.branch = self.lakefs_manager.create_branch()
-
-        # 2. Upload the files from the local path to the newly created branch
-        self.lakefs_manager.upload_files_to_branch(
-            branch_name=self.branch.id,
-            local_folder=self.local_path
-        )
-
-        # 3. Commit the changes to the branch
-        self.lakefs_manager.commit_branch(
-            branch_name=self.branch.id,
-            message="Uploaded new files."
-        )
-
-        # 4. Show differences between the main branch and the new branch
-        self.lakefs_manager.show_diff(self.branch)
-
-        # 5. Merge the new branch into the main branch
-        self.lakefs_manager.merge_branch(self.branch)
 
 
 class CleanupDatasetTask:

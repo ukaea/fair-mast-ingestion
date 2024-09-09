@@ -2,6 +2,7 @@ import os
 import argparse
 import logging
 from lakefs.client import Client
+from src.task import CleanupDatasetTask
 import lakefs
 import subprocess
 from datetime import datetime
@@ -101,6 +102,16 @@ def validate_data_directory(local_folder):
         sys.exit(1)
     logging.info(f"Data directory '{local_folder}' is valid.")
 
+def perform_cleanup(data_dir):
+    logging.info("Starting dataset cleanup process...")
+    try:
+        cleanup = CleanupDatasetTask(data_dir)
+        cleanup()  
+        logging.info(f"Cleanup successful for directory: {data_dir}")
+    except Exception as e:
+        logging.error(f"Error during cleanup: {e}")
+        raise
+
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -124,6 +135,8 @@ def main():
     lakefs_manager.merge_branch(branch)
     lakefs_manager.delete_branch(branch.id)
 
+    perform_cleanup(args.data_dir)
+    
 
 if __name__ == "__main__":
     main()

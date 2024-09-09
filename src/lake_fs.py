@@ -1,9 +1,12 @@
 import os
 import argparse
+import logging
 from lakefs.client import Client
 import lakefs
 import subprocess
 from datetime import datetime
+import uuid
+import sys
 
 class LakeFSManager:
     def __init__(self, repo_name):
@@ -11,24 +14,28 @@ class LakeFSManager:
         self.repo_name = repo_name
         self.repo = lakefs.Repository(repo_name, client=self.client)
 
+
     def execute_command(self, command):
         try:
             result = subprocess.run(command, check=True, capture_output=True, text=True)
-            print("Output:", result.stdout)
+            logging.info("Command output: %s", result.stdout)
             return result
         except subprocess.CalledProcessError as e:
-            print("An error occurred while executing the command.")
-            print("Error message:", e.stderr)
+            logging.error("Error executing command: %s", e.stderr)
             return e
 
     def create_branch(self):
-        print("Creating branch for ingestion...")
-        branch_name = datetime.now().strftime("branch-%Y%m%d-%H%M%S")
-        branch = self.repo.branch(branch_name).create(source_reference="main")
-        return branch
+        logging.info("Creating branch for ingestion...")
+        branch_name = f"branch-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:8]}"
+        try:
+            branch = self.repo.branch(branch_name).create(source_reference="main")
+            return branch
+        except lakefs.exceptions.LakeFSException as e:
+            logging.error(f"Failed to create branch: {e}")
+            sys.exit(1)
 
     def upload_files_to_branch(self, branch_name, local_folder):
-        print("Uploading files from data directory to branch...")
+        logging.info("Uploading files from data directory to branch...")
         command = [
             "lakectl", "fs", "upload",
             f"lakefs://{self.repo_name}/{branch_name}/",
@@ -38,7 +45,7 @@ class LakeFSManager:
         self.execute_command(command)
 
     def commit_branch(self, branch_name, message):
-        print("Committing changes to branch...")
+        logging.info("Committing changes to branch...")
         command = [
             "lakectl", "commit",
             f"lakefs://{self.repo_name}/{branch_name}/",
@@ -47,23 +54,27 @@ class LakeFSManager:
         result = self.execute_command(command)
 
         if result.returncode != 0:
-            print(f"Commit failed for branch '{branch_name}'. Deleting branch and exiting.")
+            logging.error(f"Commit failed for branch '{branch_name}'. Deleting branch and exiting.")
             self.delete_branch(branch_name)
-            exit()
+            sys.exit(1)
 
     def show_diff(self, branch):
         main_branch = self.repo.branch("main")
         changes = list(main_branch.diff(other_ref=branch))
-        print(f"Number of changes made to main: {len(changes)}")
+        logging.info(f"Number of changes made to main: {len(changes)}")
 
     def merge_branch(self, branch):
-        print("Merging branch to main...")
+        logging.info("Merging branch to main...")
         main_branch = self.repo.branch("main")
-        res = branch.merge_into(main_branch)
-        return res
+        try:
+            res = branch.merge_into(main_branch)
+            return res
+        except lakefs.exceptions.LakeFSException as e:
+            logging.error(f"Failed to merge branch: {e}")
+            sys.exit(1)
 
     def delete_branch(self, branch_name):
-        print("Deleting branch.")
+        logging.info("Deleting branch.")
         command = [
             "lakectl", "branch", "delete",
             f"lakefs://{self.repo_name}/{branch_name}",
@@ -72,15 +83,37 @@ class LakeFSManager:
         self.execute_command(command)
 
 
+def check_lakectl_installed():
+    try:
+        subprocess.run(["lakectl", "--version"], check=True, capture_output=True, text=True)
+        logging.info("lakectl is installed.")
+    except subprocess.CalledProcessError:
+        logging.error("lakectl is not installed or not found in PATH.")
+        sys.exit(1)
+
+
+def validate_data_directory(local_folder):
+    if not os.path.exists(local_folder):
+        logging.error(f"Data directory '{local_folder}' does not exist.")
+        sys.exit(1)
+    elif not os.listdir(local_folder):
+        logging.error(f"Data directory '{local_folder}' is empty.")
+        sys.exit(1)
+    logging.info(f"Data directory '{local_folder}' is valid.")
+
+
 def main():
-    # Parse command-line arguments
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
     parser = argparse.ArgumentParser(description="LakeFS Ingestion Script")
     parser.add_argument("--repo", required=True, help="Name of the LakeFS repository")
     parser.add_argument("--data-dir", required=True, help="Location of the data files to upload")
     parser.add_argument("--commit-message", default="Import data from CSD3", help="Commit message for the ingestion")
     args = parser.parse_args()
 
-    # Create the LakeFS manager instance
+    check_lakectl_installed()
+    validate_data_directory(args.data_dir)
+
     lakefs_manager = LakeFSManager(repo_name=args.repo)
 
     branch = lakefs_manager.create_branch()
@@ -88,7 +121,6 @@ def main():
     lakefs_manager.commit_branch(branch.id, args.commit_message)
     lakefs_manager.show_diff(branch)
 
-    # Merge the branch into main
     lakefs_manager.merge_branch(branch)
     lakefs_manager.delete_branch(branch.id)
 

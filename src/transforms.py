@@ -1047,6 +1047,14 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TransformUnits(),
                 ]
             ),
+            "xim": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xim")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
             "xmo": Pipeline(
                 [
                     MapDict(RenameDimensions()),

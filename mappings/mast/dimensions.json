@@ -7179,5 +7179,77 @@
     },
     "xdc/z_t_ztest": {
         "time1": "time"
+    },
+    "xim/cii_hu10_u": {
+        "sec": "time"
+    },
+    "xim/da_bo10": {
+        "sec": "time"
+    },
+    "xim/da_hl11_l1": {
+        "sec": "time"
+    },
+    "xim/da_h11_r1": {
+        "sec": "time"
+    },
+    "xim/da_hm10_r": {
+        "sec": "time"
+    },
+    "xim/da_hm10_r1": {
+        "sec": "time"
+    },
+    "xim/da_hm10_t": {
+        "sec": "time"
+    },
+    "xim/da_hu10_r1": {
+        "sec": "time"
+    },
+    "xim/da_hu10_t": {
+        "sec": "time"
+    },
+    "xim/da_hu10_u1": {
+        "sec": "time"
+    },
+    "xim/da_hto10": {
+        "sec": "time"
+    },
+    "xim/dg_hu10_r2": {
+        "sec": "time"
+    },
+    "xim/heii_eceleste": {
+        "sec": "time"
+    },
+    "xim/light_end": {
+        "sec": "time"
+    },
+    "xim/light_start": {
+        "sec": "time"
+    },
+    "xim/mass_end": {
+        "sec": "time"
+    },
+    "xim/mass_start": {
+        "sec": "time"
+    },
+    "xim/pellet_halpha_2": {
+        "sec": "time"
+    },
+    "xim/pellet_time": {
+        "sec": "time"
+    },
+    "xim/preion_trig": {
+        "sec": "time"
+    },
+    "xim/target": {
+        "sec": "time"
+    },
+    "xim/trigger": {
+        "sec": "time"
+    },
+    "xim/ts_yag": {
+        "sec": "time"
+    },
+    "xim/xsa_logic_out": {
+        "sec": "time"
     }
 }

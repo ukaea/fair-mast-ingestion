@@ -14,6 +14,24 @@
     "ada/geo_full": {
         "dim_0": "dim_1"
     },
+    "asm/hm_periods": {
+        "time": "hm_time"
+    },
+    "asm/hm_rating": {
+        "time": "hm_time"
+    },
+    "asm/out_nn_pattern": {
+        "time": "out_time"
+    },
+    "asm/out_nn_rating": {
+        "time": "out_time"
+    },
+    "asm/out_rating": {
+        "time": "out_time"
+    },
+    "asm/out_signal": {
+        "time": "out_time"
+    },
     "asx/elm_freqs": {
         "time": "npts"
     },

@@ -117,3 +117,11 @@ mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --
 
 This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.
 
+## CPF Metadata
+
+To parse CPF metadata we can use the following script (only on Friea):
+
+```sh
+qsub ./jobs/freia_write_cpf.qsub campaign_shots/tiny_campaign.csv
+```
+

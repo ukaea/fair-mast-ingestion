@@ -2,12 +2,27 @@ import argparse
 import logging
 from functools import partial
 from dask_mpi import initialize
+from mpi4py import MPI
 from src.uploader import UploadConfig
 from src.workflow import S3IngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
-
+from src.lake_fs import LakeFSManager
 
 def main():
+
+    # Initialize the MPI communicator
+    comm = MPI.COMM_WORLD
+    # Get the rank of the current process
+    rank = comm.Get_rank()
+    from lakefs.client import Client
+    import lakefs
+    client = Client()
+    repo = lakefs.Repository("example-repo", client=client)
+    # Run the function only on process with rank 0
+    if rank == 0:
+        branch = lakefs.repository("example-repo").branch("ingestion").create(source_reference="main")
+
+
     initialize()
     logging.basicConfig(level=logging.INFO)
 

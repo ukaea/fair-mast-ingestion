@@ -118,22 +118,6 @@ class LocalIngestionWorkflow:
 
         try:
             create()
-                # want to commit the shot here
-            print(f"{self.data_dir}/{shot}.{self.file_format}")
-            command = [
-                "lakectl", "fs", "upload",
-                f"lakefs://example-repo/ingestion/{shot}.{self.file_format}",
-                "-s", f"{self.data_dir}/{shot}.{self.file_format}", "--recursive"
-            ]
-
-            try:
-                result = subprocess.run(command, check=True, capture_output=True, text=True)
-                print("Command executed successfully.")
-                print("Output:", result.stdout)
-            except subprocess.CalledProcessError as e:
-                print("An error occurred while executing the command.")
-                print("Error message:", e.stderr)
-            # then delete it
 
         except Exception as e:
             import traceback

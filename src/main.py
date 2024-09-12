@@ -3,24 +3,19 @@ import logging
 from functools import partial
 from dask_mpi import initialize
 from mpi4py import MPI
+import lakefs
 from src.uploader import UploadConfig
 from src.workflow import S3IngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
-from src.lake_fs import LakeFSManager
+import subprocess
 
 def main():
 
     # Initialize the MPI communicator
     comm = MPI.COMM_WORLD
-    # Get the rank of the current process
     rank = comm.Get_rank()
-    from lakefs.client import Client
-    import lakefs
-    client = Client()
-    repo = lakefs.Repository("example-repo", client=client)
-    # Run the function only on process with rank 0
     if rank == 0:
-        branch = lakefs.repository("example-repo").branch("ingestion").create(source_reference="main")
+        lakefs.repository("example-repo").branch("ingestion").create(source_reference="main")
 
 
     initialize()
@@ -82,6 +77,37 @@ def main():
         workflow_manager = WorkflowManager(workflow)
         workflow_manager.run_workflows(shot_list, parallel = not args.serial)
         logging.info(f"Finished source {source}")
+
+    for shot in shot_list:
+        file_path = args.dataset_path + f"/{shot}.{args.file_format}"
+        command = [
+            "lakectl", "fs", "upload",
+            f"lakefs://example-repo/ingestion/{shot}.{args.file_format}",
+            "-s", str(file_path), "--recursive"
+        ]
+
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            print("Command executed successfully.")
+            print("Output:", result.stdout)
+        except subprocess.CalledProcessError as e:
+            print("An error occurred while executing the command.")
+            print("Error message:", e.stderr)
+
+        command = [
+            "lakectl", "commit",
+            f"lakefs://example-repo/ingestion/",
+            "-m", f"Commit shot {shot}"
+        ]
+
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            print("Command executed successfully.")
+            print("Output:", result.stdout)
+        except subprocess.CalledProcessError as e:
+            print("An error occurred while executing the command.")
+            print("Error message:", e.stderr)
+
 
 if __name__ == "__main__":
     main()

@@ -116,6 +116,19 @@ class CreateDatasetTask:
 
     def _process_source(self, source_name: str, signal_infos: pd.DataFrame, source_info: dict):
         signal_datasets = self.load_source(signal_infos)
+
+        keys, dims = [], []
+        for key, value in signal_datasets.items():
+            dim = dict(value.dims)
+            keys.append(key)
+            dims.append(dim)
+            print(key, dim)
+
+        df = pd.DataFrame()
+        df['name'] = keys
+        df['dims'] = dims
+        df.to_csv('dims.csv')
+
         pipeline = self.pipelines.get(source_name)
         dataset = pipeline(signal_datasets)
         dataset.attrs.update(source_info)
@@ -155,6 +168,7 @@ class CreateDatasetTask:
 
     def load_source(self, group: pd.DataFrame) -> dict[str, xr.Dataset]:
         datasets = {}
+
         for _, info in group.iterrows():
             info = info.to_dict()
             name = info["name"]

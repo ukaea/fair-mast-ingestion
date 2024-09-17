@@ -395,10 +395,42 @@ class MASTUPipelineRegistry(PipelineRegistry):
         dim_mapping_file = "mappings/mastu/dimensions.json"
 
         self.pipelines = {
+            "anb": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("anb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "act": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("act")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "acu": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("anb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
                     MapDict(StandardiseSignalDataset("ayc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ayd": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("ayd")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -418,6 +450,35 @@ class MASTUPipelineRegistry(PipelineRegistry):
                     # MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(dim_mapping_file)),
                     MapDict(StandardiseSignalDataset("epm")),
+                    MergeDatasets(),
+                    # LCFSTransform(),
+                    TransformUnits(),
+                    # RenameVariables(
+                    #     {
+                    #         "plasma_currc": "plasma_current_c",
+                    #         "plasma_currx": "plasma_current_x",
+                    #         "plasma_currrz": "plasma_current_rz",
+                    #         "lcfsr_c": "lcfs_r",
+                    #         "lcfsz_c": "lcfs_z",
+                    #     }
+                    # )
+                ]
+            ),
+            "esm": Pipeline(
+                [
+                    # DropDatasets(
+                    #     [
+                    #         "efm/fcoil_n",
+                    #         "efm/fcoil_segs_n",
+                    #         "efm/limitern",
+                    #         "efm/magpr_n",
+                    #         "efm/silop_n",
+                    #         "efm/shot_number",
+                    #     ]
+                    # ),
+                    # MapDict(DropZeroDimensions()),
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("esm")),
                     MergeDatasets(),
                     # LCFSTransform(),
                     TransformUnits(),

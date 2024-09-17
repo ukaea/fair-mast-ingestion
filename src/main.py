@@ -68,6 +68,25 @@ def remove_shot_from_local(shot, dataset_path, file_format):
     except Exception as e:
         logging.error(f"Failed to remove file {file_path}: {e}")
 
+def merge_branch():
+        logging.info("Merging branch to main...")
+        main_branch = lakefs.repository("example-repo").branch("main")
+        ingestion_branch = lakefs.repository("example-repo").branch("ingestion")
+        try:
+            res = ingestion_branch.merge_into(main_branch)
+        except lakefs.exceptions.LakeFSException as e:
+            logging.error(f"Failed to merge branch: {e}")
+
+def delete_branch():
+        logging.info("Deleting branch.")
+        command = [
+            "lakectl", "branch", "delete",
+            f"lakefs://example-repo/ingestion",
+            "--yes"
+        ]
+        if execute_lakectl_command(command, f"Failed to delete branch."):
+            logging.info(f"Branch deleted.")
+
 def main():
 
     initialize_lakefs_branch()
@@ -132,6 +151,8 @@ def main():
         upload_shot_to_lakefs(shot, args.dataset_path, args.file_format)
         commit_shot_to_lakefs(shot)
         remove_shot_from_local(shot, args.dataset_path, args.file_format)
+    merge_branch()
+    delete_branch()
 
 if __name__ == "__main__":
     main()

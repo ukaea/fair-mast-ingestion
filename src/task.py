@@ -11,9 +11,9 @@ from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
 from src.mast import MASTClient
 from src.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.writer import DatasetWriter
-from src.uploader import UploadConfig
-
+from src.uploader import UploadConfig, LakeFSUploadConfig
 logging.basicConfig(level=logging.INFO)
+
 
 
 class CleanupDatasetTask:
@@ -30,40 +30,37 @@ class CleanupDatasetTask:
 
 class UploadDatasetTask:
 
-    def __init__(self, local_file: Path, config: UploadConfig):
+    def __init__(self, local_file: Path, config: LakeFSUploadConfig):
         self.config = config
         self.local_file = local_file
 
     def __call__(self):
-        logging.info(f"Uploading {self.local_file} to {self.config.url}")
 
         if not Path(self.config.credentials_file).exists():
             raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
 
         env = os.environ.copy()
-
+        logging.info(f"Uploading {self.local_file} to LakeFS.")
         args = [
-            "s5cmd",
-            "--credentials-file",
-            self.config.credentials_file,
-            "--endpoint-url",
-            self.config.endpoint_url,
-            "cp",
-            "--acl",
-            "public-read",
-            str(self.local_file),
-            self.config.url,
+        "lakectl", "fs", "upload",
+        f"lakefs://example-repo/ingestion/{self.local_file}",
+        "-s", str(self.local_file), "--recursive"
         ]
 
         logging.debug(' ' .join(args))
 
-        subprocess.run(
-            args,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-            env=env,
-            check=True,
-        )
+        try:
+            result = subprocess.run(
+                args,
+                capture_output=True, 
+                env=env,
+                check=True
+            )
+            logging.info(f"Successfully uploaded {self.local_file} to LakeFS.")
+            logging.debug(f"Command output: {result.stdout.decode()}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Failed to upload {self.local_file}: {e.stderr.decode()}")
+            raise
 
 
 class CreateDatasetTask:

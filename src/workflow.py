@@ -8,7 +8,7 @@ from src.task import (
     CreateSignalMetadataTask,
     CreateSourceMetadataTask,
 )
-from src.uploader import UploadConfig
+from src.uploader import UploadConfig, LakeFSUploadConfig
 import subprocess
 
 logging.basicConfig(level=logging.INFO)
@@ -39,7 +39,7 @@ class S3IngestionWorkflow:
         self,
         metadata_dir: str,
         data_dir: str,
-        upload_config: UploadConfig,
+        upload_config: LakeFSUploadConfig,
         force: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
@@ -52,9 +52,6 @@ class S3IngestionWorkflow:
         self.force = force
         self.signal_names = signal_names
         self.source_names = source_names
-        self.fs = s3fs.S3FileSystem(
-            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
-        )
         self.file_format = file_format
         self.facility = facility
 
@@ -73,13 +70,8 @@ class S3IngestionWorkflow:
         upload = UploadDatasetTask(local_path, self.upload_config)
 
         try:
-            url = self.upload_config.url + f"{shot}.{self.file_format}"
-            if self.force or not self.fs.exists(url):
-                create()
-                upload()
-
-            else:
-                logging.info(f"Skipping shot {shot} as it already exists")
+            create()
+            upload()
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
 

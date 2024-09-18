@@ -30,9 +30,10 @@ class CleanupDatasetTask:
 
 class LakeFSUploadDatasetTask:
 
-    def __init__(self, local_file: Path, config: LakeFSUploadConfig):
+    def __init__(self, local_file: Path, shot_name: Path, config: LakeFSUploadConfig):
         self.config = config
         self.local_file = local_file
+        self.shot_name = shot_name
 
     def __call__(self):
 
@@ -43,7 +44,7 @@ class LakeFSUploadDatasetTask:
         logging.info(f"Uploading {self.local_file} to LakeFS.")
         args = [
         "lakectl", "fs", "upload",
-        f"lakefs://example-repo/ingestion/{self.local_file}",
+        f"lakefs://example-repo/ingestion/{self.shot_name}",
         "-s", str(self.local_file), "--recursive"
         ]
 

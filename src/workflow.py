@@ -35,7 +35,7 @@ class MetadataWorkflow:
             logging.error(f"Could not parse source metadata for shot {shot}: {e}")
 
 
-class S3IngestionWorkflow:
+class LakeFSIngestionWorkflow:
 
     def __init__(
         self,
@@ -59,6 +59,7 @@ class S3IngestionWorkflow:
 
     def __call__(self, shot: int):
         local_path = self.data_dir / f"{shot}.{self.file_format}"
+        shot_name = f"{shot}.{self.file_format}"
         create = CreateDatasetTask(
             self.metadata_dir,
             self.data_dir,
@@ -69,7 +70,7 @@ class S3IngestionWorkflow:
             self.facility
         )
 
-        upload = LakeFSUploadDatasetTask(local_path, self.upload_config)
+        upload = LakeFSUploadDatasetTask(local_path, shot_name, self.upload_config)
         commit = LakeFSCommitDatasetTask(local_path, self.upload_config)
         cleanup = CleanupDatasetTask(local_path)
 

@@ -4,9 +4,11 @@ from pathlib import Path
 from dask.distributed import Client, as_completed
 from src.task import (
     CreateDatasetTask,
-    UploadDatasetTask,
+    LakeFSUploadDatasetTask,
+    LakeFSCommitDatasetTask,
     CreateSignalMetadataTask,
     CreateSourceMetadataTask,
+    CleanupDatasetTask
 )
 from src.uploader import UploadConfig, LakeFSUploadConfig
 import subprocess
@@ -67,11 +69,15 @@ class S3IngestionWorkflow:
             self.facility
         )
 
-        upload = UploadDatasetTask(local_path, self.upload_config)
+        upload = LakeFSUploadDatasetTask(local_path, self.upload_config)
+        commit = LakeFSCommitDatasetTask(local_path, self.upload_config)
+        cleanup = CleanupDatasetTask(local_path)
 
         try:
             create()
             upload()
+            commit()
+            cleanup()
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
 

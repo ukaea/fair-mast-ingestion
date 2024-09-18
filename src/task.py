@@ -28,7 +28,7 @@ class CleanupDatasetTask:
             logging.warning(f"Cannot remove path: {self.path}")
 
 
-class UploadDatasetTask:
+class LakeFSUploadDatasetTask:
 
     def __init__(self, local_file: Path, config: LakeFSUploadConfig):
         self.config = config
@@ -62,6 +62,39 @@ class UploadDatasetTask:
             logging.error(f"Failed to upload {self.local_file}: {e.stderr.decode()}")
             raise
 
+class LakeFSCommitDatasetTask:
+
+    def __init__(self, local_file: Path, config: LakeFSUploadConfig):
+        self.config = config
+        self.local_file = local_file
+
+    def __call__(self):
+
+        if not Path(self.config.credentials_file).exists():
+            raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
+
+        env = os.environ.copy()
+        logging.info(f"Commit {self.local_file} to branch.")
+        args = [
+            "lakectl", "commit",
+            f"lakefs://example-repo/ingestion/",
+            "-m", f"Commit file {self.local_file}"
+        ]
+
+        logging.debug(' ' .join(args))
+
+        try:
+            result = subprocess.run(
+                args,
+                capture_output=True, 
+                env=env,
+                check=True
+            )
+            logging.info(f"Successfully committed {self.local_file} to branch.")
+            logging.debug(f"Command output: {result.stdout.decode()}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Failed to commit {self.local_file}: {e.stderr.decode()}")
+            raise
 
 class CreateDatasetTask:
 

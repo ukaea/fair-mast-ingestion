@@ -3,8 +3,9 @@ import logging
 from functools import partial
 from dask_mpi import initialize
 import lakefs
+from src.lake_fs import lakefs_merge_into_main
 from src.uploader import UploadConfig, LakeFSUploadConfig
-from src.workflow import S3IngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
+from src.workflow import LakeFSIngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
 
 def main():
@@ -36,7 +37,7 @@ def main():
             credentials_file=args.credentials_file,
             endpoint_url=args.endpoint_url,
         )
-        workflow_cls = partial(S3IngestionWorkflow, upload_config=config)
+        workflow_cls = partial(LakeFSIngestionWorkflow, upload_config=config)
     else:
         config = None
         workflow_cls = LocalIngestionWorkflow
@@ -61,6 +62,8 @@ def main():
         workflow_manager.run_workflows(shot_list, parallel=not args.serial)
         logging.info(f"Finished source {source}")
 
+    if args.upload:
+        lakefs_merge_into_main()
 
 if __name__ == "__main__":
     main()

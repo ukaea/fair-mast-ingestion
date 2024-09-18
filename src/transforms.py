@@ -695,6 +695,7 @@ class MASTPipelineRegistry(PipelineRegistry):
             "rba": Pipeline([ProcessImage()]),
             "rbb": Pipeline([ProcessImage()]),
             "rbc": Pipeline([ProcessImage()]),
+            "rcc": Pipeline([ProcessImage()]),
             "rca": Pipeline([ProcessImage()]),
             "rco": Pipeline([ProcessImage()]),
             "rgb": Pipeline([ProcessImage()]),

@@ -44,7 +44,7 @@ class LakeFSUploadDatasetTask:
         logging.info(f"Uploading {self.local_file} to LakeFS.")
         args = [
         "lakectl", "fs", "upload",
-        f"lakefs://{self.config.repository}/ingestion/{self.shot_name}",
+        f"lakefs://{self.config.repository}/{self.config.branch}/{self.shot_name}",
         "-s", str(self.local_file), "--recursive"
         ]
 
@@ -78,7 +78,7 @@ class LakeFSCommitDatasetTask:
         logging.info(f"Commit {self.local_file} to branch.")
         args = [
             "lakectl", "commit",
-            f"lakefs://{self.config.repository}/ingestion/",
+            f"lakefs://{self.config.repository}/{self.config.branch}/",
             "-m", f"Commit file {self.local_file}"
         ]
 

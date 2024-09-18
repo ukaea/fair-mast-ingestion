@@ -3,7 +3,7 @@ import logging
 from functools import partial
 from dask_mpi import initialize
 import lakefs
-from src.lake_fs import lakefs_merge_into_main
+from src.lake_fs import lakefs_merge_into_main, create_branch
 from src.uploader import UploadConfig, LakeFSUploadConfig
 from src.workflow import LakeFSIngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
@@ -33,10 +33,12 @@ def main():
 
     args = parser.parse_args()
     if args.upload:
+        new_branch = create_branch(args.upload)
         config = LakeFSUploadConfig(
             credentials_file=args.credentials_file,
             endpoint_url=args.endpoint_url,
-            repository=args.upload
+            repository=args.upload,
+            branch=new_branch
         )
         workflow_cls = partial(LakeFSIngestionWorkflow, upload_config=config)
     else:
@@ -64,7 +66,7 @@ def main():
         logging.info(f"Finished source {source}")
 
     if args.upload:
-        lakefs_merge_into_main(args.upload)
+        lakefs_merge_into_main(args.upload, new_branch)
 
 if __name__ == "__main__":
     main()

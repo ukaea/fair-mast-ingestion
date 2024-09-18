@@ -9,6 +9,25 @@ from datetime import datetime
 import uuid
 import sys
 
+def execute_command(command):
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            logging.info("Command output: %s", result.stdout)
+            return result
+        except subprocess.CalledProcessError as e:
+            logging.error("Error executing command: %s", e.stderr)
+            return e
+        
+def lakefs_merge_into_main():
+        logging.info("Uploading files from data directory to branch...")
+        command = [
+            "lakectl", "merge",
+            f"lakefs://example-repo/ingestion/",
+            f"lakefs://example-repo/main/",
+            "-m", "Merge ingestion branch into main"
+        ]
+        execute_command(command)
+
 class LakeFSManager:
     def __init__(self, repo_name):
         self.client = Client()

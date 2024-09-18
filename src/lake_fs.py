@@ -18,12 +18,12 @@ def execute_command(command):
             logging.error("Error executing command: %s", e.stderr)
             return e
         
-def lakefs_merge_into_main():
+def lakefs_merge_into_main(repo):
         logging.info("Uploading files from data directory to branch...")
         command = [
             "lakectl", "merge",
-            f"lakefs://example-repo/ingestion/",
-            f"lakefs://example-repo/main/",
+            f"lakefs://{repo}/ingestion/",
+            f"lakefs://{repo}/main/",
             "-m", "Merge ingestion branch into main"
         ]
         execute_command(command)

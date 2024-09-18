@@ -23,7 +23,7 @@ def main():
     parser.add_argument("--credentials_file", default="lakectl.cfg")
     parser.add_argument("--serial", default=False, action='store_true')
     parser.add_argument("--endpoint_url", default="http://localhost:8000")
-    parser.add_argument("--upload", default=False, action="store_true")
+    parser.add_argument("--upload", nargs='?', const=False, default=False)
     parser.add_argument("--metadata_dir", default="data/uda")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--signal_names", nargs="*", default=[])
@@ -36,6 +36,7 @@ def main():
         config = LakeFSUploadConfig(
             credentials_file=args.credentials_file,
             endpoint_url=args.endpoint_url,
+            repository=args.upload
         )
         workflow_cls = partial(LakeFSIngestionWorkflow, upload_config=config)
     else:
@@ -63,7 +64,7 @@ def main():
         logging.info(f"Finished source {source}")
 
     if args.upload:
-        lakefs_merge_into_main()
+        lakefs_merge_into_main(args.upload)
 
 if __name__ == "__main__":
     main()

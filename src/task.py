@@ -131,8 +131,7 @@ class CreateDatasetTask:
         if source_name == 'xdc':
             # Drop any CPU which is not CPU1 or isoflux
             names = ['cpu2', 'cpu3', 'cpu4', 'isoflux']
-            name_filter = lambda x: any([c in x for c in names])
-            name_mask = signal_infos_for_source['name'].map(name_filter)
+            name_mask = signal_infos_for_source['name'].map(lambda x: any([c in x for c in names]))
             signal_infos_for_source = signal_infos_for_source.loc[~name_mask]
         return signal_infos_for_source
 

@@ -11,7 +11,7 @@ from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
 from src.mast import MASTClient
 from src.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.writer import DatasetWriter
-from src.uploader import UploadConfig, LakeFSUploadConfig
+from src.uploader import LakeFSUploadConfig
 logging.basicConfig(level=logging.INFO)
 
 

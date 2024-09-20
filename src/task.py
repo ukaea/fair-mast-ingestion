@@ -41,7 +41,7 @@ class LakeFSUploadDatasetTask:
             raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
 
         env = os.environ.copy()
-        logging.info(f"Uploading {self.local_file} to LakeFS.")
+        logging.info(f"Attempting to upload {self.local_file} to repository: {self.config.repository}...")
         args = [
         "lakectl", "fs", "upload",
         f"lakefs://{self.config.repository}/{self.config.branch}/{self.shot_name}",
@@ -57,7 +57,7 @@ class LakeFSUploadDatasetTask:
                 env=env,
                 check=True
             )
-            logging.info(f"Successfully uploaded {self.local_file} to LakeFS.")
+            logging.info(f"Successfully uploaded {self.local_file} to repository: {self.config.repository}.")
             logging.debug(f"Command output: {result.stdout.decode()}")
         except subprocess.CalledProcessError as e:
             logging.error(f"Failed to upload {self.local_file}: {e.stderr.decode()}")
@@ -75,7 +75,7 @@ class LakeFSCommitDatasetTask:
             raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
 
         env = os.environ.copy()
-        logging.info(f"Commit {self.local_file} to branch.")
+        logging.info(f"Attempting to commit {self.local_file} to branch: {self.config.branch}...")
         args = [
             "lakectl", "commit",
             f"lakefs://{self.config.repository}/{self.config.branch}/",
@@ -91,7 +91,7 @@ class LakeFSCommitDatasetTask:
                 env=env,
                 check=True
             )
-            logging.info(f"Successfully committed {self.local_file} to branch.")
+            logging.info(f"Successfully committed {self.local_file} to branch: {self.config.branch}...")
             logging.debug(f"Command output: {result.stdout.decode()}")
         except subprocess.CalledProcessError as e:
             logging.error(f"Failed to commit {self.local_file}: {e.stderr.decode()}")

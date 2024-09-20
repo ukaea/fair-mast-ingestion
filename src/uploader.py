@@ -6,3 +6,10 @@ class UploadConfig:
     url: str
     endpoint_url: str
     credentials_file: str
+
+@dataclass
+class LakeFSUploadConfig:
+    endpoint_url: str
+    credentials_file: str
+    repository: str
+    branch: str

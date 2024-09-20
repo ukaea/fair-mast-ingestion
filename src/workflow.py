@@ -1,15 +1,15 @@
-import s3fs
 import logging
 from pathlib import Path
 from dask.distributed import Client, as_completed
 from src.task import (
     CreateDatasetTask,
-    UploadDatasetTask,
-    CleanupDatasetTask,
+    LakeFSUploadDatasetTask,
+    LakeFSCommitDatasetTask,
     CreateSignalMetadataTask,
     CreateSourceMetadataTask,
+    CleanupDatasetTask
 )
-from src.uploader import UploadConfig
+from src.uploader import LakeFSUploadConfig
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,13 +33,13 @@ class MetadataWorkflow:
             logging.error(f"Could not parse source metadata for shot {shot}: {e}")
 
 
-class S3IngestionWorkflow:
+class LakeFSIngestionWorkflow:
 
     def __init__(
         self,
         metadata_dir: str,
         data_dir: str,
-        upload_config: UploadConfig,
+        upload_config: LakeFSUploadConfig,
         force: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
@@ -52,14 +52,12 @@ class S3IngestionWorkflow:
         self.force = force
         self.signal_names = signal_names
         self.source_names = source_names
-        self.fs = s3fs.S3FileSystem(
-            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
-        )
         self.file_format = file_format
         self.facility = facility
 
     def __call__(self, shot: int):
         local_path = self.data_dir / f"{shot}.{self.file_format}"
+        shot_name = f"{shot}.{self.file_format}"
         create = CreateDatasetTask(
             self.metadata_dir,
             self.data_dir,
@@ -70,20 +68,17 @@ class S3IngestionWorkflow:
             self.facility
         )
 
-        upload = UploadDatasetTask(local_path, self.upload_config)
+        upload = LakeFSUploadDatasetTask(local_path, shot_name, self.upload_config)
+        commit = LakeFSCommitDatasetTask(local_path, self.upload_config)
         cleanup = CleanupDatasetTask(local_path)
 
         try:
-            url = self.upload_config.url + f"{shot}.{self.file_format}"
-            if self.force or not self.fs.exists(url):
-                create()
-                upload()
-            else:
-                logging.info(f"Skipping shot {shot} as it already exists")
+            create()
+            upload()
+            commit()
+            cleanup()
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-
-        cleanup()
 
 class LocalIngestionWorkflow:
 
@@ -120,6 +115,7 @@ class LocalIngestionWorkflow:
 
         try:
             create()
+
         except Exception as e:
             import traceback
             trace = traceback.format_exc()

@@ -1,4 +1,3 @@
-import s3fs
 import logging
 from pathlib import Path
 from dask.distributed import Client, as_completed
@@ -10,8 +9,7 @@ from src.task import (
     CreateSourceMetadataTask,
     CleanupDatasetTask
 )
-from src.uploader import UploadConfig, LakeFSUploadConfig
-import subprocess
+from src.uploader import LakeFSUploadConfig
 
 logging.basicConfig(level=logging.INFO)
 

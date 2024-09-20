@@ -1,13 +1,7 @@
-import os
-import argparse
 import logging
-from lakefs.client import Client
-from src.task import CleanupDatasetTask
-import lakefs
 import subprocess
 from datetime import datetime
 import uuid
-import sys
 
 def execute_command(command):
         try:

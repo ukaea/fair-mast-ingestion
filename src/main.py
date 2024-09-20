@@ -2,9 +2,8 @@ import argparse
 import logging
 from functools import partial
 from dask_mpi import initialize
-import lakefs
 from src.lake_fs import lakefs_merge_into_main, create_branch
-from src.uploader import UploadConfig, LakeFSUploadConfig
+from src.uploader import LakeFSUploadConfig
 from src.workflow import LakeFSIngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
 

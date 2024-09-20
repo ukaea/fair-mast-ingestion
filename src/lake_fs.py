@@ -19,7 +19,6 @@ def execute_command(command):
             return e
     
 def create_branch(repo):
-        logging.info("Uploading files from data directory to branch...")
         branch_name = f"branch-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:8]}"
         command = [
             "lakectl", "branch", "create",
@@ -30,7 +29,6 @@ def create_branch(repo):
         return branch_name
         
 def lakefs_merge_into_main(repo, branch):
-        logging.info("Uploading files from data directory to branch...")
         command = [
             "lakectl", "merge",
             f"lakefs://{repo}/{branch}/",

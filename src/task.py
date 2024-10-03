@@ -116,13 +116,6 @@ class CreateDatasetTask:
 
     def _process_source(self, source_name: str, signal_infos: pd.DataFrame, source_info: dict):
         signal_datasets = self.load_source(signal_infos)
-        items = []
-        for key, value in signal_datasets.items():
-            item = {'name': key, 'dims': dict(value.sizes)}
-            items.append(item)
-        tmp = pd.DataFrame(items)
-        tmp.to_csv('dims.csv')
-
         pipeline = self.pipelines.get(source_name)
         dataset = pipeline(signal_datasets)
         dataset.attrs.update(source_info)

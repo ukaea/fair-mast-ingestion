@@ -14,6 +14,24 @@
     "ada/geo_full": {
         "dim_0": "dim_1"
     },
+    "asm/hm_periods": {
+        "time": "hm_time"
+    },
+    "asm/hm_rating": {
+        "time": "hm_time"
+    },
+    "asm/out_nn_pattern": {
+        "time": "out_time"
+    },
+    "asm/out_nn_rating": {
+        "time": "out_time"
+    },
+    "asm/out_rating": {
+        "time": "out_time"
+    },
+    "asm/out_signal": {
+        "time": "out_time"
+    },
     "asx/elm_freqs": {
         "time": "npts"
     },
@@ -5759,7 +5777,10 @@
         "timesec": "time"
     },
     "ayc/acqiris_time": {
-        "t": "time"
+        "t": "acqiris_time"
+    },
+    "ayc/angle": {
+        "arb": "radial_index"
     },
     "ayc/aspectra": {
         "t": "time",
@@ -5775,7 +5796,7 @@
         "radialindex": "radial_index"
     },
     "ayc/instrument_dr": {
-        "t": "time",
+        "t": "instrument_time",
         "radialindex": "radial_index"
     },
     "ayc/interferometer_corr": {
@@ -5839,7 +5860,7 @@
         "t": "time"
     },
     "ayc/xyc_time": {
-        "t": "time"
+        "t": "xyc_time"
     },
     "ayc/yag_nelint": {
         "t": "time"
@@ -7158,5 +7179,77 @@
     },
     "xdc/z_t_ztest": {
         "time1": "time"
+    },
+    "xim/cii_hu10_u": {
+        "sec": "time"
+    },
+    "xim/da_bo10": {
+        "sec": "time"
+    },
+    "xim/da_hl11_l1": {
+        "sec": "time"
+    },
+    "xim/da_h11_r1": {
+        "sec": "time"
+    },
+    "xim/da_hm10_r": {
+        "sec": "time"
+    },
+    "xim/da_hm10_r1": {
+        "sec": "time"
+    },
+    "xim/da_hm10_t": {
+        "sec": "time"
+    },
+    "xim/da_hu10_r1": {
+        "sec": "time"
+    },
+    "xim/da_hu10_t": {
+        "sec": "time"
+    },
+    "xim/da_hu10_u1": {
+        "sec": "time"
+    },
+    "xim/da_hto10": {
+        "sec": "time"
+    },
+    "xim/dg_hu10_r2": {
+        "sec": "time"
+    },
+    "xim/heii_eceleste": {
+        "sec": "time"
+    },
+    "xim/light_end": {
+        "sec": "time"
+    },
+    "xim/light_start": {
+        "sec": "time"
+    },
+    "xim/mass_end": {
+        "sec": "time"
+    },
+    "xim/mass_start": {
+        "sec": "time"
+    },
+    "xim/pellet_halpha_2": {
+        "sec": "time"
+    },
+    "xim/pellet_time": {
+        "sec": "time"
+    },
+    "xim/preion_trig": {
+        "sec": "time"
+    },
+    "xim/target": {
+        "sec": "time"
+    },
+    "xim/trigger": {
+        "sec": "time"
+    },
+    "xim/ts_yag": {
+        "sec": "time"
+    },
+    "xim/xsa_logic_out": {
+        "sec": "time"
     }
 }

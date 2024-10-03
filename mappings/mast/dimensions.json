@@ -51,6 +51,24 @@
     "ada/geo_full": {
         "dim_0": "dim_1"
     },
+    "asm/hm_periods": {
+        "time": "hm_time"
+    },
+    "asm/hm_rating": {
+        "time": "hm_time"
+    },
+    "asm/out_nn_pattern": {
+        "time": "out_time"
+    },
+    "asm/out_nn_rating": {
+        "time": "out_time"
+    },
+    "asm/out_rating": {
+        "time": "out_time"
+    },
+    "asm/out_signal": {
+        "time": "out_time"
+    },
     "asx/elm_freqs": {
         "time": "npts"
     },
@@ -5796,7 +5814,10 @@
         "timesec": "time"
     },
     "ayc/acqiris_time": {
-        "t": "time"
+        "t": "acqiris_time"
+    },
+    "ayc/angle": {
+        "arb": "radial_index"
     },
     "ayc/aspectra": {
         "t": "time",
@@ -5812,7 +5833,7 @@
         "radialindex": "radial_index"
     },
     "ayc/instrument_dr": {
-        "t": "time",
+        "t": "instrument_time",
         "radialindex": "radial_index"
     },
     "ayc/interferometer_corr": {
@@ -5876,7 +5897,7 @@
         "t": "time"
     },
     "ayc/xyc_time": {
-        "t": "time"
+        "t": "xyc_time"
     },
     "ayc/yag_nelint": {
         "t": "time"

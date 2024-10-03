@@ -74,6 +74,19 @@ class DropDatasets:
             datasets.pop(key)
         return datasets
 
+class DropCoordinates:
+
+    def __init__(self, name, keys: list[str]) -> None:
+        self.name = name
+        self.keys = keys
+
+    def __call__(self, datasets: dict[str, xr.Dataset]) -> dict[str, xr.Dataset]:
+        for name, dataset in datasets.items():
+            if name == self.name:
+                for key in self.keys:
+                    dataset = dataset.drop_indexes(key)
+                    datasets[name] = dataset.drop_vars(key)
+        return datasets
 
 class StandardiseSignalDataset:
 
@@ -133,6 +146,11 @@ class RenameVariables:
         dataset = dataset.compute()
         return dataset
 
+class AlignDatasets:
+    
+    def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
+        datasets = xr.align(*list(dataset_dict.values()), join='left')
+        return dict(zip(dataset_dict.keys(), datasets))
 
 class MergeDatasets:
 
@@ -642,8 +660,16 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ayc")),
+                    DropCoordinates('ayc/segment_number', ['time']),
+                    DropDatasets(['ayc/time']),
+                    AlignDatasets(),
                     MergeDatasets(),
                     TransformUnits(),
+                    RenameVariables(
+                        {
+                            "r": "radius",
+                        }
+                    ),
                 ]
             ),
             "aye": Pipeline(
@@ -940,6 +966,14 @@ class MASTPipelineRegistry(PipelineRegistry):
                         'di_cpu1_power_on': 'di_power_on',                                                                                                               
                         'di_cpu1_watchdog_ok': 'di_watchdog_ok',
                     }),
+                    TransformUnits(),
+                ]
+            ),
+            "xim": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xim")),
+                    MergeDatasets(),
                     TransformUnits(),
                 ]
             ),

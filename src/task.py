@@ -116,6 +116,13 @@ class CreateDatasetTask:
 
     def _process_source(self, source_name: str, signal_infos: pd.DataFrame, source_info: dict):
         signal_datasets = self.load_source(signal_infos)
+        items = []
+        for key, value in signal_datasets.items():
+            item = {'name': key, 'dims': dict(value.sizes)}
+            items.append(item)
+        tmp = pd.DataFrame(items)
+        tmp.to_csv('dims.csv')
+
         pipeline = self.pipelines.get(source_name)
         dataset = pipeline(signal_datasets)
         dataset.attrs.update(source_info)
@@ -130,7 +137,7 @@ class CreateDatasetTask:
         signal_infos_for_source = signal_infos.loc[source_group_index]
         if source_name == 'xdc':
             # Drop any CPU which is not CPU1 or isoflux
-            names = ['cpu2', 'cpu3', 'cpu4', 'isoflux']
+            names = ['xdc1', 'xdc2', 'xdc3', 'xdc4', 'cpu2', 'cpu3', 'cpu4', 'isoflux']
             name_mask = signal_infos_for_source['name'].map(lambda x: any([c in x for c in names]))
             signal_infos_for_source = signal_infos_for_source.loc[~name_mask]
         return signal_infos_for_source

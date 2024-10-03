@@ -8,6 +8,43 @@
     "abm/r_tco_emis": {
         "dim_0": "chord"
     },
+
+    "act/c_pla_cutoff": {
+        "dim_0": "n_pla"
+    },
+    "act/c_pla_cutofftime": {
+        "dim_0": "n_pla"
+    },
+    "act/c_pla_cx_counts": {
+        "time": "n_pla" 
+    },
+    "act/c_pla_raw_spectrum": { "time": "n_pla" },
+    "act/c_pla_temperature": { "time": "n_pla"},
+    "act/c_pla_velocity": { "time": "n_pla" },
+
+    "act/_c_plb_cutoff": { "dim_0": "n_plb" },
+    "act/_c_plb_cutofftime": { "dim_0": "n_plb" },
+    "act/_c_plb_cx_counts": { "time": "n_plb" },
+    "act/_c_plb_raw_spectrum": { "time": "n_plb" },
+    "act/_c_plb_temperature": { "time": "n_plb" },
+    "act/_c_plb_velocity": { "time": "_plb" },
+
+    "act/c_ss_cutoff": { "dim_0": "n_ss"},
+    "act/c_ss_cutofftime": { "dim_0": "n_ss" },
+    "act/c_ss_cx_counts": { "time": "n_ss" },
+    "act/c_ss_raw_spectrum": { "time": "n_ss" },
+    "act/c_ss_temperature": { "time": "n_ss" },
+    "act/c_ss_velocity": { "time": "n_ss" },
+
+    "act/c_sw_cutoff": { "dim_0": "n_sw" },
+    "act/c_sw_cutofftime": { "dim_0": "n_sw" },
+    "act/c_sw_cx_counts": { "time": "n_sw" },
+    "act/c_sw_raw_spectrum": { "time": "n_sw" },
+    "act/c_sw_temperature": { "time": "n_sw" },
+    "act/c_sw_velocity": { "time": "n_sw" },
+
+    "act/radfitc": { "dim_0": "n_fit" },
+
     "ada/dalpha_raw_full": {
         "dim_0": "dim_1"
     },

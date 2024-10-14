@@ -48,11 +48,12 @@ class UploadDatasetTask:
             self.config.credentials_file,
             "--endpoint-url",
             self.config.endpoint_url,
-            "cp",
+            "sync",
+            "--delete",
             "--acl",
             "public-read",
-            str(self.local_file),
-            self.config.url,
+            str(self.local_file) + '/',
+            self.config.url + f"{self.local_file.parent.name}/{self.local_file.name}/",
         ]
 
         logging.debug(' ' .join(args))

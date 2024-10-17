@@ -656,6 +656,20 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TransformUnits(),
                 ]
             ),
+            "atm": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("atm")),
+                    AlignDatasets(),
+                    MergeDatasets(),
+                    TransformUnits(),
+                    RenameVariables(
+                        {
+                            "r": "radius",
+                        }
+                    ),
+                ]
+            ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
@@ -1010,6 +1024,46 @@ class MASTPipelineRegistry(PipelineRegistry):
                     AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
                     AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),
                     AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv"),
+                ]
+            ),
+            "xma": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xma")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xmb": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xmb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xmc": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xmc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xmp": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xmp")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xms": Pipeline(
+                [
+                    MapDict(RenameDimensions()),
+                    MapDict(StandardiseSignalDataset("xms")),
+                    MergeDatasets(),
+                    TransformUnits(),
                 ]
             ),
         }

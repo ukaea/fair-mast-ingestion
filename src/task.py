@@ -35,7 +35,10 @@ class UploadDatasetTask:
         self.local_file = local_file
 
     def __call__(self):
-        logging.info(f"Uploading {self.local_file} to {self.config.url}")
+        local_file_name = str(self.local_file) + '/'
+        upload_file_name = self.config.url + f"{self.local_file.parent.name}/{self.local_file.name}/"
+
+        logging.info(f"Uploading {self.local_file} to {upload_file_name}")
 
         if not Path(self.config.credentials_file).exists():
             raise RuntimeError(f"Credentials file {self.config.credentials_file} does not exist!")
@@ -52,8 +55,8 @@ class UploadDatasetTask:
             "--delete",
             "--acl",
             "public-read",
-            str(self.local_file) + '/',
-            self.config.url + f"{self.local_file.parent.name}/{self.local_file.name}/",
+            local_file_name,
+            upload_file_name,
         ]
 
         logging.debug(' ' .join(args))
@@ -131,9 +134,10 @@ class CreateDatasetTask:
         signal_infos_for_source = signal_infos.loc[source_group_index]
         if source_name == 'xdc':
             # Drop any CPU which is not CPU1 or isoflux
-            names = ['xdc1', 'xdc2', 'xdc3', 'xdc4', 'cpu2', 'cpu3', 'cpu4', 'isoflux']
+            # names = ['xdc1', 'xdc2', 'xdc3', 'xdc4', 'cpu2', 'cpu3', 'cpu4', 'isoflux']
+            names = ['ip_t_ipref', 'density_t_nelref', 'ai_raw_tf_current', 'shape']
             name_mask = signal_infos_for_source['name'].map(lambda x: any([c in x for c in names]))
-            signal_infos_for_source = signal_infos_for_source.loc[~name_mask]
+            signal_infos_for_source = signal_infos_for_source.loc[name_mask]
         return signal_infos_for_source
 
     def _read_metadata(self) -> tuple[pd.DataFrame, pd.DataFrame]:

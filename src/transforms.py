@@ -391,7 +391,6 @@ class PipelineRegistry:
 class ReplaceInvalidValues:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        #dataset = dataset.map(lambda x: x.where(x != -999, np.nan))
         dataset = dataset.where(dataset != -999, np.nan)
         dataset = dataset.compute()
         return dataset

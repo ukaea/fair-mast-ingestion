@@ -104,7 +104,7 @@ class CreateDatasetTask:
     def _main(self):
         signal_infos, source_infos = self._read_metadata()
 
-        if signal_infos is None or signal_infos is None:
+        if source_infos is None or signal_infos is None:
             return 
 
         signal_infos = self._filter_signals(signal_infos)

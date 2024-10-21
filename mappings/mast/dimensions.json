@@ -51,6 +51,7 @@
     "ada/geo_full": {
         "dim_0": "dim_1"
     },
+
     "asm/hm_periods": {
         "time": "hm_time"
     },
@@ -416,6 +417,56 @@
     "efm/volp_c": {
         "psi": "psi_norm"
     },
+
+    "efm/ff2bdry": {
+		"dim_0": "ff_knot_points"
+	},
+    "efm/ffbdry": {
+		"dim_0": "ff_knot_points"
+	},
+    "efm/ffknt": {
+		"dim_0": "ffp_knot_points"
+	},
+    "efm/kff2bdry": {
+		"dim_0": "kff_knot_points"
+	},
+    "efm/kffbdry": {
+		"dim_0": "kff_knot_points"
+	},
+    "efm/kpp2bdry": {
+		"dim_0": "kpp_knot_points"
+	},
+    "efm/kppbdry": {
+		"dim_0": "kpp_knot_points"
+	},
+    "efm/kww2bdry": {
+		"dim_0": "kww_knot_points"
+	},
+    "efm/kwwbdry": {
+		"dim_0": "kww_knot_points"
+	},
+    "efm/pp2bdry": {
+		"dim_0": "pp_knot_points"
+	},
+    "efm/ppbdry": {
+		"dim_0": "pp_knot_points"
+	},
+    "efm/ppknt": {
+		"dim_0": "pp_knot_points"
+	},
+    "efm/rot_coefs": {
+		"dim_0": "n_rot_coefs"
+	},
+    "efm/ww2bdry": {
+		"dim_0": "ww_knot_points"
+	},
+    "efm/wwbdry": {
+		"dim_0": "ww_knot_points"
+	},
+    "efm/wwknt": {
+		"dim_0": "ww_knot_points"
+	},
+
     "esm/efm_comb_ratingav": {
         "time": "fit_quality_n"
     },
@@ -5240,6 +5291,170 @@
     "xpc/trcf_0104_9": {
         "sec": "time"
     },
+
+    "xsx/hcaml#1": {
+        "sec": "time"
+    },
+    "xsx/hcaml#10": {
+        "sec": "time"
+    },
+    "xsx/hcaml#11": {
+        "sec": "time"
+    },
+    "xsx/hcaml#12": {
+        "sec": "time"
+    },
+    "xsx/hcaml#13": {
+        "sec": "time"
+    },
+    "xsx/hcaml#14": {
+        "sec": "time"
+    },
+    "xsx/hcaml#15": {
+        "sec": "time"
+    },
+    "xsx/hcaml#16": {
+        "sec": "time"
+    },
+    "xsx/hcaml#17": {
+        "sec": "time"
+    },
+    "xsx/hcaml#18": {
+        "sec": "time"
+    },
+    "xsx/hcaml#2": {
+        "sec": "time"
+    },
+    "xsx/hcaml#3": {
+        "sec": "time"
+    },
+    "xsx/hcaml#4": {
+        "sec": "time"
+    },
+    "xsx/hcaml#5": {
+        "sec": "time"
+    },
+    "xsx/hcaml#6": {
+        "sec": "time"
+    },
+    "xsx/hcaml#7": {
+        "sec": "time"
+    },
+    "xsx/hcaml#8": {
+        "sec": "time"
+    },
+    "xsx/hcaml#9": {
+        "sec": "time"
+    },
+    "xsx/hcamu#1": {
+        "sec": "time"
+    },
+    "xsx/hcamu#10": {
+        "sec": "time"
+    },
+    "xsx/hcamu#11": {
+        "sec": "time"
+    },
+    "xsx/hcamu#12": {
+        "sec": "time"
+    },
+    "xsx/hcamu#13": {
+        "sec": "time"
+    },
+    "xsx/hcamu#14": {
+        "sec": "time"
+    },
+    "xsx/hcamu#15": {
+        "sec": "time"
+    },
+    "xsx/hcamu#16": {
+        "sec": "time"
+    },
+    "xsx/hcamu#17": {
+        "sec": "time"
+    },
+    "xsx/hcamu#18": {
+        "sec": "time"
+    },
+    "xsx/hcamu#2": {
+        "sec": "time"
+    },
+    "xsx/hcamu#3": {
+        "sec": "time"
+    },
+    "xsx/hcamu#4": {
+        "sec": "time"
+    },
+    "xsx/hcamu#5": {
+        "sec": "time"
+    },
+    "xsx/hcamu#6": {
+        "sec": "time"
+    },
+    "xsx/hcamu#7": {
+        "sec": "time"
+    },
+    "xsx/hcamu#8": {
+        "sec": "time"
+    },
+    "xsx/hcamu#9": {
+        "sec": "time"
+    },
+    "xsx/tcam#1": {
+        "sec": "time"
+    },
+    "xsx/tcam#10": {
+        "sec": "time"
+    },
+    "xsx/tcam#11": {
+        "sec": "time"
+    },
+    "xsx/tcam#12": {
+        "sec": "time"
+    },
+    "xsx/tcam#13": {
+        "sec": "time"
+    },
+    "xsx/tcam#14": {
+        "sec": "time"
+    },
+    "xsx/tcam#15": {
+        "sec": "time"
+    },
+    "xsx/tcam#16": {
+        "sec": "time"
+    },
+    "xsx/tcam#17": {
+        "sec": "time"
+    },
+    "xsx/tcam#18": {
+        "sec": "time"
+    },
+    "xsx/tcam#2": {
+        "sec": "time"
+    },
+    "xsx/tcam#3": {
+        "sec": "time"
+    },
+    "xsx/tcam#4": {
+        "sec": "time"
+    },
+    "xsx/tcam#5": {
+        "sec": "time"
+    },
+    "xsx/tcam#6": {
+        "sec": "time"
+    },
+    "xsx/tcam#7": {
+        "sec": "time"
+    },
+    "xsx/tcam#8": {
+        "sec": "time"
+    },
+    "xsx/tcam#9": {
+        "sec": "time"
+    },
+
     "ahx/hxr_mezzw": {
         "timesec": "time"
     },
@@ -5267,7 +5482,12 @@
     "ama/n=odd_signal": {
         "timesec": "time"
     },
+
+
     "amb/ccbv01": {
+        "timesec": "time"
+    },
+    "amb/ccbv02": {
         "timesec": "time"
     },
     "amb/ccbv03": {
@@ -5324,6 +5544,9 @@
     "amb/ccbv20": {
         "timesec": "time"
     },
+    "amb/ccbv21": {
+        "timesec": "time"
+    },
     "amb/ccbv22": {
         "timesec": "time"
     },
@@ -5354,10 +5577,16 @@
     "amb/ccbv31": {
         "timesec": "time"
     },
+    "amb/ccbv32": {
+        "timesec": "time"
+    },
     "amb/ccbv33": {
         "timesec": "time"
     },
     "amb/ccbv34": {
+        "timesec": "time"
+    },
+    "amb/ccbv35": {
         "timesec": "time"
     },
     "amb/ccbv36": {
@@ -5375,6 +5604,12 @@
     "amb/ccbv40": {
         "timesec": "time"
     },
+    "amb/fl_cc01": {
+        "timesec": "time"
+    },
+    "amb/fl_cc02": {
+        "timesec": "time"
+    },
     "amb/fl_cc03": {
         "timesec": "time"
     },
@@ -5384,10 +5619,49 @@
     "amb/fl_cc05": {
         "timesec": "time"
     },
+    "amb/fl_cc06": {
+        "timesec": "time"
+    },
     "amb/fl_cc07": {
         "timesec": "time"
     },
+    "amb/fl_cc08": {
+        "timesec": "time"
+    },
     "amb/fl_cc09": {
+        "timesec": "time"
+    },
+    "amb/fl_p2l_1": {
+        "timesec": "time"
+    },
+    "amb/fl_p2l_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p2l_3": {
+        "timesec": "time"
+    },
+    "amb/fl_p2l_4": {
+        "timesec": "time"
+    },
+    "amb/fl_p2u_1": {
+        "timesec": "time"
+    },
+    "amb/fl_p2u_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p2u_3": {
+        "timesec": "time"
+    },
+    "amb/fl_p2u_4": {
+        "timesec": "time"
+    },
+    "amb/fl_p3l_1": {
+        "timesec": "time"
+    },
+    "amb/fl_p3l_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p3l_3": {
         "timesec": "time"
     },
     "amb/fl_p3l_4": {
@@ -5396,13 +5670,34 @@
     "amb/fl_p3u_1": {
         "timesec": "time"
     },
+    "amb/fl_p3u_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p3u_3": {
+        "timesec": "time"
+    },
     "amb/fl_p3u_4": {
         "timesec": "time"
     },
     "amb/fl_p4l_1": {
         "timesec": "time"
     },
+    "amb/fl_p4l_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p4l_3": {
+        "timesec": "time"
+    },
     "amb/fl_p4l_4": {
+        "timesec": "time"
+    },
+    "amb/fl_p4u_1": {
+        "timesec": "time"
+    },
+    "amb/fl_p4u_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p4u_3": {
         "timesec": "time"
     },
     "amb/fl_p4u_4": {
@@ -5411,16 +5706,58 @@
     "amb/fl_p5l_1": {
         "timesec": "time"
     },
+    "amb/fl_p5l_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p5l_3": {
+        "timesec": "time"
+    },
     "amb/fl_p5l_4": {
         "timesec": "time"
     },
     "amb/fl_p5u_1": {
         "timesec": "time"
     },
+    "amb/fl_p5u_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p5u_3": {
+        "timesec": "time"
+    },
+    "amb/fl_p5u_4": {
+        "timesec": "time"
+    },
+    "amb/fl_p6u_1": {
+        "timesec": "time"
+    },
+    "amb/fl_p6u_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p6u_3": {
+        "timesec": "time"
+    },
+    "amb/fl_p6u_4": {
+        "timesec": "time"
+    },
     "amb/fl_p6l_1": {
         "timesec": "time"
     },
+    "amb/fl_p6l_2": {
+        "timesec": "time"
+    },
+    "amb/fl_p6l_3": {
+        "timesec": "time"
+    },
+    "amb/fl_p6l_4": {
+        "timesec": "time"
+    },
     "amb/obr01": {
+        "timesec": "time"
+    },
+    "amb/obr02": {
+        "timesec": "time"
+    },
+    "amb/obr03": {
         "timesec": "time"
     },
     "amb/obr04": {
@@ -5432,6 +5769,9 @@
     "amb/obr06": {
         "timesec": "time"
     },
+    "amb/obr07": {
+        "timesec": "time"
+    },
     "amb/obr08": {
         "timesec": "time"
     },
@@ -5439,6 +5779,9 @@
         "timesec": "time"
     },
     "amb/obr10": {
+        "timesec": "time"
+    },
+    "amb/obr11": {
         "timesec": "time"
     },
     "amb/obr12": {
@@ -5462,6 +5805,15 @@
     "amb/obr18": {
         "timesec": "time"
     },
+    "amb/obr19": {
+        "timesec": "time"
+    },
+    "amb/obv01": {
+        "timesec": "time"
+    },
+    "amb/obv02": {
+        "timesec": "time"
+    },
     "amb/obv03": {
         "timesec": "time"
     },
@@ -5474,16 +5826,46 @@
     "amb/obv06": {
         "timesec": "time"
     },
+    "amb/obv07": {
+        "timesec": "time"
+    },
+    "amb/obv08": {
+        "timesec": "time"
+    },
     "amb/obv09": {
         "timesec": "time"
     },
+    "amb/obv10": {
+        "timesec": "time"
+    },
     "amb/obv11": {
+        "timesec": "time"
+    },
+    "amb/obv12": {
+        "timesec": "time"
+    },
+    "amb/obv13": {
+        "timesec": "time"
+    },
+    "amb/obv14": {
+        "timesec": "time"
+    },
+    "amb/obv15": {
+        "timesec": "time"
+    },
+    "amb/obv16": {
         "timesec": "time"
     },
     "amb/obv17": {
         "timesec": "time"
     },
     "amb/obv18": {
+        "timesec": "time"
+    },
+    "amb/obv19": {
+        "timesec": "time"
+    },
+    "amb/status": {
         "timesec": "time"
     },
     "amc/efps_current": {
@@ -5812,6 +6194,214 @@
     },
     "anu/neutrons_dc": {
         "timesec": "time"
+    },
+    "atm/ane_geometry_factor": {
+        "t": "time"
+    },
+    "atm/ane_nelint": {
+        "t": "time"
+    },
+    "atm/angle": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/aspectra": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/cal_constants": {
+        "dim_0": "cal_constants_index",
+        "index": "cal_constants_index"
+    },
+    "atm/cal_factors": {
+        "dim_0": "radial_index",
+        "dim_1": "cal_factors_index"
+    },
+    "atm/cal_factors_dynamic": {
+        "dim_0": "radial_index",
+        "dim_1": "cal_factors_index"
+    },
+    "atm/cal_factors_net": {
+        "dim_0": "radial_index",
+        "dim_1": "cal_factors_index"
+    },
+    "atm/chi2": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/covariance_ne_te": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/interferometer_corr": {
+        "t": "time"
+    },
+    "atm/laser_energy": {
+        "t": "time"
+    },
+    "atm/laser_energy_gauss": {
+        "t": "time"
+    },
+    "atm/laser_monitor1": {
+        "t": "time"
+    },
+    "atm/laser_monitor2": {
+        "t": "time"
+    },
+    "atm/laser_power_max": {
+        "t": "time"
+    },
+    "atm/laser_pulse_width": {
+        "t": "time"
+    },
+    "atm/laser_track": {
+        "t": "time"
+    },
+    "atm/n_e_rc": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/ndf": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/ne": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/ne_core": {
+        "t": "time"
+    },
+    "atm/ne_core_error": {
+        "t": "time"
+    },
+    "atm/ne_error": {
+        "t": "time",
+        "radialindex": "radial_index"
+    },
+    "atm/new_active_channels": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/new_track_matrix": {
+        "dim_0": "radialbin",
+        "dim_1": "spectralbin"
+    },
+    "atm/pe": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/pe_core": {
+        "t": "time"
+    },
+    "atm/pe_core_error": {
+        "t": "time"
+    },
+    "atm/pe_error": {
+        "t": "time",
+        "radialindex": "radial_index"
+    },
+    "atm/plasma_light_fast": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/plasma_light_slow": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/poisson_noise": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/polyname": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/pulse": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/r2": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/r2_error": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/r_core": {
+        "t": "time"
+    },
+    "atm/r_error": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/r": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/scat_length": {
+        "dim_0": "radial_index",
+        "arb": "radial_index"
+    },
+    "atm/spectra": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/spectra_error": {
+        "dim_0": "time",
+        "dim_1": "radial_index",
+        "dim_2": "spectral_index",
+        "t": "time",
+        "radialindex": "radial_index",
+        "spectralindex": "spectral_index"
+    },
+    "atm/te": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/te_core": {
+        "t": "time"
+    },
+    "atm/te_core_error": {
+        "t": "time"
+    },
+    "atm/te_error": {
+        "t": "time",
+        "dim_0": "radial_index",
+        "radialindex": "radial_index"
+    },
+    "atm/yag_nelint": {
+        "t": "time"
     },
     "ayc/acqiris_time": {
         "t": "acqiris_time"

@@ -46,7 +46,7 @@ class RenameDimensions:
             dims = self.dimension_mapping[name]
 
             for old_name, new_name in dims.items():
-                if old_name in dataset.coords:
+                if old_name in dataset.dims:
                     dataset = dataset.rename_dims({old_name: new_name})
 
             for old_name, new_name in dims.items():
@@ -754,6 +754,7 @@ class MASTPipelineRegistry(PipelineRegistry):
             "rcc": Pipeline([ProcessImage()]),
             "rca": Pipeline([ProcessImage()]),
             "rco": Pipeline([ProcessImage()]),
+            "rdd": Pipeline([ProcessImage()]),
             "rgb": Pipeline([ProcessImage()]),
             "rgc": Pipeline([ProcessImage()]),
             "rir": Pipeline([ProcessImage()]),

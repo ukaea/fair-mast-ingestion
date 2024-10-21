@@ -36,7 +36,9 @@ class MapDict:
 
 class RenameDimensions:
 
-    def __init__(self, mapping_file = DIMENSION_MAPPING_FILE) -> None:
+    def __init__(self, mapping_file = DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True) -> None:
+        self.squeeze_dataset = squeeze_dataset
+
         with Path(mapping_file).open("r") as handle:
             self.dimension_mapping = json.load(handle)
 
@@ -54,7 +56,8 @@ class RenameDimensions:
                     dataset = dataset.rename_vars({old_name: new_name})
 
             dataset.attrs["dims"] = list(dataset.sizes.keys())
-        dataset = dataset.squeeze()
+        if self.squeeze_dataset:
+            dataset = dataset.squeeze()
         dataset = dataset.compute()
         return dataset
 
@@ -95,11 +98,14 @@ class DropCoordinates:
 
 class StandardiseSignalDataset:
 
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, squeeze_dataset: bool = True) -> None:
         self.source = source
+        self.squeeze_dataset = squeeze_dataset
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = dataset.squeeze(drop=True)
+        if self.squeeze_dataset:
+            dataset = dataset.squeeze(drop=True)
+
         name = dataset.attrs["name"].split("/")[-1]
 
         # Drop error if all zeros
@@ -150,12 +156,6 @@ class RenameVariables:
                 dataset = dataset.rename_vars({key: value})
         dataset = dataset.compute()
         return dataset
-
-class AlignDatasets:
-    
-    def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
-        datasets = xr.align(*list(dataset_dict.values()), join='left')
-        return dict(zip(dataset_dict.keys(), datasets))
 
 class MergeDatasets:
 
@@ -410,31 +410,10 @@ class MASTUPipelineRegistry(PipelineRegistry):
             ),
             "epm": Pipeline(
                 [
-                    # DropDatasets(
-                    #     [
-                    #         "efm/fcoil_n",
-                    #         "efm/fcoil_segs_n",
-                    #         "efm/limitern",
-                    #         "efm/magpr_n",
-                    #         "efm/silop_n",
-                    #         "efm/shot_number",
-                    #     ]
-                    # ),
-                    # MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(dim_mapping_file)),
                     MapDict(StandardiseSignalDataset("epm")),
                     MergeDatasets(),
-                    # LCFSTransform(),
                     TransformUnits(),
-                    # RenameVariables(
-                    #     {
-                    #         "plasma_currc": "plasma_current_c",
-                    #         "plasma_currx": "plasma_current_x",
-                    #         "plasma_currrz": "plasma_current_rz",
-                    #         "lcfsr_c": "lcfs_r",
-                    #         "lcfsz_c": "lcfs_z",
-                    #     }
-                    # )
                 ]
             )
         }
@@ -668,7 +647,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("atm")),
-                    AlignDatasets(),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -682,9 +660,8 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ayc")),
-                    DropCoordinates('ayc/segment_number', ['time']),
+                    DropCoordinates('ayc/segment_number', ['time_segment']),
                     DropDatasets(['ayc/time']),
-                    AlignDatasets(),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -761,234 +738,9 @@ class MASTPipelineRegistry(PipelineRegistry):
             "rit": Pipeline([ProcessImage()]),
             "xdc": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
-                    TensoriseChannels(
-                        "ai_cpu1_ccbv",
-                        dim_name="ai_ccbv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_incon",
-                        dim_name="ai_incon_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_lhorw",
-                        dim_name="ai_lhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_mid",
-                        dim_name="ai_mid_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_obr",
-                        dim_name="ai_obr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_obv",
-                        dim_name="ai_obv_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_ring",
-                        dim_name="ai_ring_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_rodgr",
-                        dim_name="ai_rodgr_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_uhorw",
-                        dim_name="ai_uhorw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_cpu1_vertw",
-                        dim_name="ai_vertw_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_ccbv", dim_name="ai_ccbv", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_flcc",
-                        dim_name="ai_flcc_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_obv", dim_name="ai_obv_channel", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "ai_raw_obr", dim_name="ai_obr_channel", assign_coords=False
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg",
-                        regex=r"equil_s_seg(\d+)$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_at",
-                        regex=r"equil_s_seg(\d+)at$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_rt",
-                        regex=r"equil_s_seg(\d+)rt$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_seg_zt",
-                        regex=r"equil_s_seg(\d+)zt$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_s_segb",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_t_seg",
-                        regex=r"equil_t_seg(\d+)$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    TensoriseChannels(
-                        "equil_t_seg_u",
-                        regex=r"equil_t_seg(\d+)u$",
-                        dim_name="equil_seg_channel",
-                        assign_coords=False,
-                    ),
-                    RenameVariables({
-                        'ai_cpu1_botcol': 'ai_botcol',                     
-                        'ai_cpu1_camera_ok': 'ai_camera_ok',      
-                        'ai_cpu1_ccbv': 'ai_ccbv',       
-                        'ai_cpu1_co2': 'ai_co2',        
-                        'ai_cpu1_endcrown_l': 'ai_endcrown_l', 
-                        'ai_cpu1_endcrown_u': 'ai_endcrown_u', 
-                        'ai_cpu1_flcc': 'ai_flcc',       
-                        'ai_cpu1_flp2l1': 'ai_flp2l1',     
-                        'ai_cpu1_flp2l2': 'ai_flp2l2',    
-                        'ai_cpu1_flp2l3': 'ai_flp2l3',    
-                        'ai_cpu1_flp2l4': 'ai_flp2l4',    
-                        'ai_cpu1_flp2u1': 'ai_flp2u1',    
-                        'ai_cpu1_flp2u2': 'ai_flp2u2',    
-                        'ai_cpu1_flp2u3': 'ai_flp2u3',         
-                        'ai_cpu1_flp2u4': 'ai_flp2u4',        
-                        'ai_cpu1_flp3l1': 'ai_flp3l1',         
-                        'ai_cpu1_flp3l4': 'ai_flp3l4',      
-                        'ai_cpu1_flp3u1': 'ai_flp3u1',         
-                        'ai_cpu1_flp3u4': 'ai_flp3u4',        
-                        'ai_cpu1_flp4l1': 'ai_flp4l1',         
-                        'ai_cpu1_flp4l4': 'ai_flp4l4',      
-                        'ai_cpu1_flp4u1': 'ai_flp4u1',         
-                        'ai_cpu1_flp4u4': 'ai_flp4u4',         
-                        'ai_cpu1_flp5l1': 'ai_flp5l1',         
-                        'ai_cpu1_flp5l4': 'ai_flp5l4',         
-                        'ai_cpu1_flp5u1': 'ai_flp5u1',      
-                        'ai_cpu1_flp5u4': 'ai_flp5u4',         
-                        'ai_cpu1_flp6l1': 'ai_flp6l1',      
-                        'ai_cpu1_flp6u1': 'ai_flp6u1',         
-                        'ai_cpu1_hene': 'ai_hene',        
-                        'ai_cpu1_incon': 'ai_incon',          
-                        'ai_cpu1_lhorw': 'ai_lhorw',          
-                        'ai_cpu1_lvcc05': 'ai_lvcc05',         
-                        'ai_cpu1_mid': 'ai_mid',            
-                        'ai_cpu1_nbi_ss_i': 'ai_nbi_ss_i',       
-                        'ai_cpu1_nbi_ss_v': 'ai_nbi_ss_v',       
-                        'ai_cpu1_nbi_sw_i': 'ai_nbi_sw_i',       
-                        'ai_cpu1_nbi_sw_v': 'ai_nbi_sw_v',       
-                        'ai_cpu1_obr': 'ai_obr',            
-                        'ai_cpu1_obv': 'ai_obv',            
-                        'ai_cpu1_p2l_case': 'ai_p2l_case',      
-                        'ai_cpu1_p2larm1': 'ai_p2larm1',        
-                        'ai_cpu1_p2larm2': 'ai_p2larm2',     
-                        'ai_cpu1_p2larm3': 'ai_p2larm3',       
-                        'ai_cpu1_p2ldivpl1': 'ai_p2ldivpl1',     
-                        'ai_cpu1_p2ldivpl2': 'ai_p2ldivpl2',     
-                        'ai_cpu1_p2u_case': 'ai_p2u_case',      
-                        'ai_cpu1_p2uarm1': 'ai_p2uarm1',                                                  
-                        'ai_cpu1_p2uarm2': 'ai_p2uarm2',        
-                        'ai_cpu1_p2uarm3': 'ai_p2uarm3',                                                        
-                        'ai_cpu1_p2udivpl1': 'ai_p2udivpl1',                                                      
-                        'ai_cpu1_p2udivpl2': 'ai_p2udivpl2',                                                                    
-                        'ai_cpu1_p3l_case': 'ai_p3l_case',                                                       
-                        'ai_cpu1_p3u_case': 'ai_p3u_case',                                                                     
-                        'ai_cpu1_p4l_case': 'ai_p4l_case',                                                                     
-                        'ai_cpu1_p4u_case': 'ai_p4u_case',                                                                     
-                        'ai_cpu1_p5l_case': 'ai_p5l_case',                                                                     
-                        'ai_cpu1_p5u_case': 'ai_p5u_case',                                                                     
-                        'ai_cpu1_p6l_case': 'ai_p6l_case',                                                                     
-                        'ai_cpu1_p6u_case': 'ai_p6u_case',                                                                     
-                        'ai_cpu1_plasma_current': 'ai_plasma_current',                                                               
-                        'ai_cpu1_r_outer': 'ai_r_outer',                                                                      
-                        'ai_cpu1_r_outer_ground': 'ai_r_outer_ground',                                                               
-                        'ai_cpu1_r_outer_inv': 'ai_r_outer_inv',                                                                  
-                        'ai_cpu1_r_outer_signal': 'ai_r_outer_signal',                                                               
-                        'ai_cpu1_ring': 'ai_ring',                                                                         
-                        'ai_cpu1_rodgr': 'ai_rodgr',                                                                        
-                        'ai_cpu1_rog_ip02_1': 'ai_rog_ip02_1',                                                                        
-                        'ai_cpu1_rog_ip02_2': 'ai_rog_ip02_2',                                                                   
-                        'ai_cpu1_rog_ip02_3': 'ai_rog_ip02_3',                                                                        
-                        'ai_cpu1_rog_ip02_4': 'ai_rog_ip02_4',                                                                        
-                        'ai_cpu1_rog_p2l_1': 'ai_rog_p2l_1',                                                                         
-                        'ai_cpu1_rog_p2u_1': 'ai_rog_p2u_1',                                                                         
-                        'ai_cpu1_rog_p3l_2': 'ai_rog_p3l_2',                                                                           
-                        'ai_cpu1_rog_p3u_2': 'ai_rog_p3u_2',                                                                         
-                        'ai_cpu1_rog_p4l_2': 'ai_rog_p4l_2',                                                                           
-                        'ai_cpu1_rog_p4u_2': 'ai_rog_p4u_2',                                                                             
-                        'ai_cpu1_rog_p5l_2': 'ai_rog_p5l_2',                                                                           
-                        'ai_cpu1_rog_p5u_2': 'ai_rog_p5u_2',                                                                               
-                        'ai_cpu1_rog_p6l_2': 'ai_rog_p6l_2',                                                                             
-                        'ai_cpu1_rog_p6u_2': 'ai_rog_p6u_2',                                                                                  
-                        'ai_cpu1_rogext_efcc02': 'ai_rogext_efcc02',                                                                           
-                        'ai_cpu1_rogext_efcc05': 'ai_rogext_efcc05',                                                                               
-                        'ai_cpu1_rogext_efps': 'ai_rogext_efps',                                                                                
-                        'ai_cpu1_rogext_p2li': 'ai_rogext_p2li',                                                                                 
-                        'ai_cpu1_rogext_p2lo': 'ai_rogext_p2lo',                                                                                   
-                        'ai_cpu1_rogext_p2ui': 'ai_rogext_p2ui',                                                                                 
-                        'ai_cpu1_rogext_p2uo': 'ai_rogext_p2uo',                                                                                   
-                        'ai_cpu1_rogext_p3l': 'ai_rogext_p3l',                                                                                          
-                        'ai_cpu1_rogext_p3u': 'ai_rogext_p3u',                                                                                    
-                        'ai_cpu1_rogext_p4l': 'ai_rogext_p4l',                                                                                          
-                        'ai_cpu1_rogext_p4u': 'ai_rogext_p4u',                                                                                               
-                        'ai_cpu1_rogext_p5l': 'ai_rogext_p5l',                                                                                          
-                        'ai_cpu1_rogext_p5u': 'ai_rogext_p5u',                                                                                               
-                        'ai_cpu1_rogext_p6a': 'ai_rogext_p6a',                                                                                               
-                        'ai_cpu1_rogext_p6b': 'ai_rogext_p6b',                                                                                               
-                        'ai_cpu1_rogext_sol': 'ai_rogext_sol',                                                                                               
-                        'ai_cpu1_rogext_test': 'ai_rogext_test',                                                                                              
-                        'ai_cpu1_testch1': 'ai_testch1',                                                                                                  
-                        'ai_cpu1_testch2': 'ai_testch2',                                                                                                  
-                        'ai_cpu1_testch3': 'ai_testch3',                                                                                                  
-                        'ai_cpu1_tf_current': 'ai_tf_current',                                                                                               
-                        'ai_cpu1_topcol': 'ai_topcol',                                                                                                           
-                        'ai_cpu1_uhorw': 'ai_uhorw',                                                                                                    
-                        'ai_cpu1_vertw': 'ai_vertw',                                                                                                            
-                        'di_cpu1_cam_ok': 'di_cam_ok',                                                                                                           
-                        'di_cpu1_dt0_trigger': 'di_dt0_trigger',                                                                                                      
-                        'di_cpu1_loopback_in': 'di_loopback_in',                                                                                                           
-                        'di_cpu1_magnetics_ok': 'di_magnetics_ok',                                                                                                     
-                        'di_cpu1_nbi_ss_on': 'di_nbi_ss_on',                                                                                                             
-                        'di_cpu1_nbi_sw_on': 'di_nbi_sw_on',                                                                                                              
-                        'di_cpu1_ntm_kick': 'di_ntm_kick',                                                                                                              
-                        'di_cpu1_power_on': 'di_power_on',                                                                                                               
-                        'di_cpu1_watchdog_ok': 'di_watchdog_ok',
-                    }),
                     TransformUnits(),
                 ]
             ),
@@ -1080,11 +832,8 @@ class MASTPipelineRegistry(PipelineRegistry):
 
                     }),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
-                    # TensoriseChannels("hcam_l", regex=r"hcaml#(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
-                    # TensoriseChannels("hcam_u", regex=r"hcamu#(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
-                    # TensoriseChannels("tcam", regex=r"tcam#(\d+)"),
                     TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
                     TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
                     TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),

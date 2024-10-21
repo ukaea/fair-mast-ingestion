@@ -38,6 +38,9 @@ class UploadDatasetTask:
         local_file_name = str(self.local_file) + '/'
         upload_file_name = self.config.url + f"{self.local_file.parent.name}/{self.local_file.name}/"
 
+        if not Path(local_file_name).exists():
+            return
+            
         logging.info(f"Uploading {self.local_file} to {upload_file_name}")
 
         if not Path(self.config.credentials_file).exists():

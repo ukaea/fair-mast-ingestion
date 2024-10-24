@@ -59,7 +59,11 @@ class S3IngestionWorkflow:
         self.facility = facility
 
     def __call__(self, shot: int):
-        local_path = self.data_dir / f"{shot}.{self.file_format}"
+        if self.file_format != "zarr":
+            raise ValueError("Upload only supports Zarr file format")
+
+        source = self.source_names[0]
+        local_path = self.data_dir / f"{shot}.zarr/{source}"
         create = CreateDatasetTask(
             self.metadata_dir,
             self.data_dir,
@@ -71,10 +75,10 @@ class S3IngestionWorkflow:
         )
 
         upload = UploadDatasetTask(local_path, self.upload_config)
-        cleanup = CleanupDatasetTask(local_path)
+        cleanup = CleanupDatasetTask(local_path.parent)
 
         try:
-            url = self.upload_config.url + f"{shot}.{self.file_format}"
+            url = self.upload_config.url + f"{shot}.zarr/{source}"
             if self.force or not self.fs.exists(url):
                 create()
                 upload()

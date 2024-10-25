@@ -31,7 +31,7 @@ def upload_shot(shot):
         "s5cmd",
         "--credentials-file", ".s5cfg.stfc",
         "--endpoint-url", "https://s3.echo.stfc.ac.uk",
-        "cp", "--acl", "public-read", f"/rds/project/rds-sPGbyCAPsJI/{shot}.zarr", f"s3://mast/level1/shots/"
+        "cp", "--acl", "public-read", f"/rds/project/rds-sPGbyCAPsJI/{shot}.zarr", "s3://mast/level1/shots/"
     ]
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

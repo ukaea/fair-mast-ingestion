@@ -42,7 +42,7 @@ Edit `uda/python/setup.py` and change the "version" to 1.3.9.
 ```sh
 python -m pip install uda/python
 cd ..
-source ~/rds/rds-ukaea-mast-sPGbyCAPsJI/uda-ssl.sh
+source ~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/uda-ssl.sh
 ```
 
 #### S3 Support (Optional)

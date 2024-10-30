@@ -13,8 +13,8 @@ bucket_path=$1
 num_workers=$SLURM_NTASKS
 
 random_string=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
-temp_dir="/rds/project/rds-sPGbyCAPsJI/local_cache/$random_string"
-metadata_dir="/rds/project/rds-sPGbyCAPsJI/data/uda"
+temp_dir="/rds/project/rds-mOlK9qn0PlQ/fairmast/local_cache/$random_string"
+metadata_dir="/rds/project/rds-mOlK9qn0PlQ/fairmast/data/uda"
 
 source /rds/project/rds-sPGbyCAPsJI/uda-ssl.sh
 

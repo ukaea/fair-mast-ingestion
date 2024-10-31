@@ -20,7 +20,7 @@ def download_shot(shot):
         "s5cmd",
         "--credentials-file", ".s5cfg.stfc",
         "--endpoint-url", "https://s3.echo.stfc.ac.uk",
-        "cp", f"s3://mast/level1/shots/{shot}*", "~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/"
+        "cp", f"s3://mast/level1/shots/{shot}*", "/rds/project/rds-mOlK9qn0PlQ/fairmast"
     ]
 
     return subprocess.run(download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -31,7 +31,7 @@ def upload_shot(shot):
         "s5cmd",
         "--credentials-file", ".s5cfg.stfc",
         "--endpoint-url", "https://s3.echo.stfc.ac.uk",
-        "cp", "--acl", "public-read", f"~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/{shot}.zarr", "s3://mast/level1/shots/"
+        "cp", "--acl", "public-read", f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr", "s3://mast/level1/shots/"
     ]
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -43,7 +43,7 @@ def process_shots(shot):
     download_result = download_shot(shot)
     if download_result.returncode == 0:
         logging.info(f"Successfully downloaded shot {shot}")
-        consolidate(f"~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/{shot}.zarr")
+        consolidate(f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr")
         upload_result = upload_shot(shot)
 
         # Check if the upload succeeded
@@ -53,7 +53,7 @@ def process_shots(shot):
             logging.error(f"Failed to upload {shot}.zarr: {upload_result.stderr.strip()}")
 
         # Remove the downloaded Zarr directory
-        shutil.rmtree(f"~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/{shot}.zarr")
+        shutil.rmtree(f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr")
         logging.info(f"Deleted local file: {shot}.zarr")
     else:
         logging.error(f"Failed to download {shot}: {download_result.stderr.strip()}")

@@ -10,12 +10,11 @@
 
 num_workers=$SLURM_NTASKS
 
-uda_path="/rds/project/rds-sPGbyCAPsJI/data/uda"
-s3_path="/rds/project/rds-sPGbyCAPsJI/data/s3"
+uda_path="/rds/project/rds-mOlK9qn0PlQ/fairmast/data/uda"
+s3_path="/rds/project/rds-mOlK9qn0PlQ/fairmast/data/s3"
 index_path=./data/index
-
-source /rds/project/rds-sPGbyCAPsJI/uda-ssl.sh
 mkdir -p $index_path
+source /rds/project/rds-mOlK9qn0PlQ/fairmast/uda-ssl.sh
 
 # Parse Signal and Source metadata from UDA
 mpirun -n $num_workers python3 -m src.create_uda_metadata $uda_path campaign_shots/M9.csv 

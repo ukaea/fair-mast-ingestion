@@ -376,8 +376,8 @@
         "r": "profile_r"
     },
     "efm/psirz": {
-        "height": "profile_z",
-        "radius": "profile_r"
+        "height": "z",
+        "radius": "r"
     },
     "efm/pwpsi_c": {
         "psi": "psi_norm"

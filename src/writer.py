@@ -42,12 +42,9 @@ class DatasetWriter:
         if self.dataset_path.suffix != '.zarr':
             return
 
-        zarr.consolidate_metadata(self.dataset_path)
         with zarr.open(self.dataset_path) as f:
             for source in f.keys():
                 zarr.consolidate_metadata(self.dataset_path / source)
-                for signal in f[source].keys():
-                    zarr.consolidate_metadata(self.dataset_path / source / signal)
 
     def remove_none_keys(self, attrs: dict):
         remove_keys = []

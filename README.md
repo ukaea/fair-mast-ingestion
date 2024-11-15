@@ -68,6 +68,10 @@ You should now be able to run the following commands.
 
 ### Submitting runs on CSD3
 
+#### First Run on CSD3
+
+This will ingest data into the test folder in S3. The small_ingest script allows you to put one file of shots into the ingestion.
+
 1. First submit a job to collect all the metadata:
 
 ```sh
@@ -76,8 +80,18 @@ sbatch ./jobs/metadata.csd3.slurm.sh
 
 2. Then submit an ingestion job
 
+Argument 1 (e.g. s3://mast/test/shots/) is where the data will ingest to, and argument 2 is the file of shots to ingest (e.g. campaign_shots/tiny_campaign.csv), arguments 3 and greater are the sources (e.g. amc)
+
 ```sh
-sbatch ./jobs/ingest.csd3.slurm.sh campaign_shots/tiny_campaign.csv s3://mast/test/shots/ amc
+sbatch ./jobs/small_ingest.csd3.slurm.sh s3://mast/test/shots/ campaign_shots/tiny_campaign.csv amc
+```
+
+#### Ingesting All Shots
+
+This ingestion job runs through all shots for the specified source (e.g. amc)
+
+```sh
+sbatch ./jobs/small_ingest.csd3.slurm.sh s3://mast/test/shots/ amc
 ```
 
 ## Manually Running Ingestor

@@ -10,8 +10,8 @@
 
 num_workers=$SLURM_NTASKS
 
-bucket_path="s3://mast/test/shots/"
+bucket_path="s3://mast/level1/shots/"
 local_path="/rds/project/rds-mOlK9qn0PlQ/fairmast"
-
+S
 mpirun -n $num_workers \
     python3 -m src.consolidate_s3 $bucket_path $local_path

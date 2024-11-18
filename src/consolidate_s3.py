@@ -22,7 +22,7 @@ def download_shot(shot, local_path, config):
         "s5cmd",
         "--credentials-file", config.credentials_file,
         "--endpoint-url", config.endpoint_url,
-        "cp", f"{config.bucket_path}{shot}*", local_path
+        "cp", f"{config.url}{shot}*", local_path
     ]
 
     return subprocess.run(download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -33,7 +33,7 @@ def upload_shot(shot, local_path, config):
         "s5cmd",
         "--credentials-file", config.credentials_file,
         "--endpoint-url", config.endpoint_url,
-        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", config.bucket_path
+        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", config.url
     ]
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     # Submit tasks to the Dask cluster
     for shot in shot_list:
-        task = dask_client.submit(process_shots, shot, args.bucket_path, args.local_path, config)
+        task = dask_client.submit(process_shots, shot, args.local_path, config)
         tasks.append(task)
 
     n = len(tasks)

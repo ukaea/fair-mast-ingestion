@@ -5,6 +5,7 @@ import json
 import uuid
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 import xarray as xr
 from pathlib import Path
 
@@ -320,6 +321,23 @@ class LCFSTransform:
         dataset = dataset.compute()
         return dataset
 
+class AddGeometry:
+    def __init__(self, stem:str, path: str):
+        geom_data = pq.read_table(path)
+        geom_data = geom_data.to_pandas()
+        geom_data.drop("uda_name", inplace=True, axis=1)
+        geom_data.columns = [stem + "_" + c for c in geom_data.columns]
+        self.stem = stem
+        index_name = f'{self.stem}_channel'
+        geom_data[index_name] = [stem + '_' + str(index+1) for index in range(len(geom_data))]
+        geom_data = geom_data.set_index(index_name)
+        self.geom_data = geom_data.to_xarray()
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        geom_data = self.geom_data.copy()
+        dataset = xr.merge([dataset, geom_data], combine_attrs="drop_conflicts", join='left')
+        dataset = dataset.compute()
+        return dataset
 
 class AddXSXCameraParams:
 
@@ -541,6 +559,29 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
+                    AddGeometry("p2il_coil_current", "geometry_data/amc/amc_p2il_coil_current.parquet"),
+                    AddGeometry("p2iu_coil_current", "geometry_data/amc/amc_p2iu_coil_current.parquet"),
+                    AddGeometry("p2l_case_current", "geometry_data/amc/amc_p2l_case_current.parquet"),
+                    AddGeometry("p2ol_coil_current", "geometry_data/amc/amc_p2ol_coil_current.parquet"),
+                    AddGeometry("p2ou_coil_current", "geometry_data/amc/amc_p2ou_coil_current.parquet"),
+                    AddGeometry("p2u_case_current", "geometry_data/amc/amc_p2u_case_current.parquet"),
+                    AddGeometry("p3l_case_current", "geometry_data/amc/amc_p3l_case_current.parquet"),
+                    AddGeometry("p3l_coil_current", "geometry_data/amc/amc_p3l_coil_current.parquet"),
+                    AddGeometry("p3u_case_current", "geometry_data/amc/amc_p3u_case_current.parquet"),
+                    AddGeometry("p3u_coil_current", "geometry_data/amc/amc_p3u_coil_current.parquet"),
+                    AddGeometry("p4l_case_current", "geometry_data/amc/amc_p4l_case_current.parquet"),
+                    AddGeometry("p4l_coil_current", "geometry_data/amc/amc_p4l_coil_current.parquet"),
+                    AddGeometry("p4u_case_current", "geometry_data/amc/amc_p4u_case_current.parquet"),
+                    AddGeometry("p4u_coil_current", "geometry_data/amc/amc_p4u_coil_current.parquet"),
+                    AddGeometry("p5l_case_current", "geometry_data/amc/amc_p5l_case_current.parquet"),
+                    AddGeometry("p5l_coil_current", "geometry_data/amc/amc_p5l_coil_current.parquet"),
+                    AddGeometry("p5u_case_current", "geometry_data/amc/amc_p5u_case_current.parquet"),
+                    AddGeometry("p5u_coil_current", "geometry_data/amc/amc_p5u_coil_current.parquet"),
+                    AddGeometry("p6l_case_current", "geometry_data/amc/amc_p6l_case_current.parquet"),
+                    AddGeometry("p6l_coil_current", "geometry_data/amc/amc_p6l_coil_current.parquet"),
+                    AddGeometry("p6u_case_current", "geometry_data/amc/amc_p6u_case_current.parquet"),
+                    AddGeometry("p6u_coil_current", "geometry_data/amc/amc_p6u_coil_current.parquet"),
+                    AddGeometry("sol_current", "geometry_data/amc/amc_sol_current.parquet"),
                 ]
             ),
             "amh": Pipeline(
@@ -564,6 +605,7 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TensoriseChannels("lhorw"),
                     TensoriseChannels("uhorw"),
                     TransformUnits(),
+                    
                 ]
             ),
             "ams": Pipeline(

@@ -16,37 +16,37 @@ def consolidate(shot):
             for signal in f[source].keys():
                 zarr.consolidate_metadata(f"{shot}/{source}/{signal}")
 
-def download_shot(shot, bucket_path, local_path, config):
+def download_shot(shot, local_path, config):
     """Download the Zarr file for the given shot number."""
     download_command = [
         "s5cmd",
         "--credentials-file", config.credentials_file,
         "--endpoint-url", config.endpoint_url,
-        "cp", f"{bucket_path}{shot}*", local_path
+        "cp", f"{config.bucket_path}{shot}*", local_path
     ]
 
     return subprocess.run(download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def upload_shot(shot, bucket_path, local_path, config):
+def upload_shot(shot, local_path, config):
     """Upload the consolidated Zarr file back to S3."""
     upload_command = [
         "s5cmd",
         "--credentials-file", config.credentials_file,
         "--endpoint-url", config.endpoint_url,
-        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", bucket_path
+        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", config.bucket_path
     ]
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def process_shots(shot, bucket_path, local_path, config):
+def process_shots(shot, local_path, config):
     """Process the Zarr files for the given shot number."""
     logging.info(f"Processing shot {shot}...")
     
-    download_result = download_shot(shot, bucket_path, local_path, config)
+    download_result = download_shot(shot, local_path, config)
     if download_result.returncode == 0:
         logging.info(f"Successfully downloaded shot {shot}")
         consolidate(f"{local_path}/{shot}.zarr")
-        upload_result = upload_shot(shot, bucket_path, local_path, config)
+        upload_result = upload_shot(shot, local_path, config)
 
         # Check if the upload succeeded
         if upload_result.returncode == 0:

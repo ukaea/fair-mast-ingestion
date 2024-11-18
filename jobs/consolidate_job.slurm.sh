@@ -10,7 +10,7 @@
 
 num_workers=$SLURM_NTASKS
 
-bucket_path="s3://mast/level1/shots/"
+bucket_path="s3://mast/test/shots/"
 local_path="/rds/project/rds-mOlK9qn0PlQ/fairmast"
 
 mpirun -n $num_workers \

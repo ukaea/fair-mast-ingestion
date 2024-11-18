@@ -38,15 +38,15 @@ def upload_shot(shot, bucket_path, local_path, config):
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def process_shots(shot, local_path):
+def process_shots(shot, bucket_path, local_path, config):
     """Process the Zarr files for the given shot number."""
     logging.info(f"Processing shot {shot}...")
     
-    download_result = download_shot(shot)
+    download_result = download_shot(shot, bucket_path, local_path, config)
     if download_result.returncode == 0:
         logging.info(f"Successfully downloaded shot {shot}")
         consolidate(f"{local_path}/{shot}.zarr")
-        upload_result = upload_shot(shot)
+        upload_result = upload_shot(shot, bucket_path, local_path, config)
 
         # Check if the upload succeeded
         if upload_result.returncode == 0:
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     # Submit tasks to the Dask cluster
     for shot in shot_list:
-        task = dask_client.submit(process_shots, shot)
+        task = dask_client.submit(process_shots, shot, args.bucket_path, args.local_path, config)
         tasks.append(task)
 
     n = len(tasks)

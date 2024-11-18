@@ -325,23 +325,24 @@ class AddGeometry:
     def __init__(self, stem:str, path: str):
         table = pq.read_table(path)
         geom_data = table.to_pandas()
-        if "uda_name" in geom_data:
-            geom_data.drop("uda_name", inplace=True, axis=1)
+        geom_data.drop("uda_name", inplace=True, axis=1)
         geom_data.columns = [stem + "_" + c for c in geom_data.columns]
         self.stem = stem
         index_name = f'{self.stem}_channel'
         geom_data[index_name] = [stem + '_' + str(index+1) for index in range(len(geom_data))]
-        geom_data.set_index(index_name, inplace=True)
+        geom_data.set_index(index_name)
         self.geom_data = geom_data.to_xarray()
 
         if table.schema.metadata:
             arrow_metadata = {key.decode(): value.decode() for key, value in table.schema.metadata.items()}
-            renamed_metadata = {{"source": "geometry_source_file"}.get(key, key): value for key, value in arrow_metadata.items()}
-            self.geom_data.attrs.update(renamed_metadata)
+            renamed_metadata = {"source": "geometry_source_file"}
+            arrow_metadata = {renamed_metadata.get(key, key): value for key, value in arrow_metadata.items()}
+
         for field in table.schema:
             if field.metadata:
                 field_metadata = {key.decode(): value.decode() for key, value in field.metadata.items()}
                 self.geom_data[f"{stem}_{field.name}"].attrs.update(field_metadata)
+                self.geom_data[f"{stem}_{field.name}"].attrs.update(arrow_metadata)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         geom_data = self.geom_data.copy()
@@ -558,9 +559,22 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("abm")),
+                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
+                    AddGeometry("ccbv", "geometry_data/amb/ccbv.parquet"),
+                    AddGeometry("fl_cc", "geometry_data/amb/fl_cc.parquet"),
+                    AddGeometry("fl_p2l", "geometry_data/amb/fl_p2l.parquet"),
+                    AddGeometry("fl_p3l", "geometry_data/amb/fl_p3l.parquet"),
+                    AddGeometry("fl_p4l", "geometry_data/amb/fl_p4l.parquet"),
+                    AddGeometry("FL/P5L", "geometry_data/amb/fl_p5l.parquet"),
+                    AddGeometry("FL/P6L", "geometry_data/amb/fl_p6l.parquet"),
+                    AddGeometry("FL/P2U", "geometry_data/amb/fl_p2u.parquet"),
+                    AddGeometry("FL/P3U", "geometry_data/amb/fl_p3u.parquet"),
+                    AddGeometry("FL/P4U", "geometry_data/amb/fl_p4u.parquet"),
+                    AddGeometry("FL/P5U", "geometry_data/amb/fl_p5u.parquet"),
+                    AddGeometry("obr", "geometry_data/amb/xma_obr.parquet"),
+                    AddGeometry("obv", "geometry_data/amb/xma_obv.parquet"),
                 ]
             ),
             "amc": Pipeline(

@@ -323,19 +323,29 @@ class LCFSTransform:
 
 class AddGeometry:
     def __init__(self, stem:str, path: str):
-        geom_data = pq.read_table(path)
-        geom_data = geom_data.to_pandas()
-        geom_data.drop("uda_name", inplace=True, axis=1)
+        table = pq.read_table(path)
+        geom_data = table.to_pandas()
+        if "uda_name" in geom_data:
+            geom_data.drop("uda_name", inplace=True, axis=1)
         geom_data.columns = [stem + "_" + c for c in geom_data.columns]
         self.stem = stem
         index_name = f'{self.stem}_channel'
         geom_data[index_name] = [stem + '_' + str(index+1) for index in range(len(geom_data))]
-        geom_data = geom_data.set_index(index_name)
+        geom_data.set_index(index_name, inplace=True)
         self.geom_data = geom_data.to_xarray()
+
+        if table.schema.metadata:
+            arrow_metadata = {key.decode(): value.decode() for key, value in table.schema.metadata.items()}
+            renamed_metadata = {{"source": "geometry_source_file"}.get(key, key): value for key, value in arrow_metadata.items()}
+            self.geom_data.attrs.update(renamed_metadata)
+        for field in table.schema:
+            if field.metadata:
+                field_metadata = {key.decode(): value.decode() for key, value in field.metadata.items()}
+                self.geom_data[f"{stem}_{field.name}"].attrs.update(field_metadata)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         geom_data = self.geom_data.copy()
-        dataset = xr.merge([dataset, geom_data], combine_attrs="drop_conflicts", join='left')
+        dataset = xr.merge([dataset, geom_data], combine_attrs="no_conflicts", join='left')
         dataset = dataset.compute()
         return dataset
 

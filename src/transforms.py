@@ -330,7 +330,7 @@ class AddGeometry:
         self.stem = stem
         index_name = f'{self.stem}_channel'
         geom_data[index_name] = [stem + '_' + str(index+1) for index in range(len(geom_data))]
-        geom_data.set_index(index_name)
+        geom_data = geom_data.set_index(index_name)
         self.geom_data = geom_data.to_xarray()
 
         if table.schema.metadata:
@@ -629,6 +629,27 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TensoriseChannels("lhorw"),
                     TensoriseChannels("uhorw"),
                     TransformUnits(),
+                    AddGeometry("botcol", "geometry_data/amm/amm_botcol.parquet"),
+                    AddGeometry("endcrown_l", "geometry_data/amm/amm_endcrown_l.parquet"),
+                    AddGeometry("endcrown_u", "geometry_data/amm/amm_endcrown_u.parquet"),
+                    AddGeometry("incon", "geometry_data/amm/amm_incon.parquet"),
+                    AddGeometry("lhorw", "geometry_data/amm/amm_lhorw.parquet"),
+                    AddGeometry("mid", "geometry_data/amm/amm_mid.parquet"),
+                    AddGeometry("p2larm1", "geometry_data/amm/amm_p2larm1.parquet"),
+                    AddGeometry("p2larm2", "geometry_data/amm/amm_p2larm2.parquet"),
+                    AddGeometry("p2larm3", "geometry_data/amm/amm_p2larm3.parquet"),
+                    AddGeometry("p2ldivpl1", "geometry_data/amm/amm_p2ldivpl1.parquet"),
+                    AddGeometry("p2ldivpl2", "geometry_data/amm/amm_p2ldivpl2.parquet"),
+                    AddGeometry("p2uarm1", "geometry_data/amm/amm_p2uarm1.parquet"),
+                    AddGeometry("p2uarm2", "geometry_data/amm/amm_p2uarm2.parquet"),
+                    AddGeometry("p2uarm3", "geometry_data/amm/amm_p2uarm3.parquet"),
+                    AddGeometry("p2udivpl1", "geometry_data/amm/amm_p2udivpl1.parquet"),
+                    AddGeometry("ring", "geometry_data/amm/amm_ring.parquet"),
+                    AddGeometry("rodr", "geometry_data/amm/amm_rodr.parquet"),
+                    AddGeometry("topcol", "geometry_data/amm/amm_topcol.parquet"),
+                    AddGeometry("uhorw", "geometry_data/amm/amm_uhorw.parquet"),
+                    AddGeometry("vertw", "geometry_data/amm/amm_vertw.parquet"),
+
                     
                 ]
             ),

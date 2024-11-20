@@ -932,9 +932,12 @@ class MASTPipelineRegistry(PipelineRegistry):
                     TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
                     TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
                     TransformUnits(),
-                    AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
-                    AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),
-                    AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv"),
+                    AddGeometry("v_ste29", "geometry_data/xsx/ssx_inner_vertical_cam.parquet"),
+                    AddGeometry("hcam_l", "geometry_data/xsx/ssx_lower_horizontal_cam.parquet"),
+                    AddGeometry("tcam", "geometry_data/xsx/ssx_tangential_cam.parquet"),
+                    AddGeometry("hpzr", "geometry_data/xsx/ssx_third_horizontal_cam.parquet"),
+                    AddGeometry("hcam_u", "geometry_data/xsx/ssx_upper_horizontal_cam.parquet"),
+                    AddGeometry("v_ste36", "geometry_data/xsx/ssx_outer_vertical_cam.parquet"),
                 ]
             ),
             "xma": Pipeline(

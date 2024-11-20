@@ -967,7 +967,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                     AddGeometry("sad_out_l", "geometry_data/xmb/xmb_sad_l.parquet"),
                     AddGeometry("sad_out_u", "geometry_data/xmb/xmb_sad_u.parquet"),
                     AddGeometry("sad_out_m", "geometry_data/xmb/xmb_sad_m.parquet"),
-                    
                 ]
             ),
             "xmc": Pipeline(
@@ -976,6 +975,9 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xmc")),
                     MergeDatasets(),
                     TransformUnits(),
+                    AddGeometry("cc_mt", "geometry_data/xmc/ccmt.parquet"),
+                    AddGeometry("cc_mv", "geometry_data/xmc/ccmv.parquet"),
+                    AddGeometry("omv", "geometry_data/xmc/xmc_omv.parquet"),
                 ]
             ),
             "xmp": Pipeline(

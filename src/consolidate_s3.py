@@ -1,3 +1,5 @@
+import argparse
+from src.uploader import UploadConfig
 import subprocess
 import shutil
 import zarr
@@ -14,37 +16,37 @@ def consolidate(shot):
             for signal in f[source].keys():
                 zarr.consolidate_metadata(f"{shot}/{source}/{signal}")
 
-def download_shot(shot):
+def download_shot(shot, local_path, config):
     """Download the Zarr file for the given shot number."""
     download_command = [
         "s5cmd",
-        "--credentials-file", ".s5cfg.stfc",
-        "--endpoint-url", "https://s3.echo.stfc.ac.uk",
-        "cp", f"s3://mast/level1/shots/{shot}*", "/rds/project/rds-mOlK9qn0PlQ/fairmast"
+        "--credentials-file", config.credentials_file,
+        "--endpoint-url", config.endpoint_url,
+        "cp", f"{config.url}{shot}*", local_path
     ]
 
     return subprocess.run(download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def upload_shot(shot):
+def upload_shot(shot, local_path, config):
     """Upload the consolidated Zarr file back to S3."""
     upload_command = [
         "s5cmd",
-        "--credentials-file", ".s5cfg.stfc",
-        "--endpoint-url", "https://s3.echo.stfc.ac.uk",
-        "cp", "--acl", "public-read", f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr", "s3://mast/level1/shots/"
+        "--credentials-file", config.credentials_file,
+        "--endpoint-url", config.endpoint_url,
+        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", config.url
     ]
 
     return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-def process_shots(shot):
+def process_shots(shot, local_path, config):
     """Process the Zarr files for the given shot number."""
     logging.info(f"Processing shot {shot}...")
     
-    download_result = download_shot(shot)
+    download_result = download_shot(shot, local_path, config)
     if download_result.returncode == 0:
         logging.info(f"Successfully downloaded shot {shot}")
-        consolidate(f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr")
-        upload_result = upload_shot(shot)
+        consolidate(f"{local_path}/{shot}.zarr")
+        upload_result = upload_shot(shot, local_path, config)
 
         # Check if the upload succeeded
         if upload_result.returncode == 0:
@@ -53,7 +55,7 @@ def process_shots(shot):
             logging.error(f"Failed to upload {shot}.zarr: {upload_result.stderr.strip()}")
 
         # Remove the downloaded Zarr directory
-        shutil.rmtree(f"/rds/project/rds-mOlK9qn0PlQ/fairmast/{shot}.zarr")
+        shutil.rmtree(f"{local_path}/{shot}.zarr")
         logging.info(f"Deleted local file: {shot}.zarr")
     else:
         logging.error(f"Failed to download {shot}: {download_result.stderr.strip()}")
@@ -68,14 +70,34 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S"   # Time format
     )
 
+    parser = argparse.ArgumentParser(
+        prog="Consolidate s3",
+        description="Processing Zarr files",
+    )
+
+    parser.add_argument("bucket_path")
+    parser.add_argument("local_path")
+    parser.add_argument("--credentials_file", default=".s5cfg.stfc")
+    parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
+    parser.add_argument("--start_shot", type=int, default=11695)
+    parser.add_argument("--end_shot", type=int, default=30472)
+
+    args = parser.parse_args()
+
+    config = UploadConfig(
+            credentials_file=args.credentials_file,
+            endpoint_url=args.endpoint_url,
+            url=args.bucket_path,
+        )
+
     dask_client = Client()
 
-    shot_list = list(range(11695, 30472))
+    shot_list = list(range(args.start_shot, args.end_shot))
     tasks = []
 
     # Submit tasks to the Dask cluster
     for shot in shot_list:
-        task = dask_client.submit(process_shots, shot)
+        task = dask_client.submit(process_shots, shot, args.local_path, config)
         tasks.append(task)
 
     n = len(tasks)

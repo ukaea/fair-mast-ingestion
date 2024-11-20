@@ -964,6 +964,10 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xmb")),
                     MergeDatasets(),
                     TransformUnits(),
+                    AddGeometry("sad_out_l", "geometry_data/xmb/xmb_sad_l.parquet"),
+                    AddGeometry("sad_out_u", "geometry_data/xmb/xmb_sad_u.parquet"),
+                    AddGeometry("sad_out_m", "geometry_data/xmb/xmb_sad_m.parquet"),
+                    
                 ]
             ),
             "xmc": Pipeline(

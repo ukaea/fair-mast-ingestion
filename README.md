@@ -9,12 +9,12 @@ After logging into your CSD3 account (on Icelake node), first load the correct P
 module load python/3.9.12/gcc/pdcqf4o5
 ```
 
-Clone the repository and fetch data files:
+Clone the repository and fetch data files (Git LFS must be installed):
 
 ```sh
 git clone git@github.com:ukaea/fair-mast-ingestion.git
 cd fair-mast-ingestion
-git lfs fetch
+git lfs pull
 ```
 
 Create a virtual environment:

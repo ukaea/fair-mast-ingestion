@@ -129,7 +129,7 @@ class CreateDatasetTask:
     def _get_signals_for_source(self, source_name: str, source_group_index: pd.Series, signal_infos: pd.DataFrame):
         signal_infos_for_source = signal_infos.loc[source_group_index]
         if source_name == 'xdc':
-            signal_infos_for_source = signal_infos_for_source.loc[signal_infos_for_source.name == 'xdc/ip_t_ipref']
+            signal_infos_for_source = signal_infos_for_source.loc[(signal_infos_for_source.name == 'xdc/ip_t_ipref') | (signal_infos_for_source.name == 'xdc_plasma_t_ip_ref')]
         return signal_infos_for_source
 
     def _read_metadata(self) -> tuple[pd.DataFrame, pd.DataFrame]:

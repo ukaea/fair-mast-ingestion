@@ -167,3 +167,4 @@ data
 dask-scratch-space
 # Ignore credentials file
 .s5cfg.stfc
+*.out

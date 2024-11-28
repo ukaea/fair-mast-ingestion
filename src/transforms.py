@@ -406,10 +406,58 @@ class MASTUPipelineRegistry(PipelineRegistry):
         dim_mapping_file = "mappings/mastu/dimensions.json"
 
         self.pipelines = {
+            "amb": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("amb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "amc": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("amc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "anb": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("anb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "act": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("act")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "acu": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("anb")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
                     MapDict(StandardiseSignalDataset("ayc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ayd": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("ayd")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -421,7 +469,31 @@ class MASTUPipelineRegistry(PipelineRegistry):
                     MergeDatasets(),
                     TransformUnits(),
                 ]
-            )
+            ),
+            "esm": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("esm")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xsx": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("xsx")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xdc": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MapDict(StandardiseSignalDataset("xdc")),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
         }
 
 class MASTPipelineRegistry(PipelineRegistry):

@@ -168,3 +168,6 @@ dask-scratch-space
 # Ignore credentials file
 .s5cfg.stfc
 *.out
+
+fairmast-*.e*
+fairmast-*.o*

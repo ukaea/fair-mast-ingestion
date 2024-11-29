@@ -777,7 +777,7 @@ class MASTPipelineRegistry(PipelineRegistry):
                     AlignChannels("ring"),
 
                     TensoriseChannels("rodgr"),
-                    AddGeometry("rodr", "geometry/data/amm/amm_rodr.parquet"),
+                    AddGeometry("rodgr", "geometry/data/amm/amm_rodr.parquet"),
                     AlignChannels("rodgr"),
 
                     AddGeometry("topcol", "geometry/data/amm/amm_topcol.parquet"),
@@ -1096,56 +1096,56 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xma")),
                     MergeDatasets(),
                     TransformUnits(),
-                    TensoriseChannels("ccbv"),
-                    AddGeometry("ccbv", "geometry/data/amb/ccbv.parquet"),
+                    TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
+                    AddGeometry("ccbv", "geometry/data/xma/ccbv.parquet"),
                     AlignChannels("ccbv"),
 
                     TensoriseChannels("fl_cc"),
-                    AddGeometry("fl_cc", "geometry/data/amb/fl_cc.parquet"),
+                    AddGeometry("fl_cc", "geometry/data/xma/fl_cc.parquet"),
                     AlignChannels("fl_cc"),
 
-                    TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
-                    AddGeometry("fl_p2l", "geometry/data/amb/fl_p2l.parquet"),
+                    TensoriseChannels("fl_p2l"),
+                    AddGeometry("fl_p2l", "geometry/data/xma/fl_p2l.parquet"),
                     AlignChannels("fl_p2l"),
 
-                    TensoriseChannels("fl_p3l", regex=r"fl_p3l_(\d+)"),
-                    AddGeometry("fl_p3l", "geometry/data/amb/fl_p3l.parquet"),
+                    TensoriseChannels("fl_p3l"),
+                    AddGeometry("fl_p3l", "geometry/data/xma/fl_p3l.parquet"),
                     AlignChannels("fl_p3l"),
 
-                    TensoriseChannels("fl_p4l", regex=r"fl_p4l_(\d+)"),
-                    AddGeometry("fl_p4l", "geometry/data/amb/fl_p4l.parquet"),
+                    TensoriseChannels("fl_p4l"),
+                    AddGeometry("fl_p4l", "geometry/data/xma/fl_p4l.parquet"),
                     AlignChannels("fl_p4l"),
 
-                    TensoriseChannels("fl_p5l", regex=r"fl_p5l_(\d+)"),
-                    AddGeometry("fl_p5l", "geometry/data/amb/fl_p5l.parquet"),
+                    TensoriseChannels("fl_p5l"),
+                    AddGeometry("fl_p5l", "geometry/data/xma/fl_p5l.parquet"),
                     AlignChannels("fl_p5l"),
 
-                    TensoriseChannels("fl_p6l", regex=r"fl_p6l_(\d+)"),
-                    AddGeometry("fl_p6l", "geometry/data/amb/fl_p6l.parquet"),
+                    TensoriseChannels("fl_p6l"),
+                    AddGeometry("fl_p6l", "geometry/data/xma/fl_p6l.parquet"),
                     AlignChannels("fl_p6l"),
 
-                    TensoriseChannels("fl_p2u", regex=r"fl_p2u_(\d+)"),
-                    AddGeometry("fl_p2u", "geometry/data/amb/fl_p2u.parquet"),
+                    TensoriseChannels("fl_p2u"),
+                    AddGeometry("fl_p2u", "geometry/data/xma/fl_p2u.parquet"),
                     AlignChannels("fl_p2u"),
 
-                    TensoriseChannels("fl_p3u", regex=r"fl_p3u_(\d+)"),
-                    AddGeometry("fl_p3u", "geometry/data/amb/fl_p3u.parquet"),
+                    TensoriseChannels("fl_p3u"),
+                    AddGeometry("fl_p3u", "geometry/data/xma/fl_p3u.parquet"),
                     AlignChannels("fl_p3u"),
 
-                    TensoriseChannels("fl_p4u", regex=r"fl_p4u_(\d+)"),
-                    AddGeometry("fl_p4u", "geometry/data/amb/fl_p4u.parquet"),
+                    TensoriseChannels("fl_p4u"),
+                    AddGeometry("fl_p4u", "geometry/data/xma/fl_p4u.parquet"),
                     AlignChannels("fl_p4u"),
 
-                    TensoriseChannels("fl_p5u", regex=r"fl_p5u_(\d+)"),
-                    AddGeometry("fl_p5u", "geometry/data/amb/fl_p5u.parquet"),
+                    TensoriseChannels("fl_p5u"),
+                    AddGeometry("fl_p5u", "geometry/data/xma/fl_p5u.parquet"),
                     AlignChannels("fl_p5u"),
 
-                    TensoriseChannels("obr"),
-                    AddGeometry("obr", "geometry/data/amb/xma_obr.parquet"),
+                    TensoriseChannels("obr", regex=r"obr_(\d+)"),
+                    AddGeometry("obr", "geometry/data/xma/xma_obr.parquet"),
                     AlignChannels("obr"),
 
-                    TensoriseChannels("obv"),
-                    AddGeometry("obv", "geometry/data/amb/xma_obv.parquet"),
+                    TensoriseChannels("obv", regex=r"obv_(\d+)"),
+                    AddGeometry("obv", "geometry/data/xma/xma_obv.parquet"),
                     AlignChannels("obv"),
                 ]
             ),
@@ -1163,7 +1163,7 @@ class MASTPipelineRegistry(PipelineRegistry):
                     AddGeometry("sad_out_u", "geometry/data/xmb/xmb_sad_u.parquet"),
                     AlignChannels("sad_out_u"),
 
-                    TensoriseChannels("sad_ousad_out_mt_l"),
+                    TensoriseChannels("sad_out_m"),
                     AddGeometry("sad_out_m", "geometry/data/xmb/xmb_sad_m.parquet"),
                     AlignChannels("sad_out_m"),
                 ]
@@ -1174,15 +1174,15 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xmc")),
                     MergeDatasets(),
                     TransformUnits(),
-                    TensoriseChannels("cc_mt"),
+                    TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
                     AddGeometry("cc_mt", "geometry/data/xmc/ccmt.parquet"),
                     AlignChannels("cc_mt"),
 
-                    TensoriseChannels("cc_mv"),
+                    TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
                     AddGeometry("cc_mv", "geometry/data/xmc/ccmv.parquet"),
                     AlignChannels("cc_mv"),
 
-                    TensoriseChannels("omv"),
+                    TensoriseChannels("omv", regex=r"omv_(\d+)"),
                     AddGeometry("omv", "geometry/data/xmc/xmc_omv.parquet"),
                     AlignChannels("omv"),
                 ]

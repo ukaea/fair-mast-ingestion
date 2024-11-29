@@ -1,5 +1,6 @@
-import pandas as pd
 import argparse
+
+import pandas as pd
 import pyarrow as pa
 
 schema = pa.schema(

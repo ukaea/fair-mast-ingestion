@@ -1,8 +1,9 @@
 import json
+import logging
 from pathlib import Path
+
 import pandas as pd
 import pyarrow as pa
-import logging
 
 
 def main():

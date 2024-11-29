@@ -1,16 +1,17 @@
 import numpy as np
 import xarray as xr
+
 from src.transforms import (
     AddXSXCameraParams,
     DropDatasets,
     DropZeroDimensions,
     MergeDatasets,
+    ProcessImage,
     RenameDimensions,
     RenameVariables,
     StandardiseSignalDataset,
     TensoriseChannels,
     TransformUnits,
-    ProcessImage,
 )
 
 

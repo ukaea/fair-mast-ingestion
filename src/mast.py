@@ -1,12 +1,12 @@
 import re
 import typing as t
-import numpy as np
-import xarray as xr
 import uuid
-import pyuda
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
 
+import numpy as np
+import pyuda
+import xarray as xr
 
 LAST_MAST_SHOT = 30473
 

@@ -1,10 +1,12 @@
 import argparse
 import logging
 from functools import partial
+
 from dask_mpi import initialize
+
 from src.uploader import UploadConfig
-from src.workflow import S3IngestionWorkflow, LocalIngestionWorkflow, WorkflowManager
 from src.utils import read_shot_file
+from src.workflow import LocalIngestionWorkflow, S3IngestionWorkflow, WorkflowManager
 
 
 def main():

@@ -1,14 +1,15 @@
+import argparse
 import logging
+from pathlib import Path
 from typing import Optional
+
+import pandas as pd
+import pyarrow as pa
+import s3fs
 import zarr
 import zarr.storage
-import s3fs
-import pandas as pd
-import argparse
-from pathlib import Path
-from dask_mpi import initialize
 from dask.distributed import Client, as_completed
-import pyarrow as pa
+from dask_mpi import initialize
 
 logging.basicConfig(level=logging.INFO)
 

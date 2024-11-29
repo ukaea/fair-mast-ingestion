@@ -1,0 +1,2 @@
+*.parquet filter=lfs diff=lfs merge=lfs -text
+geometry_files/raw_files filter=lfs diff=lfs merge=lfs -text

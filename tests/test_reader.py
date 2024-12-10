@@ -1,7 +1,8 @@
-import pandas as pd
-import xarray as xr
 from dataclasses import asdict
+
+import pandas as pd
 import pytest
+import xarray as xr
 
 pyuda_import = pytest.importorskip("pyuda")
 from src.reader import (  # noqa: E402
@@ -9,6 +10,7 @@ from src.reader import (  # noqa: E402
     SignalMetadataReader,  # noqa: E402
     SourceMetadataReader,  # noqa: E402
 )  # noqa: E402
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_list_signals():

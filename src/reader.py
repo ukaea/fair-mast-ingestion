@@ -1,6 +1,7 @@
+from dataclasses import asdict
+
 import pandas as pd
 import xarray as xr
-from dataclasses import asdict
 
 from src.mast import MASTClient, SignalInfo
 

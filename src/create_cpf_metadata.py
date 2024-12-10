@@ -1,11 +1,12 @@
 import argparse
-import numpy as np
-import pandas as pd
 import multiprocessing as mp
 from functools import partial
 from pathlib import Path
-from rich.progress import track
+
+import numpy as np
+import pandas as pd
 from pycpf import pycpf
+from rich.progress import track
 
 
 def read_cpf_for_shot(shot, columns):

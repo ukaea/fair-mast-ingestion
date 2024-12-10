@@ -6,8 +6,8 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
 import pint
+import pyarrow.parquet as pq
 import xarray as xr
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"

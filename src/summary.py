@@ -1,11 +1,10 @@
+import logging
+
+import pandas as pd
 import s3fs
 import xarray as xr
-import pandas as pd
-import logging
-import s3fs
-import pandas as pd
-from dask_mpi import initialize
 from dask.distributed import Client, as_completed
+from dask_mpi import initialize
 
 logging.basicConfig(level=logging.INFO)
 

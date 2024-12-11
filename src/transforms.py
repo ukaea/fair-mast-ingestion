@@ -19,12 +19,10 @@ def get_dataset_item_uuid(name: str, shot: int) -> str:
 
 
 class MapDict:
-
     def __init__(self, transform) -> None:
         self.transform = transform
 
     def __call__(self, datasets: dict[str, xr.Dataset]) -> dict[str, xr.Dataset]:
-
         out = {}
         for key, dataset in datasets.items():
             try:
@@ -35,8 +33,9 @@ class MapDict:
 
 
 class RenameDimensions:
-
-    def __init__(self, mapping_file = DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True) -> None:
+    def __init__(
+        self, mapping_file=DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True
+    ) -> None:
         self.squeeze_dataset = squeeze_dataset
 
         with Path(mapping_file).open("r") as handle:
@@ -63,7 +62,6 @@ class RenameDimensions:
 
 
 class DropZeroDimensions:
-
     def __call__(self, dataset: xr.Dataset) -> Any:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
@@ -73,7 +71,6 @@ class DropZeroDimensions:
 
 
 class DropDatasets:
-
     def __init__(self, keys: list[str]) -> None:
         self.keys = keys
 
@@ -82,8 +79,8 @@ class DropDatasets:
             datasets.pop(key)
         return datasets
 
-class DropCoordinates:
 
+class DropCoordinates:
     def __init__(self, name, keys: list[str]) -> None:
         self.name = name
         self.keys = keys
@@ -96,8 +93,8 @@ class DropCoordinates:
                     datasets[name] = dataset.drop_vars(key)
         return datasets
 
-class StandardiseSignalDataset:
 
+class StandardiseSignalDataset:
     def __init__(self, source: str, squeeze_dataset: bool = True) -> None:
         self.source = source
         self.squeeze_dataset = squeeze_dataset
@@ -118,7 +115,11 @@ class StandardiseSignalDataset:
             new_names["data"] = name
             new_names["error"] = "_".join([name, "error"])
         else:
-            name = name + "_" if name == "time" or name in dataset.data_vars or name in dataset.coords else name
+            name = (
+                name + "_"
+                if name == "time" or name in dataset.data_vars or name in dataset.coords
+                else name
+            )
             new_names["data"] = name
 
         dataset = dataset.rename(new_names)
@@ -157,8 +158,8 @@ class RenameVariables:
         dataset = dataset.compute()
         return dataset
 
-class MergeDatasets:
 
+class MergeDatasets:
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
@@ -322,15 +323,16 @@ class LCFSTransform:
 
 
 class AddXSXCameraParams:
-
     def __init__(self, stem: str, path: str):
         cam_data = pd.read_csv(path)
         cam_data.drop("name", inplace=True, axis=1)
         cam_data.drop("comment", inplace=True, axis=1)
         cam_data.columns = [stem + "_" + c for c in cam_data.columns]
         self.stem = stem
-        index_name = f'{self.stem}_channel'
-        cam_data[index_name] = [stem + '_' + str(index+1) for index in range(len(cam_data))]
+        index_name = f"{self.stem}_channel"
+        cam_data[index_name] = [
+            stem + "_" + str(index + 1) for index in range(len(cam_data))
+        ]
         cam_data = cam_data.set_index(index_name)
         self.cam_data = cam_data.to_xarray()
 
@@ -339,7 +341,9 @@ class AddXSXCameraParams:
         # if camera data in not in dataset, then skip and do nothing
         if self.stem not in dataset:
             return dataset
-        dataset = xr.merge([dataset, cam_data], combine_attrs="drop_conflicts", join='left')
+        dataset = xr.merge(
+            [dataset, cam_data], combine_attrs="drop_conflicts", join="left"
+        )
         dataset = dataset.compute()
         return dataset
 
@@ -373,7 +377,6 @@ class ProcessImage:
 
 
 class Pipeline:
-
     def __init__(self, transforms: list):
         self.transforms = transforms
 
@@ -382,26 +385,25 @@ class Pipeline:
             x = transform(x)
         return x
 
-        
+
 class PipelineRegistry:
-    
     def __init__(self) -> None:
         pass
-        
+
     def get(self, name: str) -> Pipeline:
         if name not in self.pipelines:
             raise RuntimeError(f"{name} is not a registered source!")
         return self.pipelines[name]
 
-class ReplaceInvalidValues:
 
+class ReplaceInvalidValues:
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = dataset.where(dataset != -999, np.nan)
         dataset = dataset.compute()
         return dataset
 
-class MASTUPipelineRegistry(PipelineRegistry):
 
+class MASTUPipelineRegistry(PipelineRegistry):
     def __init__(self) -> None:
         dim_mapping_file = "mappings/mastu/dimensions.json"
 
@@ -420,6 +422,11 @@ class MASTUPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
+                    RenameVariables(
+                        {
+                            "ip": "plasma_current",
+                        }
+                    ),
                 ]
             ),
             "anb": Pipeline(
@@ -484,6 +491,9 @@ class MASTUPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_ch(\d+)"),
+                    TensoriseChannels("tcam", regex=r"tcam_ch(\d+)"),
                 ]
             ),
             "xdc": Pipeline(
@@ -496,8 +506,8 @@ class MASTUPipelineRegistry(PipelineRegistry):
             ),
         }
 
-class MASTPipelineRegistry(PipelineRegistry):
 
+class MASTPipelineRegistry(PipelineRegistry):
     def __init__(self) -> None:
         self.pipelines = {
             "abm": Pipeline(
@@ -738,8 +748,8 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ayc")),
-                    DropCoordinates('ayc/segment_number', ['time_segment']),
-                    DropDatasets(['ayc/time']),
+                    DropCoordinates("ayc/segment_number", ["time_segment"]),
+                    DropDatasets(["ayc/time"]),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -852,64 +862,64 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
-                    RenameVariables({
-
-                        "hcaml#1": "hcam_l_1",
-                        "hcaml#10": "hcam_l_10",
-                        "hcaml#11": "hcam_l_11",
-                        "hcaml#12": "hcam_l_12",
-                        "hcaml#13": "hcam_l_13",
-                        "hcaml#14": "hcam_l_14",
-                        "hcaml#15": "hcam_l_15",
-                        "hcaml#16": "hcam_l_16",
-                        "hcaml#17": "hcam_l_17",
-                        "hcaml#18": "hcam_l_18",
-                        "hcaml#2": "hcam_l_2",
-                        "hcaml#3": "hcam_l_3",
-                        "hcaml#4": "hcam_l_4",
-                        "hcaml#5": "hcam_l_5",
-                        "hcaml#6": "hcam_l_6",
-                        "hcaml#7": "hcam_l_7",
-                        "hcaml#8": "hcam_l_8",
-                        "hcaml#9": "hcam_l_9",
-                        "hcamu#1": "hcam_u_1",
-                        "hcamu#10": "hcam_u_10",
-                        "hcamu#11": "hcam_u_11",
-                        "hcamu#12": "hcam_u_12",
-                        "hcamu#13": "hcam_u_13",
-                        "hcamu#14": "hcam_u_14",
-                        "hcamu#15": "hcam_u_15",
-                        "hcamu#16": "hcam_u_16",
-                        "hcamu#17": "hcam_u_17",
-                        "hcamu#18": "hcam_u_18",
-                        "hcamu#2": "hcam_u_2",
-                        "hcamu#3": "hcam_u_3",
-                        "hcamu#4": "hcam_u_4",
-                        "hcamu#5": "hcam_u_5",
-                        "hcamu#6": "hcam_u_6",
-                        "hcamu#7": "hcam_u_7",
-                        "hcamu#8": "hcam_u_8",
-                        "hcamu#9": "hcam_u_9",
-                        "tcam#1": "tcam_1",
-                        "tcam#10": "tcam_10",
-                        "tcam#11": "tcam_11",
-                        "tcam#12": "tcam_12",
-                        "tcam#13": "tcam_13",
-                        "tcam#14": "tcam_14",
-                        "tcam#15": "tcam_15",
-                        "tcam#16": "tcam_16",
-                        "tcam#17": "tcam_17",
-                        "tcam#18": "tcam_18",
-                        "tcam#2": "tcam_2",
-                        "tcam#3": "tcam_3",
-                        "tcam#4": "tcam_4",
-                        "tcam#5": "tcam_5",
-                        "tcam#6": "tcam_6",
-                        "tcam#7": "tcam_7",
-                        "tcam#8": "tcam_8",
-                        "tcam#9": "tcam_9"
-
-                    }),
+                    RenameVariables(
+                        {
+                            "hcaml#1": "hcam_l_1",
+                            "hcaml#10": "hcam_l_10",
+                            "hcaml#11": "hcam_l_11",
+                            "hcaml#12": "hcam_l_12",
+                            "hcaml#13": "hcam_l_13",
+                            "hcaml#14": "hcam_l_14",
+                            "hcaml#15": "hcam_l_15",
+                            "hcaml#16": "hcam_l_16",
+                            "hcaml#17": "hcam_l_17",
+                            "hcaml#18": "hcam_l_18",
+                            "hcaml#2": "hcam_l_2",
+                            "hcaml#3": "hcam_l_3",
+                            "hcaml#4": "hcam_l_4",
+                            "hcaml#5": "hcam_l_5",
+                            "hcaml#6": "hcam_l_6",
+                            "hcaml#7": "hcam_l_7",
+                            "hcaml#8": "hcam_l_8",
+                            "hcaml#9": "hcam_l_9",
+                            "hcamu#1": "hcam_u_1",
+                            "hcamu#10": "hcam_u_10",
+                            "hcamu#11": "hcam_u_11",
+                            "hcamu#12": "hcam_u_12",
+                            "hcamu#13": "hcam_u_13",
+                            "hcamu#14": "hcam_u_14",
+                            "hcamu#15": "hcam_u_15",
+                            "hcamu#16": "hcam_u_16",
+                            "hcamu#17": "hcam_u_17",
+                            "hcamu#18": "hcam_u_18",
+                            "hcamu#2": "hcam_u_2",
+                            "hcamu#3": "hcam_u_3",
+                            "hcamu#4": "hcam_u_4",
+                            "hcamu#5": "hcam_u_5",
+                            "hcamu#6": "hcam_u_6",
+                            "hcamu#7": "hcam_u_7",
+                            "hcamu#8": "hcam_u_8",
+                            "hcamu#9": "hcam_u_9",
+                            "tcam#1": "tcam_1",
+                            "tcam#10": "tcam_10",
+                            "tcam#11": "tcam_11",
+                            "tcam#12": "tcam_12",
+                            "tcam#13": "tcam_13",
+                            "tcam#14": "tcam_14",
+                            "tcam#15": "tcam_15",
+                            "tcam#16": "tcam_16",
+                            "tcam#17": "tcam_17",
+                            "tcam#18": "tcam_18",
+                            "tcam#2": "tcam_2",
+                            "tcam#3": "tcam_3",
+                            "tcam#4": "tcam_4",
+                            "tcam#5": "tcam_5",
+                            "tcam#6": "tcam_6",
+                            "tcam#7": "tcam_7",
+                            "tcam#8": "tcam_8",
+                            "tcam#9": "tcam_9",
+                        }
+                    ),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
@@ -963,4 +973,3 @@ class MASTPipelineRegistry(PipelineRegistry):
                 ]
             ),
         }
-

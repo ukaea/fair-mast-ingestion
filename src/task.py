@@ -148,9 +148,10 @@ class CreateDatasetTask:
     ):
         signal_infos_for_source = signal_infos.loc[source_group_index]
         if source_name == "xdc":
+            logging.warning(f"{signal_infos_for_source}")
             signal_infos_for_source = signal_infos_for_source.loc[
                 (signal_infos_for_source.name == "xdc/ip_t_ipref")
-                | (signal_infos_for_source.name == "xdc_plasma_t_ip_ref")
+                | (signal_infos_for_source.uda_name == "XDC/PLASMA/T/IP_REF")
             ]
         return signal_infos_for_source
 

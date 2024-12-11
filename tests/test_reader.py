@@ -1,15 +1,15 @@
+import importlib
 from dataclasses import asdict
 
 import pandas as pd
 import pytest
 import xarray as xr
+
 from src.reader import (  # noqa: E402
     DatasetReader,  # noqa: E402
     SignalMetadataReader,  # noqa: E402
     SourceMetadataReader,  # noqa: E402
 )  # noqa: E402
-
-import importlib
 
 uda_available = not importlib.util.find_spec("pyuda")
 

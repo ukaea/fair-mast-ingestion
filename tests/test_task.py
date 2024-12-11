@@ -1,21 +1,24 @@
-import pandas as pd
-import zarr
-import xarray as xr
-import subprocess
-from src.uploader import UploadConfig
-from pathlib import Path
 import os
+import subprocess
+from pathlib import Path
+
+import pandas as pd
 import pytest
+import xarray as xr
+import zarr
+
+from src.uploader import UploadConfig
 
 pyuda_import = pytest.importorskip("pyuda")
-from src.writer import DatasetWriter  # noqa: E402
 from src.task import (  # noqa: E402
-    CreateDatasetTask,  # noqa: E402
     CleanupDatasetTask,  # noqa: E402
-    UploadDatasetTask,  # noqa: E402
-    CreateSourceMetadataTask,  # noqa: E402
+    CreateDatasetTask,  # noqa: E402
     CreateSignalMetadataTask,  # noqa: E402
+    CreateSourceMetadataTask,  # noqa: E402
+    UploadDatasetTask,  # noqa: E402
 )  # noqa: E402
+from src.writer import DatasetWriter  # noqa: E402
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_create_dataset_task(tmpdir, mocker):

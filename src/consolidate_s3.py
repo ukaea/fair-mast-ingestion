@@ -1,11 +1,14 @@
 import argparse
-from src.uploader import UploadConfig
-import subprocess
-import shutil
-import zarr
 import logging
+import shutil
+import subprocess
+
+import zarr
 from dask.distributed import Client, as_completed
 from dask_mpi import initialize
+
+from src.uploader import UploadConfig
+
 
 def consolidate(shot):
     """Consolidate the metadata for the given Zarr shot."""

@@ -1,12 +1,14 @@
-from typing import Any, Optional
-import pint
-import re
 import json
+import re
 import uuid
+from pathlib import Path
+from typing import Any, Optional
+
 import numpy as np
 import pandas as pd
+import pint
+import pyarrow.parquet as pq
 import xarray as xr
-from pathlib import Path
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
@@ -322,6 +324,66 @@ class LCFSTransform:
         return dataset
 
 
+class AddGeometry:
+    def __init__(self, stem: str, path: str):
+        table = pq.read_table(path)
+        geom_data = table.to_pandas()
+        geom_data.drop("uda_name", inplace=True, axis=1)
+        geom_data.columns = [stem + "_" + c for c in geom_data.columns]
+        self.stem = stem
+        index_name = f"{self.stem}_geometry_index"
+        geom_data[index_name] = [
+            f"{stem}{index+1:02}" for index in range(len(geom_data))
+        ]
+        geom_data = geom_data.set_index(index_name)
+        self.geom_data = geom_data.to_xarray()
+
+        if table.schema.metadata:
+            arrow_metadata = {
+                key.decode(): value.decode()
+                for key, value in table.schema.metadata.items()
+            }
+            renamed_metadata = {"source": "geometry_source_file"}
+            arrow_metadata = {
+                renamed_metadata.get(key, key): value
+                for key, value in arrow_metadata.items()
+            }
+
+        for field in table.schema:
+            if field.metadata:
+                field_metadata = {
+                    key.decode(): value.decode()
+                    for key, value in field.metadata.items()
+                }
+                self.geom_data[f"{stem}_{field.name}"].attrs.update(field_metadata)
+                self.geom_data[f"{stem}_{field.name}"].attrs.update(arrow_metadata)
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        geom_data = self.geom_data.copy()
+        dataset = xr.merge(
+            [dataset, geom_data], combine_attrs="no_conflicts", join="left"
+        )
+        dataset = dataset.compute()
+        return dataset
+
+
+class AlignChannels:
+    def __init__(self, source: str):
+        self.source = source
+        self.channel_dim = f"{source}_channel"
+        self.geometry_dim = f"{source}_geometry_index"
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        geometry_index = dataset.coords[self.geometry_dim].values
+        dataset = dataset.reindex({f"{self.source}_channel": geometry_index})
+        dataset = dataset.drop_vars(self.geometry_dim)
+        dataset = dataset.rename(
+            {f"{self.source}_geometry_index": f"{self.source}_channel"}
+        )
+
+        return dataset
+
+
 class AddXSXCameraParams:
     def __init__(self, stem: str, path: str):
         cam_data = pd.read_csv(path)
@@ -612,9 +674,48 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("abm")),
+                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("ccbv"),
+                    AddGeometry("ccbv", "geometry/data/amb/ccbv.parquet"),
+                    AlignChannels("ccbv"),
+                    TensoriseChannels("fl_cc"),
+                    AddGeometry("fl_cc", "geometry/data/amb/fl_cc.parquet"),
+                    AlignChannels("fl_cc"),
+                    TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
+                    AddGeometry("fl_p2l", "geometry/data/amb/fl_p2l.parquet"),
+                    AlignChannels("fl_p2l"),
+                    TensoriseChannels("fl_p3l", regex=r"fl_p3l_(\d+)"),
+                    AddGeometry("fl_p3l", "geometry/data/amb/fl_p3l.parquet"),
+                    AlignChannels("fl_p3l"),
+                    TensoriseChannels("fl_p4l", regex=r"fl_p4l_(\d+)"),
+                    AddGeometry("fl_p4l", "geometry/data/amb/fl_p4l.parquet"),
+                    AlignChannels("fl_p4l"),
+                    TensoriseChannels("fl_p5l", regex=r"fl_p5l_(\d+)"),
+                    AddGeometry("fl_p5l", "geometry/data/amb/fl_p5l.parquet"),
+                    AlignChannels("fl_p5l"),
+                    TensoriseChannels("fl_p6l", regex=r"fl_p6l_(\d+)"),
+                    AddGeometry("fl_p6l", "geometry/data/amb/fl_p6l.parquet"),
+                    AlignChannels("fl_p6l"),
+                    TensoriseChannels("fl_p2u", regex=r"fl_p2u_(\d+)"),
+                    AddGeometry("fl_p2u", "geometry/data/amb/fl_p2u.parquet"),
+                    AlignChannels("fl_p2u"),
+                    TensoriseChannels("fl_p3u", regex=r"fl_p3u_(\d+)"),
+                    AddGeometry("fl_p3u", "geometry/data/amb/fl_p3u.parquet"),
+                    AlignChannels("fl_p3u"),
+                    TensoriseChannels("fl_p4u", regex=r"fl_p4u_(\d+)"),
+                    AddGeometry("fl_p4u", "geometry/data/amb/fl_p4u.parquet"),
+                    AlignChannels("fl_p4u"),
+                    TensoriseChannels("fl_p5u", regex=r"fl_p5u_(\d+)"),
+                    AddGeometry("fl_p5u", "geometry/data/amb/fl_p5u.parquet"),
+                    AlignChannels("fl_p5u"),
+                    TensoriseChannels("obr"),
+                    AddGeometry("obr", "geometry/data/amb/xma_obr.parquet"),
+                    AlignChannels("obr"),
+                    TensoriseChannels("obv"),
+                    AddGeometry("obv", "geometry/data/amb/xma_obv.parquet"),
+                    AlignChannels("obv"),
                 ]
             ),
             "amc": Pipeline(
@@ -623,6 +724,120 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
+                    AddGeometry(
+                        "p2il_coil_current",
+                        "geometry/data/amc/amc_p2il_coil_current.parquet",
+                    ),
+                    AlignChannels("p2il_coil_current"),
+                    AddGeometry(
+                        "p2iu_coil_current",
+                        "geometry/data/amc/amc_p2iu_coil_current.parquet",
+                    ),
+                    AlignChannels("p2iu_coil_current"),
+                    AddGeometry(
+                        "p2l_case_current",
+                        "geometry/data/amc/amc_p2l_case_current.parquet",
+                    ),
+                    AlignChannels("p2l_case_current"),
+                    AddGeometry(
+                        "p2ol_coil_current",
+                        "geometry/data/amc/amc_p2ol_coil_current.parquet",
+                    ),
+                    AlignChannels("p2ol_coil_current"),
+                    AddGeometry(
+                        "p2ou_coil_current",
+                        "geometry/data/amc/amc_p2ou_coil_current.parquet",
+                    ),
+                    AlignChannels("p2ou_coil_current"),
+                    AddGeometry(
+                        "p2u_case_current",
+                        "geometry/data/amc/amc_p2u_case_current.parquet",
+                    ),
+                    AlignChannels("p2u_case_current"),
+                    AddGeometry(
+                        "p3l_case_current",
+                        "geometry/data/amc/amc_p3l_case_current.parquet",
+                    ),
+                    AlignChannels("p3l_case_current"),
+                    AddGeometry(
+                        "p3l_coil_current",
+                        "geometry/data/amc/amc_p3l_coil_current.parquet",
+                    ),
+                    AlignChannels("p3l_coil_current"),
+                    AddGeometry(
+                        "p3u_case_current",
+                        "geometry/data/amc/amc_p3u_case_current.parquet",
+                    ),
+                    AlignChannels("p3u_case_current"),
+                    AddGeometry(
+                        "p3u_coil_current",
+                        "geometry/data/amc/amc_p3u_coil_current.parquet",
+                    ),
+                    AlignChannels("p3u_coil_current"),
+                    AddGeometry(
+                        "p4l_case_current",
+                        "geometry/data/amc/amc_p4l_case_current.parquet",
+                    ),
+                    AlignChannels("p4l_case_current"),
+                    AddGeometry(
+                        "p4l_coil_current",
+                        "geometry/data/amc/amc_p4l_coil_current.parquet",
+                    ),
+                    AlignChannels("p4l_coil_current"),
+                    AddGeometry(
+                        "p4u_case_current",
+                        "geometry/data/amc/amc_p4u_case_current.parquet",
+                    ),
+                    AlignChannels("p4u_case_current"),
+                    AddGeometry(
+                        "p4u_coil_current",
+                        "geometry/data/amc/amc_p4u_coil_current.parquet",
+                    ),
+                    AlignChannels("p4u_coil_current"),
+                    AddGeometry(
+                        "p5l_case_current",
+                        "geometry/data/amc/amc_p5l_case_current.parquet",
+                    ),
+                    AlignChannels("p5l_case_current"),
+                    AddGeometry(
+                        "p5l_coil_current",
+                        "geometry/data/amc/amc_p5l_coil_current.parquet",
+                    ),
+                    AlignChannels("p5l_coil_current"),
+                    AddGeometry(
+                        "p5u_case_current",
+                        "geometry/data/amc/amc_p5u_case_current.parquet",
+                    ),
+                    AlignChannels("p5u_case_current"),
+                    AddGeometry(
+                        "p5u_coil_current",
+                        "geometry/data/amc/amc_p5u_coil_current.parquet",
+                    ),
+                    AlignChannels("p5u_coil_current"),
+                    AddGeometry(
+                        "p6l_case_current",
+                        "geometry/data/amc/amc_p6l_case_current.parquet",
+                    ),
+                    AlignChannels("p6l_case_current"),
+                    AddGeometry(
+                        "p6l_coil_current",
+                        "geometry/data/amc/amc_p6l_coil_current.parquet",
+                    ),
+                    AlignChannels("p6l_coil_current"),
+                    AddGeometry(
+                        "p6u_case_current",
+                        "geometry/data/amc/amc_p6u_case_current.parquet",
+                    ),
+                    AlignChannels("p6u_case_current"),
+                    AddGeometry(
+                        "p6u_coil_current",
+                        "geometry/data/amc/amc_p6u_coil_current.parquet",
+                    ),
+                    AlignChannels("p6u_coil_current"),
+                    AddGeometry(
+                        "sol_current", "geometry/data/amc/amc_sol_current.parquet"
+                    ),
+                    AlignChannels("sol_current"),
                 ]
             ),
             "amh": Pipeline(
@@ -638,14 +853,58 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("amm")),
                     MergeDatasets(),
-                    TensoriseChannels("incon"),
-                    TensoriseChannels("mid"),
-                    TensoriseChannels("ring"),
-                    TensoriseChannels("rodgr"),
-                    TensoriseChannels("vertw"),
-                    TensoriseChannels("lhorw"),
-                    TensoriseChannels("uhorw"),
                     TransformUnits(),
+                    AddGeometry("botcol", "geometry/data/amm/amm_botcol.parquet"),
+                    AlignChannels("botcol"),
+                    AddGeometry(
+                        "endcrown_l", "geometry/data/amm/amm_endcrown_l.parquet"
+                    ),
+                    AlignChannels("endcrown_l"),
+                    AddGeometry(
+                        "endcrown_u", "geometry/data/amm/amm_endcrown_u.parquet"
+                    ),
+                    AlignChannels("endcrown_u"),
+                    TensoriseChannels("incon"),
+                    AddGeometry("incon", "geometry/data/amm/amm_incon.parquet"),
+                    AlignChannels("incon"),
+                    TensoriseChannels("lhorw"),
+                    AddGeometry("lhorw", "geometry/data/amm/amm_lhorw.parquet"),
+                    AlignChannels("lhorw"),
+                    TensoriseChannels("mid"),
+                    AddGeometry("mid", "geometry/data/amm/amm_mid.parquet"),
+                    AlignChannels("mid"),
+                    AddGeometry("p2larm1", "geometry/data/amm/amm_p2larm1.parquet"),
+                    AlignChannels("p2larm1"),
+                    AddGeometry("p2larm2", "geometry/data/amm/amm_p2larm2.parquet"),
+                    AlignChannels("p2larm2"),
+                    AddGeometry("p2larm3", "geometry/data/amm/amm_p2larm3.parquet"),
+                    AlignChannels("p2larm3"),
+                    AddGeometry("p2ldivpl1", "geometry/data/amm/amm_p2ldivpl1.parquet"),
+                    AlignChannels("p2ldivpl1"),
+                    AddGeometry("p2ldivpl2", "geometry/data/amm/amm_p2ldivpl2.parquet"),
+                    AlignChannels("p2ldivpl2"),
+                    AddGeometry("p2uarm1", "geometry/data/amm/amm_p2uarm1.parquet"),
+                    AlignChannels("p2uarm1"),
+                    AddGeometry("p2uarm2", "geometry/data/amm/amm_p2uarm2.parquet"),
+                    AlignChannels("p2uarm2"),
+                    AddGeometry("p2uarm3", "geometry/data/amm/amm_p2uarm3.parquet"),
+                    AlignChannels("p2uarm3"),
+                    AddGeometry("p2udivpl1", "geometry/data/amm/amm_p2udivpl1.parquet"),
+                    AlignChannels("p2udivpl1"),
+                    TensoriseChannels("ring"),
+                    AddGeometry("ring", "geometry/data/amm/amm_ring.parquet"),
+                    AlignChannels("ring"),
+                    TensoriseChannels("rodgr"),
+                    AddGeometry("rodgr", "geometry/data/amm/amm_rodr.parquet"),
+                    AlignChannels("rodgr"),
+                    AddGeometry("topcol", "geometry/data/amm/amm_topcol.parquet"),
+                    AlignChannels("topcol"),
+                    TensoriseChannels("uhorw"),
+                    AddGeometry("uhorw", "geometry/data/amm/amm_uhorw.parquet"),
+                    AlignChannels("uhorw"),
+                    TensoriseChannels("vertw"),
+                    AddGeometry("vertw", "geometry/data/amm/amm_vertw.parquet"),
+                    AlignChannels("vertw"),
                 ]
             ),
             "ams": Pipeline(
@@ -920,16 +1179,35 @@ class MASTPipelineRegistry(PipelineRegistry):
                             "tcam#9": "tcam_9",
                         }
                     ),
-                    TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
-                    TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
-                    TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
-                    TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
-                    TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
-                    TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
                     TransformUnits(),
-                    AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
-                    AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),
-                    AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv"),
+                    TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
+                    AddGeometry(
+                        "v_ste29", "geometry/data/xsx/ssx_inner_vertical_cam.parquet"
+                    ),
+                    AlignChannels("v_ste29"),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
+                    AddGeometry(
+                        "hcam_l", "geometry/data/xsx/ssx_lower_horizontal_cam.parquet"
+                    ),
+                    AlignChannels("hcam_l"),
+                    TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
+                    AddGeometry("tcam", "geometry/data/xsx/ssx_tangential_cam.parquet"),
+                    AlignChannels("tcam"),
+                    TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
+                    AddGeometry(
+                        "hpzr", "geometry/data/xsx/ssx_third_horizontal_cam.parquet"
+                    ),
+                    AlignChannels("hpzr"),
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
+                    AddGeometry(
+                        "hcam_u", "geometry/data/xsx/ssx_upper_horizontal_cam.parquet"
+                    ),
+                    AlignChannels("hcam_u"),
+                    TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
+                    AddGeometry(
+                        "v_ste36", "geometry/data/xsx/ssx_outer_vertical_cam.parquet"
+                    ),
+                    AlignChannels("v_ste36"),
                 ]
             ),
             "xma": Pipeline(
@@ -938,6 +1216,45 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xma")),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
+                    AddGeometry("ccbv", "geometry/data/xma/ccbv.parquet"),
+                    AlignChannels("ccbv"),
+                    TensoriseChannels("fl_cc"),
+                    AddGeometry("fl_cc", "geometry/data/xma/fl_cc.parquet"),
+                    AlignChannels("fl_cc"),
+                    TensoriseChannels("fl_p2l"),
+                    AddGeometry("fl_p2l", "geometry/data/xma/fl_p2l.parquet"),
+                    AlignChannels("fl_p2l"),
+                    TensoriseChannels("fl_p3l"),
+                    AddGeometry("fl_p3l", "geometry/data/xma/fl_p3l.parquet"),
+                    AlignChannels("fl_p3l"),
+                    TensoriseChannels("fl_p4l"),
+                    AddGeometry("fl_p4l", "geometry/data/xma/fl_p4l.parquet"),
+                    AlignChannels("fl_p4l"),
+                    TensoriseChannels("fl_p5l"),
+                    AddGeometry("fl_p5l", "geometry/data/xma/fl_p5l.parquet"),
+                    AlignChannels("fl_p5l"),
+                    TensoriseChannels("fl_p6l"),
+                    AddGeometry("fl_p6l", "geometry/data/xma/fl_p6l.parquet"),
+                    AlignChannels("fl_p6l"),
+                    TensoriseChannels("fl_p2u"),
+                    AddGeometry("fl_p2u", "geometry/data/xma/fl_p2u.parquet"),
+                    AlignChannels("fl_p2u"),
+                    TensoriseChannels("fl_p3u"),
+                    AddGeometry("fl_p3u", "geometry/data/xma/fl_p3u.parquet"),
+                    AlignChannels("fl_p3u"),
+                    TensoriseChannels("fl_p4u"),
+                    AddGeometry("fl_p4u", "geometry/data/xma/fl_p4u.parquet"),
+                    AlignChannels("fl_p4u"),
+                    TensoriseChannels("fl_p5u"),
+                    AddGeometry("fl_p5u", "geometry/data/xma/fl_p5u.parquet"),
+                    AlignChannels("fl_p5u"),
+                    TensoriseChannels("obr", regex=r"obr_(\d+)"),
+                    AddGeometry("obr", "geometry/data/xma/xma_obr.parquet"),
+                    AlignChannels("obr"),
+                    TensoriseChannels("obv", regex=r"obv_(\d+)"),
+                    AddGeometry("obv", "geometry/data/xma/xma_obv.parquet"),
+                    AlignChannels("obv"),
                 ]
             ),
             "xmb": Pipeline(
@@ -946,6 +1263,15 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xmb")),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("sad_out_l"),
+                    AddGeometry("sad_out_l", "geometry/data/xmb/xmb_sad_l.parquet"),
+                    AlignChannels("sad_out_l"),
+                    TensoriseChannels("sad_out_u"),
+                    AddGeometry("sad_out_u", "geometry/data/xmb/xmb_sad_u.parquet"),
+                    AlignChannels("sad_out_u"),
+                    TensoriseChannels("sad_out_m"),
+                    AddGeometry("sad_out_m", "geometry/data/xmb/xmb_sad_m.parquet"),
+                    AlignChannels("sad_out_m"),
                 ]
             ),
             "xmc": Pipeline(
@@ -954,6 +1280,15 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(StandardiseSignalDataset("xmc")),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
+                    AddGeometry("cc_mt", "geometry/data/xmc/ccmt.parquet"),
+                    AlignChannels("cc_mt"),
+                    TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
+                    AddGeometry("cc_mv", "geometry/data/xmc/ccmv.parquet"),
+                    AlignChannels("cc_mv"),
+                    TensoriseChannels("omv", regex=r"omv_(\d+)"),
+                    AddGeometry("omv", "geometry/data/xmc/xmc_omv.parquet"),
+                    AlignChannels("omv"),
                 ]
             ),
             "xmp": Pipeline(

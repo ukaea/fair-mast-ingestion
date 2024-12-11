@@ -1,0 +1,65 @@
+AMC_Plasma Current                                       
+         -            -              330.0		 
+AMC_Plasma Current                                       
+         -            -              330.0		 
+AMC_Plasma Current                                       
+         -            -              330.0		 
+AMC_Plasma Current                                       
+         -            -              330.0		 
+AMC_Plasma Current                                       
+         -            -              270.0		 
+AMC_Plasma Current                                       
+         -            -              270.0		 
+AMC_Plasma Current                                       
+         -            -              270.0		 
+AMC_Plasma Current                                       
+         -            -              270.0		 
+AMC_TF Current                                           
+         -            -                -		 
+AMC_Sol Current                                          
+         -            -                -		 
+AMC_EFPS Current                                         
+         -            -                -		 
+AMC_P2u Current                                          
+       0.5000         1.66900        330.0		 
+AMC_P2u Current                                          
+       0.5000         1.69900        150.0		 
+AMC_P3u Current                                          
+       1.1002         1.10360        330.0		 
+AMC_P3u Current                                          
+       1.1002         1.10360        150.0		 
+AMC_P4u Current                                          
+       1.4949         1.10090        360.0		 
+AMC_P4u Current                                          
+       1.4949         1.10090        180.0		 
+AMC_P5u Current                                          
+       1.6416         0.50420        360.0		 
+AMC_P5u Current                                          
+       1.6416         0.50420        180.0		 
+AMC_P6u Current                                          
+       1.4382         0.89450        360.0		 
+AMC_P6u Current                                          
+       1.4382         0.89450        180.0		 
+AMC_P2l Current                                          
+       0.4998        -1.65120        330.0		 
+AMC_P2l Current                                          
+       0.4998        -1.65120        150.0		 
+AMC_P3l Current                                          
+       1.1000        -1.09960        330.0		 
+AMC_P3l Current                                          
+       1.1000        -1.09960        150.0		 
+AMC_P4l Current                                          
+       1.4681        -1.10900        360.0		 
+AMC_P4l Current                                          
+       1.4681        -1.10900        180.0		 
+AMC_P5l Current                                          
+       1.6403        -0.50530        360.0		 
+AMC_P5l Current                                          
+       1.6403        -0.50530        180.0		 
+AMC_P6l Current                                          
+       1.4367        -0.89510        360.0		 
+AMC_P6l Current                                          
+       1.4367        -0.89510        180.0
+
+    
+

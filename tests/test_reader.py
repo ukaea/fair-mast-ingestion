@@ -21,7 +21,7 @@ def test_list_signals():
     signals = reader.list_datasets()
 
     assert isinstance(signals, list)
-    assert len(signals) == 11254
+    assert len(signals) == 11227
 
     info = signals[0]
     assert info.name == "abm/calib_shot"

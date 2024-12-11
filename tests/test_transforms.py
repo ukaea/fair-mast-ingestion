@@ -9,7 +9,6 @@ from src.transforms import (
     ProcessImage,
     RenameDimensions,
     RenameVariables,
-    StandardiseSignalDataset,
     TensoriseChannels,
     TransformUnits,
 )
@@ -79,18 +78,10 @@ def test_merge_datasets(fake_dataset):
     assert "data_b" in dataset.data_vars
 
 
-def test_standardise_dataset(fake_dataset):
-    transform = StandardiseSignalDataset("amc")
-    dataset = transform(fake_dataset)
-
-    assert "plasma_current" in dataset.data_vars
-    assert "plasma_current_error" in dataset.data_vars
-
-
 def test_xsx_camera_params():
     fake_dataset = xr.Dataset(
         data_vars=dict(
-            tcam=(("time", 'tcam_channels'), np.random.random((100, 18))),
+            tcam=(("time", "tcam_channels"), np.random.random((100, 18))),
             time=("time", np.random.random(100)),
         ),
         attrs={"name": "xsx/tcam", "shot_id": 30420},

@@ -50,6 +50,7 @@ def test_create_dataset_task(tmpdir, mocker):
     ds = xr.open_zarr(dataset_path, group="abm")
     assert len(ds.data_vars) == 3
 
+
 @pytest.mark.skip(reason="Pyuda client unavailable")
 @pytest.mark.usefixtures("fake_dataset")
 def test_write_cleanup(tmpdir, fake_dataset):
@@ -61,6 +62,7 @@ def test_write_cleanup(tmpdir, fake_dataset):
     task = CleanupDatasetTask(writer.dataset_path)
     task()
     assert not writer.dataset_path.exists()
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_upload_dataset(mocker):
@@ -96,6 +98,7 @@ def test_upload_dataset(mocker):
         env=env,
     )
 
+
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_source_metadata_reader(tmpdir):
     shot = 30420
@@ -106,6 +109,7 @@ def test_source_metadata_reader(tmpdir):
     assert path.exists()
     df = pd.read_parquet(path)
     assert isinstance(df, pd.DataFrame)
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_signal_metadata_reader(tmpdir):

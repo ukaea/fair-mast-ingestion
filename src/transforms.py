@@ -99,45 +99,6 @@ class DropCoordinates:
                     datasets[name] = dataset.drop_vars(key)
         return datasets
 
-    # class StandardiseSignalDataset:
-
-    #     def __init__(self, source: str, squeeze_dataset: bool = True) -> None:
-    #         self.source = source
-    #         self.squeeze_dataset = squeeze_dataset
-
-    #     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-    #         if self.squeeze_dataset:
-    #             dataset = dataset.squeeze(drop=True)
-
-    #         name = dataset.attrs["name"].split("/")[-1]
-
-    #         # Drop error if all zeros
-    #         if (dataset["error"].values == 0).all():
-    #             dataset = dataset.drop_vars("error")
-
-    #         # Rename variables
-    #         new_names = {}
-    #         if "error" in dataset:
-    #             new_names["data"] = name
-    #             new_names["error"] = "_".join([name, "error"])
-    #         else:
-    #             name = name + "_" if name == "time" or name in dataset.data_vars or name in dataset.coords else name
-    #             new_names["data"] = name
-
-    #         dataset = dataset.rename(new_names)
-    #         dataset = self._drop_unused_coords(dataset)
-
-    #         if "time" in dataset.dims:
-    #             dataset = dataset.drop_duplicates(dim="time")
-
-    #         # Update attributes
-    #         attrs = dataset.attrs
-    #         attrs["name"] = self.source + "/" + new_names["data"]
-    #         attrs["dims"] = list(dataset.sizes.keys())
-    #         dataset[new_names["data"]].attrs = attrs
-    #         dataset = dataset.compute()
-    #         return dataset
-
     def _drop_unused_coords(self, data: xr.Dataset) -> xr.Dataset:
         used_coords = set()
         for var in data.data_vars.values():

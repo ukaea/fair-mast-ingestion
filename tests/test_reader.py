@@ -3,16 +3,18 @@ from dataclasses import asdict
 import pandas as pd
 import pytest
 import xarray as xr
-
-pyuda_import = pytest.importorskip("pyuda")
 from src.reader import (  # noqa: E402
     DatasetReader,  # noqa: E402
     SignalMetadataReader,  # noqa: E402
     SourceMetadataReader,  # noqa: E402
 )  # noqa: E402
 
+import importlib
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+uda_available = not importlib.util.find_spec("pyuda")
+
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_list_signals():
     shot = 30420
     reader = DatasetReader(shot)
@@ -24,7 +26,8 @@ def test_list_signals():
     info = signals[0]
     assert info.name == "abm/calib_shot"
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_list_signals_exclude_raw():
     shot = 30420
     reader = DatasetReader(shot)
@@ -36,7 +39,8 @@ def test_list_signals_exclude_raw():
     info = signals[0]
     assert info.name == "abm/calib_shot"
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_read_signal():
     shot = 30420
     reader = DatasetReader(shot)
@@ -49,7 +53,8 @@ def test_read_signal():
     assert dataset.attrs["name"] == "abm/calib_shot"
     assert dataset["time"].shape == (1,)
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_read_image():
     shot = 30420
     reader = DatasetReader(shot)
@@ -66,7 +71,8 @@ def test_read_image():
     assert dataset["data"].shape == (186, 912, 768)
     assert list(dataset.dims.keys()) == ["time", "height", "width"]
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_read_signals_metadata():
     shot = 30420
     reader = SignalMetadataReader(shot)
@@ -74,7 +80,8 @@ def test_read_signals_metadata():
 
     assert isinstance(df, pd.DataFrame)
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+
+@pytest.mark.skipif(uda_available, reason="Pyuda client unavailable")
 def test_read_sources_metadata():
     shot = 30420
     reader = SourceMetadataReader(shot)

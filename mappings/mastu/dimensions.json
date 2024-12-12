@@ -1,4 +1,22 @@
 {
+    "anb/sum_voltage": {
+        "timetime": "time"
+    },
+    "anb/sum_time": {
+        "timetime": "time"
+    },
+    "anb/sum_power": {
+        "timetime": "time"
+    },
+    "anb/ss_voltage": {
+        "timetime": "time"
+    },
+    "anb/ss_time": {
+        "timetime": "time"
+    },
+    "anb/ss_power": {
+        "timetime": "time"
+    },
     "epm/output_fluxfunctionprofiles_elongation": {
         "normalizedpoloidalflux": "normalized_poloidal_flux"
     },

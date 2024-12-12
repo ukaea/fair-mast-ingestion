@@ -17,7 +17,6 @@ logging.basicConfig(level=logging.INFO)
 
 
 class MetadataWorkflow:
-
     def __init__(self, data_dir: str):
         self.data_dir = Path(data_dir)
 
@@ -36,7 +35,6 @@ class MetadataWorkflow:
 
 
 class S3IngestionWorkflow:
-
     def __init__(
         self,
         metadata_dir: str,
@@ -45,7 +43,7 @@ class S3IngestionWorkflow:
         force: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
-        file_format: str = 'zarr',
+        file_format: str = "zarr",
         facility: str = "MAST",
     ):
         self.metadata_dir = metadata_dir
@@ -73,7 +71,7 @@ class S3IngestionWorkflow:
             self.signal_names,
             self.source_names,
             self.file_format,
-            self.facility
+            self.facility,
         )
 
         upload = UploadDatasetTask(local_path, self.upload_config)
@@ -91,8 +89,8 @@ class S3IngestionWorkflow:
 
         cleanup()
 
-class LocalIngestionWorkflow:
 
+class LocalIngestionWorkflow:
     def __init__(
         self,
         metadata_dir: str,
@@ -100,8 +98,8 @@ class LocalIngestionWorkflow:
         force: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
-        file_format: str = 'zarr',
-        facility: str = "MAST"
+        file_format: str = "zarr",
+        facility: str = "MAST",
     ):
         self.metadata_dir = metadata_dir
         self.data_dir = Path(data_dir)
@@ -121,22 +119,19 @@ class LocalIngestionWorkflow:
             self.signal_names,
             self.source_names,
             self.file_format,
-            self.facility
+            self.facility,
         )
 
         try:
             create()
         except Exception as e:
             import traceback
+
             trace = traceback.format_exc()
             logging.error(f"Failed to run workflow with error {type(e)}: {e}\n{trace}")
 
 
-
-
-
 class WorkflowManager:
-
     def __init__(self, workflow):
         self.workflow = workflow
 
@@ -162,4 +157,5 @@ class WorkflowManager:
 
         n = len(tasks)
         for i, task in enumerate(as_completed(tasks)):
+            task.release()
             logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")

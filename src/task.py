@@ -180,6 +180,7 @@ class CreateDatasetTask:
 
     def load_source(self, group: pd.DataFrame) -> dict[str, xr.Dataset]:
         datasets = {}
+
         for _, info in group.iterrows():
             info = info.to_dict()
 

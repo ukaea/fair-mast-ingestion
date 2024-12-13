@@ -431,6 +431,46 @@ class MASTUPipelineRegistry(PipelineRegistry):
         dim_mapping_file = "mappings/mastu/dimensions.json"
 
         self.pipelines = {
+            "amb": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "amc": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                    RenameVariables(
+                        {
+                            "ip": "plasma_current",
+                        }
+                    ),
+                ]
+            ),
+            "anb": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "act": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "acu": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
@@ -438,7 +478,38 @@ class MASTUPipelineRegistry(PipelineRegistry):
                     TransformUnits(),
                 ]
             ),
+            "ayd": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
             "epm": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "esm": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xsx": Pipeline(
+                [
+                    MapDict(RenameDimensions(dim_mapping_file)),
+                    MergeDatasets(),
+                    TransformUnits(),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_ch(\d+)"),
+                    TensoriseChannels("tcam", regex=r"tcam_ch(\d+)"),
+                ]
+            ),
+            "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
                     MergeDatasets(),

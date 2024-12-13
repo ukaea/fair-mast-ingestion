@@ -20,17 +20,18 @@ module load uda-mast/1.3.9
 source /home/rt2549/envs/fmast/bin/activate
 
 # Get command line arguments
-summary_file=$1
-bucket_path=$2
-num_workers=$3
+bucket_path="s3://fairmast/mastu/level1/shots"
+num_workers=8
 
 export PATH="/home/rt2549/dev/:$PATH"
 
 random_string=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
-
 temp_dir="/common/tmp/sjackson/local_cache/$random_string"
 metadata_dir="/common/tmp/sjackson/data/uda/"
+credentials_file=".s5cfg.ukaea"
+endpoint_url="http://mon3.cepheus.hpc.l:8000"
 
 # Run script
-time mpirun -np $num_workers \
-    python3 -m src.main $temp_dir $summary_file --metadata_dir $metadata_dir --bucket_path $bucket_path --file_format zarr --upload --force --source_names ${@:4}
+summary_file="./campaign_shots/mastu.csv"
+mpirun -np $num_workers \
+    python3 -m src.main $temp_dir $summary_file --credentials_file $credentials_file --endpoint_url $endpoint_url --metadata_dir $metadata_dir --bucket_path $bucket_path --upload --force --facility "MASTU" --source_names ${@:1}

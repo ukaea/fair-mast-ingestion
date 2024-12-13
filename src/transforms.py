@@ -50,7 +50,11 @@ class RenameDimensions:
 
             for old_name, new_name in dims.items():
                 if old_name in dataset.dims:
-                    dataset = dataset.rename_dims({old_name: new_name})
+                    if new_name not in dataset:
+                        dataset = dataset.rename_dims({old_name: new_name})
+                    else:
+                        dataset = dataset.swap_dims({old_name: new_name})
+                        dataset = dataset.drop_vars(old_name)
 
             for old_name, new_name in dims.items():
                 if old_name in dataset.coords:
@@ -94,49 +98,6 @@ class DropCoordinates:
                     dataset = dataset.drop_indexes(key)
                     datasets[name] = dataset.drop_vars(key)
         return datasets
-
-
-class StandardiseSignalDataset:
-    def __init__(self, source: str, squeeze_dataset: bool = True) -> None:
-        self.source = source
-        self.squeeze_dataset = squeeze_dataset
-
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        if self.squeeze_dataset:
-            dataset = dataset.squeeze(drop=True)
-
-        name = dataset.attrs["name"].split("/")[-1]
-
-        # Drop error if all zeros
-        if (dataset["error"].values == 0).all():
-            dataset = dataset.drop_vars("error")
-
-        # Rename variables
-        new_names = {}
-        if "error" in dataset:
-            new_names["data"] = name
-            new_names["error"] = "_".join([name, "error"])
-        else:
-            name = (
-                name + "_"
-                if name == "time" or name in dataset.data_vars or name in dataset.coords
-                else name
-            )
-            new_names["data"] = name
-
-        dataset = dataset.rename(new_names)
-        dataset = self._drop_unused_coords(dataset)
-
-        if "time" in dataset.dims:
-            dataset = dataset.drop_duplicates(dim="time")
-
-        # Update attributes
-        attrs = dataset.attrs
-        attrs["name"] = self.source + "/" + new_names["data"]
-        attrs["dims"] = list(dataset.sizes.keys())
-        dataset[new_names["data"]].attrs = attrs
-        dataset = dataset.compute()
-        return dataset
 
     def _drop_unused_coords(self, data: xr.Dataset) -> xr.Dataset:
         used_coords = set()
@@ -473,7 +434,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -481,7 +441,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "amc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -494,7 +453,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "anb": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("anb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -502,7 +460,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "act": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("act")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -510,7 +467,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "acu": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("anb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -518,7 +474,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("ayc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -526,7 +481,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "ayd": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("ayd")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -534,7 +488,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "epm": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("epm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -542,7 +495,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "esm": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("esm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -550,7 +502,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "xsx": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
@@ -561,7 +512,6 @@ class MASTUPipelineRegistry(PipelineRegistry):
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(dim_mapping_file)),
-                    MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -576,7 +526,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(DropZeroDimensions()),
-                    MapDict(StandardiseSignalDataset("abm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -584,7 +533,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "acc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("acc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -592,7 +540,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "act": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("act")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -600,7 +547,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ada": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ada")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -608,7 +554,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "aga": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("aga")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -616,7 +561,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "adg": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("adg")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -624,7 +568,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ahx": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ahx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -632,7 +575,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "aim": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("aim")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -640,7 +582,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "air": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("air")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -648,7 +589,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ait": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ait")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -658,7 +598,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                     MapDict(RenameDimensions()),
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("alp")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -666,7 +605,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ama": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ama")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -674,7 +612,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
@@ -721,7 +658,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
                     AddGeometry(
@@ -843,7 +779,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amh": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("amh")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -851,7 +786,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "amm": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("amm")),
                     MergeDatasets(),
                     TransformUnits(),
                     AddGeometry("botcol", "geometry/data/amm/amm_botcol.parquet"),
@@ -910,7 +844,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ams": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ams")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -918,7 +851,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "anb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -926,7 +858,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ane": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ane")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -934,7 +865,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ant": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ant")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -942,7 +872,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "anu": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("anu")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -951,7 +880,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("aoe")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -959,7 +887,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "arp": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("arp")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -967,7 +894,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "asb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("asb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -975,7 +901,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "asm": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("asm")),
                     MergeDatasets(),
                     TensoriseChannels("sad_m"),
                     TransformUnits(),
@@ -985,7 +910,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(RenameDimensions()),
                     MapDict(ASXTransform()),
-                    MapDict(StandardiseSignalDataset("asx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -993,7 +917,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "atm": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("atm")),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -1006,9 +929,8 @@ class MASTPipelineRegistry(PipelineRegistry):
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("ayc")),
-                    DropCoordinates("ayc/segment_number", ["time_segment"]),
-                    DropDatasets(["ayc/time"]),
+                    DropCoordinates("segment_number", ["time_segment"]),
+                    DropDatasets(["time"]),
                     MergeDatasets(),
                     TransformUnits(),
                     RenameVariables(
@@ -1021,7 +943,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "aye": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("aye")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1030,18 +951,17 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     DropDatasets(
                         [
-                            "efm/fcoil_n",
-                            "efm/fcoil_segs_n",
-                            "efm/limitern",
-                            "efm/magpr_n",
-                            "efm/silop_n",
-                            "efm/shot_number",
+                            "fcoil_n",
+                            "fcoil_segs_n",
+                            "limitern",
+                            "magpr_n",
+                            "silop_n",
+                            "shot_number",
                         ]
                     ),
                     MapDict(ReplaceInvalidValues()),
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("efm")),
                     MergeDatasets(),
                     LCFSTransform(),
                     TransformUnits(),
@@ -1060,7 +980,6 @@ class MASTPipelineRegistry(PipelineRegistry):
                 [
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("esm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1068,7 +987,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "esx": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("esx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1087,7 +1005,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1095,7 +1012,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xim": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xim")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1103,7 +1019,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xmo": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xmo")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1111,7 +1026,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xpc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xpc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1119,7 +1033,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xsx": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
                     RenameVariables(
                         {
@@ -1213,7 +1126,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xma": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xma")),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
@@ -1260,7 +1172,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xmb": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xmb")),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("sad_out_l"),
@@ -1277,7 +1188,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xmc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xmc")),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
@@ -1294,7 +1204,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xmp": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xmp")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -1302,7 +1211,6 @@ class MASTPipelineRegistry(PipelineRegistry):
             "xms": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardiseSignalDataset("xms")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]

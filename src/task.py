@@ -8,8 +8,8 @@ from pathlib import Path
 import pandas as pd
 import xarray as xr
 
-from src.mast import MASTClient
-from src.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
+from src.load import LoaderTypes, MissingProfileError, loader_registry
+from src.reader import SignalMetadataReader, SourceMetadataReader
 from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
 from src.uploader import UploadConfig
 from src.writer import DatasetWriter
@@ -89,7 +89,7 @@ class CreateDatasetTask:
     ):
         self.shot = shot
         self.metadata_dir = Path(metadata_dir)
-        self.reader = DatasetReader(shot)
+        self.reader = loader_registry.create(LoaderTypes.UDA)
         self.writer = DatasetWriter(shot, dataset_dir, file_format)
         self.signal_names = signal_names
         self.source_names = source_names
@@ -149,11 +149,13 @@ class CreateDatasetTask:
     ):
         signal_infos_for_source = signal_infos.loc[source_group_index]
         if source_name == "xdc":
-            logging.warning(f"{signal_infos_for_source}")
-            signal_infos_for_source = signal_infos_for_source.loc[
-                (signal_infos_for_source.name == "xdc/ip_t_ipref")
-                | (signal_infos_for_source.uda_name == "XDC/PLASMA/T/IP_REF")
-            ]
+            # Drop any CPU which is not CPU1 or isoflux
+            # names = ['xdc1', 'xdc2', 'xdc3', 'xdc4', 'cpu2', 'cpu3', 'cpu4', 'isoflux']
+            names = ["ip_t_ipref", "density_t_nelref", "ai_raw_tf_current", "shape"]
+            name_mask = signal_infos_for_source["name"].map(
+                lambda x: any([c in x for c in names])
+            )
+            signal_infos_for_source = signal_infos_for_source.loc[name_mask]
         return signal_infos_for_source
 
     def _read_metadata(self) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -181,29 +183,27 @@ class CreateDatasetTask:
 
         for _, info in group.iterrows():
             info = info.to_dict()
+
             name = info["name"]
-            format = info["format"]
-            format = format if format is not None else ""
+            name = name.strip("/")
+            name = name.split("/", maxsplit=1)[-1]
+
+            uda_name = info["uda_name"]
 
             try:
-                client = MASTClient()
-                if info["signal_type"] != "Image":
-                    dataset = client.get_signal(
-                        shot_num=self.shot, name=info["uda_name"], format=format
-                    )
-                else:
-                    dataset = client.get_image(
-                        shot_num=self.shot, name=info["uda_name"]
-                    )
-            except Exception as e:
-                uda_name = info["uda_name"]
-                logging.warning(
-                    f"Could not read dataset {name} ({uda_name}) for shot {self.shot}: {e}"
-                )
+                dataset = self.reader.load(self.shot, uda_name)
+            except MissingProfileError as e:
+                logging.warning(e)
                 continue
 
+            if name == "time":
+                name = "time_"
+
+            dataset = dataset.rename_vars(
+                {uda_name: name, f"{uda_name}_error": f"{name}_error"}
+            )
+
             dataset.attrs.update(info)
-            dataset.attrs["dims"] = list(dataset.sizes.keys())
             datasets[name] = dataset
         return datasets
 

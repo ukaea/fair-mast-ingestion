@@ -11,7 +11,8 @@ def harmonise_name(name: str) -> str:
     name = name.replace(",", "")
     name = name.strip("_")
     name = name.strip("/")
-    name = name.split("_", maxsplit=1)[-1]
+    # name = name.split("_", maxsplit=1)[-1]
+    name = name.replace("_", "/", 1)
     name = name.lower()
     return name
 

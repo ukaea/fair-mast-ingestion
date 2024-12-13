@@ -46,7 +46,8 @@ class DatasetBuilder:
                 new_name = harmonise_name(name)
                 dataset = self.loader.load(shot, name)
                 dataset.attrs["name"] = new_name
-                datasets[f"{group_name}/{new_name}"] = dataset
+                datasets[new_name] = dataset
+                print(new_name)
             except MissingProfileError as e:
                 logger.warning(e)
         return datasets

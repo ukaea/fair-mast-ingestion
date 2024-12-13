@@ -3,7 +3,7 @@ from typing import Optional
 from src.log import logger
 from src.utils import harmonise_name
 from src.load import BaseLoader, MissingProfileError
-from src.transforms import PipelineRegistry
+from src.pipelines import Pipelines
 from src.writer import DatasetWriter
 
 
@@ -12,7 +12,7 @@ class DatasetBuilder:
         self,
         loader: BaseLoader,
         writer: DatasetWriter,
-        pipelines: PipelineRegistry,
+        pipelines: Pipelines,
         include_datasets: Optional[list[str]],
         exclude_datasets: Optional[list[str]],
     ):

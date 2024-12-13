@@ -6,7 +6,7 @@ from distributed import Client, LocalCluster, as_completed
 from src.log import logger
 from src.config import IngestionConfig
 from src.builder import DatasetBuilder
-from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
+from src.pipelines import pipelines_registry
 from src.load import loader_registry
 from src.writer import dataset_writer_registry
 
@@ -41,13 +41,7 @@ class IngestionWorkflow:
         )
 
         loader = loader_registry.create("uda")
-
-        if self.facility == "MAST":
-            pipelines = MASTPipelineRegistry()
-        elif self.facility == "MASTU":
-            pipelines = MASTUPipelineRegistry()
-        else:
-            raise RuntimeError(f"Unknown facility: {self.facility}")
+        pipelines = pipelines_registry.create(self.facility)
 
         builder = DatasetBuilder(
             loader,

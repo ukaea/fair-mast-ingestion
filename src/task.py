@@ -10,7 +10,7 @@ import xarray as xr
 
 from src.load import LoaderTypes, MissingProfileError, loader_registry
 from src.reader import SignalMetadataReader, SourceMetadataReader
-from src.transforms import MASTPipelineRegistry, MASTUPipelineRegistry
+from src.transforms import MASTPipelines, MASTUPipelines
 from src.uploader import UploadConfig
 from src.writer import DatasetWriter
 
@@ -95,9 +95,9 @@ class CreateDatasetTask:
         self.source_names = source_names
 
         if facility == "MAST":
-            self.pipelines = MASTPipelineRegistry()
+            self.pipelines = MASTPipelines()
         else:
-            self.pipelines = MASTUPipelineRegistry()
+            self.pipelines = MASTUPipelines()
 
     def __call__(self):
         try:

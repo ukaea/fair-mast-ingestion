@@ -72,7 +72,7 @@ class ZarrDatasetWriter(DatasetWriter):
     def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
         file_name = self.output_path / file_name
         dataset.to_zarr(
-            file_name, group=name, mode="a", zarr_format=self.version, consolidated=True
+            file_name, group=name, mode="w", zarr_format=self.version, consolidated=True
         )
         zarr.consolidate_metadata(file_name)
 

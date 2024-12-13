@@ -5,12 +5,9 @@ from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
-import pandas as pd
 import pint
 import pyarrow.parquet as pq
 import xarray as xr
-
-from src.registry import Registry
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
@@ -73,6 +70,15 @@ class DropZeroDimensions:
     def __call__(self, dataset: xr.Dataset) -> Any:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
+                dataset = dataset.drop_vars(key)
+        dataset = dataset.compute()
+        return dataset
+
+
+class DropZeroDataset:
+    def __call__(self, dataset: xr.Dataset) -> Any:
+        for key, item in dataset.data_vars.items():
+            if (item.values == 0).all():
                 dataset = dataset.drop_vars(key)
         dataset = dataset.compute()
         return dataset

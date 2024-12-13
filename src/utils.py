@@ -9,14 +9,9 @@ def harmonise_name(name: str) -> str:
     name = name.replace("(", "")
     name = name.replace(")", "")
     name = name.replace(",", "")
-
-    if name.startswith("_"):
-        name = name[1:]
-
-    parts = name.split("_")
-    if len(parts) > 1:
-        name = parts[0] + "/" + "_".join(parts[1:])
-
+    name = name.strip("_")
+    name = name.strip("/")
+    name = name.split("_", maxsplit=1)[-1]
     name = name.lower()
     return name
 

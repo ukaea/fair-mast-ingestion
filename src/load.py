@@ -10,6 +10,7 @@ from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
 
+from src.utils import harmonise_name
 from src.registry import Registry
 
 
@@ -237,6 +238,7 @@ class UDALoader(BaseLoader):
         data = np.atleast_1d(signal.data)
         error = np.atleast_1d(signal.errors)
         attrs = self._get_dataset_attributes(signal_name, signal)
+        signal_name = harmonise_name(signal_name)
 
         data = xr.DataArray(data, dims=dim_names, coords=coords, attrs=attrs)
         data.name = signal_name

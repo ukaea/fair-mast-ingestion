@@ -6,6 +6,7 @@ from src.transforms import (
     ASXTransform,
     DropCoordinates,
     DropDatasets,
+    DropZeroDataset,
     DropZeroDimensions,
     LCFSTransform,
     MapDict,
@@ -272,6 +273,7 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions()),
                     MergeDatasets(),
+                    DropZeroDataset(),
                     TransformUnits(),
                     AddGeometry(
                         "p2il_coil_current",

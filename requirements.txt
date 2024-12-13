@@ -3,13 +3,13 @@ pandas
 h5py
 h5netcdf
 s3fs
-dask
 distributed
-dask_mpi
-mpi4py
+dask
 xarray
 pint
-pytest
 pyarrow
 uda
 zarr
+rich
+pydantic
+git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python

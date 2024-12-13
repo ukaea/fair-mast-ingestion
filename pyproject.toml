@@ -21,5 +21,15 @@ py-modules = ["__init__"] #
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-mock"
+]
+
+mpi = [
+  "mpi4py",
+  "dask_mpi"
+]
 
 [project.urls]

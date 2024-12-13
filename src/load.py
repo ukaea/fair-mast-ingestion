@@ -1,13 +1,14 @@
 import re
-from abc import ABC
-from enum import Enum
-from typing import Optional
-
+import typing as t
 import fsspec
 import numpy as np
 import xarray as xr
 import zarr
 import zarr.storage
+from abc import ABC
+from enum import Enum
+from typing import Optional
+from pydantic import BaseModel
 
 from src.registry import Registry
 
@@ -20,8 +21,32 @@ class MissingSourceError(Exception):
     pass
 
 
+class DatasetInfo(BaseModel):
+    name: str
+    description: str
+    quality: str
+
+
+class SignalInfo(BaseModel):
+    name: str
+    version: int
+    description: str
+    quality: str
+    dataset: str
+
+
 class BaseLoader(ABC):
     def load(self, *args, **kwargs) -> xr.Dataset:
+        raise NotImplementedError(
+            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+        )
+
+    def list_datasets(self, shot: int) -> list[DatasetInfo]:
+        raise NotImplementedError(
+            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+        )
+
+    def list_signals(self, shot: int) -> list[SignalInfo]:
         raise NotImplementedError(
             f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
         )
@@ -62,6 +87,76 @@ class SALLoader(BaseLoader):
 class UDALoader(BaseLoader):
     def __init__(self) -> None:
         pass
+
+    def list_datasets(self, shot: int):
+        source_infos = self.get_source_infos(shot)
+        return source_infos
+
+    def list_signals(self, shot: int):
+        signal_infos = self.get_signal_infos(shot)
+        image_infos = self.get_image_infos(shot)
+        infos = signal_infos + image_infos
+        return infos
+
+    def get_source_infos(self, shot_num: int) -> t.List[DatasetInfo]:
+        from mast.mast_client import ListType
+
+        client = self._get_client()
+        signals = client.list(ListType.SOURCES, shot=shot_num)
+        infos = [
+            DatasetInfo(
+                name=item.source_alias,
+                description=item.description,
+                quality=self.lookup_status_code(item.status),
+            )
+            for item in signals
+        ]
+        return infos
+
+    def lookup_status_code(self, status):
+        """Status code mapping from the numeric representation to the meaning"""
+        lookup = {
+            -1: "Very Bad",
+            0: "Bad",
+            1: "Not Checked",
+            2: "Checked",
+            3: "Validated",
+        }
+        return lookup[status]
+
+    def get_signal_infos(self, shot_num: int) -> t.List[SignalInfo]:
+        client = self._get_client()
+        signals = client.list_signals(shot=shot_num)
+        infos = [
+            SignalInfo(
+                name=item.signal_name,
+                description=item.description,
+                version=item.pass_,
+                quality=self.lookup_status_code(item.signal_status),
+                dataset=item.source_alias,
+            )
+            for item in signals
+        ]
+        return infos
+
+    def get_image_infos(self, shot_num: int) -> t.List[SignalInfo]:
+        from mast.mast_client import ListType
+
+        client = self._get_client()
+
+        sources = client.list(ListType.SOURCES, shot_num)
+        sources = [source for source in sources if source.type == "Image"]
+        infos = [
+            SignalInfo(
+                name=item.source_alias,
+                description=item.description,
+                version=item.pass_,
+                quality=self.lookup_status_code(item.status),
+                dataset=item.source_alias,
+            )
+            for item in sources
+        ]
+        return infos
 
     def _get_client(self):
         import pyuda

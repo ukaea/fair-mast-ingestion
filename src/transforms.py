@@ -1,25 +1,27 @@
 import json
 import re
-import uuid
+import pint
+import numpy as np
+import xarray as xr
+import pyarrow.parquet as pq
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Optional
 
-import numpy as np
-import pint
-import pyarrow.parquet as pq
-import xarray as xr
+from src.utils import get_dataset_item_uuid
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
 CUSTOM_UNITS_FILE = "mappings/mast/custom_units.txt"
 
 
-def get_dataset_item_uuid(name: str, shot: int) -> str:
-    oid_name = name + "/" + str(shot)
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
+class BaseTransform(ABC):
+    @abstractmethod
+    def __call__(self, datasets: xr.Dataset) -> xr.Dataset:
+        raise NotImplementedError("Method is not implemented.")
 
 
-class MapDict:
+class MapDict(BaseTransform):
     def __init__(self, transform) -> None:
         self.transform = transform
 
@@ -33,7 +35,7 @@ class MapDict:
         return out
 
 
-class RenameDimensions:
+class RenameDimensions(BaseTransform):
     def __init__(
         self, mapping_file=DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True
     ) -> None:
@@ -44,8 +46,12 @@ class RenameDimensions:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         name = dataset.attrs["name"]
+        group_name = dataset.attrs["source"]
+        name = f"{group_name}/{name}"
+
         if name in self.dimension_mapping:
             dims = self.dimension_mapping[name]
+            name = name.split("/", maxsplit=1)[-1]
 
             for old_name, new_name in dims.items():
                 if old_name in dataset.dims:
@@ -66,7 +72,7 @@ class RenameDimensions:
         return dataset
 
 
-class DropZeroDimensions:
+class DropZeroDimensions(BaseTransform):
     def __call__(self, dataset: xr.Dataset) -> Any:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
@@ -75,7 +81,7 @@ class DropZeroDimensions:
         return dataset
 
 
-class DropZeroDataset:
+class DropZeroDataset(BaseTransform):
     def __call__(self, dataset: xr.Dataset) -> Any:
         for key, item in dataset.data_vars.items():
             if (item.values == 0).all():
@@ -84,17 +90,18 @@ class DropZeroDataset:
         return dataset
 
 
-class DropDatasets:
+class DropDatasets(BaseTransform):
     def __init__(self, keys: list[str]) -> None:
         self.keys = keys
 
     def __call__(self, datasets: dict[str, xr.Dataset]) -> dict[str, xr.Dataset]:
         for key in self.keys:
-            datasets.pop(key)
+            if key in datasets:
+                datasets.pop(key)
         return datasets
 
 
-class DropCoordinates:
+class DropCoordinates(BaseTransform):
     def __init__(self, name, keys: list[str]) -> None:
         self.name = name
         self.keys = keys
@@ -118,7 +125,7 @@ class DropCoordinates:
         return data
 
 
-class RenameVariables:
+class RenameVariables(BaseTransform):
     def __init__(self, mapping: dict[str, str]):
         self.mapping = mapping
 
@@ -130,7 +137,7 @@ class RenameVariables:
         return dataset
 
 
-class MergeDatasets:
+class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
@@ -138,7 +145,7 @@ class MergeDatasets:
         return dataset
 
 
-class TensoriseChannels:
+class TensoriseChannels(BaseTransform):
     def __init__(
         self,
         stem: str,
@@ -210,7 +217,7 @@ class TensoriseChannels:
         return sorted(strings, key=self._parse_digits)
 
 
-class TransformUnits:
+class TransformUnits(BaseTransform):
     def __init__(self):
         with Path(UNITS_MAPPING_FILE).open("r") as handle:
             self.units_map = json.load(handle)
@@ -243,7 +250,7 @@ class TransformUnits:
             return unit
 
 
-class ASXTransform:
+class ASXTransform(BaseTransform):
     """ASX is very special.
 
     The time points are actually the data and the data is blank.
@@ -269,7 +276,7 @@ class ASXTransform:
         return dataset
 
 
-class LCFSTransform:
+class LCFSTransform(BaseTransform):
     """LCFS transform for LCFS coordinates
 
     In MAST, the LCFS coordinates have a lot of padding.
@@ -293,7 +300,7 @@ class LCFSTransform:
         return dataset
 
 
-class AddGeometry:
+class AddGeometry(BaseTransform):
     def __init__(self, stem: str, path: str):
         table = pq.read_table(path)
         geom_data = table.to_pandas()
@@ -336,7 +343,7 @@ class AddGeometry:
         return dataset
 
 
-class AlignChannels:
+class AlignChannels(BaseTransform):
     def __init__(self, source: str):
         self.source = source
         self.channel_dim = f"{source}_channel"
@@ -353,25 +360,7 @@ class AlignChannels:
         return dataset
 
 
-class XDCRenameDimensions:
-    """XDC is a special boi...
-
-    XDC has dynamically named time dimensions. The same signal can be called 'time2' or 'time4'
-    depending on what got written to disk.
-    """
-
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = dataset.squeeze()
-        for dim_name in dataset.sizes.keys():
-            if "time" in dim_name and dim_name != "time":
-                dataset = dataset.rename_dims({dim_name: "time"})
-                dataset = dataset.rename_vars({dim_name: "time"})
-
-        dataset = dataset.compute()
-        return dataset
-
-
-class ProcessImage:
+class ProcessImage(BaseTransform):
     def __call__(self, dataset: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset: xr.Dataset = list(dataset.values())[0]
         dataset.attrs["units"] = "pixels"
@@ -381,7 +370,7 @@ class ProcessImage:
         return dataset
 
 
-class ReplaceInvalidValues:
+class ReplaceInvalidValues(BaseTransform):
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = dataset.where(dataset != -999, np.nan)
         dataset = dataset.compute()

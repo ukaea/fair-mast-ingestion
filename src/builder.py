@@ -44,10 +44,11 @@ class DatasetBuilder:
             name = signal_info.name
             try:
                 new_name = harmonise_name(name)
+                logger.info(f"Loading {new_name}")
                 dataset = self.loader.load(shot, name)
                 dataset.attrs["name"] = new_name
+                dataset.attrs["source"] = group_name
                 datasets[new_name] = dataset
-                print(new_name)
             except MissingProfileError as e:
                 logger.warning(e)
         return datasets

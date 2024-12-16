@@ -241,12 +241,16 @@ class UDALoader(BaseLoader):
         signal_name = harmonise_name(signal_name)
 
         data = xr.DataArray(data, dims=dim_names, coords=coords, attrs=attrs)
+        if signal_name == "time":
+            signal_name = "time_"
         data.name = signal_name
+        data.attrs["name"] = data.name
 
         error = xr.DataArray(error, dims=dim_names, coords=coords, attrs=attrs)
         error.name = f"{signal_name}_error"
+        error.attrs["name"] = error.name
 
-        dataset = xr.Dataset({data.name: data, error.name: error})
+        dataset = xr.merge([data, error])
         return dataset
 
     def load_image(self, shot_num: int, name: str) -> xr.Dataset:

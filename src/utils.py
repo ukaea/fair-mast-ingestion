@@ -11,14 +11,18 @@ def harmonise_name(name: str) -> str:
     name = name.replace(",", "")
     name = name.strip("_")
     name = name.strip("/")
-    # name = name.split("_", maxsplit=1)[-1]
-    name = name.replace("_", "/", 1)
+    name = name.split("_", maxsplit=1)[-1]
     name = name.lower()
     return name
 
 
 def get_dataset_uuid(shot: int) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_OID, str(shot)))
+
+
+def get_dataset_item_uuid(name: str, shot: int) -> str:
+    oid_name = name + "/" + str(shot)
+    return str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
 
 
 def get_shot_list(args):

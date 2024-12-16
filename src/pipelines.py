@@ -566,12 +566,14 @@ class MASTPipelines(Pipelines):
                 [
                     DropDatasets(
                         [
-                            "efm/fcoil_n",
-                            "efm/fcoil_segs_n",
-                            "efm/limitern",
-                            "efm/magpr_n",
-                            "efm/silop_n",
-                            "efm/shot_number",
+                            "all_times",
+                            "fcoil_n",
+                            "fcoil_segs_n",
+                            "limitern",
+                            "magpr_n",
+                            "silop_n",
+                            "shot_number",
+                            "time",
                         ]
                     ),
                     MapDict(ReplaceInvalidValues()),

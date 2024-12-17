@@ -1,11 +1,12 @@
-import zarr
 import json
-import numpy as np
-import xarray as xr
-
+from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from abc import ABC, abstractmethod
+
+import numpy as np
+import xarray as xr
+import zarr
+
 from src.registry import Registry
 
 

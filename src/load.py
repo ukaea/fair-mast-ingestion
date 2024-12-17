@@ -1,17 +1,18 @@
 import re
 import typing as t
+from abc import ABC
+from enum import Enum
+from typing import Optional
+
 import fsspec
 import numpy as np
 import xarray as xr
 import zarr
 import zarr.storage
-from abc import ABC
-from enum import Enum
-from typing import Optional
 from pydantic import BaseModel
 
-from src.utils import harmonise_name
 from src.registry import Registry
+from src.utils import harmonise_name
 
 
 class MissingProfileError(Exception):

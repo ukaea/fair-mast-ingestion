@@ -1,13 +1,14 @@
 import traceback
 from typing import Optional
+
 from dask import config
 from distributed import Client, LocalCluster, as_completed
 
-from src.log import logger
-from src.config import IngestionConfig
 from src.builder import DatasetBuilder
-from src.pipelines import pipelines_registry
+from src.config import IngestionConfig
 from src.load import loader_registry
+from src.log import logger
+from src.pipelines import pipelines_registry
 from src.writer import dataset_writer_registry
 
 

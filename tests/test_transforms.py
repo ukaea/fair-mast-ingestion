@@ -28,8 +28,9 @@ def test_rename_dimensions(fake_dataset):
 
     transform = RenameDimensions()
     dataset = transform(fake_dataset)
+    print(dataset)
 
-    assert "time" in dataset.sizes
+    assert "time" in dataset.coords
 
 
 def test_drop_zero_dimensions(fake_dataset):

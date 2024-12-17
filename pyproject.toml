@@ -24,7 +24,8 @@ dependencies = {file = ["requirements.txt"]}
 [project.optional-dependencies]
 dev = [
     "pytest",
-    "pytest-mock"
+    "pytest-mock",
+    "ruff"
 ]
 
 mpi = [

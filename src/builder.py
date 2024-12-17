@@ -29,6 +29,8 @@ class DatasetBuilder:
 
             logger.info(f"Loading dataset {group_name} for shot #{shot}")
             dataset = self.load_datasets(shot, group_name)
+
+            logger.info(f"Processing {group_name} for shot #{shot}")
             pipeline = self.pipelines.get(group_name)
             dataset = pipeline(dataset)
 
@@ -44,7 +46,7 @@ class DatasetBuilder:
             name = signal_info.name
             try:
                 new_name = harmonise_name(name)
-                logger.info(f"Loading {new_name}")
+                logger.debug(f"Loading {new_name}")
                 dataset = self.loader.load(shot, name)
                 dataset.attrs["name"] = new_name
                 dataset.attrs["source"] = group_name

@@ -1,6 +1,7 @@
 import json
 import re
-import pint
+from pint.errors import UndefinedUnitError
+from pint import UnitRegistry
 import numpy as np
 import xarray as xr
 import pyarrow.parquet as pq
@@ -8,7 +9,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Optional
 
-from src.utils import get_dataset_item_uuid
+from src.log import logger
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
@@ -154,7 +155,7 @@ class TensoriseChannels(BaseTransform):
         assign_coords: bool = True,
     ) -> None:
         self.stem = stem
-        self.regex = regex if regex is not None else stem + "(\d+)"
+        self.regex = regex if regex is not None else stem + r"(\d+)"
         name = self.stem.split("/")[-1]
         self.dim_name = f"{name}_channel" if dim_name is None else dim_name
         self.assign_coords = assign_coords
@@ -190,10 +191,6 @@ class TensoriseChannels(BaseTransform):
         attrs["name"] = self.stem
         attrs["description"] = description
         attrs["channel_descriptions"] = channel_descriptions
-        attrs["uuid"] = get_dataset_item_uuid(attrs["name"], attrs["shot_id"])
-        attrs["shape"] = list(dataset.sizes.values())
-        attrs["rank"] = len(attrs["shape"])
-        attrs["dims"] = list(dataset.sizes.keys())
         attrs.pop("uda_name", "")
         attrs.pop("mds_name", "")
         dataset.attrs = attrs
@@ -221,9 +218,7 @@ class TransformUnits(BaseTransform):
     def __init__(self):
         with Path(UNITS_MAPPING_FILE).open("r") as handle:
             self.units_map = json.load(handle)
-
-        self.ureg = pint.UnitRegistry()
-        self.ureg.load_definitions(CUSTOM_UNITS_FILE)
+        self.ureg = UnitRegistry()
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         for array in dataset.data_vars.values():
@@ -237,17 +232,24 @@ class TransformUnits(BaseTransform):
 
     def _update_units(self, array: xr.DataArray):
         units = array.attrs.get("units", "")
+        units = units.strip()
         units = self.units_map.get(units, units)
-        units = self._parse_units(units)
+        units = "dimensionless" if units == "" else units
         array.attrs["units"] = units
+        units = self._parse_units(array)
 
-    def _parse_units(self, unit: str) -> str:
+    def _parse_units(self, item: xr.DataArray):
+        units = item.attrs["units"]
+
         try:
-            unit = self.ureg.parse_units(unit)
-            unit = format(unit, "~")
-            return unit
-        except Exception:
-            return unit
+            units = self.ureg.parse_units(units)
+            units = f"{units:#~}"
+        except (ValueError, UndefinedUnitError, AssertionError, TypeError) as e:
+            logger.warning(
+                f'Issue with converting units "{units}" for signal "{item.name}": {e}'
+            )
+
+        return item
 
 
 class ASXTransform(BaseTransform):

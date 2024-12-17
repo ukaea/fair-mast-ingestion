@@ -4,6 +4,13 @@
     "m-4": "m^-4",
     "MWm-2": "MW m^-2",
     "MW m-2": "MW m^-2",
+    "Watts": "W",
+    "Watt": "W",
+    "Vs": "V",
+    "Radians": "radian",
+    "Ohms": "ohm",
+    "Ohm": "ohm",
+    "Tesla": "T",
     "Degree C": "degC",
     "Passnumber": "",
     "Status": "",
@@ -32,5 +39,8 @@
     "status_detai": "",
     "error, neutr": "",
     "None": "",
-    "a.u.": ""
+    "a.u.": "",
+    "Chord no": "",
+    "Pixels": "",
+    "no": ""
 }

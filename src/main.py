@@ -36,6 +36,7 @@ def main():
         facility=args.facility,
         include_sources=args.include_sources,
         exclude_sources=args.exclude_sources,
+        verbose=args.verbose,
     )
 
     workflow_manager = WorkflowManager(workflow)

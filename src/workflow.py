@@ -18,13 +18,18 @@ class IngestionWorkflow:
         facility: str,
         include_sources: Optional[list[str]] = [],
         exclude_sources: Optional[list[str]] = [],
+        verbose: bool = False,
     ):
         self.config = config
         self.facility = facility
         self.include_sources = include_sources
         self.exclude_sources = exclude_sources
+        self.verbose = verbose
 
     def __call__(self, shot: int):
+        if self.verbose:
+            logger.setLevel("DEBUG")
+
         try:
             self.create_dataset(shot)
             self.upload_dataset(shot)

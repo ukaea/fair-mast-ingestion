@@ -1,6 +1,5 @@
 import pytest
 import xarray as xr
-import zarr
 
 from src.writer import ZarrDatasetWriter
 

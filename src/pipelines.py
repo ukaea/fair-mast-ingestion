@@ -757,6 +757,17 @@ class MASTPipelines(Pipelines):
             "rzz": Pipeline(
                 [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
             ),
+            "xbt": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                    TensoriseChannels("bes", regex=r"channel(\d+)"),
+                ]
+            ),
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),

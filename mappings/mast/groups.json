@@ -24,6 +24,7 @@
     "rgc": {"name": "camera_visible_bremsstrahlung_b", "imas": "camera_visible"},
     "rir": {"name": "camera_ir", "imas": "camera_ir"},
     "rzz": {"name": "camera_visible_bremsstrahlung_zebra", "imas": "camera_visible"},
+    "xbt": {"name": "bes"},
     "xdc": {"name": "controllers", "imas": "controllers"},
     "xim": {"name": "spectrometer_visible", "imas": "spectrometer_visible"},
     "xma": {"name": "magnetics_a", "imas": "magnetics"},

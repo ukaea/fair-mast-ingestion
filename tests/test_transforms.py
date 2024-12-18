@@ -1,15 +1,14 @@
-import numpy as np
+import json
+
 import xarray as xr
 
 from src.transforms import (
-    AddXSXCameraParams,
     DropDatasets,
     DropZeroDimensions,
     MergeDatasets,
     ProcessImage,
     RenameDimensions,
     RenameVariables,
-    StandardiseSignalDataset,
     TensoriseChannels,
     TransformUnits,
 )
@@ -29,10 +28,10 @@ def test_rename_dimensions(fake_dataset):
     fake_dataset = fake_dataset.rename_dims({"time": "timesec"})
     fake_dataset = fake_dataset.rename_vars({"time": "timesec"})
 
-    transform = RenameDimensions()
+    transform = RenameDimensions("mappings/mast/dimensions.json")
     dataset = transform(fake_dataset)
 
-    assert "time" in dataset.sizes
+    assert "time" in dataset.coords
 
 
 def test_drop_zero_dimensions(fake_dataset):
@@ -44,8 +43,13 @@ def test_drop_zero_dimensions(fake_dataset):
     assert len(dataset.coords) == 0
 
 
-def test_rename_variables(fake_dataset):
-    transform = RenameVariables({"data": "hello"})
+def test_rename_variables(tmpdir, fake_dataset):
+    file_name = tmpdir / "mapping.json"
+    with file_name.open("w") as f:
+        json.dump({"amc": {"data": "hello"}}, f)
+    fake_dataset.attrs["source"] = "amc"
+
+    transform = RenameVariables(file_name)
     dataset = transform(fake_dataset)
     assert "hello" in dataset.data_vars
 
@@ -77,32 +81,6 @@ def test_merge_datasets(fake_dataset):
     assert isinstance(dataset, xr.Dataset)
     assert "data_a" in dataset.data_vars
     assert "data_b" in dataset.data_vars
-
-
-def test_standardise_dataset(fake_dataset):
-    transform = StandardiseSignalDataset("amc")
-    dataset = transform(fake_dataset)
-
-    assert "plasma_current" in dataset.data_vars
-    assert "plasma_current_error" in dataset.data_vars
-
-
-def test_xsx_camera_params():
-    fake_dataset = xr.Dataset(
-        data_vars=dict(
-            tcam=(("time", 'tcam_channels'), np.random.random((100, 18))),
-            time=("time", np.random.random(100)),
-        ),
-        attrs={"name": "xsx/tcam", "shot_id": 30420},
-    )
-    transform = AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv")
-    dataset = transform(fake_dataset)
-
-    assert "tcam_r1" in dataset.data_vars
-    assert "tcam_r2" in dataset.data_vars
-
-    assert "tcam_z1" in dataset.data_vars
-    assert "tcam_z2" in dataset.data_vars
 
 
 def test_process_image(fake_image):

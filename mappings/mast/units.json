@@ -1,8 +1,18 @@
 {
+    "S": "s",
     "m^-^3": "m^-3",
     "m-4": "m^-4",
     "MWm-2": "MW m^-2",
     "MW m-2": "MW m^-2",
+    "s-1 m-2 sr-1": "s^-1 m^-2 sr^-1",
+    "Watts": "W",
+    "Watt": "W",
+    "Volt": "V",
+    "Vs": "V",
+    "Radians": "radian",
+    "Ohms": "ohm",
+    "Ohm": "ohm",
+    "Tesla": "T",
     "Degree C": "degC",
     "Passnumber": "",
     "Status": "",
@@ -31,5 +41,10 @@
     "status_detai": "",
     "error, neutr": "",
     "None": "",
-    "a.u.": ""
+    "a.u.": "",
+    "Chord no": "",
+    "Pixels": "",
+    "no": "",
+    "electrons/s": "cps",
+    "electrons": "counts"
 }

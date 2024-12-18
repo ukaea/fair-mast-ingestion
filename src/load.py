@@ -171,13 +171,15 @@ class UDALoader(BaseLoader):
     def load(self, shot_num: int, name: str, channels: Optional[list[str]] = None):
         try:
             if channels is not None:
-                return self.load_channels(shot_num, name, channels)
-            elif name in ["RBB", "RBA"]:
-                return self.load_image(shot_num, name)
+                dataset = self.load_channels(shot_num, name, channels)
+            elif name.strip("/").lower().startswith("r"):
+                dataset = self.load_image(shot_num, name)
             else:
-                return self.load_signal(shot_num, name)
+                dataset = self.load_signal(shot_num, name)
         except Exception as e:
             raise MissingProfileError(f"{e}, {type(e)}")
+
+        return dataset
 
     def load_channels(self, shot_num: int, name: str, channels: list[str]):
         signals = []
@@ -239,6 +241,7 @@ class UDALoader(BaseLoader):
         data = np.atleast_1d(signal.data)
         error = np.atleast_1d(signal.errors)
         attrs = self._get_dataset_attributes(signal_name, signal)
+        uda_name = signal_name
         signal_name = harmonise_name(signal_name)
 
         data = xr.DataArray(data, dims=dim_names, coords=coords, attrs=attrs)
@@ -246,6 +249,7 @@ class UDALoader(BaseLoader):
             signal_name = "time_"
         data.name = signal_name
         data.attrs["name"] = data.name
+        data.attrs["uda_name"] = uda_name
 
         error = xr.DataArray(error, dims=dim_names, coords=coords, attrs=attrs)
         error.name = f"{signal_name}_error"
@@ -260,6 +264,7 @@ class UDALoader(BaseLoader):
         dataset = self._convert_image_to_dataset(image)
         dataset.name = name
         dataset.attrs["shot_id"] = shot_num
+        dataset.attrs["uda_name"] = name
         dataset = dataset.to_dataset()
         return dataset
 

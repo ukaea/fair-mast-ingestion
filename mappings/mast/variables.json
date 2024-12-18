@@ -1,17 +1,66 @@
 
 {
+    "act": {
+        "majorradius": "major_radius",
+        "chordno": "chord"
+    },
     "atm": {
-        "r": "radius"
+        "r": "major_radius"
     },
     "ayc": {
-        "r": "radius"
+        "r": "major_radius",
+        "r_error": "major_radius_error",
+        "arb": "radial_index"
+    },
+    "aye": {
+        "r": "major_radius",
+        "r_error": "major_radius_error",
+        "arb": "radial_index"
     },
     "efm": {
         "plasma_currc": "plasma_current_c",
         "plasma_currx": "plasma_current_x",
-        "plasma_currrz": "plasma_current_rz",
+        "plasma_currrz": "plasma_current",
+        "psirz": "magnetic_flux",
         "lcfsr_c": "lcfs_r",
         "lcfsz_c": "lcfs_z"
+    },
+    "rba": {
+        "rba": "data"
+    },
+    "rbb": {
+        "rbb": "data"
+    },
+    "rbc": {
+        "rbc": "data"
+    },
+    "rco": {
+        "rco": "data"
+    },
+    "rgb": {
+        "rgb": "data"
+    },
+    "rgc": {
+        "rgc": "data"
+    },
+    "rir": {
+        "rir": "data"
+    },
+    "rzz": {
+        "rzz": "data"
+    },
+    "xdc": {
+        "ip_t_ipref": "reference_plasma_current",
+        "density_t_nelref": "reference_plasma_density"
+    },
+    "xim": {
+        "da_hm10_r": "dalpha_mid_plane_center",
+        "da_hm10_r1": "dalpha_mid_plane_r1",
+        "da_hm10_u1": "dalpha_mid_plane_u1",
+        "da_hm10_t": "dalpha_mid_plane_wide",
+        "da_hu10_t": "dalpha_tangential",
+        "da_hu10_r1": "dalpha_tangential_r1",
+        "da_hu10_u1": "dalpha_tangential_u1"
     },
     "xsx": {
         "hcaml#1": "hcam_l_1",

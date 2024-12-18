@@ -9,6 +9,7 @@ from src.log import logger
 def harmonise_name(name: str) -> str:
     name = name.replace("/", "_")
     name = name.replace(" ", "_")
+    name = name.replace("-", "_")
     name = name.replace("(", "")
     name = name.replace(")", "")
     name = name.replace(",", "")

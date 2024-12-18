@@ -28,7 +28,6 @@ def test_rename_dimensions(fake_dataset):
 
     transform = RenameDimensions()
     dataset = transform(fake_dataset)
-    print(dataset)
 
     assert "time" in dataset.coords
 

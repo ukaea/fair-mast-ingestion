@@ -4,6 +4,7 @@
     "m-4": "m^-4",
     "MWm-2": "MW m^-2",
     "MW m-2": "MW m^-2",
+    "s-1 m-2 sr-1": "s^-1 m^-2 sr^-1",
     "Watts": "W",
     "Watt": "W",
     "Vs": "V",
@@ -42,5 +43,7 @@
     "a.u.": "",
     "Chord no": "",
     "Pixels": "",
-    "no": ""
+    "no": "",
+    "electrons/s": "cps",
+    "electrons": "counts"
 }

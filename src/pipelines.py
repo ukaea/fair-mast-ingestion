@@ -9,6 +9,7 @@ from src.transforms import (
     DropDatasets,
     DropZeroDataset,
     DropZeroDimensions,
+    InterpolateAxis,
     LCFSTransform,
     MapDict,
     MergeDatasets,
@@ -176,6 +177,7 @@ class MASTPipelines(Pipelines):
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -184,6 +186,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -192,6 +196,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -200,6 +206,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -208,6 +216,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -216,6 +226,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -224,6 +236,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -232,6 +246,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -240,6 +256,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -248,6 +266,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -257,6 +277,7 @@ class MASTPipelines(Pipelines):
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -265,6 +286,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -273,6 +296,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
@@ -320,6 +345,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     DropZeroDataset(),
                     TransformUnits(),
@@ -443,6 +470,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -451,6 +480,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     AddGeometry("botcol", "geometry/data/amm/amm_botcol.parquet"),
@@ -510,6 +541,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -518,6 +551,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -526,6 +561,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -534,6 +571,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -542,6 +581,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -550,6 +591,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -558,6 +601,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -566,6 +611,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -574,6 +621,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TensoriseChannels("sad_m"),
                     TransformUnits(),
@@ -583,6 +632,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MapDict(ASXTransform()),
                     MergeDatasets(),
                     TransformUnits(),
@@ -592,6 +643,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -600,9 +653,16 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     DropCoordinates("segment_number", ["time_segment"]),
+                    DropCoordinates("angle", ["radial_index"]),
+                    DropCoordinates("polyname", ["radial_index"]),
+                    DropCoordinates("pulse", ["radial_index"]),
+                    DropCoordinates("scat_length", ["radial_index"]),
                     DropDatasets(["time"]),
                     MergeDatasets(),
+                    InterpolateAxis("time", "zero"),
                     TransformUnits(),
                 ]
             ),
@@ -610,7 +670,12 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    DropCoordinates("segment_number", ["time_segment"]),
+                    DropDatasets(["time"]),
                     MergeDatasets(),
+                    InterpolateAxis("time", "zero"),
                     TransformUnits(),
                 ]
             ),
@@ -629,9 +694,10 @@ class MASTPipelines(Pipelines):
                         ]
                     ),
                     MapDict(ReplaceInvalidValues()),
-                    MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     LCFSTransform(),
                     TransformUnits(),
@@ -639,9 +705,10 @@ class MASTPipelines(Pipelines):
             ),
             "esm": Pipeline(
                 [
-                    MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -650,25 +717,54 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
-            "rba": Pipeline([ProcessImage()]),
-            "rbb": Pipeline([ProcessImage()]),
-            "rbc": Pipeline([ProcessImage()]),
-            "rcc": Pipeline([ProcessImage()]),
-            "rca": Pipeline([ProcessImage()]),
-            "rco": Pipeline([ProcessImage()]),
-            "rdd": Pipeline([ProcessImage()]),
-            "rgb": Pipeline([ProcessImage()]),
-            "rgc": Pipeline([ProcessImage()]),
-            "rir": Pipeline([ProcessImage()]),
-            "rit": Pipeline([ProcessImage()]),
+            "rba": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rbb": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rbc": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rcc": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rca": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rco": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rdd": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rgb": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rgc": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rir": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rit": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rzz": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -677,6 +773,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -685,6 +783,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -693,6 +793,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -701,6 +803,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
@@ -737,6 +841,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
@@ -784,6 +890,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("sad_out_l"),
@@ -801,6 +909,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
@@ -818,6 +928,8 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -826,8 +938,11 @@ class MASTPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("channels", regex=r"ch(\d+)"),
                 ]
             ),
         }

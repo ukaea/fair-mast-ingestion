@@ -134,7 +134,13 @@ class RenameVariables(BaseTransform):
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         group_name = dataset.attrs["source"]
+
+        if group_name not in self.mapping:
+            return dataset
+
         for key, value in self.mapping[group_name].items():
+            if key in dataset.dims:
+                dataset = dataset.rename_dims({key: value})
             if key in dataset:
                 dataset = dataset.rename_vars({key: value})
         dataset = dataset.compute()
@@ -145,6 +151,31 @@ class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
+        dataset.attrs = {}
+        return dataset
+
+
+class InterpolateAxis(BaseTransform):
+    def __init__(self, axis_name: str, method: str):
+        super().__init__()
+        self.axis_name = axis_name
+        self.method = method
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        axis_values = dataset[self.axis_name].values
+        amin = axis_values.min()
+        amax = axis_values.max()
+        adelta = axis_values[1] - axis_values[0]
+        coords = np.arange(amin, amax, adelta)
+
+        datasets = {}
+        for k, v in dataset.data_vars.items():
+            if self.axis_name in v.dims:
+                v = v.dropna(self.axis_name, how="all")
+                datasets[k] = v.interp({self.axis_name: coords}, method=self.method)
+            else:
+                datasets[k] = v
+        dataset = xr.merge(datasets.values())
         dataset.attrs = {}
         return dataset
 
@@ -369,8 +400,6 @@ class ProcessImage(BaseTransform):
     def __call__(self, dataset: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset: xr.Dataset = list(dataset.values())[0]
         dataset.attrs["units"] = "pixels"
-        dataset.attrs["shape"] = list(dataset.sizes.values())
-        dataset.attrs["rank"] = len(dataset.sizes.values())
         dataset = dataset.compute()
         return dataset
 

@@ -1,161 +1,121 @@
-import logging
+import traceback
 from pathlib import Path
+from typing import Optional
 
-import s3fs
-from dask.distributed import Client, as_completed
+from dask import config
+from distributed import Client, LocalCluster, as_completed
 
-from src.task import (
-    CleanupDatasetTask,
-    CreateDatasetTask,
-    CreateSignalMetadataTask,
-    CreateSourceMetadataTask,
-    UploadDatasetTask,
-)
-from src.uploader import UploadConfig
-
-logging.basicConfig(level=logging.INFO)
+from src.builder import DatasetBuilder
+from src.config import IngestionConfig
+from src.load import loader_registry
+from src.log import logger
+from src.pipelines import pipelines_registry
+from src.upload import UploadS3
+from src.writer import dataset_writer_registry
 
 
-class MetadataWorkflow:
-    def __init__(self, data_dir: str):
-        self.data_dir = Path(data_dir)
-
-    def __call__(self, shot: int):
-        try:
-            signal_metadata = CreateSignalMetadataTask(self.data_dir / "signals", shot)
-            signal_metadata()
-        except Exception as e:
-            logging.error(f"Could not parse signal metadata for shot {shot}: {e}")
-
-        try:
-            source_metadata = CreateSourceMetadataTask(self.data_dir / "sources", shot)
-            source_metadata()
-        except Exception as e:
-            logging.error(f"Could not parse source metadata for shot {shot}: {e}")
-
-
-class S3IngestionWorkflow:
+class IngestionWorkflow:
     def __init__(
         self,
-        metadata_dir: str,
-        data_dir: str,
-        upload_config: UploadConfig,
-        force: bool = True,
-        signal_names: list[str] = [],
-        source_names: list[str] = [],
-        file_format: str = "zarr",
-        facility: str = "MAST",
+        config: IngestionConfig,
+        facility: str,
+        include_sources: Optional[list[str]] = [],
+        exclude_sources: Optional[list[str]] = [],
+        verbose: bool = False,
     ):
-        self.metadata_dir = metadata_dir
-        self.data_dir = Path(data_dir)
-        self.upload_config = upload_config
-        self.force = force
-        self.signal_names = signal_names
-        self.source_names = source_names
-        self.fs = s3fs.S3FileSystem(
-            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
-        )
-        self.file_format = file_format
+        self.config = config
         self.facility = facility
+        self.include_sources = include_sources
+        self.exclude_sources = exclude_sources
+        self.verbose = verbose
 
     def __call__(self, shot: int):
-        if self.file_format != "zarr":
-            raise ValueError("Upload only supports Zarr file format")
+        if self.verbose:
+            logger.setLevel("DEBUG")
 
-        source = self.source_names[0]
-        local_path = self.data_dir / f"{shot}.zarr/{source}"
-        create = CreateDatasetTask(
-            self.metadata_dir,
-            self.data_dir,
-            shot,
-            self.signal_names,
-            self.source_names,
-            self.file_format,
-            self.facility,
+        writer_config = self.config.writer
+        self.writer = dataset_writer_registry.create(
+            writer_config.type, **writer_config.options
         )
-
-        upload = UploadDatasetTask(local_path, self.upload_config)
-        cleanup = CleanupDatasetTask(local_path.parent)
+        self.loader = loader_registry.create("uda")
+        self.pipelines = pipelines_registry.create(self.facility)
 
         try:
-            url = self.upload_config.url + f"{shot}.zarr/{source}"
-            if self.force or not self.fs.exists(url):
-                create()
-                upload()
-            else:
-                logging.info(f"Skipping shot {shot} as it already exists")
+            self.create_dataset(shot)
+            self.upload_dataset(shot)
+            logger.info(f"Done shot #{shot}")
         except Exception as e:
-            logging.error(f"Failed to run workflow with error {type(e)}: {e}")
+            logger.error(f"Failed to run workflow with error {type(e)}: {e}\n")
+            logger.debug(traceback.print_exception(e))
 
-        cleanup()
-
-
-class LocalIngestionWorkflow:
-    def __init__(
-        self,
-        metadata_dir: str,
-        data_dir: str,
-        force: bool = True,
-        signal_names: list[str] = [],
-        source_names: list[str] = [],
-        file_format: str = "zarr",
-        facility: str = "MAST",
-    ):
-        self.metadata_dir = metadata_dir
-        self.data_dir = Path(data_dir)
-        self.force = force
-        self.signal_names = signal_names
-        self.source_names = source_names
-        self.file_format = file_format
-        self.facility = facility
-
-    def __call__(self, shot: int):
-        self.data_dir.mkdir(exist_ok=True, parents=True)
-
-        create = CreateDatasetTask(
-            self.metadata_dir,
-            self.data_dir,
-            shot,
-            self.signal_names,
-            self.source_names,
-            self.file_format,
-            self.facility,
+    def create_dataset(self, shot: int):
+        builder = DatasetBuilder(
+            self.loader,
+            self.writer,
+            self.pipelines,
+            self.include_sources,
+            self.exclude_sources,
         )
 
-        try:
-            create()
-        except Exception as e:
-            import traceback
+        builder.create(shot)
 
-            trace = traceback.format_exc()
-            logging.error(f"Failed to run workflow with error {type(e)}: {e}\n{trace}")
+    def upload_dataset(self, shot: int):
+        if self.config.upload is None:
+            return
+
+        file_name = f"{shot}.{self.writer.file_extension}"
+        local_file = self.config.writer.options["output_path"] / Path(file_name)
+        remote_file = f"{self.config.upload.base_path}/"
+
+        uploader = UploadS3(self.config.upload)
+        uploader.upload(local_file, remote_file)
 
 
 class WorkflowManager:
     def __init__(self, workflow):
         self.workflow = workflow
 
-    def run_workflows(self, shot_list: list[int], parallel=True):
-        if parallel:
-            self._run_workflows_parallel(shot_list)
-        else:
-            self._run_workflows_serial(shot_list)
-
-    def _run_workflows_serial(self, shot_list: list[int]):
-        n = len(shot_list)
-        for i, shot in enumerate(shot_list):
-            self.workflow(shot)
-            logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
-
-    def _run_workflows_parallel(self, shot_list: list[int]):
-        dask_client = Client()
+    def run_workflows(self, shot_list: list[int], n_workers: int = 4):
+        client = self.initialize_client(n_workers)
         tasks = []
 
         for shot in shot_list:
-            task = dask_client.submit(self.workflow, shot)
+            task = client.submit(self.workflow, shot)
             tasks.append(task)
 
         n = len(tasks)
         for i, task in enumerate(as_completed(tasks)):
             task.release()
-            logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
+            logger.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
+
+    def initialize_client(self, n_workers: Optional[int] = None) -> Client:
+        config.set({"distributed.scheduler.locks.lease-timeout": "inf"})
+
+        try:
+            # Try and get MPI, if not use dask
+            from mpi4py import MPI
+
+            comm = MPI.COMM_WORLD
+            size = comm.Get_size()
+            rank = comm.Get_rank()
+        except ImportError:
+            size = None
+
+        if size is not None and size > 1:
+            # Using dask MPI client
+            from dask_mpi import initialize
+
+            initialize()
+            client = Client()
+            if rank == 0:
+                logger.info(f"Running in parallel with mpi and {size} ranks")
+        else:
+            # Using plain dask client
+            cluster = LocalCluster(n_workers=n_workers, threads_per_worker=1)
+            client = Client(cluster)
+            num_workers = len(client.scheduler_info()["workers"])
+            logger.info(
+                f"Running in parallel with dask local cluster and {num_workers} ranks"
+            )
+
+        return client

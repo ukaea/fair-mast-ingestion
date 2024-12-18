@@ -5,7 +5,7 @@ import xarray as xr
 from src.load import BaseLoader, MissingProfileError
 from src.log import logger
 from src.pipelines import Pipelines
-from src.utils import harmonise_name
+from src.utils import harmonise_name, read_json_file
 from src.writer import DatasetWriter
 
 
@@ -23,18 +23,31 @@ class DatasetBuilder:
         self.loader = loader
         self.include_datasets = include_datasets
         self.exclude_datasets = exclude_datasets
+        self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
 
     def create(self, shot: int):
         dataset_infos = self.list_datasets(shot)
+
         for dataset_info in dataset_infos:
             group_name = dataset_info.name
 
             logger.info(f"Loading dataset {group_name} for shot #{shot}")
-            dataset = self.load_datasets(shot, group_name)
+            datasets = self.load_datasets(shot, group_name)
 
             logger.info(f"Processing {group_name} for shot #{shot}")
             pipeline = self.pipelines.get(group_name)
-            dataset = pipeline(dataset)
+
+            dataset = pipeline(datasets)
+
+            # rename groups
+            if group_name in self.group_name_mapping:
+                mapping = self.group_name_mapping[group_name]
+                imas_name = mapping["imas"]
+
+                for dataset in datasets.values():
+                    dataset.attrs["imas"] = imas_name
+
+                group_name = mapping["name"]
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"

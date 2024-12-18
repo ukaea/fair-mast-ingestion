@@ -1,5 +1,7 @@
+import json
 import sys
 import uuid
+from pathlib import Path
 
 from src.log import logger
 
@@ -48,3 +50,8 @@ def read_shot_file(shot_file: str) -> list[int]:
         shot_nums = map(lambda x: x.strip(), shot_nums)
         shot_nums = list(sorted(map(int, shot_nums)))
     return shot_nums
+
+
+def read_json_file(file_name: str):
+    with Path(file_name).open("r") as handle:
+        return json.load(handle)

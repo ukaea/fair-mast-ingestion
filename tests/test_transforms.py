@@ -1,3 +1,4 @@
+import json
 import xarray as xr
 
 from src.transforms import (
@@ -41,8 +42,13 @@ def test_drop_zero_dimensions(fake_dataset):
     assert len(dataset.coords) == 0
 
 
-def test_rename_variables(fake_dataset):
-    transform = RenameVariables({"data": "hello"})
+def test_rename_variables(tmpdir, fake_dataset):
+    file_name = tmpdir / "mapping.json"
+    with file_name.open("w") as f:
+        json.dump({"amc": {"data": "hello"}}, f)
+    fake_dataset.attrs["source"] = "amc"
+
+    transform = RenameVariables(file_name)
     dataset = transform(fake_dataset)
     assert "hello" in dataset.data_vars
 

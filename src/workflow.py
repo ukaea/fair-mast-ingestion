@@ -1,4 +1,5 @@
 import traceback
+from pathlib import Path
 from typing import Optional
 
 from dask import config
@@ -9,6 +10,7 @@ from src.config import IngestionConfig
 from src.load import loader_registry
 from src.log import logger
 from src.pipelines import pipelines_registry
+from src.upload import UploadS3
 from src.writer import dataset_writer_registry
 
 
@@ -31,28 +33,26 @@ class IngestionWorkflow:
         if self.verbose:
             logger.setLevel("DEBUG")
 
+        writer_config = self.config.writer
+        self.writer = dataset_writer_registry.create(
+            writer_config.type, **writer_config.options
+        )
+        self.loader = loader_registry.create("uda")
+        self.pipelines = pipelines_registry.create(self.facility)
+
         try:
             self.create_dataset(shot)
             self.upload_dataset(shot)
-            self.cleanup(shot)
             logger.info(f"Done shot #{shot}")
         except Exception as e:
             logger.error(f"Failed to run workflow with error {type(e)}: {e}\n")
             logger.debug(traceback.print_exception(e))
 
     def create_dataset(self, shot: int):
-        writer_config = self.config.writer
-        writer = dataset_writer_registry.create(
-            writer_config.type, **writer_config.options
-        )
-
-        loader = loader_registry.create("uda")
-        pipelines = pipelines_registry.create(self.facility)
-
         builder = DatasetBuilder(
-            loader,
-            writer,
-            pipelines,
+            self.loader,
+            self.writer,
+            self.pipelines,
             self.include_sources,
             self.exclude_sources,
         )
@@ -63,8 +63,12 @@ class IngestionWorkflow:
         if self.config.upload is None:
             return
 
-    def cleanup(self, shot: int):
-        pass
+        file_name = f"{shot}.{self.writer.file_extension}"
+        local_file = self.config.writer.options["output_path"] / Path(file_name)
+        remote_file = f"{self.config.upload.base_path}/"
+
+        uploader = UploadS3(self.config.upload)
+        uploader.upload(local_file, remote_file)
 
 
 class WorkflowManager:

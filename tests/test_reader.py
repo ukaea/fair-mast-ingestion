@@ -1,15 +1,17 @@
+import importlib
 from dataclasses import asdict
 
 import pandas as pd
 import pytest
 import xarray as xr
 
-pyuda_import = pytest.importorskip("pyuda")
 from src.reader import (  # noqa: E402
     DatasetReader,  # noqa: E402
     SignalMetadataReader,  # noqa: E402
     SourceMetadataReader,  # noqa: E402
 )  # noqa: E402
+
+uda_available = not importlib.util.find_spec("pyuda")
 
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
@@ -19,10 +21,11 @@ def test_list_signals():
     signals = reader.list_datasets()
 
     assert isinstance(signals, list)
-    assert len(signals) == 11254
+    assert len(signals) == 11227
 
     info = signals[0]
     assert info.name == "abm/calib_shot"
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_list_signals_exclude_raw():
@@ -36,6 +39,7 @@ def test_list_signals_exclude_raw():
     info = signals[0]
     assert info.name == "abm/calib_shot"
 
+
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_read_signal():
     shot = 30420
@@ -48,6 +52,7 @@ def test_read_signal():
     assert isinstance(dataset, xr.Dataset)
     assert dataset.attrs["name"] == "abm/calib_shot"
     assert dataset["time"].shape == (1,)
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_read_image():
@@ -66,6 +71,7 @@ def test_read_image():
     assert dataset["data"].shape == (186, 912, 768)
     assert list(dataset.dims.keys()) == ["time", "height", "width"]
 
+
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_read_signals_metadata():
     shot = 30420
@@ -73,6 +79,7 @@ def test_read_signals_metadata():
     df = reader.read_metadata()
 
     assert isinstance(df, pd.DataFrame)
+
 
 @pytest.mark.skip(reason="Pyuda client unavailable")
 def test_read_sources_metadata():

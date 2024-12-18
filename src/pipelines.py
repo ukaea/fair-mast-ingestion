@@ -4,7 +4,6 @@ from src.registry import Registry
 from src.transforms import (
     AddGeometry,
     AlignChannels,
-    ASXTransform,
     DropCoordinates,
     DropDatasets,
     DropZeroDataset,
@@ -634,7 +633,6 @@ class MASTPipelines(Pipelines):
                     MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(DropZeroDimensions()),
                     MapDict(DropZeroDataset()),
-                    MapDict(ASXTransform()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -846,6 +844,7 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
+                    TensoriseChannels("ccbv", regex=r"ccbv(\d+)"),
                     AddGeometry("ccbv", "geometry/data/xma/ccbv.parquet"),
                     AlignChannels("ccbv"),
                     TensoriseChannels("fl_cc"),
@@ -879,9 +878,11 @@ class MASTPipelines(Pipelines):
                     AddGeometry("fl_p5u", "geometry/data/xma/fl_p5u.parquet"),
                     AlignChannels("fl_p5u"),
                     TensoriseChannels("obr", regex=r"obr_(\d+)"),
+                    TensoriseChannels("obr", regex=r"obr(\d+)"),
                     AddGeometry("obr", "geometry/data/xma/xma_obr.parquet"),
                     AlignChannels("obr"),
                     TensoriseChannels("obv", regex=r"obv_(\d+)"),
+                    TensoriseChannels("obv", regex=r"obv(\d+)"),
                     AddGeometry("obv", "geometry/data/xma/xma_obv.parquet"),
                     AlignChannels("obv"),
                 ]

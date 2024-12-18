@@ -23,7 +23,14 @@
         "plasma_currrz": "plasma_current",
         "psirz": "magnetic_flux",
         "lcfsr_c": "lcfs_r",
-        "lcfsz_c": "lcfs_z"
+        "lcfsz_c": "lcfs_z",
+        "silop_c": "psi_loop_c",
+        "silop_chisq": "psi_loop_chisq",
+        "silop_dphi": "psi_loop_dphi",
+        "silop_n": "psi_loop_n",
+        "silop_r": "psi_loop_r",
+        "silop_x": "psi_loop_x",
+        "silop_z": "psi_loop_z"
     },
     "rba": {
         "rba": "data"
@@ -48,6 +55,9 @@
     },
     "rzz": {
         "rzz": "data"
+    },
+    "xma": {
+        "sec": "time"
     },
     "xdc": {
         "ip_t_ipref": "reference_plasma_current",

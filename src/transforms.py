@@ -13,9 +13,7 @@ from pint.errors import UndefinedUnitError
 from src.log import logger
 from src.utils import read_json_file
 
-DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
-CUSTOM_UNITS_FILE = "mappings/mast/custom_units.txt"
 
 
 class BaseTransform(ABC):
@@ -39,9 +37,7 @@ class MapDict(BaseTransform):
 
 
 class RenameDimensions(BaseTransform):
-    def __init__(
-        self, mapping_file=DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True
-    ) -> None:
+    def __init__(self, mapping_file: str, squeeze_dataset: bool = True) -> None:
         self.squeeze_dataset = squeeze_dataset
 
         with Path(mapping_file).open("r") as handle:
@@ -284,32 +280,6 @@ class TransformUnits(BaseTransform):
             )
 
         return item
-
-
-class ASXTransform(BaseTransform):
-    """ASX is very special.
-
-    The time points are actually the data and the data is blank.
-    This transformation renames them and used the correct dimension mappings.
-    """
-
-    def __init__(self) -> None:
-        with Path(DIMENSION_MAPPING_FILE).open("r") as handle:
-            self.dimension_mapping = json.load(handle)
-
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = dataset.squeeze()
-        name = dataset.attrs["name"]
-
-        if name not in self.dimension_mapping:
-            return dataset
-
-        dataset = dataset.rename_dims(self.dimension_mapping[name])
-        dataset = dataset.drop("data")
-        dataset["data"] = dataset["time"]
-        dataset = dataset.drop("time")
-        dataset = dataset.compute()
-        return dataset
 
 
 class LCFSTransform(BaseTransform):

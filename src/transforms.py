@@ -11,6 +11,7 @@ from pint import UnitRegistry
 from pint.errors import UndefinedUnitError
 
 from src.log import logger
+from src.utils import read_json_file
 
 DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
 UNITS_MAPPING_FILE = "mappings/mast/units.json"
@@ -128,11 +129,12 @@ class DropCoordinates(BaseTransform):
 
 
 class RenameVariables(BaseTransform):
-    def __init__(self, mapping: dict[str, str]):
-        self.mapping = mapping
+    def __init__(self, mapping_file: str):
+        self.mapping = read_json_file(mapping_file)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        for key, value in self.mapping.items():
+        group_name = dataset.attrs["source"]
+        for key, value in self.mapping[group_name].items():
             if key in dataset:
                 dataset = dataset.rename_vars({key: value})
         dataset = dataset.compute()

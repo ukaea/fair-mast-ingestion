@@ -55,11 +55,16 @@ class MASTUPipelines(Pipelines):
     def dimension_mapping_file(self):
         return "mappings/mastu/dimensions.json"
 
+    @property
+    def variable_mapping_file(self):
+        return "mappings/mastu/variables.json"
+
     def __init__(self) -> None:
         self.pipelines = {
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -67,18 +72,16 @@ class MASTUPipelines(Pipelines):
             "amc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
-                    RenameVariables(
-                        {
-                            "ip": "plasma_current",
-                        }
-                    ),
+                    RenameVariables(self.variable_mapping_file),
                 ]
             ),
             "anb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -86,6 +89,7 @@ class MASTUPipelines(Pipelines):
             "act": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -93,6 +97,7 @@ class MASTUPipelines(Pipelines):
             "acu": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -100,6 +105,7 @@ class MASTUPipelines(Pipelines):
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -107,6 +113,7 @@ class MASTUPipelines(Pipelines):
             "ayd": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -114,6 +121,7 @@ class MASTUPipelines(Pipelines):
             "epm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -121,6 +129,7 @@ class MASTUPipelines(Pipelines):
             "esm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -128,6 +137,7 @@ class MASTUPipelines(Pipelines):
             "xsx": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
@@ -138,6 +148,7 @@ class MASTUPipelines(Pipelines):
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -154,11 +165,16 @@ class MASTPipelines(Pipelines):
     def dimension_mapping_file(self):
         return "mappings/mast/dimensions.json"
 
+    @property
+    def variable_mapping_file(self):
+        return "mappings/mast/variables.json"
+
     def __init__(self) -> None:
         self.pipelines = {
             "abm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(DropZeroDimensions()),
                     MergeDatasets(),
                     TransformUnits(),
@@ -167,6 +183,7 @@ class MASTPipelines(Pipelines):
             "acc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -174,6 +191,7 @@ class MASTPipelines(Pipelines):
             "act": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -181,6 +199,7 @@ class MASTPipelines(Pipelines):
             "ada": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -188,6 +207,7 @@ class MASTPipelines(Pipelines):
             "aga": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -195,6 +215,7 @@ class MASTPipelines(Pipelines):
             "adg": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -202,6 +223,7 @@ class MASTPipelines(Pipelines):
             "ahx": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -209,6 +231,7 @@ class MASTPipelines(Pipelines):
             "aim": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -216,6 +239,7 @@ class MASTPipelines(Pipelines):
             "air": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -223,6 +247,7 @@ class MASTPipelines(Pipelines):
             "ait": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -230,8 +255,8 @@ class MASTPipelines(Pipelines):
             "alp": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(DropZeroDimensions()),
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -239,6 +264,7 @@ class MASTPipelines(Pipelines):
             "ama": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -246,6 +272,7 @@ class MASTPipelines(Pipelines):
             "amb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
@@ -292,6 +319,7 @@ class MASTPipelines(Pipelines):
             "amc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     DropZeroDataset(),
                     TransformUnits(),
@@ -414,6 +442,7 @@ class MASTPipelines(Pipelines):
             "amh": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -421,6 +450,7 @@ class MASTPipelines(Pipelines):
             "amm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     AddGeometry("botcol", "geometry/data/amm/amm_botcol.parquet"),
@@ -479,6 +509,7 @@ class MASTPipelines(Pipelines):
             "ams": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -486,6 +517,7 @@ class MASTPipelines(Pipelines):
             "anb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -493,6 +525,7 @@ class MASTPipelines(Pipelines):
             "ane": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -500,6 +533,7 @@ class MASTPipelines(Pipelines):
             "ant": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -507,6 +541,7 @@ class MASTPipelines(Pipelines):
             "anu": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -514,7 +549,7 @@ class MASTPipelines(Pipelines):
             "aoe": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -522,6 +557,7 @@ class MASTPipelines(Pipelines):
             "arp": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -529,6 +565,7 @@ class MASTPipelines(Pipelines):
             "asb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -536,6 +573,7 @@ class MASTPipelines(Pipelines):
             "asm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TensoriseChannels("sad_m"),
                     TransformUnits(),
@@ -544,6 +582,7 @@ class MASTPipelines(Pipelines):
             "asx": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MapDict(ASXTransform()),
                     MergeDatasets(),
                     TransformUnits(),
@@ -552,32 +591,25 @@ class MASTPipelines(Pipelines):
             "atm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
-                    RenameVariables(
-                        {
-                            "r": "radius",
-                        }
-                    ),
                 ]
             ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     DropCoordinates("segment_number", ["time_segment"]),
                     DropDatasets(["time"]),
                     MergeDatasets(),
                     TransformUnits(),
-                    RenameVariables(
-                        {
-                            "r": "radius",
-                        }
-                    ),
                 ]
             ),
             "aye": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -599,24 +631,17 @@ class MASTPipelines(Pipelines):
                     MapDict(ReplaceInvalidValues()),
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     LCFSTransform(),
                     TransformUnits(),
-                    RenameVariables(
-                        {
-                            "plasma_currc": "plasma_current_c",
-                            "plasma_currx": "plasma_current_x",
-                            "plasma_currrz": "plasma_current_rz",
-                            "lcfsr_c": "lcfs_r",
-                            "lcfsz_c": "lcfs_z",
-                        }
-                    ),
                 ]
             ),
             "esm": Pipeline(
                 [
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -624,6 +649,7 @@ class MASTPipelines(Pipelines):
             "esx": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -642,6 +668,7 @@ class MASTPipelines(Pipelines):
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -649,6 +676,7 @@ class MASTPipelines(Pipelines):
             "xim": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -656,6 +684,7 @@ class MASTPipelines(Pipelines):
             "xmo": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -663,6 +692,7 @@ class MASTPipelines(Pipelines):
             "xpc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -670,65 +700,8 @@ class MASTPipelines(Pipelines):
             "xsx": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
-                    RenameVariables(
-                        {
-                            "hcaml#1": "hcam_l_1",
-                            "hcaml#10": "hcam_l_10",
-                            "hcaml#11": "hcam_l_11",
-                            "hcaml#12": "hcam_l_12",
-                            "hcaml#13": "hcam_l_13",
-                            "hcaml#14": "hcam_l_14",
-                            "hcaml#15": "hcam_l_15",
-                            "hcaml#16": "hcam_l_16",
-                            "hcaml#17": "hcam_l_17",
-                            "hcaml#18": "hcam_l_18",
-                            "hcaml#2": "hcam_l_2",
-                            "hcaml#3": "hcam_l_3",
-                            "hcaml#4": "hcam_l_4",
-                            "hcaml#5": "hcam_l_5",
-                            "hcaml#6": "hcam_l_6",
-                            "hcaml#7": "hcam_l_7",
-                            "hcaml#8": "hcam_l_8",
-                            "hcaml#9": "hcam_l_9",
-                            "hcamu#1": "hcam_u_1",
-                            "hcamu#10": "hcam_u_10",
-                            "hcamu#11": "hcam_u_11",
-                            "hcamu#12": "hcam_u_12",
-                            "hcamu#13": "hcam_u_13",
-                            "hcamu#14": "hcam_u_14",
-                            "hcamu#15": "hcam_u_15",
-                            "hcamu#16": "hcam_u_16",
-                            "hcamu#17": "hcam_u_17",
-                            "hcamu#18": "hcam_u_18",
-                            "hcamu#2": "hcam_u_2",
-                            "hcamu#3": "hcam_u_3",
-                            "hcamu#4": "hcam_u_4",
-                            "hcamu#5": "hcam_u_5",
-                            "hcamu#6": "hcam_u_6",
-                            "hcamu#7": "hcam_u_7",
-                            "hcamu#8": "hcam_u_8",
-                            "hcamu#9": "hcam_u_9",
-                            "tcam#1": "tcam_1",
-                            "tcam#10": "tcam_10",
-                            "tcam#11": "tcam_11",
-                            "tcam#12": "tcam_12",
-                            "tcam#13": "tcam_13",
-                            "tcam#14": "tcam_14",
-                            "tcam#15": "tcam_15",
-                            "tcam#16": "tcam_16",
-                            "tcam#17": "tcam_17",
-                            "tcam#18": "tcam_18",
-                            "tcam#2": "tcam_2",
-                            "tcam#3": "tcam_3",
-                            "tcam#4": "tcam_4",
-                            "tcam#5": "tcam_5",
-                            "tcam#6": "tcam_6",
-                            "tcam#7": "tcam_7",
-                            "tcam#8": "tcam_8",
-                            "tcam#9": "tcam_9",
-                        }
-                    ),
                     TransformUnits(),
                     TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
                     AddGeometry(
@@ -763,6 +736,7 @@ class MASTPipelines(Pipelines):
             "xma": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
@@ -809,6 +783,7 @@ class MASTPipelines(Pipelines):
             "xmb": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("sad_out_l"),
@@ -825,6 +800,7 @@ class MASTPipelines(Pipelines):
             "xmc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
@@ -841,6 +817,7 @@ class MASTPipelines(Pipelines):
             "xmp": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -848,6 +825,7 @@ class MASTPipelines(Pipelines):
             "xms": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
                     MergeDatasets(),
                     TransformUnits(),
                 ]

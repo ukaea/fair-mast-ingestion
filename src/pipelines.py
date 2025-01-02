@@ -204,6 +204,20 @@ class MASTUPipelines(Pipelines):
                     TransformUnits(),
                 ]
             ),
+            "asx": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_ch(\d+)"),
+                    TensoriseChannels("tcam", regex=r"tcam_ch(\d+)"),
+                    TensoriseChannels("vcam", regex=r"vcam_ch(\d+)"),
+                ]
+            ),
             "ayc": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
@@ -245,6 +259,28 @@ class MASTUPipelines(Pipelines):
                             "input_constraints_fluxloops_fluxloopdim",
                         ]
                     ),
+                    DropCoordinates("output_radialprofiles_totalpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_toroidalflux", ["r"]),
+                    DropCoordinates("output_radialprofiles_staticpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_staticpprime", ["r"]),
+                    DropCoordinates("output_radialprofiles_rotationalpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_radialcoord", ["r"]),
+                    DropCoordinates("output_radialprofiles_r", ["r"]),
+                    DropCoordinates("output_radialprofiles_q", ["r"]),
+                    DropCoordinates("output_radialprofiles_poloidalarea", ["r"]),
+                    DropCoordinates("output_radialprofiles_plasmavolume", ["r"]),
+                    DropCoordinates("output_radialprofiles_plasmadensity", ["r"]),
+                    DropCoordinates(
+                        "output_radialprofiles_normalizedtoroidalflux", ["r"]
+                    ),
+                    DropCoordinates(
+                        "output_radialprofiles_normalizedpoloidalflux", ["r"]
+                    ),
+                    DropCoordinates("output_radialprofiles_jphi", ["r"]),
+                    DropCoordinates("output_radialprofiles_ffprime", ["r"]),
+                    DropCoordinates("output_radialprofiles_bz", ["r"]),
+                    DropCoordinates("output_radialprofiles_bt", ["r"]),
+                    DropCoordinates("output_radialprofiles_br", ["r"]),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -270,6 +306,38 @@ class MASTUPipelines(Pipelines):
                             "input_constraints_fluxloops_fluxloopdim",
                         ]
                     ),
+                    DropCoordinates("output_radialprofiles_totalpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_toroidalflux", ["r"]),
+                    DropCoordinates("output_radialprofiles_staticpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_staticpprime", ["r"]),
+                    DropCoordinates("output_radialprofiles_rotationalpressure", ["r"]),
+                    DropCoordinates("output_radialprofiles_radialcoord", ["r"]),
+                    DropCoordinates("output_radialprofiles_r", ["r"]),
+                    DropCoordinates("output_radialprofiles_q", ["r"]),
+                    DropCoordinates("output_radialprofiles_poloidalarea", ["r"]),
+                    DropCoordinates("output_radialprofiles_plasmavolume", ["r"]),
+                    DropCoordinates("output_radialprofiles_plasmadensity", ["r"]),
+                    DropCoordinates(
+                        "output_radialprofiles_normalizedtoroidalflux", ["r"]
+                    ),
+                    DropCoordinates(
+                        "output_radialprofiles_normalizedpoloidalflux", ["r"]
+                    ),
+                    DropCoordinates("output_radialprofiles_jphi", ["r"]),
+                    DropCoordinates("output_radialprofiles_ffprime", ["r"]),
+                    DropCoordinates("output_radialprofiles_bz", ["r"]),
+                    DropCoordinates("output_radialprofiles_bt", ["r"]),
+                    DropCoordinates("output_radialprofiles_br", ["r"]),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "esm": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -289,16 +357,6 @@ class MASTUPipelines(Pipelines):
             "rgc": Pipeline(
                 [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
             ),
-            "esm": Pipeline(
-                [
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
-                    MapDict(RenameVariables(self.variable_mapping_file)),
-                    MapDict(DropZeroDimensions()),
-                    MapDict(DropZeroDataset()),
-                    MergeDatasets(),
-                    TransformUnits(),
-                ]
-            ),
             "xbt": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
@@ -307,6 +365,7 @@ class MASTUPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("bes", regex=r"channel(\d+)"),
                 ]
             ),
             "xdc": Pipeline(
@@ -337,6 +396,28 @@ class MASTUPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("rtdi_01", regex=r"rtdi_01_ch(\d+)$"),
+                    TensoriseChannels("rtdi_02", regex=r"rtdi_02_ch(\d+)$"),
+                    TensoriseChannels("rtdi_03", regex=r"rtdi_03_ch(\d+)$"),
+                    TensoriseChannels("rtdi_04", regex=r"rtdi_04_ch(\d+)$"),
+                    TensoriseChannels("rtdi_05", regex=r"rtdi_05_ch(\d+)$"),
+                    TensoriseChannels("rtdi_06", regex=r"rtdi_06_ch(\d+)$"),
+                    TensoriseChannels("rtdi_07", regex=r"rtdi_07_ch(\d+)$"),
+                    TensoriseChannels("rtdi_08", regex=r"rtdi_08_ch(\d+)$"),
+                    TensoriseChannels("sanx20_01", regex=r"sanx20_01_ch(\d+)$"),
+                    TensoriseChannels("sanx20_02", regex=r"sanx20_02_ch(\d+)$"),
+                    TensoriseChannels("sanx21_01", regex=r"sanx21_01_ch(\d+)$"),
+                    TensoriseChannels("sanx21_02", regex=r"sanx21_02_ch(\d+)$"),
+                ]
+            ),
+            "xmb": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
                 ]
             ),
             "xmc": Pipeline(
@@ -347,6 +428,7 @@ class MASTUPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
+                    TensoriseChannels("acq216_202", regex=r"acq216_202_ch(\d+)"),
                 ]
             ),
             "xsx": Pipeline(
@@ -360,6 +442,7 @@ class MASTUPipelines(Pipelines):
                     TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_ch(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_ch(\d+)"),
+                    TensoriseChannels("vcam", regex=r"vcam_ch(\d+)"),
                 ]
             ),
         }

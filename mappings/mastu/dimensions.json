@@ -1079,5 +1079,21 @@
     },
     "epq/input_constraints_mse_a1": {
         "dim_0": "mse_n"
+    },
+
+    "xsx/devices_limit": {
+        "dim_0": "dim_1"
+    },
+    "xim/devices_limit": {
+        "dim_0": "dim_1"
+    },
+    "xma/devices_limit": {
+        "dim_0": "dim_1"
+    },
+    "xmb/devices_limit": {
+        "dim_0": "dim_1"
+    },
+    "xmc/devices_limit": {
+        "dim_0": "dim_1"
     }
  }

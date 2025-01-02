@@ -47,6 +47,8 @@ class DatasetBuilder:
             pipeline = self.pipelines.get(group_name)
 
             dataset: xr.Dataset = pipeline(datasets)
+            dataset.attrs["description"] = dataset_info.description
+            dataset.attrs["quality"] = dataset_info.quality
             dataset, group_name = self._rename_group(dataset, group_name)
 
             logger.info(f"Writing {group_name} for shot #{shot}")

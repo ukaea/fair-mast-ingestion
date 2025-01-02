@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from src.registry import Registry
 from src.utils import harmonise_name
 
+LAST_MAST_SHOT = 30471
+
 
 class MissingProfileError(Exception):
     pass
@@ -113,6 +115,15 @@ class UDALoader(BaseLoader):
             )
             for item in signals
         ]
+
+        # Special case: in MAST-U, soft x rays were moved from XSX -> ASX then back to XSX, but XSX contained raw data signals.
+        # Here we drop XSX if ASX is avilable, otherwise we return ASX
+        if shot_num > LAST_MAST_SHOT:
+            sources = {info.name: info for info in infos}
+            if "asx" in sources:
+                sources.pop("xsx")
+                infos = sources.values()
+
         return infos
 
     def lookup_status_code(self, status):
@@ -247,6 +258,7 @@ class UDALoader(BaseLoader):
         data = xr.DataArray(data, dims=dim_names, coords=coords, attrs=attrs)
         if signal_name == "time":
             signal_name = "time_"
+
         data.name = signal_name
         data.attrs["name"] = data.name
         data.attrs["uda_name"] = uda_name

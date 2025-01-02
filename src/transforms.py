@@ -156,9 +156,9 @@ class RenameVariables(BaseTransform):
 class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         for name, item in dataset_dict.items():
-            if "dim_0" in item.dims:
+            if "r" in item.dims:
                 print(f"{item.dims}, {name}")
-            # print(item)
+                print(item["r"].values)
 
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
@@ -207,9 +207,6 @@ class TensoriseChannels(BaseTransform):
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         group_keys = self._get_group_keys(dataset)
-
-        for key in group_keys:
-            self._parse_digits(key)
 
         # If we couldn't find any matching keys, do nothing.
         if len(group_keys) == 0:

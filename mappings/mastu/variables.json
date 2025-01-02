@@ -25,6 +25,24 @@
         "r_error": "major_radius_error",
         "arb": "radial_index"
     },
+    "rba": {
+        "rba": "data"
+    },
+    "rbb": {
+        "rbb": "data"
+    },
+    "rbc": {
+        "rbc": "data"
+    },
+    "rco": {
+        "rco": "data"
+    },
+    "rgb": {
+        "rgb": "data"
+    },
+    "rgc": {
+        "rgc": "data"
+    },
     "xdc": {
         "XDC/PLASMA/T/IP_REF": "reference_plasma_current",
         "XDC/FUELLING/T/DENSITY_REF_TARGET": "reference_plasma_density"

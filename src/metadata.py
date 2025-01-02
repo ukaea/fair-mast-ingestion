@@ -40,6 +40,9 @@ class SignalMetadata(BaseModel):
     description: str
     quality: Optional[str] = "Not Checked"
     units: str
+    rank: int
+    shape: str
+    dimensions: str
 
     class Config:
         extra = "ignore"
@@ -81,6 +84,9 @@ class MetadataWriter:
             Column("description", String),
             Column("units", String),
             Column("quality", String),
+            Column("rank", Integer),
+            Column("shape", String),
+            Column("dimensions", String),
         )
         metadata.create_all(self.engine)
         return table
@@ -115,11 +121,18 @@ class MetadataWriter:
             full_name = f"{source_name}/{item.attrs['name']}"
             url = f"{self.remote_path}/{shot}.zarr/{full_name}"
 
+            rank = len(item.shape)
+            shape = ",".join(list(map(str, item.shape)))
+            dims = ",".join(list(item.sizes.keys()))
+
             data = SignalMetadata(
                 uuid=get_uuid(full_name, shot),
                 shot_id=shot,
                 url=url,
                 source=source_name,
+                shape=shape,
+                dimensions=dims,
+                rank=rank,
                 **item.attrs,
             )
             datas.append(data.model_dump())

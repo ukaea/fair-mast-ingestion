@@ -159,9 +159,9 @@ class DatasetBuilder:
                 name = harmonise_name(uda_name)
                 logger.debug(f"Loading {name} ({uda_name})")
                 dataset = self.loader.load(shot, uda_name)
-                dataset.attrs.update(signal_info.model_dump())
                 dataset.attrs["name"] = name
                 dataset.attrs["source"] = group_name
+                dataset.attrs["quality"] = signal_info.quality
                 datasets[name] = dataset
             except MissingProfileError as e:
                 if "StructuredData" not in str(e):

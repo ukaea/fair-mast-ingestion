@@ -359,6 +359,9 @@ class UDALoader(BaseLoader):
             elif attr is None:
                 attrs[key] = "null"
 
+        attrs.pop("rank", "")
+        attrs.pop("shape", "")
+        attrs.pop("time_index", "")
         return attrs
 
     def _normalize_dimension_names(self, signal):

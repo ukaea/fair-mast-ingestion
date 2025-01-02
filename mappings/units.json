@@ -1,4 +1,5 @@
 {
+    "N/A": "",
     "STATE": "",
     "W / (sr.m2)": "W / (sr*m^2)",
     "S": "s",
@@ -11,6 +12,7 @@
     "Watt": "W",
     "Volt": "V",
     "Vs": "V",
+    "V s": "V",
     "Radians": "radian",
     "Ohms": "ohm",
     "Ohm": "ohm",

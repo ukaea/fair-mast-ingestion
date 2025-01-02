@@ -1,77 +1,140 @@
-import uuid
+import json
+from abc import ABC, abstractmethod
+from enum import Enum
 from pathlib import Path
 
-import h5py
+import numpy as np
 import xarray as xr
 import zarr
 
-
-def get_dataset_uuid(shot: int) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(shot)))
+from src.registry import Registry
 
 
-class DatasetWriter:
+class NumpyEncoder(json.JSONEncoder):
+    """Special json encoder for numpy types"""
 
-    def __init__(self, shot: int, dir_name: str, file_format: str = 'zarr'):
-        self.shot = shot
-        self.dir_name = Path(dir_name)
-        self.dir_name.mkdir(exist_ok=True, parents=True)
-        self.dataset_path = self.dir_name / f"{shot}.{file_format}"
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
-    def write_metadata(self):
-        if self.dataset_path.suffix == '.zarr':
-            fhandle = zarr.open(self.dataset_path)
+
+class DatasetWriter(ABC):
+    def __init__(self, output_path: str, **kwargs):
+        self.output_path = Path(output_path)
+
+    @property
+    def file_extension(self):
+        raise NotImplementedError(
+            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+        )
+
+    @abstractmethod
+    def write(self, group_name: str, datasets: dict[str, xr.Dataset]):
+        raise NotImplementedError(
+            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+        )
+
+    def _convert_dict_attrs_to_json(self, dataset: xr.Dataset):
+        for var in dataset.data_vars.values():
+            for attr_name, item in var.attrs.items():
+                if isinstance(item, dict) or isinstance(item, list):
+                    var.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
+
+        for attr_name, item in dataset.attrs.items():
+            if isinstance(item, dict) or isinstance(item, list):
+                var.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
+
+
+class ZarrDatasetWriter(DatasetWriter):
+    def __init__(
+        self, output_path: str, mode: str = "single", zarr_format: int = 2, **kwargs
+    ):
+        super().__init__(output_path)
+        self.version = zarr_format
+        self.mode = mode
+
+    @property
+    def file_extension(self):
+        return "zarr"
+
+    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+        self._convert_dict_attrs_to_json(dataset)
+
+        if self.mode == "single":
+            self._write_single_zarr(file_name, group_name, dataset)
         else:
-            fhandle = h5py.File(self.dataset_path, mode='a')
+            self._write_multi_zarr(file_name, group_name, dataset)
 
-        with fhandle as f:
-            f.attrs["dataset_uuid"] = get_dataset_uuid(self.shot)
-            f.attrs["shot_id"] = self.shot
+    def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
+        file_name = self.output_path / file_name
+        dataset.to_zarr(
+            file_name, group=name, mode="w", zarr_format=self.version, consolidated=True
+        )
+        zarr.consolidate_metadata(file_name)
 
-    def write_dataset(self, dataset: xr.Dataset):
-        name = dataset.attrs["name"]
-        if self.dataset_path.suffix == '.zarr':
-            dataset.to_zarr(self.dataset_path, group=name, consolidated=True, mode="w")
-        elif self.dataset_path.suffix == '.nc' or self.dataset_path.suffix == '.h5':
-            for var in dataset.data_vars.values():
-                var.attrs = self.remove_none_keys(var.attrs)
-            dataset.attrs = self.remove_none_keys(dataset.attrs)
-            mode = 'a' if self.dataset_path.exists() else 'w'
-            dataset.to_netcdf(self.dataset_path, group=name, mode=mode, engine='h5netcdf')
+    def _write_multi_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
+        file_name = Path(file_name)
+        path = self.output_path / f"{file_name.stem}/{name}.zarr"
+        path.parent.mkdir(exist_ok=True, parents=True)
+        dataset.to_zarr(path, mode="a", zarr_format=self.version, consolidated=True)
+        zarr.consolidate_metadata(path)
 
-    def consolidate_dataset(self):
-        if self.dataset_path.suffix != '.zarr':
-            return
 
-        with zarr.open(self.dataset_path) as f:
-            for source in f.keys():
-                zarr.consolidate_metadata(self.dataset_path / source)
+class ParquetDatasetWriter(DatasetWriter):
+    def __init__(self, output_path: str, **kwargs):
+        super().__init__(output_path)
 
-    def remove_none_keys(self, attrs: dict):
-        remove_keys = []
-        for key, value in attrs.items():
-            if value is None:
-                remove_keys.append(key)
+    @property
+    def file_extension(self):
+        return "parquet"
 
-        for key in remove_keys:
-            attrs.pop(key)
+    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+        df = dataset.to_dataframe()
+        path = self.output_path / f"{Path(file_name).stem}/{group_name}.parquet"
+        path.parent.mkdir(exist_ok=True, parents=True)
+        df.to_parquet(path)
 
-        return attrs
-        
 
-    def get_group_name(self, name: str) -> str:
-        name = name.replace("/", "_")
-        name = name.replace(" ", "_")
-        name = name.replace("(", "")
-        name = name.replace(")", "")
-        name = name.replace(",", "")
+class NetCDFDatasetWriter(DatasetWriter):
+    def __init__(self, output_path: str, mode: str = "single", **kwargs):
+        super().__init__(output_path)
+        self.mode = mode
 
-        if name.startswith("_"):
-            name = name[1:]
+    @property
+    def file_extension(self):
+        return "nc"
 
-        parts = name.split("_")
-        if len(parts) > 1:
-            name = parts[0] + "/" + "_".join(parts[1:])
+    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+        self._convert_dict_attrs_to_json(dataset)
 
-        name = name.lower()
-        return name
+        if self.mode == "single":
+            self._write_single_netcdf(file_name, group_name, dataset)
+        else:
+            self._write_multi_netcdf(file_name, group_name, dataset)
+
+    def _write_single_netcdf(self, file_name: str, name: str, dataset: xr.Dataset):
+        file_name = self.output_path / file_name
+        self.output_path.mkdir(exist_ok=True, parents=True)
+        dataset.to_netcdf(file_name, group=name, mode="a", engine="h5netcdf")
+
+    def _write_multi_netcdf(self, file_name: str, name: str, dataset: xr.Dataset):
+        path = self.output_path / f"{file_name}/{name}.nc"
+        path.parent.mkdir(exist_ok=True, parents=True)
+        dataset.to_netcdf(path, mode="a", engine="h5netcdf")
+
+
+class DatasetWriterNames(str, Enum):
+    ZARR = "zarr"
+    NETCDF = "netcdf"
+    PARQUET = "parquet"
+
+
+dataset_writer_registry = Registry[DatasetWriter]()
+dataset_writer_registry.register(DatasetWriterNames.ZARR, ZarrDatasetWriter)
+dataset_writer_registry.register(DatasetWriterNames.NETCDF, NetCDFDatasetWriter)
+dataset_writer_registry.register(DatasetWriterNames.PARQUET, ParquetDatasetWriter)

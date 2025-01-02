@@ -1,13 +1,17 @@
 {
-    "abm/i-bol": {
-        "chord": "dim_0"
-    },
-    "abm/v-bol": {
-        "chord": "dim_0"
-    },
-    "abm/r_tco_emis": {
-        "dim_0": "chord"
-    },
+    "abm/channel_status": {"dim_0": "chord"},
+    "abm/channel_type": {"dim_0": "chord"},
+    "abm/gain": {"dim_0": "chord"},
+    "abm/km": {"dim_0": "chord"},
+    "abm/phi_chords": {"dim_0": "chord"},
+    "abm/phi_slits": {"dim_0": "chord"},
+    "abm/prad_pol": {"dim_0": "chord"},
+    "abm/r_chords": {"dim_0": "chord"},
+    "abm/r_slits": {"dim_0": "chord"},
+    "abm/rbm": {"dim_0": "chord"},
+    "abm/taum": {"dim_0": "chord"},
+    "abm/z_chords": {"dim_0": "chord"},
+    "abm/z_slits": {"dim_0": "chord"},
 
     "act/c_pla_cutoff": {
         "dim_0": "n_pla"
@@ -1876,6 +1880,10 @@
         "t": "time",
         "radialindex": "radial_index"
     },
+    "ayc/instrument_intensity": {
+        "time": "instrument_time",
+        "t": "instrument_time"
+    },
     "ayc/instrument_dr": {
         "time": "instrument_time",
         "t": "instrument_time",
@@ -1980,8 +1988,12 @@
         "radialindex": "radial_index",
         "spectralindex": "spectral_index"
     },
+    "aye/instrument_intensity": {
+        "time": "instrument_time",
+        "t": "instrument_time"
+    },
     "aye/instrument_dr": {
-        "t": "time",
+        "t": "instrument_time",
         "radialindex": "radial_index"
     },
     "aye/interferometer_corr": {
@@ -2006,7 +2018,7 @@
         "radialindex": "radial_index"
     },
     "aye/segment_number": {
-        "t": "time"
+        "t": "time_segment"
     },
     "aye/spectra": {
         "t": "time",

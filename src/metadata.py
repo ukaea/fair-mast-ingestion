@@ -1,10 +1,19 @@
 from typing import Optional
+
+import xarray as xr
 from distributed import Lock
 from pydantic import BaseModel
-import xarray as xr
-from sqlalchemy import create_engine
+from sqlalchemy import (
+    Column,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    and_,
+    create_engine,
+    delete,
+)
 from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
-from sqlalchemy import Table, MetaData, Column, String, Integer, delete, and_
 
 from src.log import logger
 from src.utils import connected_to_cluster, get_uuid, nullcontext

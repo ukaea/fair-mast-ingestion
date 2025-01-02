@@ -13,7 +13,7 @@ from pint.errors import UndefinedUnitError
 from src.log import logger
 from src.utils import read_json_file
 
-UNITS_MAPPING_FILE = "mappings/mast/units.json"
+UNITS_MAPPING_FILE = "mappings/units.json"
 
 
 class BaseTransform(ABC):
@@ -100,6 +100,16 @@ class DropDatasets(BaseTransform):
         return datasets
 
 
+class DropErrors(BaseTransform):
+    def __init__(self, keys: list[str]):
+        self.keys = keys
+
+    def __call__(self, datasets: dict[str, xr.Dataset]) -> dict[str, xr.Dataset]:
+        for key in self.keys:
+            datasets[key] = datasets[key].drop(f"{key}_error")
+        return datasets
+
+
 class DropCoordinates(BaseTransform):
     def __init__(self, name, keys: list[str]) -> None:
         self.name = name
@@ -145,6 +155,11 @@ class RenameVariables(BaseTransform):
 
 class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
+        for name, item in dataset_dict.items():
+            if "dim_0" in item.dims:
+                print(f"{item.dims}, {name}")
+            # print(item)
+
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
         dataset.attrs = {}
@@ -192,6 +207,9 @@ class TensoriseChannels(BaseTransform):
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         group_keys = self._get_group_keys(dataset)
+
+        for key in group_keys:
+            self._parse_digits(key)
 
         # If we couldn't find any matching keys, do nothing.
         if len(group_keys) == 0:

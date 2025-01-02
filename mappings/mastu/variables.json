@@ -1,5 +1,104 @@
 {
+    "act": {
+        "majorradius": "major_radius",
+        "pixelnumber": "pixel_number"
+    },
+    "aiv": {
+        "majorradius": "major_radius"
+    },
+    "ait": {
+        "majorradius": "major_radius"
+    },
     "amc": {
         "ip": "plasma_current"
+    },
+    "ams": {
+        "timeaxis": "time"
+    },
+    "ayc": {
+        "r": "major_radius",
+        "r_error": "major_radius_error",
+        "arb": "radial_index"
+    },
+    "aye": {
+        "r": "major_radius",
+        "r_error": "major_radius_error",
+        "arb": "radial_index"
+    },
+    "xdc": {
+        "XDC/PLASMA/T/IP_REF": "reference_plasma_current",
+        "XDC/FUELLING/T/DENSITY_REF_TARGET": "reference_plasma_density"
+    },
+    "xim": {
+        "da_hm10_r": "dalpha_mid_plane_center",
+        "da_hm10_r1": "dalpha_mid_plane_r1",
+        "da_hm10_u1": "dalpha_mid_plane_u1",
+        "da_hm10_t": "dalpha_mid_plane_wide"
+    },
+    "xsx": {
+        "hcaml#1_data": "hcam_l_1",
+        "hcaml#10_data": "hcam_l_10",
+        "hcaml#11_data": "hcam_l_11",
+        "hcaml#12_data": "hcam_l_12",
+        "hcaml#13_data": "hcam_l_13",
+        "hcaml#14_data": "hcam_l_14",
+        "hcaml#15_data": "hcam_l_15",
+        "hcaml#16_data": "hcam_l_16",
+        "hcaml#2_data": "hcam_l_2",
+        "hcaml#3_data": "hcam_l_3",
+        "hcaml#4_data": "hcam_l_4",
+        "hcaml#5_data": "hcam_l_5",
+        "hcaml#6_data": "hcam_l_6",
+        "hcaml#7_data": "hcam_l_7",
+        "hcaml#8_data": "hcam_l_8",
+        "hcaml#9_data": "hcam_l_9",
+        "hcamu#1_data": "hcam_u_1",
+        "hcamu#10_data": "hcam_u_10",
+        "hcamu#11_data": "hcam_u_11",
+        "hcamu#12_data": "hcam_u_12",
+        "hcamu#13_data": "hcam_u_13",
+        "hcamu#14_data": "hcam_u_14",
+        "hcamu#15_data": "hcam_u_15",
+        "hcamu#16_data": "hcam_u_16",
+        "hcamu#2_data": "hcam_u_2",
+        "hcamu#3_data": "hcam_u_3",
+        "hcamu#4_data": "hcam_u_4",
+        "hcamu#5_data": "hcam_u_5",
+        "hcamu#6_data": "hcam_u_6",
+        "hcamu#7_data": "hcam_u_7",
+        "hcamu#8_data": "hcam_u_8",
+        "hcamu#9_data": "hcam_u_9",
+        "tcam#1_data": "tcam_1",
+        "tcam#10_data": "tcam_10",
+        "tcam#11_data": "tcam_11",
+        "tcam#12_data": "tcam_12",
+        "tcam#13_data": "tcam_13",
+        "tcam#14_data": "tcam_14",
+        "tcam#15_data": "tcam_15",
+        "tcam#16_data": "tcam_16",
+        "tcam#2_data": "tcam_2",
+        "tcam#3_data": "tcam_3",
+        "tcam#4_data": "tcam_4",
+        "tcam#5_data": "tcam_5",
+        "tcam#6_data": "tcam_6",
+        "tcam#7_data": "tcam_7",
+        "tcam#8_data": "tcam_8",
+        "tcam#9_data": "tcam_9",
+        "vcam#1_data": "vcam_1",
+        "vcam#10_data": "vcam_10",
+        "vcam#11_data": "vcam_11",
+        "vcam#12_data": "vcam_12",
+        "vcam#13_data": "vcam_13",
+        "vcam#14_data": "vcam_14",
+        "vcam#15_data": "vcam_15",
+        "vcam#16_data": "vcam_16",
+        "vcam#2_data": "vcam_2",
+        "vcam#3_data": "vcam_3",
+        "vcam#4_data": "vcam_4",
+        "vcam#5_data": "vcam_5",
+        "vcam#6_data": "vcam_6",
+        "vcam#7_data": "vcam_7",
+        "vcam#8_data": "vcam_8",
+        "vcam#9_data": "vcam_9"
     }
 }

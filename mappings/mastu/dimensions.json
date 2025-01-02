@@ -1,4 +1,65 @@
 {
+    "act/cel3_radial_wavelength": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_time": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_pixel_number": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_major_radius": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_index": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_counts_error": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_counts": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_fit_min_wvl": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_fit_max_wvl": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_c5291_rest_wavelength": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_av_fits": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_av_counts_error": {
+        "majorradius": "radial_major_radius"
+    },
+    "act/cel3_radial_ava_av_counts": {
+      "majorradius": "radial_major_radius"
+    },
+    "act/cel3_bg_wavelength": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_time": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_pixel_number": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_major_radius": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_index": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_counts_error": {
+        "majorradius": "bg_major_radius"
+    },
+    "act/cel3_bg_counts": {
+        "majorradius": "bg_major_radius"
+    },
+
     "anb/sum_voltage": {
         "timetime": "time"
     },
@@ -17,6 +78,374 @@
     "anb/ss_power": {
         "timetime": "time"
     },
+
+    "epm/output_separatrixgeometry_zboundary": {
+        "dim_0": "boundary_n"
+    },
+    "epm/output_separatrixgeometry_xpointz": {
+        "dim_0": "xpoint_n"
+    },
+    "epm/output_separatrixgeometry_xpointr": {
+        "dim_0": "xpoint_n"
+    },
+    "epm/output_separatrixgeometry_xpointdim": {
+        "dim_0": "xpoint_n"
+    },
+    "epm/output_separatrixgeometry_strikepointdim": {
+        "dim_0": "strikepoint_n"
+    },
+    "epm/output_separatrixgeometry_strikepointr": {
+        "dim_0": "strikepoint_n"
+    },
+    "epm/output_separatrixgeometry_strikepointz": {
+        "dim_0": "strikepoint_n"
+    },
+    "epm/output_separatrixgeometry_rboundary": {
+        "dim_0": "boundary_n"
+    },
+    "epm/output_separatrixgeometry_boundarycoordsdim": {
+        "dim_0": "boundary_n"
+    },
+    "epm/output_radialprofiles_radialcoord": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_totalpressure": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_toroidalflux": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_staticpressure": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_staticpprime": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_rotationalpressure": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_r": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_q": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_poloidalarea": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_plasmavolume": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_plasmadensity": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_normalizedtoroidalflux": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_normalizedpoloidalflux": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_jphi": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_ffprime": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_bz": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_bt": {
+        "dim_0": "r"
+    },
+    "epm/output_radialprofiles_br": {
+        "dim_0": "r"
+    },
+    "epm/output_numericaldetails_poloidalfluxerror": {
+        "dim_0": "iterations"
+    },
+    "epm/output_numericaldetails_maximumiterationcount": {
+        "dim_0": "iterations"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_pprimecoeffs": {
+        "dim_0": "pprime_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_pfcurrents": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_pfcircuitdim": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_pprimedim": {
+        "dim_0": "pprime_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_freepfcurrents": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_ffprimecoeffs": {
+        "dim_0": "ffprime_n"
+    },
+    "epm/output_numericaldetails_degreesoffreedom_ffprimedim": {
+        "dim_0": "ffprime_n"
+    },
+    "epm/output_numericaldetails_chisquared": {
+        "dim_0": "iterations"
+    },
+
+    "epm/input_pfsystem_pfcoils_zcentre": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_turncount": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_rcentre": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_pfcoilelements": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_dz": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_dr": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_coilid": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_circuitid": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_angle1": {
+        "dim_0": "pfcoils_n"
+    },
+    "epm/input_pfsystem_pfcoils_angle2": {
+        "dim_0": "pfcoils_n"
+    },
+
+    "epm/input_pfsystem_passivestructures_zcentre": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_turncount": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_rcentre": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_pfcoilelements": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_dz": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_dr": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_coilid": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_circuitid": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_angle1": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_angle2": {
+        "dim_0": "passivestructures_n"
+    },
+    "epm/input_pfsystem_passivestructures_passivestructureelements": {
+        "dim_0": "passivestructures_n"
+    },
+
+    "epm/input_numericalcontrols_ww_knt": {
+        "dim_0": "ww_knot_n"
+    },
+    "epm/input_numericalcontrols_ww_knotdim": {
+        "dim_0": "ww_knot_n"
+    },
+    "epm/input_numericalcontrols_ww_kbdry2": {
+        "dim_0": "ww_knot_n"
+    },
+    "epm/input_numericalcontrols_ww_kbdry": {
+        "dim_0": "ww_knot_n"
+    },
+    "epm/input_numericalcontrols_ww_bdry2": {
+        "dim_0": "ww_knot_n"
+    },
+    "epm/input_numericalcontrols_ww_bdry": {
+        "dim_0": "ww_knot_n"
+    },
+
+    "epm/input_numericalcontrols_pp_knt": {
+        "dim_0": "pp_knot_n"
+    },
+    "epm/input_numericalcontrols_pp_knotdim": {
+        "dim_0": "pp_knot_n"
+    },
+    "epm/input_numericalcontrols_pp_kbdry2": {
+        "dim_0": "pp_knot_n"
+    },
+    "epm/input_numericalcontrols_pp_kbdry": {
+        "dim_0": "pp_knot_n"
+    },
+    "epm/input_numericalcontrols_pp_bdry2": {
+        "dim_0": "pp_knot_n"
+    },
+    "epm/input_numericalcontrols_pp_bdry": {
+        "dim_0": "pp_knot_n"
+    },
+
+    "epm/input_numericalcontrols_ne_knt": {
+        "dim_0": "ne_knot_n"
+    },
+    "epm/input_numericalcontrols_ne_knotdim": {
+        "dim_0": "ne_knot_n"
+    },
+    "epm/input_numericalcontrols_ne_kbdry2": {
+        "dim_0": "ne_knot_n"
+    },
+    "epm/input_numericalcontrols_ne_kbdry": {
+        "dim_0": "ne_knot_n"
+    },
+    "epm/input_numericalcontrols_ne_bdry2": {
+        "dim_0": "ne_knot_n"
+    },
+    "epm/input_numericalcontrols_ne_bdry": {
+        "dim_0": "ne_knot_n"
+    },
+
+    "epm/input_numericalcontrols_ffp_knt": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epm/input_numericalcontrols_ffp_knotdim": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epm/input_numericalcontrols_ffp_kbdry2": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epm/input_numericalcontrols_ffp_kbdry": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epm/input_numericalcontrols_ffp_bdry2": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epm/input_numericalcontrols_ffp_bdry": {
+        "dim_0": "ffp_knot_n"
+    },
+
+    "epm/input_limiter_zvalues": {
+        "dim_0": "limiter_n"
+    },
+    "epm/input_limiter_rvalues": {
+        "dim_0": "limiter_n"
+    },
+    "epm/input_limiter_limitercoord": {
+        "dim_0": "limiter_n"
+    },
+
+    "epm/input_constraints_pfcircuits_weights": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_timeslicesource": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_target": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_strdim_shortname": {
+        "dim_0": "pfcircuit_name_n"
+    },
+    "epm/input_constraints_pfcircuits_sigmas": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_pfcircuitsdim": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_id": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_pfcircuits_computed": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epm/input_constraints_magneticprobes_zcentre": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_weights": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_turncount": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_toroidalsector": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_toroidalangle": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_target": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_strdim_shortname": {
+        "dim_0": "mag_probe_name_n"
+    },
+    "epm/input_constraints_magneticprobes_sigmas": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_rcentre": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_poloidalorientation": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_magneticprobedim": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_id": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_computed": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_axiallength": {
+        "dim_0": "mag_probe_n"
+    },
+    "epm/input_constraints_magneticprobes_area": {
+        "dim_0": "mag_probe_n"
+    },
+
+    "epm/input_constraints_fluxloops_zvalues": {
+        "dim_0": "flux_loop_n"
+    },
+    "epm/input_constraints_fluxloops_weights": {
+        "dim_0": "flux_loop_n"
+    },
+    "epm/input_constraints_fluxloops_toroidalangleend": {
+        "dim_0": "flux_loop_n"
+    },
+    "epm/input_constraints_fluxloops_toroidalanglebegin": {
+        "dim_0": "flux_loop_n"
+    },
+    "epm/input_constraints_fluxloops_target": {
+        "dim_0": "flux_loop_n"
+    },
+    "epm/input_constraints_fluxloops_strdim_shortname": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epm/input_constraints_fluxloops_sigmas": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epm/input_constraints_fluxloops_rvalues": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epm/input_constraints_fluxloops_id": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epm/input_constraints_fluxloops_fluxloopdim": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epm/input_constraints_fluxloops_computed": {
+        "dim_0": "flux_loop_name_n"
+    },
+
     "epm/output_fluxfunctionprofiles_elongation": {
         "normalizedpoloidalflux": "normalized_poloidal_flux"
     },
@@ -128,5 +557,527 @@
     },
     "epm/output_profiles2d_z": {
         "zcoordinatesofcomputationalgrid": "z"
+    },
+
+    "epq/output_separatrixgeometry_zboundary": {
+        "dim_0": "boundary_n"
+    },
+    "epq/output_separatrixgeometry_xpointz": {
+        "dim_0": "xpoint_n"
+    },
+    "epq/output_separatrixgeometry_xpointr": {
+        "dim_0": "xpoint_n"
+    },
+    "epq/output_separatrixgeometry_xpointdim": {
+        "dim_0": "xpoint_n"
+    },
+    "epq/output_separatrixgeometry_strikepointdim": {
+        "dim_0": "strikepoint_n"
+    },
+    "epq/output_separatrixgeometry_strikepointr": {
+        "dim_0": "strikepoint_n"
+    },
+    "epq/output_separatrixgeometry_strikepointz": {
+        "dim_0": "strikepoint_n"
+    },
+    "epq/output_separatrixgeometry_rboundary": {
+        "dim_0": "boundary_n"
+    },
+    "epq/output_separatrixgeometry_boundarycoordsdim": {
+        "dim_0": "boundary_n"
+    },
+    "epq/output_radialprofiles_radialcoord": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_totalpressure": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_toroidalflux": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_staticpressure": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_staticpprime": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_rotationalpressure": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_r": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_q": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_poloidalarea": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_plasmavolume": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_plasmadensity": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_normalizedtoroidalflux": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_normalizedpoloidalflux": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_jphi": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_ffprime": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_bz": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_bt": {
+        "dim_0": "r"
+    },
+    "epq/output_radialprofiles_br": {
+        "dim_0": "r"
+    },
+    "epq/output_numericaldetails_poloidalfluxerror": {
+        "dim_0": "iterations"
+    },
+    "epq/output_numericaldetails_maximumiterationcount": {
+        "dim_0": "iterations"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_pprimecoeffs": {
+        "dim_0": "pprime_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_pfcurrents": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_pfcircuitdim": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_pprimedim": {
+        "dim_0": "pprime_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_freepfcurrents": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_ffprimecoeffs": {
+        "dim_0": "ffprime_n"
+    },
+    "epq/output_numericaldetails_degreesoffreedom_ffprimedim": {
+        "dim_0": "ffprime_n"
+    },
+    "epq/output_numericaldetails_chisquared": {
+        "dim_0": "iterations"
+    },
+
+    "epq/input_pfsystem_pfcoils_zcentre": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_turncount": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_rcentre": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_pfcoilelements": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_dz": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_dr": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_coilid": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_circuitid": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_angle1": {
+        "dim_0": "pfcoils_n"
+    },
+    "epq/input_pfsystem_pfcoils_angle2": {
+        "dim_0": "pfcoils_n"
+    },
+
+    "epq/input_pfsystem_passivestructures_zcentre": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_turncount": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_rcentre": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_pfcoilelements": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_dz": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_dr": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_coilid": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_circuitid": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_angle1": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_angle2": {
+        "dim_0": "passivestructures_n"
+    },
+    "epq/input_pfsystem_passivestructures_passivestructureelements": {
+        "dim_0": "passivestructures_n"
+    },
+
+    "epq/input_numericalcontrols_ww_knt": {
+        "dim_0": "ww_knot_n"
+    },
+    "epq/input_numericalcontrols_ww_knotdim": {
+        "dim_0": "ww_knot_n"
+    },
+    "epq/input_numericalcontrols_ww_kbdry2": {
+        "dim_0": "ww_knot_n"
+    },
+    "epq/input_numericalcontrols_ww_kbdry": {
+        "dim_0": "ww_knot_n"
+    },
+    "epq/input_numericalcontrols_ww_bdry2": {
+        "dim_0": "ww_knot_n"
+    },
+    "epq/input_numericalcontrols_ww_bdry": {
+        "dim_0": "ww_knot_n"
+    },
+
+    "epq/input_numericalcontrols_pp_knt": {
+        "dim_0": "pp_knot_n"
+    },
+    "epq/input_numericalcontrols_pp_knotdim": {
+        "dim_0": "pp_knot_n"
+    },
+    "epq/input_numericalcontrols_pp_kbdry2": {
+        "dim_0": "pp_knot_n"
+    },
+    "epq/input_numericalcontrols_pp_kbdry": {
+        "dim_0": "pp_knot_n"
+    },
+    "epq/input_numericalcontrols_pp_bdry2": {
+        "dim_0": "pp_knot_n"
+    },
+    "epq/input_numericalcontrols_pp_bdry": {
+        "dim_0": "pp_knot_n"
+    },
+
+    "epq/input_numericalcontrols_ne_knt": {
+        "dim_0": "ne_knot_n"
+    },
+    "epq/input_numericalcontrols_ne_knotdim": {
+        "dim_0": "ne_knot_n"
+    },
+    "epq/input_numericalcontrols_ne_kbdry2": {
+        "dim_0": "ne_knot_n"
+    },
+    "epq/input_numericalcontrols_ne_kbdry": {
+        "dim_0": "ne_knot_n"
+    },
+    "epq/input_numericalcontrols_ne_bdry2": {
+        "dim_0": "ne_knot_n"
+    },
+    "epq/input_numericalcontrols_ne_bdry": {
+        "dim_0": "ne_knot_n"
+    },
+
+    "epq/input_numericalcontrols_ffp_knt": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epq/input_numericalcontrols_ffp_knotdim": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epq/input_numericalcontrols_ffp_kbdry2": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epq/input_numericalcontrols_ffp_kbdry": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epq/input_numericalcontrols_ffp_bdry2": {
+        "dim_0": "ffp_knot_n"
+    },
+    "epq/input_numericalcontrols_ffp_bdry": {
+        "dim_0": "ffp_knot_n"
+    },
+
+    "epq/input_limiter_zvalues": {
+        "dim_0": "limiter_n"
+    },
+    "epq/input_limiter_rvalues": {
+        "dim_0": "limiter_n"
+    },
+    "epq/input_limiter_limitercoord": {
+        "dim_0": "limiter_n"
+    },
+
+    "epq/input_constraints_pfcircuits_weights": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_timeslicesource": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_target": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_strdim_shortname": {
+        "dim_0": "pfcircuit_name_n"
+    },
+    "epq/input_constraints_pfcircuits_sigmas": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_pfcircuitsdim": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_id": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_pfcircuits_computed": {
+        "dim_0": "pfcircuit_n"
+    },
+    "epq/input_constraints_magneticprobes_zcentre": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_weights": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_turncount": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_toroidalsector": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_toroidalangle": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_target": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_strdim_shortname": {
+        "dim_0": "mag_probe_name_n"
+    },
+    "epq/input_constraints_magneticprobes_sigmas": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_rcentre": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_poloidalorientation": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_magneticprobedim": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_id": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_computed": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_axiallength": {
+        "dim_0": "mag_probe_n"
+    },
+    "epq/input_constraints_magneticprobes_area": {
+        "dim_0": "mag_probe_n"
+    },
+
+    "epq/input_constraints_fluxloops_zvalues": {
+        "dim_0": "flux_loop_n"
+    },
+    "epq/input_constraints_fluxloops_weights": {
+        "dim_0": "flux_loop_n"
+    },
+    "epq/input_constraints_fluxloops_toroidalangleend": {
+        "dim_0": "flux_loop_n"
+    },
+    "epq/input_constraints_fluxloops_toroidalanglebegin": {
+        "dim_0": "flux_loop_n"
+    },
+    "epq/input_constraints_fluxloops_target": {
+        "dim_0": "flux_loop_n"
+    },
+    "epq/input_constraints_fluxloops_strdim_shortname": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epq/input_constraints_fluxloops_sigmas": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epq/input_constraints_fluxloops_rvalues": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epq/input_constraints_fluxloops_id": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epq/input_constraints_fluxloops_fluxloopdim": {
+        "dim_0": "flux_loop_name_n"
+    },
+    "epq/input_constraints_fluxloops_computed": {
+        "dim_0": "flux_loop_name_n"
+    },
+
+    "epq/output_fluxfunctionprofiles_elongation": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_ffprime": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_goutside": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_i": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_iota": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_iotaoutside": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_ioutside": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_javrg": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_lowertriangularity": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_normalizedpoloidalflux": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_normalizedtoroidalflux": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_plasmadensity": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_plasmafluxvolume": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_poloidalflux": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_poloidalfluxarea": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_poloidalfluxoutside": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_q": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_rbphi": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_rinboard": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_rotationalpprime": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_rotationalpressure": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_routboard": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_staticpprime": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_staticpressure": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_toroidalflux": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_fluxfunctionprofiles_uppertriangularity": {
+        "normalizedpoloidalflux": "normalized_poloidal_flux"
+    },
+    "epq/output_profiles2d_bphi": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_bpol": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_br": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_bz": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_jphi": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_poloidalflux": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_psinorm": {
+        "rcoordinatesofcomputationalgrid": "r",
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/output_profiles2d_r": {
+        "rcoordinatesofcomputationalgrid": "r"
+    },
+    "epq/output_profiles2d_z": {
+        "zcoordinatesofcomputationalgrid": "z"
+    },
+    "epq/input_constraints_mse_weights": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_toroidalsector": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_target": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_sigmas": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_r": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_msechannelsdim": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_id": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_computed": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a6": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a5": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a4": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a3": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a2": {
+        "dim_0": "mse_n"
+    },
+    "epq/input_constraints_mse_a1": {
+        "dim_0": "mse_n"
     }
  }

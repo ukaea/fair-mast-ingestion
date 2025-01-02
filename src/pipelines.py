@@ -6,6 +6,7 @@ from src.transforms import (
     AlignChannels,
     DropCoordinates,
     DropDatasets,
+    DropErrors,
     DropZeroDataset,
     DropZeroDimensions,
     InterpolateAxis,
@@ -61,27 +62,12 @@ class MASTUPipelines(Pipelines):
 
     def __init__(self) -> None:
         self.pipelines = {
-            "amb": Pipeline(
+            "abm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
-                    MergeDatasets(),
-                    TransformUnits(),
-                ]
-            ),
-            "amc": Pipeline(
-                [
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
-                    MapDict(RenameVariables(self.variable_mapping_file)),
-                    MergeDatasets(),
-                    TransformUnits(),
-                    RenameVariables(self.variable_mapping_file),
-                ]
-            ),
-            "anb": Pipeline(
-                [
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
-                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -90,14 +76,130 @@ class MASTUPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    DropDatasets(["cel3_bg_z", "cel3_radial_z", "cel3_ss_z"]),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
-            "acu": Pipeline(
+            "aga": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ahx": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ait": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "aiv": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "alp": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "amb": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "amc": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ams": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    DropErrors(["stokes_s3", "stokes_s2", "stokes_s1"]),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "anb": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "ane": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "anu": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "asm": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -106,6 +208,8 @@ class MASTUPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -114,6 +218,8 @@ class MASTUPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -122,14 +228,123 @@ class MASTUPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    DropDatasets(
+                        [
+                            "input_numericalcontrols_ww_knotdim",
+                            "input_numericalcontrols_ne_knotdim",
+                            "input_numericalcontrols_pp_knotdim",
+                            "input_numericalcontrols_ffp_knotdim",
+                            "input_limiter_unitydim",
+                            "input_constraints_pfcircuits_shortname",
+                            "input_constraints_pfcircuits_pfcircuitsdim",
+                            "input_constraints_magneticprobes_shortname",
+                            "input_constraints_magneticprobes_magneticprobedim",
+                            "input_constraints_fluxloops_strdim_shortname",
+                            "input_constraints_fluxloops_fluxloopdim",
+                        ]
+                    ),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
+            ),
+            "epq": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    DropDatasets(
+                        [
+                            "input_numericalcontrols_ww_knotdim",
+                            "input_numericalcontrols_ne_knotdim",
+                            "input_numericalcontrols_pp_knotdim",
+                            "input_numericalcontrols_ffp_knotdim",
+                            "input_limiter_unitydim",
+                            "input_constraints_pfcircuits_shortname",
+                            "input_constraints_pfcircuits_pfcircuitsdim",
+                            "input_constraints_magneticprobes_shortname",
+                            "input_constraints_magneticprobes_magneticprobedim",
+                            "input_constraints_fluxloops_strdim_shortname",
+                            "input_constraints_fluxloops_fluxloopdim",
+                        ]
+                    ),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "rba": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rbb": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rbc": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rgb": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
+            ),
+            "rgc": Pipeline(
+                [MapDict(RenameVariables(self.variable_mapping_file)), ProcessImage()]
             ),
             "esm": Pipeline(
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xbt": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xdc": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xim": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xma": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
+                    MergeDatasets(),
+                    TransformUnits(),
+                ]
+            ),
+            "xmc": Pipeline(
+                [
+                    MapDict(RenameDimensions(self.dimension_mapping_file)),
+                    MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -138,19 +353,13 @@ class MASTUPipelines(Pipelines):
                 [
                     MapDict(RenameDimensions(self.dimension_mapping_file)),
                     MapDict(RenameVariables(self.variable_mapping_file)),
+                    MapDict(DropZeroDimensions()),
+                    MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_ch(\d+)"),
                     TensoriseChannels("hcam_u", regex=r"hcam_u_ch(\d+)"),
                     TensoriseChannels("tcam", regex=r"tcam_ch(\d+)"),
-                ]
-            ),
-            "xdc": Pipeline(
-                [
-                    MapDict(RenameDimensions(self.dimension_mapping_file)),
-                    MapDict(RenameVariables(self.variable_mapping_file)),
-                    MergeDatasets(),
-                    TransformUnits(),
                 ]
             ),
         }

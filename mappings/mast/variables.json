@@ -10,9 +10,14 @@
     "ayc": {
         "r": "major_radius",
         "r_error": "major_radius_error",
-        "arb": "radial_index"
+        "arb": "radial_index",
+        "te": "t_e",
+        "te_core": "t_e_core",
+        "ne": "n_e",
+        "ne_core": "n_e_core",
+        "pe": "p_e"
     },
-    "aye": {
+    "ayd": {
         "r": "major_radius",
         "r_error": "major_radius_error",
         "arb": "radial_index"

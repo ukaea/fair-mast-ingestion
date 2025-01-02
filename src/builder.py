@@ -8,6 +8,11 @@ from src.pipelines import Pipelines
 from src.utils import harmonise_name, read_json_file
 from src.writer import DatasetWriter
 
+SEG_FAULT_LIST = [
+    "EPQ/INPUT/CONSTRAINTS/MSE/STRDIM_SHORTNAME",
+    "EPQ/INPUT/CONSTRAINTS/MSE/SHORTNAME",
+]
+
 
 class DatasetBuilder:
     def __init__(
@@ -42,14 +47,7 @@ class DatasetBuilder:
             pipeline = self.pipelines.get(group_name)
 
             dataset: xr.Dataset = pipeline(datasets)
-
-            # rename groups
-            if group_name in self.group_name_mapping:
-                mapping = self.group_name_mapping[group_name]
-                if "imas" in mapping:
-                    imas_name = mapping["imas"]
-                    dataset.attrs["imas"] = imas_name
-                group_name = mapping["name"]
+            dataset, group_name = self._rename_group(dataset, group_name)
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"
@@ -129,6 +127,8 @@ class DatasetBuilder:
                 "XDC_Z_S_ZIP",
                 "/XDC/Z/S/ZIPREF",
                 "XDC_Z_S_ZIPREF",
+                "XDC/PLASMA/T/IP_REF",
+                "XDC/FUELLING/T/DENSITY_REF_TARGET",
             ]
 
             signal_infos = [
@@ -137,17 +137,36 @@ class DatasetBuilder:
 
         datasets = {}
         for signal_info in signal_infos:
-            name = signal_info.name
+            uda_name = signal_info.name
+
+            if uda_name in SEG_FAULT_LIST:
+                logger.warning(
+                    f"Skipping {uda_name} as it is in the seg fault exclude list."
+                )
+                continue
+
             try:
-                new_name = harmonise_name(name)
-                logger.debug(f"Loading {new_name}")
-                dataset = self.loader.load(shot, name)
-                dataset.attrs["name"] = new_name
+                name = harmonise_name(uda_name)
+                logger.debug(f"Loading {name} ({uda_name})")
+                dataset = self.loader.load(shot, uda_name)
+                dataset.attrs["name"] = name
                 dataset.attrs["source"] = group_name
-                datasets[new_name] = dataset
+                datasets[name] = dataset
             except MissingProfileError as e:
-                logger.warning(e)
+                if "StructuredData" not in str(e):
+                    logger.warning(e)
         return datasets
+
+    def _rename_group(self, dataset: xr.Dataset, group_name: str):
+        if group_name in self.group_name_mapping:
+            mapping = self.group_name_mapping[group_name]
+            if "imas" in mapping:
+                imas_name = mapping["imas"]
+                dataset.attrs["imas"] = imas_name
+            dataset.attrs["uda_name"] = group_name
+            group_name = mapping["name"]
+
+        return dataset, group_name
 
     def list_datasets(self, shot: int):
         infos = self.loader.list_datasets(shot)

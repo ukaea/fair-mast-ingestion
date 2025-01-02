@@ -1,4 +1,5 @@
 {
+    "W / (sr.m2)": "W / (sr*m^2)",
     "S": "s",
     "m^-^3": "m^-3",
     "m-4": "m^-4",
@@ -13,6 +14,7 @@
     "Ohms": "ohm",
     "Ohm": "ohm",
     "Tesla": "T",
+    "Celsius": "degC",
     "Degree C": "degC",
     "Passnumber": "",
     "Status": "",

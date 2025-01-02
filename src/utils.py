@@ -1,9 +1,25 @@
+from contextlib import contextmanager
 import json
 import sys
 import uuid
 from pathlib import Path
 
+from distributed import get_client
+
 from src.log import logger
+
+
+@contextmanager
+def nullcontext(enter_result=None):
+    yield enter_result
+
+
+def connected_to_cluster():
+    try:
+        get_client()
+        return True
+    except ValueError:
+        return False
 
 
 def harmonise_name(name: str) -> str:
@@ -20,12 +36,8 @@ def harmonise_name(name: str) -> str:
     return name
 
 
-def get_dataset_uuid(shot: int) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(shot)))
-
-
-def get_dataset_item_uuid(name: str, shot: int) -> str:
-    oid_name = name + "/" + str(shot)
+def get_uuid(name: str, shot: int) -> str:
+    oid_name = f"{shot}/{name}"
     return str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
 
 

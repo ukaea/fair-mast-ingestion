@@ -173,7 +173,7 @@ def process_shot(shot: int, **kwargs):
 
     if config.upload is not None:
         local_file = config.writer.options["output_path"] / Path(file_name)
-        remote_file = f"{config.upload['base_path']}/"
+        remote_file = f"{config.upload.base_path}/"
 
         uploader = UploadS3(**config.upload)
         uploader.upload(local_file, remote_file)

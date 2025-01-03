@@ -1,10 +1,6 @@
 facility: "MASTU"
 default_loader: "uda"
-plasma_current:
-  source: "ip"
-  dimensions:
-    time:
-
+plasma_current: "summary/plasma_current"
 global_interpolate:
   params:
     time:

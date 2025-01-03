@@ -1,10 +1,6 @@
 facility: "MAST"
 default_loader: "fairmast"
-plasma_current:
-  source: "amc/plasma_current"
-  dimensions:
-    time:
-      source: "amc/time"
+plasma_current: "core_profiles/plasma_current"
 global_interpolate:
   params:
     time:

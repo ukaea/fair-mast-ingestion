@@ -1,11 +1,6 @@
 facility: "JET"
 default_loader: "sal"
-plasma_current:
-  source: "magn/ipla"
-  units: "A"
-  dimensions:
-    time:
-      units: "s"
+plasma_current: "core_profiles/plasma_current"
 
 global_interpolate:
   params:

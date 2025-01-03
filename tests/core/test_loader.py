@@ -1,3 +1,5 @@
+import importlib
+import pytest
 import xarray as xr
 from src.core.load import SALLoader, UDALoader, ZarrLoader
 
@@ -8,6 +10,9 @@ def test_load_uda():
     assert isinstance(signal, xr.DataArray)
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("jet"), reason="requires the Jet SAL library"
+)
 def test_load_sal():
     loader = SALLoader()
     signal = loader.load(87737, "magn/ipla")

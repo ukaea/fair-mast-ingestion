@@ -24,7 +24,7 @@ class SourceMetadata(BaseModel):
     name: str
     shot_id: int
     url: str
-    description: str
+    description: Optional[str] = ""
     quality: Optional[str] = "Not Checked"
     imas: Optional[str] = None
 
@@ -38,12 +38,12 @@ class SignalMetadata(BaseModel):
     source: str
     shot_id: int
     url: str
-    description: str
-    quality: Optional[str] = "Not Checked"
-    units: str
     rank: int
     shape: str
     dimensions: str
+    units: Optional[str] = ""
+    description: Optional[str] = ""
+    quality: Optional[str] = "Not Checked"
     imas: Optional[str] = None
 
     class Config:

@@ -2,25 +2,26 @@ import argparse
 import sys
 import uuid
 from pathlib import Path
+
 import numpy as np
-import xarray as xr
 import pint  # noqa: F401
 import pint_xarray  # noqa: F401
+import xarray as xr
 
-from src.core.log import logger
+from src.core.config import IngestionConfig, ReaderConfig, load_config
 from src.core.load import (
     BaseLoader,
-    loader_registry,
     MissingProfileError,
     MissingSourceError,
+    loader_registry,
 )
+from src.core.log import logger
+from src.core.metadata import MetadataWriter
+from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
 from src.core.writer import dataset_writer_registry
-from src.core.metadata import MetadataWriter
-from src.core.config import IngestionConfig, ReaderConfig, load_config
-from src.core.model import Mapping, load_model
-from src.level2.reader import DatasetReader
 from src.level2.parallel import process_shots
+from src.level2.reader import DatasetReader
 
 MIN_SHOT = 11695
 MAX_SHOT = 30472

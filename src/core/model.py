@@ -1,10 +1,11 @@
-from collections import OrderedDict
 import json
-import numpy as np
-from typing import Any, Optional, Union
-import yaml
+from collections import OrderedDict
 from enum import Enum
 from pathlib import Path
+from typing import Any, Optional, Union
+
+import numpy as np
+import yaml
 from pydantic import BaseModel, Field
 
 

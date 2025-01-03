@@ -1,4 +1,4 @@
-from src.core.model import load_model, Mapping
+from src.core.model import Mapping, load_model
 
 
 def test_load_mappings():

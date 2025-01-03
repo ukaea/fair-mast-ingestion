@@ -147,12 +147,15 @@ class FFTDecomposeTransform(BaseDatasetTransform):
         spectrum = np.abs(spectrum)
 
         angles = xr.DataArray(angles, coords=dict(frequency=f, time=t))
+        angle_name = f"{signal_name}_angles"
+        angles.attrs["name"] = angle_name
         angles.attrs["units"] = "radians"
-        spectrum = xr.DataArray(spectrum, coords=dict(frequency=f, time=t))
 
-        signal = xr.Dataset(
-            {f"{signal_name}_spectrogram": spectrum, f"{signal_name}_angles": angles}
-        )
+        spectrum = xr.DataArray(spectrum, coords=dict(frequency=f, time=t))
+        spec_name = f"{signal_name}_spectrogram"
+        spectrum.attrs["name"] = spec_name
+
+        signal = xr.Dataset({spec_name: spectrum, angle_name: angles})
         return signal
 
 

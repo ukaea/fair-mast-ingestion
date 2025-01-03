@@ -38,7 +38,7 @@ class IngestionWorkflow:
         self.writer = dataset_writer_registry.create(
             writer_config.type, **writer_config.options
         )
-        self.loader = loader_registry.create("uda")
+        self.loader = loader_registry.create("uda", include_error=True)
         self.pipelines = pipelines_registry.create(self.facility)
 
         db_path = Path(self.config.metadatabase_file).absolute()

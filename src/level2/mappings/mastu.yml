@@ -1,0 +1,629 @@
+facility: "MASTU"
+default_loader: "uda"
+plasma_current:
+  source: "ip"
+  dimensions:
+    time:
+
+global_interpolate:
+  params:
+    time:
+      step: 0.00025
+      method: 'zero'
+      fill: 'ffill'
+      dropna: true
+
+datasets:
+  equilibrium:
+    interpolate:
+      time:
+        method: "none"
+      major_radius:
+        method: "none"
+        dropna: true
+      z:
+        method: "none"
+        dropna: true
+
+    profiles:
+      q:
+        source: "epm/output/fluxFunctionProfiles/q" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.q"
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+      plasma_current:
+        source: "epm/output/profiles2D/jphi" 
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          z:
+            source: "epm/output/profiles2D/z"
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+      magnetic_flux:
+        source: "epm/output/profiles2D/poloidalFlux" 
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          z:
+            source: "epm/output/profiles2D/z"
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+
+      total_pressure:
+        source: "epm/output/radialProfiles/totalPressure"
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+
+      elongation:
+        source: "epm/output/separatrixGeometry/elongation" 
+        units: 'dimensionless'
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      elongation_axis:
+        source: "epm/output/separatrixGeometry/elongation" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.elongation"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_r:
+        source:
+          - name: "EFM_XPOINT_R"
+            channels:
+              - "epm/output/separatrixGeometry/dndXpoint1R" 
+              - "epm/output/separatrixGeometry/dndXpoint2R" 
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
+        units: "dimensionless"
+        dimensions:
+          n_x_points:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_z:
+        source:
+          - name: "EFM_XPOINT_Z"
+            channels:
+              - "epm/output/separatrixGeometry/dndXpoint1Z" 
+              - "epm/output/separatrixGeometry/dndXpoint2Z" 
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
+        units: "dimensionless"
+        dimensions:
+          n_x_points:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      minor_radius:
+        source: "epm/output/separatrixGeometry/minorRadius" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].boundary.minor_radius" 
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_lower:
+        source: "epm/output/separatrixGeometry/lowerTriangularity" 
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_upper:
+        source: "epm/output/separatrixGeometry/upperTriangularity" 
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      magnetic_axis_r:
+        source: "epm/output/globalParameters/magneticAxis/R" 
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      magnetic_axis_z:
+        source: "epm/output/globalParameters/magneticAxis/Z" 
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      beta_normal:
+        source: "epm/output/globalParameters/betan" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_normal"
+        dimensions:
+          time:
+            source: "epm/time"
+
+      beta_pol:
+        source: "epm/output/globalParameters/betap" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      beta_tor:
+        source: "epm/output/globalParameters/betat" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      bphi_rmag:
+        source: "epm/output/globalParameters/bphiRmag" 
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+      bvac_rmag:
+        source: "epm/output/globalParameters/bvacRmag" 
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+      li:
+        source: "epm/output/globalParameters/li1" 
+        imase_name: "equilibrium.time_slice[:].global_quantities.li_3"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+      q0:
+        source: "epm/output/globalParameters/q0" 
+        units: 'dimensionless'
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+      q95:
+        source: "epm/output/globalParameters/q95" 
+        imas: "equilibrium.time_slice[:].global_quantities.q_95"
+        units: 'dimensionless'
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      lcfs_r:
+        source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/RBOUNDARY" 
+        imas: "equilibrium.time_slice[:].boundary.lcfs.r"
+        dimensions:
+          time:
+            source: "epm/time"
+          n_boundary_coords:
+
+      lcfs_z:
+        source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/ZBOUNDARY" 
+        imas: "equilibrium.time_slice[:].boundary.lcfs.z"
+        dimensions:
+          time:
+            source: "epm/time"
+          n_boundary_coords:
+
+  pulse_schedule:
+    imas: pulse_schedule
+    profiles:
+      ref_plasma_current:
+        source: "XDC/PLASMA/T/IP_REF"
+        imas: "pulse_schedule.flux_control.i_plasma" 
+        dimensions:
+          time:
+      ref_plasma_density:
+        source: "xdc/fuelling/t/density_ref_target"
+        imas: "pulse_schedule.density_control.n_e_line"
+        dimensions:
+          time:
+        units: "m^-2"
+        scale: 1e21
+
+  summary:
+    profiles:
+      plasma_current:
+        source: "AMC/PLASMA_CURRENT"
+        target_units: "A"
+        dimensions:
+          time:
+      sol_current:
+        source: "/AMC/ROGEXT/P1"
+        dimensions:
+          time:
+      integrated_electron_density:
+        source: "ANE/DENSITY"
+        dimensions:
+          time:
+      total_power:
+        source: "/ANB/SUM/POWER"
+        dimensions:
+          time:
+      vloop_static:
+        source: "/esm/vloop_static" 
+        dimensions:
+          time:
+      vloop_dynamic:
+        source: "/esm/vloop_dynamic" 
+        dimensions:
+          time:
+      line_averaged_density:
+        source: "/esm/nebar" 
+        dimensions:
+          time:
+      # gas_pressure:
+      #   source: "AGA_FIG"
+      #   dimensions:
+      #     time:
+      neutron_flux:
+        source: "/ANU/FC/DETECTOR1/NEUTRONS_VAR"
+        dimensions:
+          time:
+
+  dalpha:
+    interpolate:
+      time: 
+        step: 2e-5
+
+    profiles:
+      dalpha_mid_plane_center:
+        source: "XIM/Da/HM10/R"
+        dimensions:
+          time:
+      dalpha_mid_plane_wide:
+        source: "XIM/Da/HM10/T"
+        dimensions:
+          time:
+      # dalpha_tangential:
+      #   source: "XIM_DA/HU10/T"
+      #   dimensions:
+      #     time:
+
+  # flux_loops:
+  #   profiles:
+  #     fl_cc03: 
+  #       source: "AMB_FL/CC03"
+  #       dimensions:
+  #         time:
+  #     fl_cc09: 
+  #       source: "AMB_FL/CC09"
+  #       dimensions:
+  #         time:
+  #     fl_p4l_4: 
+  #       source: "AMB_FL/P4U/4"
+  #       dimensions:
+  #         time:
+  #     fl_p4u_4: 
+  #       source: "AMB_FL/P4U/4"
+  #       dimensions:
+  #         time:
+  #     fl_p5l_1: 
+  #       source: "AMB_FL/P5L/1"
+  #       dimensions:
+  #         time:
+  #     fl_p5u_1: 
+  #       source: "AMB_FL/P5U/1"
+  #       dimensions:
+  #         time:
+
+  # saddle_coils:
+  #   profiles:
+  #     m1:
+  #       source: "xmb/sad/out/m01"
+  #       dimensions:
+  #         time:
+  #     m3:
+  #       source: "xmb/sad/out/m03"
+  #       dimensions:
+  #         time:
+  #     m5:
+  #       source: "xmb/sad/out/m05"
+  #       dimensions:
+  #         time:
+  #     m7:
+  #       source: "xmb/sad/out/m07"
+  #       dimensions:
+  #         time:
+
+  # magnetics:
+  #   profiles:
+  #     # '04', '12', '20', '28', '36'
+  #     ccbv_04:
+  #       source: "xma/ccbv/04"
+  #       dimensions:
+  #         time:
+  #     ccbv_12:
+  #       source: "xma/ccbv/12"
+  #       dimensions:
+  #         time:
+  #     ccbv_20:
+  #       source: "xma/ccbv/20"
+  #       dimensions:
+  #         time:
+  #     ccbv_28:
+  #       source: "xma/ccbv/28"
+  #       dimensions:
+  #         time:
+  #     ccbv_36:
+  #       source: "xma/ccbv/36"
+  #       dimensions:
+  #         time:
+
+  #     # ['03', '06', '14','17']
+  #     obr_03:
+  #       source: "xma/obr/03"
+  #       dimensions:
+  #         time:
+  #     obr_06:
+  #       source: "xma/obr/06"
+  #       dimensions:
+  #         time:
+  #     obr_14:
+  #       source: "xma/obr/14"
+  #       dimensions:
+  #         time:
+  #     obr_17:
+  #       source: "xma/obr/17"
+  #       dimensions:
+  #         time:
+      
+  #     # ['03', '06', '14','17']
+  #     obv_03:
+  #       source: "xma/obr/03"
+  #       dimensions:
+  #         time:
+  #     obv_06:
+  #       source: "xma/obr/06"
+  #       dimensions:
+  #         time:
+  #     obv_14:
+  #       source: "xma/obr/14"
+  #       dimensions:
+  #         time:
+  #     obv_17:
+  #       source: "xma/obr/17"
+  #       dimensions:
+  #         time:
+
+  # mirnov:
+  #   interpolate:
+  #     time:
+  #       step: 2e-6
+  #   profiles:
+  #     omv_110:
+  #       source: "xmc/omv/110"
+  #       dimensions:
+  #         time:
+  #     omv_210:
+  #       source: "xmc/omv/210"
+  #       dimensions:
+  #         time:
+  #     omv_310:
+  #       source: "xmc/omv/310"
+  #       dimensions:
+  #         time:
+
+    
+  # mirnov_fft:
+  #   transforms:
+  #     fftdecompose:
+
+  #   interpolate:
+  #     time:
+  #       step: 2e-6
+  #   profiles:
+  #     omv_110:
+  #       source: "xmc/omv/110"
+  #       dimensions:
+  #         time:
+  #     omv_210:
+  #       source: "xmc/omv/210"
+  #       dimensions:
+  #         time:
+  #     omv_310:
+  #       source: "xmc/omv/310"
+  #       dimensions:
+  #         time:
+
+  thomson_scattering:
+    imas: thomson_scattering
+    interpolate:
+      time:
+        step: 0.005
+        fill: 'none'
+        dropna: False
+      major_radius:
+        start: 0.3
+        end: 1.5
+        step: 0.01
+        fill: 'none'
+        method: 'linear'
+
+    profiles:
+      te_core:
+        source: "ayc/t_e_core"
+        dimensions:
+          time:
+            source: "ayc/time"
+
+      ne_core:
+        source: "ayc/n_e_core"
+        dimensions:
+          time:
+            source: "ayc/time"
+
+      te:
+        imas: "thomson_scattering.channel[:].t_e.data"
+        source: "ayc/t_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].t_e.time"
+            source: "ayc/time"
+          major_radius: 
+            imas: "thomson_scattering.channel[:].position.r"
+            source: "ayc/r"
+
+      ne:
+        imas: "thomson_scattering.channel[:].n_e.data"
+        source: "ayc/n_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].n_e.time"
+            source: "ayc/time"
+          major_radius: 
+            imas: "thomson_scattering.channel[:].position.r"
+            source: "ayc/r"
+
+      pe:
+        source: "ayc/p_e"
+        dimensions:
+          time:
+            source: "ayc/time"
+          major_radius: 
+            source: "ayc/r"
+
+  charge_exchange:
+    imas: charge_exchange
+    interpolate:
+      time:
+        step: 0.005
+        fill: 'none'
+        dropna: False
+      major_radius:
+        start: 0.3
+        end: 1.5
+        step: 0.01
+        fill: 'none'
+        method: 'linear'
+
+    profiles:
+      ti_core:
+        source: "act/cel3/ss/t_i_core" 
+        dimensions:
+          time:
+            source: "act/cel3/ss/time"
+      vi_core:
+        source: "act/cel3/ss/v_i_core" 
+        dimensions:
+          time:
+            source: "act/cel3/ss/time"
+          
+      ti:
+        imas: "charge_exchange.channel[:].t_i_average.data"
+        source: "act/cel3/ss/pvb/c5291/temperature" 
+        dimensions:
+          time:
+            source: "act/cel3/ss/time"
+          
+          major_radius:
+            source: "/act/cel3/ss/major_radius"
+
+      vi:
+        source: "act/cel3/ss/pvb/c5291/velocity" 
+        dimensions:
+          time:
+            source: "act/cel3/ss/time"
+          
+          major_radius:
+            source: "/act/cel3/ss/major_radius"
+            
+  soft_xrays:
+    interpolate:
+      time:
+        step: 2e-6
+
+    profiles:
+      hcam_l:
+        source: 
+          - name: "ASX/HCAM/L"
+            channels:
+              - '/ASX/HCAM/L/ch01'
+              - '/ASX/HCAM/L/ch02'
+              - '/ASX/HCAM/L/ch03'
+              - '/ASX/HCAM/L/ch04'
+              - '/ASX/HCAM/L/ch05'
+              - '/ASX/HCAM/L/ch06'
+              - '/ASX/HCAM/L/ch07'
+              - '/ASX/HCAM/L/ch08'
+              - '/ASX/HCAM/L/ch09'
+              - '/ASX/HCAM/L/ch10'
+              - '/ASX/HCAM/L/ch11'
+              - '/ASX/HCAM/L/ch12'
+              - '/ASX/HCAM/L/ch13'
+              - '/ASX/HCAM/L/ch14'
+        dimensions:
+          hcam_l_channel:
+          time: 
+            source: "ASX/TIME"
+
+      hcam_u:
+        source: 
+          - name: "ASX/HCAM/U"
+            channels:
+              - '/ASX/HCAM/U/ch01'
+              - '/ASX/HCAM/U/ch02'
+              - '/ASX/HCAM/U/ch03'
+              - '/ASX/HCAM/U/ch04'
+              - '/ASX/HCAM/U/ch05'
+              - '/ASX/HCAM/U/ch06'
+              - '/ASX/HCAM/U/ch07'
+              - '/ASX/HCAM/U/ch08'
+              - '/ASX/HCAM/U/ch09'
+              - '/ASX/HCAM/U/ch10'
+              - '/ASX/HCAM/U/ch11'
+              - '/ASX/HCAM/U/ch12'
+              - '/ASX/HCAM/U/ch13'
+              - '/ASX/HCAM/U/ch14'
+        dimensions:
+          hcam_u_channel:
+          time: 
+            source: "ASX/TIME"
+
+  cameras:
+    interpolate:
+      time:
+        step: 0.002
+    profiles:
+      camera_a:
+        source: "RBA"
+        dimensions:
+          time:
+          width_a: null
+          height_a: null

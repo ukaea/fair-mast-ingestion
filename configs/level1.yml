@@ -1,0 +1,43 @@
+metadatabase_file: level1.db
+readers:
+  uda:
+    type: 'uda'
+  fairmast:
+    type: 'zarr'
+    options:
+      base_path: 's3://mast/level1/shots'
+      protocol: 'simplecache'
+      target_protocol: "s3"
+      target_options:
+          anon: True 
+          endpoint_url: "https://s3.echo.stfc.ac.uk"
+# writer:
+#   type: "parquet"
+#   options:
+#     output_path: "/common/tmp/sjackson/benchmarks/parquet"
+# writer:
+#   type: "netcdf"
+#   options:
+#     output_path: "/common/tmp/sjackson/benchmarks/netcdf"
+# writer:
+#   type: "icechunk"
+#   options:
+#     output_path: "/common/tmp/sjackson/benchmarks/icechunk"
+writer:
+  type: "zarr"
+  options:
+    zarr_format: 2
+    output_path: "/common/tmp/sjackson/upload-tmp/zarr/level1"
+
+# upload:
+#   base_path: "s3://mast/test/level1/shots"
+#   mode: 's5cmd'
+#   credentials_file: ".s5cfg.csd3"
+#   endpoint_url: "https://object.arcus.openstack.hpc.cam.ac.uk"
+
+# upload:
+#   base_path: "s3://mast/test/level2/shots"
+#   mode: 's5cmd'
+#   credentials_file: ".s5cfg.stfc"
+#   endpoint_url: "https://s3.echo.stfc.ac.uk"
+

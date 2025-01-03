@@ -26,6 +26,7 @@ class SourceMetadata(BaseModel):
     url: str
     description: str
     quality: Optional[str] = "Not Checked"
+    imas: Optional[str] = None
 
     class Config:
         extra = "ignore"
@@ -43,6 +44,7 @@ class SignalMetadata(BaseModel):
     rank: int
     shape: str
     dimensions: str
+    imas: Optional[str] = None
 
     class Config:
         extra = "ignore"
@@ -67,6 +69,7 @@ class MetadataWriter:
             Column("url", String),
             Column("description", String),
             Column("quality", String),
+            Column("imas", String),
         )
         metadata.create_all(self.engine)
         return table
@@ -87,6 +90,7 @@ class MetadataWriter:
             Column("rank", Integer),
             Column("shape", String),
             Column("dimensions", String),
+            Column("imas", String),
         )
         metadata.create_all(self.engine)
         return table

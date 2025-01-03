@@ -1,0 +1,63 @@
+facility: "JET"
+default_loader: "sal"
+plasma_current:
+  source: "magn/ipla"
+  units: "A"
+  dimensions:
+    time:
+      units: "s"
+
+global_interpolate:
+  params:
+    time:
+      step: 0.00025
+      method: 'zero'
+      fill: 'ffill'
+      dropna: true
+
+datasets:
+  equilibrium:
+    interpolate:
+      time:
+        method: "none"
+      z:
+        method: "none"
+        dropna: true
+      major_radius:
+        method: "none"
+        dropna: true
+
+    profiles:
+      normalized_beta:
+        source: "efit/btnd" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_normal"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      poloidal_beta:
+        source: "efit/btpd" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      toroidal_beta:
+        source: "efit/bttd" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+  core_profiles:
+    imas: core_profiles
+    profiles:
+      plasma_current:
+        source: "magn/ipla"
+        imas: core_profiles.global_quantities.ip
+        units: "A"
+        dimensions:
+          time:
+            imas: "core_profiles.time"
+            units: "s"

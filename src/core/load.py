@@ -89,8 +89,8 @@ class SALLoader(BaseLoader):
 
 
 class UDALoader(BaseLoader):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, include_error: bool = False) -> None:
+        self._include_error = include_error
 
     def list_datasets(self, shot: int):
         source_infos = self.get_source_infos(shot)
@@ -224,7 +224,7 @@ class UDALoader(BaseLoader):
         signals = xr.concat(signals, dim=channels)
         return signals
 
-    def load_signal(self, shot_num: int, name: str):
+    def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
         import pyuda
 
         try:
@@ -238,7 +238,9 @@ class UDALoader(BaseLoader):
                 f'Could not load profile {name} for shot "{shot_num}". Encountered exception: {e}'
             )
 
-    def _convert_signal_to_dataset(self, signal_name, signal):
+    def _convert_signal_to_dataset(
+        self, signal_name, signal
+    ) -> xr.Dataset | xr.DataArray:
         dim_names = self._normalize_dimension_names(signal)
         coords = {}
         for name, dim in zip(dim_names, signal.dims):
@@ -268,7 +270,11 @@ class UDALoader(BaseLoader):
         error.attrs["name"] = error.name
 
         dataset = xr.merge([data, error])
-        return dataset
+
+        if self._include_error:
+            return dataset
+        else:
+            return data
 
     def load_image(self, shot_num: int, name: str) -> xr.Dataset:
         client = self._get_client()

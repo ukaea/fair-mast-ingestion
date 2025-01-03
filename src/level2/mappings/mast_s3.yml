@@ -1,0 +1,666 @@
+facility: "MAST"
+default_loader: "fairmast"
+plasma_current:
+  source: "amc/plasma_current"
+  dimensions:
+    time:
+      source: "amc/time"
+global_interpolate:
+  params:
+    time:
+      step: 0.00025
+      method: 'zero'
+      fill: 'ffill'
+      dropna: true
+datasets:
+  equilibrium:
+    interpolate:
+      time:
+        method: "none"
+      major_radius:
+        method: "none"
+        dropna: true
+      z:
+        method: "none"
+        dropna: true
+    profiles:
+      q:
+        source: "efm/qr" 
+        dimensions:
+          time:
+            source: "efm/time"
+          major_radius:
+            source: "efm/r"
+            units: 'm'
+      plasma_current:
+        source: "efm/plasma_current_rz" 
+        dimensions:
+          time:
+            source: "efm/time"
+          z:
+            source: "efm/z"
+          major_radius:
+            source: "efm/r"
+            units: 'm'
+      magnetic_flux:
+        source: "efm/psirz" 
+        dimensions:
+          time:
+            source: "efm/time"
+          z:
+            source: "efm/z"
+          major_radius:
+            source: "efm/r"
+            units: 'm'
+
+      elongation:
+        source: "efm/elongation" 
+        dimensions:
+          time:
+            source: "efm/time"
+      elongation_axis:
+        source: "efm/elongation_axis" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi90_in:
+        source: "efm/rpsi90_in" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi90_out:
+        source: "efm/rpsi90_out" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi95_in:
+        source: "efm/rpsi95_in" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi95_out:
+        source: "efm/rpsi95_out" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi100_in:
+        source: "efm/rpsi100_in" 
+        dimensions:
+          time:
+            source: "efm/time"
+      rpsi100_out:
+        source: "efm/rpsi100_out" 
+        dimensions:
+          time:
+            source: "efm/time"
+      xpoint1_rc:
+        source: "efm/xpoint1_rc" 
+        dimensions:
+          time:
+            source: "efm/time"
+      xpoint1_zc:
+        source: "efm/xpoint1_zc" 
+        dimensions:
+          time:
+            source: "efm/time"
+      xpoint2_rc:
+        source: "efm/xpoint2_rc" 
+        dimensions:
+          time:
+            source: "efm/time"
+      xpoint2_zc:
+        source: "efm/xpoint2_zc" 
+        dimensions:
+          time:
+            source: "efm/time"
+      minor_radius:
+        source: "efm/minor_radius" 
+        dimensions:
+          time:
+            source: "efm/time"
+      upper_triangularity:
+        source: "efm/triang_upper" 
+        dimensions:
+          time:
+            source: "efm/time"
+      lower_triangularity:
+        source: "efm/triang_lower" 
+        dimensions:
+          time:
+            source: "efm/time"
+      magnetic_axis_r:
+        source: "efm/magnetic_axis_r" 
+        dimensions:
+          time:
+            source: "efm/time"
+      magnetic_axis_z:
+        source: "efm/magnetic_axis_z" 
+        dimensions:
+          time:
+            source: "efm/time"
+      normalized_beta:
+        source: "efm/betan" 
+        dimensions:
+          time:
+            source: "efm/time"
+      poloidal_beta:
+        source: "efm/betap" 
+        dimensions:
+          time:
+            source: "efm/time"
+      toroidal_beta:
+        source: "efm/betat" 
+        dimensions:
+          time:
+            source: "efm/time"
+      bphi_rmag:
+        source: "efm/bphi_rmag" 
+        dimensions:
+          time:
+            source: "efm/time"
+      bvac_rmag:
+        source: "efm/bvac_rmag" 
+        dimensions:
+          time:
+            source: "efm/time"
+      internal_inductance:
+        source: "efm/li" 
+        dimensions:
+          time:
+            source: "efm/time"
+      q0:
+        source: "efm/q_axis" 
+        dimensions:
+          time:
+            source: "efm/time"
+      q90:
+        source: "efm/q_100" 
+        dimensions:
+          time:
+            source: "efm/time"
+      q95:
+        source: "efm/q_95" 
+        dimensions:
+          time:
+            source: "efm/time"
+      q100:
+        source: "efm/q_100" 
+        dimensions:
+          time:
+            source: "efm/time"
+      whmd:
+        source: "efm/wplasmd" 
+        dimensions:
+          time:
+            source: "efm/time"
+  control:
+    profiles:
+      ref_plasma_current:
+        source: "xdc/ip_t_ipref"
+        dimensions:
+          time:
+            source: "xdc/time1"
+      ref_plasma_density:
+        source: "xdc/density_t_nelref"
+        dimensions:
+          time:
+            source: "xdc/time1"
+
+  core_profiles:
+    imas: core_profiles
+    profiles:
+      plasma_current:
+        source: "amc/plasma_current"
+        imas: core_profiles.global_quantities.ip
+        dimensions:
+          time:
+            source: "amc/time"
+            imas: "core_profiles.time"
+      sol_current:
+        source: "amc/sol_current"
+        dimensions:
+          time:
+            source: "amc/time"
+      integrated_electron_density:
+        source: "ane/density"
+        dimensions:
+          time:
+            source: "ane/time"
+      tot_sum_power:
+        source: "anb/tot_sum_power"
+        dimensions:
+          time:
+            source: "anb/time"
+      vloop_static:
+        source: "esm/v_loop_static" 
+        dimensions:
+          time:
+            source: "esm/time"
+      vloop_dynamic:
+        source: "esm/v_loop_dynamic" 
+        dimensions:
+          time:
+            source: "esm/time"
+      line_averaged_density:
+        source: "esm/ne_bar" 
+        dimensions:
+          time:
+            source: "esm/time"
+      gas_pressure:
+        source: "aga/fig"
+        dimensions:
+          time:
+            source: "aga/time"
+      neutron_flux:
+        source: "anu/neutrons"
+        dimensions:
+          time:
+            source: "anu/time"
+
+  dalpha:
+    interpolate:
+      time: 
+        step: 2e-5
+
+    profiles:
+      dalpha:
+        source: "xim/da_hm10_t"
+        dimensions:
+          time:
+            source: "xim/time"
+  flux_loops:
+    profiles:
+      fl_cc03: 
+        source: "amb/fl_cc03"
+        dimensions:
+          time:
+            source: "amb/time"
+      fl_cc09: 
+        source: "amb/fl_cc09"
+        dimensions:
+          time:
+            source: "amb/time"
+      fl_p4l_4: 
+        source: "amb/fl_p4u_4"
+        dimensions:
+          time:
+            source: "amb/time"
+      fl_p4u_4: 
+        source: "amb/fl_p4u_4"
+        dimensions:
+          time:
+            source: "amb/time"
+      fl_p5l_1: 
+        source: "amb/fl_p5l_1"
+        dimensions:
+          time:
+            source: "amb/time"
+      fl_p5u_1: 
+        source: "amb/fl_p5u_1"
+        dimensions:
+          time:
+            source: "amb/time"
+
+  saddle_coils:
+    profiles:
+      m1:
+        source: "xmb/sad_out_m01"
+        dimensions:
+          time:
+            source: "xmb/time"
+      m3:
+        source: "xmb/sad_out_m03"
+        dimensions:
+          time:
+            source: "xmb/time"
+      m5:
+        source: "xmb/sad_out_m05"
+        dimensions:
+          time:
+            source: "xmb/time"
+      m7:
+        source: "xmb/sad_out_m07"
+        dimensions:
+          time:
+            source: "xmb/time"
+
+  magnetics:
+    profiles:
+      # '04', '12', '20', '28', '36'
+      ccbv_04:
+        source: "xma/ccbv_04"
+        dimensions:
+          time:
+            source: "xma/time"
+      ccbv_12:
+        source: "xma/ccbv_12"
+        dimensions:
+          time:
+            source: "xma/time"
+      ccbv_20:
+        source: "xma/ccbv_20"
+        dimensions:
+          time:
+            source: "xma/time"
+      ccbv_28:
+        source: "xma/ccbv_28"
+        dimensions:
+          time:
+            source: "xma/time"
+      ccbv_36:
+        source: "xma/ccbv_36"
+        dimensions:
+          time:
+            source: "xma/time"
+
+      # ['03', '06', '14','17']
+      obr_03:
+        source: "xma/obr_03"
+        dimensions:
+          time:
+            source: "xma/time"
+      obr_06:
+        source: "xma/obr_06"
+        dimensions:
+          time:
+            source: "xma/time"
+      obr_14:
+        source: "xma/obr_14"
+        dimensions:
+          time:
+            source: "xma/time"
+      obr_17:
+        source: "xma/obr_17"
+        dimensions:
+          time:
+            source: "xma/time"
+      
+      # ['03', '06', '14','17']
+      obv_03:
+        source: "xma/obr_03"
+        dimensions:
+          time:
+            source: "xma/time"
+      obv_06:
+        source: "xma/obr_06"
+        dimensions:
+          time:
+            source: "xma/time"
+      obv_14:
+        source: "xma/obr_14"
+        dimensions:
+          time:
+            source: "xma/time"
+      obv_17:
+        source: "xma/obr_17"
+        dimensions:
+          time:
+            source: "xma/time"
+    
+  mirnov:
+    interpolate:
+      time:
+        step: 2e-6
+    profiles:
+      omv_110:
+        source: "xmc/omv_110"
+        dimensions:
+          time:
+            source: "xmc/time"
+      omv_210:
+        source: "xmc/omv_210"
+        dimensions:
+          time:
+            source: "xmc/time"
+      omv_310:
+        source: "xmc/omv_310"
+        dimensions:
+          time:
+            source: "xmc/time"
+
+  thomson_scattering:
+    imas: thomson_scattering
+    interpolate:
+      time:
+        step: 0.005
+      major_radius:
+        start: 0
+        end: 1.6
+        step: 0.01
+        method: "linear"
+
+    profiles:
+      te_core:
+        source:
+          - name: "ayc/te_core"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "atm/te_core"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+            source:
+              - name: "ayc/time"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/time"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+
+      ne_core:
+        source:
+          - name: "ayc/ne_core"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "atm/ne_core"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+            source:
+              - name: "ayc/time"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/time"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+
+
+      te:
+        source:
+          - name: "ayc/te"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "atm/te"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        imas: "thomson_scattering.channel[:].t_e"
+        dimensions:
+          time:
+            source:
+              - name: "ayc/time"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/time"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].t_e.time"
+          major_radius:
+            source:
+              - name: "ayc/radius"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/radius"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].delta_position.r" 
+      ne:
+        source:
+          - name: "ayc/ne"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "atm/ne"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        imas: "thomson_scattering.channel[:].n_e"
+        dimensions:
+          time:
+            source:
+              - name: "ayc/time"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/time"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].n_e.time"
+          major_radius:
+            source:
+              - name: "ayc/radius"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/radius"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].delta_position.r" 
+      pe:
+        source:
+          - name: "ayc/pe"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "atm/pe"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+            source:
+              - name: "ayc/time"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/time"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+          major_radius:
+            source:
+              - name: "ayc/radius"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "atm/radius"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].delta_position.r" 
+
+  charge_exchange:
+    imas: charge_exchange
+    interpolate:
+      time:
+        step: 0.01
+        method: 'zero'
+      major_radius:
+        start: 0
+        end: 1.6
+        step: 0.01
+        method: "linear"
+    profiles:
+      ti:
+        source: "act/pla_temperature" 
+        imas: "charge_exchange.channel[:].ion[:].t_i"
+        dimensions:
+          time:
+            source: "act/time"
+            imas: "charge_exchange.time"
+          
+          major_radius:
+            source: "act/majorradius"
+            imas: "charge_exchange.channel[:].position.r" 
+
+      velocity:
+        source: "act/pla_velocity" 
+        dimensions:
+          time:
+            source: "act/time"
+            imas: "charge_exchange.time"
+          
+          major_radius:
+            source: "act/majorradius"
+            imas: "charge_exchange.channel[:].position.r" 
+            
+  soft_xrays:
+    interpolate:
+      time:
+        step: 2e-6
+
+    profiles:
+      tcam:
+        source: "xsx/tcam"
+        dimensions:
+          tcam_channel:
+            source: "xsx/tcam_channel"
+          time: 
+            source: "xsx/time"
+      hcam_l:
+        source: "xsx/hcam_l"
+        dimensions:
+          hcam_l_channel:
+            source: "xsx/hcam_l_channel"
+          time: 
+            source: "xsx/time"
+      hcam_u:
+        source: "xsx/hcam_u"
+        dimensions:
+          hcam_u_channel:
+            source: "xsx/hcam_u_channel"
+          time: 
+            source: "xsx/time"
+
+  camera_a:
+    interpolate:
+      time:
+        step: 0.002
+    profiles:
+      data:
+        source: "rba/data"
+        dimensions:
+          time:
+            source: "rba/time"
+          height: null
+          width: null
+
+  camera_b:
+    interpolate:
+      time:
+        step: 0.002
+    profiles:
+      data:
+        source: "rbb/data"
+        dimensions:
+          time:
+            source: "rbb/time"
+          height: null
+          width: null

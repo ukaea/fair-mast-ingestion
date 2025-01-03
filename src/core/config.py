@@ -16,8 +16,14 @@ class WriterConfig(BaseModel):
     options: dict[str, Any]
 
 
+class ReaderConfig(BaseModel):
+    type: str
+    options: Optional[dict[str, Any]] = {}
+
+
 class IngestionConfig(BaseModel):
     upload: Optional[UploadConfig] = None
+    readers: dict[str, ReaderConfig]
     writer: WriterConfig
     metadatabase_file: Optional[str] = "metadatabase.db"
 

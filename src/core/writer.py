@@ -7,7 +7,7 @@ import numpy as np
 import xarray as xr
 import zarr
 
-from src.registry import Registry
+from src.core.registry import Registry
 
 
 class NumpyEncoder(json.JSONEncoder):

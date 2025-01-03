@@ -10,8 +10,8 @@ import xarray as xr
 from pint import UnitRegistry
 from pint.errors import UndefinedUnitError
 
-from src.log import logger
-from src.utils import read_json_file
+from src.core.log import logger
+from src.core.utils import read_json_file
 
 UNITS_MAPPING_FILE = "mappings/units.json"
 

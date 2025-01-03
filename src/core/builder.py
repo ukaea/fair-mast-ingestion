@@ -2,12 +2,12 @@ from typing import Optional
 
 import xarray as xr
 
-from src.load import BaseLoader, MissingProfileError
-from src.log import logger
-from src.metadata import MetadataWriter
-from src.pipelines import Pipelines
-from src.utils import harmonise_name, read_json_file
-from src.writer import DatasetWriter
+from src.core.load import BaseLoader, MissingProfileError
+from src.core.log import logger
+from src.core.metadata import MetadataWriter
+from src.core.utils import harmonise_name, read_json_file
+from src.core.writer import DatasetWriter
+from src.level1.pipelines import Pipelines
 
 SEG_FAULT_LIST = [
     "EPQ/INPUT/CONSTRAINTS/MSE/STRDIM_SHORTNAME",

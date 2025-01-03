@@ -1,7 +1,7 @@
 import pytest
 import xarray as xr
 
-from src.writer import ZarrDatasetWriter
+from src.core.writer import ZarrDatasetWriter
 
 pyuda_import = pytest.importorskip("pyuda")
 

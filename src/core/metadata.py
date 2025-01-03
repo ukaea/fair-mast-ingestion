@@ -15,8 +15,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 
-from src.log import logger
-from src.utils import connected_to_cluster, get_uuid, nullcontext
+from src.core.log import logger
+from src.core.utils import connected_to_cluster, get_uuid, nullcontext
 
 
 class SourceMetadata(BaseModel):

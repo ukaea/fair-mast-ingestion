@@ -11,8 +11,8 @@ import zarr
 import zarr.storage
 from pydantic import BaseModel
 
-from src.registry import Registry
-from src.utils import harmonise_name
+from src.core.registry import Registry
+from src.core.utils import harmonise_name
 
 LAST_MAST_SHOT = 30471
 

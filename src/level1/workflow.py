@@ -5,14 +5,14 @@ from typing import Optional
 from dask import config
 from distributed import Client, LocalCluster, as_completed
 
-from src.builder import DatasetBuilder
-from src.config import IngestionConfig
-from src.load import loader_registry
-from src.log import logger
-from src.metadata import MetadataWriter
-from src.pipelines import pipelines_registry
-from src.upload import UploadS3
-from src.writer import dataset_writer_registry
+from src.core.builder import DatasetBuilder
+from src.core.config import IngestionConfig
+from src.core.load import loader_registry
+from src.core.log import logger
+from src.core.metadata import MetadataWriter
+from src.core.upload import UploadS3
+from src.core.writer import dataset_writer_registry
+from src.level1.pipelines import pipelines_registry
 
 
 class IngestionWorkflow:

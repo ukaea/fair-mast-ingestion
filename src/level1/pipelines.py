@@ -1,7 +1,7 @@
 from typing import Any
 
-from src.registry import Registry
-from src.transforms import (
+from src.core.registry import Registry
+from src.level1.transforms import (
     AddGeometry,
     AlignChannels,
     DropCoordinates,

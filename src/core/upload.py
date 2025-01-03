@@ -2,8 +2,8 @@ import os
 import shutil
 import subprocess
 
-from src.config import UploadConfig
-from src.log import logger
+from src.core.config import UploadConfig
+from src.core.log import logger
 
 
 class UploadS3:

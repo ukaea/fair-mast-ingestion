@@ -6,7 +6,7 @@ from pathlib import Path
 
 from distributed import get_client
 
-from src.log import logger
+from src.core.log import logger
 
 
 @contextmanager

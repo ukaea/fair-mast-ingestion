@@ -1,9 +1,9 @@
 import argparse
 
-from src.config import load_config
-from src.log import logger
-from src.utils import get_shot_list
-from src.workflow import IngestionWorkflow, WorkflowManager
+from src.core.config import load_config
+from src.core.log import logger
+from src.core.utils import get_shot_list
+from src.level1.workflow import IngestionWorkflow, WorkflowManager
 
 
 def main():

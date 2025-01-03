@@ -25,4 +25,4 @@ shot_file=$1
 export PATH="/home/rt2549/dev/:$PATH"
 
 # Run script
-python3 -m src.create_cpf_metadata $shot_file
+python3 -m scripts.create_cpf_metadata $shot_file

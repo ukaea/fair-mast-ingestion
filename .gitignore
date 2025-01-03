@@ -172,3 +172,4 @@ dask-scratch-space
 fairmast-*.e*
 fairmast-*.o*
 .s5cfg*
+*.db

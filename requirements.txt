@@ -1,3 +1,4 @@
+bottleneck
 distributed
 dask
 h5py

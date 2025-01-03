@@ -208,7 +208,7 @@ class UDALoader(BaseLoader):
                 f'Could not load profile {name} for shot "{shot_num}". Could not load any channels!'
             )
 
-        channels = xr.DataArray(data=loaded_channels)
+        channels = xr.DataArray(data=loaded_channels, dims=["channels"])
         channels.name = "channels"
 
         first_signal = signals[0]

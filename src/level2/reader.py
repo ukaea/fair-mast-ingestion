@@ -71,7 +71,7 @@ class DatasetReader:
                 coordinates[dim_name] = self._create_dimension(dim_name, dim)
             elif dim_index < len(dataset.coords):
                 # Get dimension from data array object
-                names = list(dataset.coords.keys())
+                names = list(dataset.sizes.keys())
                 coord: xr.DataArray = dataset.coords[names[dim_index]]
                 if coord.name != dim_name:
                     coord = coord.rename({coord.name: dim_name})

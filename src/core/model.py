@@ -60,6 +60,9 @@ class ProfileInfo(BaseModel):
     target_units: Optional[str] = None
     description: Optional[str] = ""
 
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class DatasetInfo(BaseModel):
     imas: Optional[str] = None

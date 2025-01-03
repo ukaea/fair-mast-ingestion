@@ -61,73 +61,52 @@ aws_access_key_id=<access-key>
 aws_secret_access_key=<secret-key>
 ```
 
-You should now be able to run the following commands.
 
-## Submitting runs on CSD3
+## Running Ingestion
 
-#### First Run on CSD3
+The following section details how to ingest data into a local folder with UDA. 
 
-This will ingest data into the test folder in S3. The small_ingest script allows you to put one file of shots into the ingestion.
+First you must edit both the config files in `./configs/` to point the writer `output_path` at a sensible location:
 
-1. First submit a job to collect all the metadata:
-
-```sh
-sbatch ./jobs/metadata.csd3.slurm.sh
+```yaml
+...
+writer:
+  type: "zarr"
+  options:
+    zarr_format: 2
+    output_path: "/common/tmp/sjackson/upload-tmp/zarr/level1"
+...
 ```
 
-2. Then submit an ingestion job
+### Level 1 Ingestion
 
-Argument 1 (e.g. s3://mast/test/shots/) is where the data will ingest to, and argument 2 is the file of shots to ingest (e.g. campaign_shots/tiny_campaign.csv), arguments 3 and greater are the sources (e.g. amc)
-
-```sh
-sbatch ./jobs/small_ingest.csd3.slurm.sh s3://mast/test/shots/ campaign_shots/tiny_campaign.csv amc
-```
-
-#### Ingesting All Shots
-
-This ingestion job runs through all shots for the specified source (e.g. amc)
+Below gives an example of running a level 1 ingestion which will write `ayc` data for shot `30421` from MAST.
 
 ```sh
-sbatch ./jobs/small_ingest.csd3.slurm.sh s3://mast/test/shots/ amc
+mpirun -n 4 python3 -m src.level1.main -v --facility MAST --shot 30421 -i ayc
 ```
 
-## Manually Running Ingestor
+### Level 2 Ingestion
 
-### Local Ingestion
-
-The following section details how to ingest data into a local folder on freia with UDA.
-
-1. Parse the metadata for all signals and sources for a list of shots with the following command
-
+Below gives an example of running a level 2 ingestion which will write `thomson_scattering` data for shot `30421` from MAST.
 ```sh
-mpirun -n 16 python3 -m src.create_uda_metadata data/uda campaign_shots/tiny_campaign.csv 
+mpirun -n 4 python3 -m src.level2.main mappings/level2/mast.yml -v --shot 30421 -i thomson_scattering
 ```
-
-```sh
-mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --metadata_dir data/uda --source_names amc xsx --file_format nc
-```
-
-Files will be output in the NetCDF format to `data/local`.
 
 ### Ingestion to S3
 
-The following section details how to ingest data into the s3 storage on freia with UDA.
+To ingest to S3 you must edit the config files in `./configs` to include the an upload entry specifying the endpoint and location to upload data to.
+For example the following config sets the base path and endpoint url for object storage at CSD3:
 
-1. Parse the metadata for all signals and sources for a list of shots with the following command
-
-```sh
-mpirun -n 16 python3 -m src.create_uda_metadata data/uda campaign_shots/tiny_campaign.csv 
+```yaml
+upload:
+  base_path: "s3://mast/test/level1/shots"
+  mode: 's5cmd'
+  credentials_file: ".s5cfg.csd3"
+  endpoint_url: "https://object.arcus.openstack.hpc.cam.ac.uk"
 ```
 
-This will create the metadata for the tiny campaign. You may do the same for full campaigns such as `M9`.
-
-2. Run the ingestion pipleline by submitting the following job:
-
-```sh
-mpirun -np 16 python3 -m src.main data/local campaign_shots/tiny_campaign.csv --bucket_path s3://mast/test/shots --source_names amc xsx --file_format zarr --upload --force
-```
-
-This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.
+Then simple rerun the commands as above.
 
 ## CPF Metadata
 

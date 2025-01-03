@@ -1,13 +1,27 @@
 ### FAIR MAST Data Ingestion
 
-## Running on CSD3
-### Installation on CSD3
+## Project Structure
 
-After logging into your CSD3 account (on Icelake node), first load the correct Python module:
-
-```sh
-module load python/3.9.12/gcc/pdcqf4o5
+Below is a brief overview of the project structure
 ```
+|-- campaign_shots      # CSV lists of shots for each MAST campaign
+|-- configs             # Config files for each level of ingestion
+|-- geometry            # Geometry data files for each diagnostic source 
+|-- jobs                # Job scripts for different HPC machines
+|-- mappings            # Mapping files for transforming units, names, dimensions, etc.
+|-- notebooks           # Notebooks for checking outputs
+|-- scripts             # Misc scripts for metadata curation
+|-- src                 # Source code for ingestion tools
+|   |-- core            # Core modules for ingestion, shared between all levels
+|   |-- level1          # Level1 data ingestion code
+|   |-- level2          # Level2 data ingestion code
+`-- tests               # Unit tests
+    |-- core            # Core module unit tests
+    |-- level1          # Level1 module unit tests
+    |-- level2          # Level2 module unit tests
+```
+
+## Installation and Setup
 
 Clone the repository and fetch data files (Git LFS must be installed):
 
@@ -17,38 +31,29 @@ cd fair-mast-ingestion
 git lfs pull
 ```
 
-Create a virtual environment:
+Create a new python virtual environment:
 
 ```sh
-python -m venv fair-mast-ingestion
-source fair-mast-ingestion/bin/activate
+uv venv --python 3.12.6 
+source .venv/bin/activate
 ```
 
 Update pip and install required packages:
 
 ```sh
-python -m pip install -U pip
-python -m pip install git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python
-python -m pip install -e .
+uv pip install git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python
+uv pip install -e .
+uv pip install -e ".[dev]"
+uv pip install -e ".[mpi]"
 ```
 
-We must also source the SSL certificate information by running the following command. Without this UDA cannot connect to the UKAEA network.
+If running on CSD3, we must also source the SSL certificate information by running the following command. Without this UDA cannot connect to the UKAEA network.
 
 ```sh
 source ~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/uda-ssl.sh
 ```
 
-#### S3 Support (Optional)
-
-Finally, for uploading to S3 we need to install `s5cmd` and make sure it is on the path:
-
-```sh
-wget https://github.com/peak/s5cmd/releases/download/v2.2.2/s5cmd_2.2.2_Linux-64bit.tar.gz
-tar -xvzf s5cmd_2.2.2_Linux-64bit.tar.gz
-PATH=$PWD:$PATH
-```
-
-And add a config file for the bucket keys, by creating a file called `.s5cfg.stfc`:
+Finally, for uploading to S3 we need to create a local config file with the bucket keys. Create a file called `.s5cfg.stfc` with the following information:
 
 ```
 [default]
@@ -58,7 +63,7 @@ aws_secret_access_key=<secret-key>
 
 You should now be able to run the following commands.
 
-### Submitting runs on CSD3
+## Submitting runs on CSD3
 
 #### First Run on CSD3
 

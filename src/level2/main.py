@@ -19,8 +19,8 @@ from src.core.log import logger
 from src.core.metadata import MetadataWriter
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
+from src.core.workflow_manager import WorkflowManager
 from src.core.writer import dataset_writer_registry
-from src.level2.parallel import process_shots
 from src.level2.reader import DatasetReader
 
 MIN_SHOT = 11695
@@ -181,9 +181,9 @@ def process_shot(shot: int, **kwargs):
     logger.info(f"Done shot {shot}!")
 
 
-def safe_process_shot(**kwargs):
+def safe_process_shot(*args, **kwargs):
     try:
-        process_shot(**kwargs)
+        process_shot(*args, **kwargs)
     except MissingProfileError as e:
         logger.warning(e)
     except MissingSourceError as e:
@@ -216,13 +216,14 @@ def main():
                 "Must provide both a minimum and maximum shot (--shot-min/--shot-max)"
             )
             sys.exit(-1)
-
         shots = range(args.shot_min, args.shot_max)
-        kwargs = vars(args)
-        process_shots(safe_process_shot, shots, **kwargs)
     else:
-        kwargs = vars(args)
-        process_shot(**kwargs)
+        shots = [args.shot]
+
+    kwargs = vars(args)
+    kwargs.pop("shot")
+    workflow_manager = WorkflowManager(safe_process_shot)
+    workflow_manager.run_workflows(shots, **kwargs)
 
 
 if __name__ == "__main__":

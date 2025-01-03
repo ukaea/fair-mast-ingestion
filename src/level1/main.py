@@ -3,7 +3,8 @@ import argparse
 from src.core.config import load_config
 from src.core.log import logger
 from src.core.utils import get_shot_list
-from src.level1.workflow import IngestionWorkflow, WorkflowManager
+from src.core.workflow_manager import WorkflowManager
+from src.level1.workflow import IngestionWorkflow
 
 
 def main():

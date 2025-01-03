@@ -85,12 +85,12 @@ class WorkflowManager:
     def __init__(self, workflow):
         self.workflow = workflow
 
-    def run_workflows(self, shot_list: list[int], n_workers: int = 4):
+    def run_workflows(self, shot_list: list[int], n_workers: int = 4, **kwargs):
         client = self.initialize_client(n_workers)
         tasks = []
 
         for shot in shot_list:
-            task = client.submit(self.workflow, shot)
+            task = client.submit(self.workflow, shot, **kwargs)
             tasks.append(task)
 
         n = len(tasks)

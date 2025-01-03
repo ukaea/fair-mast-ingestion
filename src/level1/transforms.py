@@ -348,8 +348,10 @@ class AddGeometry(BaseTransform):
                     key.decode(): value.decode()
                     for key, value in field.metadata.items()
                 }
-                self.geom_data[f"{stem}_{field.name}"].attrs.update(field_metadata)
-                self.geom_data[f"{stem}_{field.name}"].attrs.update(arrow_metadata)
+                name = f"{stem}_{field.name}"
+                self.geom_data[name].attrs["name"] = name
+                self.geom_data[name].attrs.update(field_metadata)
+                self.geom_data[name].attrs.update(arrow_metadata)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         geom_data = self.geom_data.copy()

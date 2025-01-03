@@ -50,15 +50,15 @@ class Pipelines:
 class MASTUPipelines(Pipelines):
     @property
     def group_mapping_file(self):
-        return "mappings/mastu/groups.json"
+        return "mappings/level1/mastu/groups.json"
 
     @property
     def dimension_mapping_file(self):
-        return "mappings/mastu/dimensions.json"
+        return "mappings/level1/mastu/dimensions.json"
 
     @property
     def variable_mapping_file(self):
-        return "mappings/mastu/variables.json"
+        return "mappings/level1/mastu/variables.json"
 
     def __init__(self) -> None:
         self.pipelines = {
@@ -451,15 +451,15 @@ class MASTUPipelines(Pipelines):
 class MASTPipelines(Pipelines):
     @property
     def group_mapping_file(self):
-        return "mappings/mast/groups.json"
+        return "mappings/level1/mast/groups.json"
 
     @property
     def dimension_mapping_file(self):
-        return "mappings/mast/dimensions.json"
+        return "mappings/level1/mast/dimensions.json"
 
     @property
     def variable_mapping_file(self):
-        return "mappings/mast/variables.json"
+        return "mappings/level1/mast/variables.json"
 
     def __init__(self) -> None:
         self.pipelines = {

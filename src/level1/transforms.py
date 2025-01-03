@@ -13,7 +13,7 @@ from pint.errors import UndefinedUnitError
 from src.core.log import logger
 from src.core.utils import read_json_file
 
-UNITS_MAPPING_FILE = "mappings/units.json"
+UNITS_MAPPING_FILE = "mappings/level1/units.json"
 
 
 class BaseTransform(ABC):

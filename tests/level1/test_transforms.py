@@ -28,7 +28,7 @@ def test_rename_dimensions(fake_dataset):
     fake_dataset = fake_dataset.rename_dims({"time": "timesec"})
     fake_dataset = fake_dataset.rename_vars({"time": "timesec"})
 
-    transform = RenameDimensions("mappings/mast/dimensions.json")
+    transform = RenameDimensions("mappings/level1/mast/dimensions.json")
     dataset = transform(fake_dataset)
 
     assert "time" in dataset.coords

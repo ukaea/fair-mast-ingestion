@@ -2,6 +2,7 @@ distributed
 dask
 h5py
 h5netcdf
+lfs
 numpy
 pandas
 pint

@@ -276,17 +276,18 @@ class UDALoader(BaseLoader):
         else:
             return data
 
-    def load_image(self, shot_num: int, name: str) -> xr.Dataset:
+    def load_image(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
         client = self._get_client()
         image = client.get_images(name, shot_num)
         dataset = self._convert_image_to_dataset(image)
         dataset.name = name
-        dataset.attrs["shot_id"] = shot_num
+        dataset.attrs["name"] = name
         dataset.attrs["uda_name"] = name
-        dataset = dataset.to_dataset()
+        if self._include_error:
+            dataset = dataset.to_dataset()
         return dataset
 
-    def _convert_image_to_dataset(self, image):
+    def _convert_image_to_dataset(self, image) -> xr.DataArray:
         attrs = {
             name: getattr(image, name)
             for name in dir(image)

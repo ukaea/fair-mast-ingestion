@@ -14,7 +14,7 @@ class WorkflowManager:
         client = self.initialize_client(n_workers)
         tasks = []
 
-        for shot in shot_list:
+        for shot in reversed(sorted(shot_list)):
             task = client.submit(self.workflow, shot, **kwargs)
             tasks.append(task)
 

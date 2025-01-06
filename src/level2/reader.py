@@ -203,10 +203,12 @@ class DatasetReader:
         for name in ["units", "description", "label"]:
             attrs[name] = data.attrs[name]
 
-        if len(data.values.shape) == 1:
-            coord = xr.DataArray(data=data.values, dims=[dim_name], attrs=attrs)
-        elif len(data.values.shape) > 1:
-            coord = xr.DataArray(data=data.values[0], dims=[dim_name], attrs=attrs)
+        data = data.values
+        ndims = len(data.shape)
+        if ndims == 1:
+            coord = xr.DataArray(data=data, dims=[dim_name], attrs=attrs)
+        elif ndims > 1:
+            coord = xr.DataArray(data=data[0], dims=[dim_name], attrs=attrs)
 
         coord.name = dim_name
         coord *= dimension.scale

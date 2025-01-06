@@ -232,7 +232,6 @@ class UDALoader(BaseLoader):
             signal = client.get(name, shot_num)
             dataset = self._convert_signal_to_dataset(name, signal)
             dataset = dataset.squeeze(drop=True)
-            dataset = dataset.drop_duplicates(dim=...)
             return dataset
         except pyuda.ServerException as e:
             raise MissingSourceError(

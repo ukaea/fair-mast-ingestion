@@ -17,6 +17,10 @@ from src.core.utils import harmonise_name
 LAST_MAST_SHOT = 30471
 
 
+class MissingMetadataError(Exception):
+    pass
+
+
 class MissingProfileError(Exception):
     pass
 
@@ -138,8 +142,14 @@ class UDALoader(BaseLoader):
         return lookup[status]
 
     def get_signal_infos(self, shot_num: int) -> t.List[SignalInfo]:
+        import pyuda
+
         client = self._get_client()
-        signals = client.list_signals(shot=shot_num)
+        try:
+            signals = client.list_signals(shot=shot_num)
+        except pyuda.ServerException:
+            raise MissingMetadataError()
+
         infos = [
             SignalInfo(
                 name=item.signal_name,

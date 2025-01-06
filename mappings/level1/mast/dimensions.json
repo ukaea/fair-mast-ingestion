@@ -489,16 +489,29 @@
     "esm/r": {
         "dim_0": "radius"
     },
+    "esm/r_multi": {
+        "time": "r_multi_time"
+    },
     "esm/r_larmor": {
         "dim_0": "radius"
     },
     "esm/r_larmor_multi": {
+        "time": "multi_time",
         "dim_0": "radius"
     },
     "esm/v_ion": {
         "dim_0": "radius"
     },
     "esm/v_ion_multi": {
+        "time": "multi_time",
+        "dim_0": "radius"
+    },
+    "esm/ne_bar": {
+        "time": "ne_time",
+        "dim_0": "radius"
+    },
+    "esm/ne_8a": {
+        "time": "ne_time",
         "dim_0": "radius"
     },
 

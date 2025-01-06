@@ -155,6 +155,8 @@ class RenameVariables(BaseTransform):
 
 class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
+        for key, item in dataset_dict.items():
+            print(item.sizes, key)
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
         dataset.attrs = {}

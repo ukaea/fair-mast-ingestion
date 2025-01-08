@@ -36,7 +36,7 @@ def trim_ip_range(dataset: xr.Dataset, delta_time: float) -> xr.Dataset:
     NN = 300
     NN_adapt = int(NN * delta_time / (2e-4))
 
-    ip_ = dataset.values
+    ip_ = dataset.values / 1000
     rm = running_mean(ip_, NN_adapt)
 
     sign_ip = rm[abs(rm) > 30].mean()

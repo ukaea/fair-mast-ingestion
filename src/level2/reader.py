@@ -145,6 +145,7 @@ class DatasetReader:
     ) -> xr.Dataset:
         dataset.attrs["name"] = name
         dataset.attrs["description"] = self._mapping.datasets[name].description
+        dataset.attrs["imas"] = self._mapping.datasets[name].imas
         return dataset
 
     def _parse_units(self, item: xr.DataArray):
@@ -216,7 +217,7 @@ class DatasetReader:
         if dimension.units is not None:
             coord.attrs["units"] = dimension.units
         if dimension.imas is not None:
-            coord.attrs["imas_name"] = dimension.imas
+            coord.attrs["imas"] = dimension.imas
 
         coord = self._parse_units(coord)
         coord = self._convert_units(coord, dimension.target_units)

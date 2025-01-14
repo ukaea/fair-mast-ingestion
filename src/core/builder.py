@@ -63,6 +63,8 @@ class DatasetBuilder:
             logger.info(f"Writing metadata for {group_name} and shot #{shot}")
             self.metadata_writer.write(shot, dataset)
 
+            self.loader.reset_connection()
+
     def load_datasets(self, shot, group_name: str) -> dict[str, xr.Dataset]:
         signal_infos = self.loader.list_signals(shot)
         signal_infos = [info for info in signal_infos if info.dataset == group_name]

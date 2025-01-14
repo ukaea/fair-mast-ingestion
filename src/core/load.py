@@ -401,6 +401,17 @@ class UDALoader(BaseLoader):
         dim_names = [re.sub("[^a-zA-Z0-9_\n\\.]", "", dim) for dim in dim_names]
         return dim_names
 
+    def reset_connection(self):
+        import pyuda
+
+        client = self._get_client()
+        client.set_property("timeout", 0)
+        try:
+            _ = client.get("help::ping()", "")
+        except pyuda.UDAException:
+            pass
+        client.set_property("timeout", 600)
+
 
 class ZarrLoader(BaseLoader):
     def __init__(self, base_path: str, **kwargs) -> None:

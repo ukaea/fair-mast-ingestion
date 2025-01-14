@@ -14,6 +14,7 @@ global_interpolate:
 datasets:
   equilibrium:
     imas: "equilibrium"
+
     interpolate:
       time:
         step: 5.0e-3
@@ -64,7 +65,7 @@ datasets:
 
       phi:
         source: "EFM_PSI(R,Z)" 
-        imas: "equilibrium.time_slice[:].profiles_2d[:].phi"
+        imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
         dimensions:
           time:
             units: 's'
@@ -82,6 +83,13 @@ datasets:
         source: "EFM_ELONGATION" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].boundary.elongation"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      elongation_axis:
+        source: "EFM_ELONGATION_AXIS" 
+        units: 'dimensionless'
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -236,12 +244,6 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
 
-      boundary_elongation_axis:
-        source: "EFM_ELONGATION_AXIS" 
-        units: 'dimensionless'
-        dimensions:
-          time:
-            imas: "equilibrium.time_slice[:].time"
       rpsi90_in:
         source: "EFM_R(PSI90)_IN" 
         dimensions:
@@ -988,7 +990,7 @@ datasets:
       time:
         step: 0.002
     profiles:
-      camera_a:
+      camera_lower:
         source: "RBA"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
         dimensions:
@@ -996,8 +998,16 @@ datasets:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
           height_a:
           width_a:
-      camera_b:
+      camera_center:
         source: "RBB"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimensions:
+          time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
+          height_b:
+          width_b:
+      camera_color:
+        source: "RGB"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
         dimensions:
           time:

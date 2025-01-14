@@ -1,6 +1,6 @@
 facility: "MASTU"
 default_loader: "uda"
-plasma_current: "summary/plasma_current"
+plasma_current: "summary/ip"
 global_interpolate:
   params:
     time:
@@ -11,6 +11,8 @@ global_interpolate:
 
 datasets:
   equilibrium:
+    imas: "equilibrium"
+
     interpolate:
       time:
         method: "none"
@@ -35,8 +37,9 @@ datasets:
             source: "epm/output/profiles2D/r"
             units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.r"
-      plasma_current:
+      j_tor:
         source: "epm/output/profiles2D/jphi" 
+        imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
         dimensions:
           time:
             source: "epm/time"
@@ -49,8 +52,10 @@ datasets:
           z:
             source: "epm/output/profiles2D/z"
             imas: "equilibrium.time_slice[:].coordinate_system.z"
-      magnetic_flux:
+
+      psi:
         source: "epm/output/profiles2D/poloidalFlux" 
+        imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
         dimensions:
           time:
             source: "epm/time"
@@ -78,6 +83,7 @@ datasets:
 
       elongation:
         source: "epm/output/separatrixGeometry/elongation" 
+        imas: "equilibrium.time_slice[:].boundary.elongation"
         units: 'dimensionless'
         dimensions:
           time:
@@ -87,19 +93,18 @@ datasets:
       elongation_axis:
         source: "epm/output/separatrixGeometry/elongation" 
         units: 'dimensionless'
-        imas: "equilibrium.time_slice[:].boundary.elongation"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       x_point_r:
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
         source:
           - name: "EFM_XPOINT_R"
             channels:
               - "epm/output/separatrixGeometry/dndXpoint1R" 
               - "epm/output/separatrixGeometry/dndXpoint2R" 
-        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
         units: "dimensionless"
         dimensions:
           n_x_points:
@@ -107,12 +112,12 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_z:
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
         source:
           - name: "EFM_XPOINT_Z"
             channels:
               - "epm/output/separatrixGeometry/dndXpoint1Z" 
               - "epm/output/separatrixGeometry/dndXpoint2Z" 
-        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
         units: "dimensionless"
         dimensions:
           n_x_points:
@@ -254,24 +259,39 @@ datasets:
         scale: 1e21
 
   summary:
+    imas: "summary"
     profiles:
-      plasma_current:
+      ip:
         source: "AMC/PLASMA_CURRENT"
+        imas: "summary.global_quantities.ip"
         target_units: "A"
         dimensions:
           time:
-      sol_current:
-        source: "/AMC/ROGEXT/P1"
-        dimensions:
-          time:
-      integrated_electron_density:
+      line_average_n_e:
+        imas: "summary.line_average.n_e.value"
         source: "ANE/DENSITY"
         dimensions:
           time:
-      total_power:
+      power_nbi:
         source: "/ANB/SUM/POWER"
+        target_units: "W"
+        imas: "summary.heating_current_drive.power_nbi"
         dimensions:
           time:
+      neutron_rates_total:
+        source: "/ANU/FC/DETECTOR1/NEUTRONS_VAR"
+        imas: "summary.fusion.neutron_rates.total"
+        units: "cps"
+        target_units: "Hz"
+        dimensions:
+          time:
+      power_radiated:
+        imas: "summary.global_quantities.power_radiated.value"
+        source: "/abm/prad"
+        target_units: "W"
+        dimensions:
+          time:
+            imas: "summary.time"
       vloop_static:
         source: "/esm/vloop_static" 
         dimensions:
@@ -280,183 +300,696 @@ datasets:
         source: "/esm/vloop_dynamic" 
         dimensions:
           time:
-      line_averaged_density:
-        source: "/esm/nebar" 
+      sol_current:
+        source: "/AMC/ROGEXT/P1"
         dimensions:
           time:
       # gas_pressure:
       #   source: "AGA_FIG"
       #   dimensions:
       #     time:
-      neutron_flux:
-        source: "/ANU/FC/DETECTOR1/NEUTRONS_VAR"
+
+  pf_active:
+    imas: "pf_active"
+    profiles:
+      coils:
+        imas: "pf_active.coil[:].current.data"
+        source:
+          - name: "AMC" 
+            channels:
+               - "/AMC/ROGEXT/D1L"
+               - "/AMC/ROGEXT/D1U"
+               - "/AMC/ROGEXT/D2L"
+               - "/AMC/ROGEXT/D2U"
+               - "/AMC/ROGEXT/D3L"
+               - "/AMC/ROGEXT/D3U"
+               - "/AMC/ROGEXT/D5L"
+               - "/AMC/ROGEXT/D5U"
+               - "/AMC/ROGEXT/D6L"
+               - "/AMC/ROGEXT/D6U"
+               - "/AMC/ROGEXT/D7L"
+               - "/AMC/ROGEXT/D7U"
+               - "/AMC/ROGEXT/P1"
+               - "/AMC/ROGEXT/P4L"
+               - "/AMC/ROGEXT/P4U"
+               - "/AMC/ROGEXT/P5L"
+               - "/AMC/ROGEXT/P5U"
+               - "/AMC/ROGEXT/P6L"
+               - "/AMC/ROGEXT/P6U"
+               - "/AMC/ROGEXT/PXL"
+               - "/AMC/ROGEXT/PXU"
+
+        dimensions:
+          channel:
+          time: 
+            imas: "pf_active.coil[:].current.time"
+
+  magnetics:
+    imas: "magnetics"
+
+    interpolate:
+      time:
+        step: 0.0002
+        method: 'zero'
+      b_field_tor_probe_voltage_time:
+        step: 0.000001
+        method: 'zero'
+
+    profiles:
+      ip: 
+        imas: "magnetics.ip[:].data"
+        source: "/AMC/PLASMA_CURRENT"
+        target_units: "A"
         dimensions:
           time:
+            imas: "magnetics.time"
 
-  dalpha:
+      b_field_pol_probe_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        units: "T"
+        source:
+          - name: "AMB"
+            channels:
+              - "/AMB/PICKUP/B_BL1_N02"
+              - "/AMB/PICKUP/B_BL1_N04"
+              - "/AMB/PICKUP/B_BL1_N06"
+              - "/AMB/PICKUP/B_BL1_N08"
+              - "/AMB/PICKUP/B_BL1_N10"
+              - "/AMB/PICKUP/B_BL1_P01"
+              - "/AMB/PICKUP/B_BL1_P03"
+              - "/AMB/PICKUP/B_BL1_P05"
+              - "/AMB/PICKUP/B_BL1_P07"
+              - "/AMB/PICKUP/B_BL1_P09"
+              - "/AMB/PICKUP/B_BL1_P11"
+              - "/AMB/PICKUP/B_BL2_N02"
+              - "/AMB/PICKUP/B_BL2_N04"
+              - "/AMB/PICKUP/B_BL2_N06"
+              - "/AMB/PICKUP/B_BL2_N08"
+              - "/AMB/PICKUP/B_BL2_N10"
+              - "/AMB/PICKUP/B_BL2_P03"
+              - "/AMB/PICKUP/B_BL2_P05"
+              - "/AMB/PICKUP/B_BL2_P09"
+              - "/AMB/PICKUP/B_BL2_P11"
+              - "/AMB/PICKUP/B_BU1_N02"
+              - "/AMB/PICKUP/B_BU1_N08"
+              - "/AMB/PICKUP/B_BU1_N10"
+              - "/AMB/PICKUP/B_BU1_P01"
+              - "/AMB/PICKUP/B_BU1_P09"
+              - "/AMB/PICKUP/B_BU1_P11"
+              - "/AMB/PICKUP/B_BU2_N02"
+              - "/AMB/PICKUP/B_BU2_N06"
+              - "/AMB/PICKUP/B_BU2_P05"
+              - "/AMB/PICKUP/B_BU2_P07"
+              - "/AMB/PICKUP/B_BU2_P09"
+              - "/AMB/PICKUP/B_BU2_P11"
+              - "/AMB/PICKUP/B_C1_P03"
+              - "/AMB/PICKUP/B_C1_P05"
+              - "/AMB/PICKUP/B_C1_P07"
+              - "/AMB/PICKUP/B_C1_P09"
+              - "/AMB/PICKUP/B_C1_P10"
+              - "/AMB/PICKUP/B_C1_P12"
+              - "/AMB/PICKUP/B_C1_P14"
+              - "/AMB/PICKUP/B_C1_P15"
+              - "/AMB/PICKUP/B_C1_P20"
+              - "/AMB/PICKUP/B_C1_P22"
+              - "/AMB/PICKUP/B_C1_P23"
+              - "/AMB/PICKUP/B_C1_P25"
+              - "/AMB/PICKUP/B_C1_P27"
+              - "/AMB/PICKUP/B_C1_P28"
+              - "/AMB/PICKUP/B_C1_P30"
+              - "/AMB/PICKUP/B_C1_P32"
+              - "/AMB/PICKUP/B_C1_P33"
+              - "/AMB/PICKUP/B_C1_P35"
+              - "/AMB/PICKUP/B_C1_P37"
+              - "/AMB/PICKUP/B_C1_P39"
+              - "/AMB/PICKUP/B_C1_P40"
+              - "/AMB/PICKUP/B_C1_P41"
+              - "/AMB/PICKUP/B_C1_P43"
+              - "/AMB/PICKUP/B_C1_P45"
+              - "/AMB/PICKUP/B_C1_P48"
+              - "/AMB/PICKUP/B_C1_P52"
+              - "/AMB/PICKUP/B_C2_P18"
+              - "/AMB/PICKUP/B_C2_P46"
+              - "/AMB/PICKUP/B_NL1_N02"
+              - "/AMB/PICKUP/B_NL1_N04"
+              - "/AMB/PICKUP/B_NL1_N06"
+              - "/AMB/PICKUP/B_NL1_N08"
+              - "/AMB/PICKUP/B_NL1_N10"
+              - "/AMB/PICKUP/B_NL1_P01"
+              - "/AMB/PICKUP/B_NL1_P03"
+              - "/AMB/PICKUP/B_NL1_P05"
+              - "/AMB/PICKUP/B_NL1_P07"
+              - "/AMB/PICKUP/B_NL1_P09"
+              - "/AMB/PICKUP/B_NL1_P11"
+              - "/AMB/PICKUP/B_NL2_N02"
+              - "/AMB/PICKUP/B_NL2_N04"
+              - "/AMB/PICKUP/B_NL2_N10"
+              - "/AMB/PICKUP/B_NL2_P01"
+              - "/AMB/PICKUP/B_NL2_P05"
+              - "/AMB/PICKUP/B_NL2_P07"
+              - "/AMB/PICKUP/B_NL2_P09"
+              - "/AMB/PICKUP/B_NL2_P11"
+              - "/AMB/PICKUP/B_NU1_N02"
+              - "/AMB/PICKUP/B_NU1_N06"
+              - "/AMB/PICKUP/B_NU1_P01"
+              - "/AMB/PICKUP/B_NU1_P03"
+              - "/AMB/PICKUP/B_NU1_P05"
+              - "/AMB/PICKUP/B_NU1_P07"
+              - "/AMB/PICKUP/B_NU1_P09"
+              - "/AMB/PICKUP/B_NU1_P11"
+              - "/AMB/PICKUP/B_NU2_N02"
+              - "/AMB/PICKUP/B_NU2_N04"
+              - "/AMB/PICKUP/B_NU2_N06"
+              - "/AMB/PICKUP/B_NU2_N08"
+              - "/AMB/PICKUP/B_NU2_N10"
+              - "/AMB/PICKUP/B_NU2_P01"
+              - "/AMB/PICKUP/B_NU2_P03"
+              - "/AMB/PICKUP/B_NU2_P05"
+              - "/AMB/PICKUP/B_NU2_P07"
+              - "/AMB/PICKUP/B_NU2_P09"
+              - "/AMB/PICKUP/B_NU2_P11"
+              - "/AMB/PICKUP/B_O1_N02"
+              - "/AMB/PICKUP/B_O1_N06"
+              - "/AMB/PICKUP/B_O1_N08"
+              - "/AMB/PICKUP/B_O1_P01"
+              - "/AMB/PICKUP/B_O1_P05"
+              - "/AMB/PICKUP/B_O1_P07"
+              - "/AMB/PICKUP/B_O1_P09"
+              - "/AMB/PICKUP/B_O1_P12"
+              - "/AMB/PICKUP/B_O1_P14"
+              - "/AMB/PICKUP/B_O1_P16"
+              - "/AMB/PICKUP/B_O1_P18"
+              - "/AMB/PICKUP/B_O1_P20"
+              - "/AMB/PICKUP/B_O1_P21"
+              - "/AMB/PICKUP/B_O1_P23"
+              - "/AMB/PICKUP/B_O1_P25"
+              - "/AMB/PICKUP/B_O1_P27"
+              - "/AMB/PICKUP/B_O2_N04"
+              - "/AMB/PICKUP/B_O2_N06"
+              - "/AMB/PICKUP/B_O2_N08"
+              - "/AMB/PICKUP/B_O2_N24"
+              - "/AMB/PICKUP/B_O2_N26"
+              - "/AMB/PICKUP/B_O2_N28"
+              - "/AMB/PICKUP/B_O2_P01"
+              - "/AMB/PICKUP/B_O2_P03"
+              - "/AMB/PICKUP/B_O2_P07"
+              - "/AMB/PICKUP/B_O2_P09"
+              - "/AMB/PICKUP/B_O2_P18"
+              - "/AMB/PICKUP/B_O2_P25"
+              - "/AMB/PICKUP/B_O2_P29"
+              - "/AMB/PICKUP/B_XL1_N01"
+              - "/AMB/PICKUP/B_XL1_N03"
+              - "/AMB/PICKUP/B_XL1_N07"
+              - "/AMB/PICKUP/B_XL1_N09"
+              - "/AMB/PICKUP/B_XL1_N13"
+              - "/AMB/PICKUP/B_XL1_N17"
+              - "/AMB/PICKUP/B_XL1_N20"
+              - "/AMB/PICKUP/B_XL1_N22"
+              - "/AMB/PICKUP/B_XL1_N27"
+              - "/AMB/PICKUP/B_XL1_N35"
+              - "/AMB/PICKUP/B_XL1_P02"
+              - "/AMB/PICKUP/B_XL1_P04"
+              - "/AMB/PICKUP/B_XL1_P14"
+              - "/AMB/PICKUP/B_XL1_P21"
+              - "/AMB/PICKUP/B_XL1_P28"
+              - "/AMB/PICKUP/B_XL1_P32"
+              - "/AMB/PICKUP/B_XL1_P34"
+              - "/AMB/PICKUP/B_XL1_P36"
+              - "/AMB/PICKUP/B_XL2_N01"
+              - "/AMB/PICKUP/B_XL2_N03"
+              - "/AMB/PICKUP/B_XL2_N07"
+              - "/AMB/PICKUP/B_XL2_N09"
+              - "/AMB/PICKUP/B_XL2_N17"
+              - "/AMB/PICKUP/B_XL2_N20"
+              - "/AMB/PICKUP/B_XL2_N22"
+              - "/AMB/PICKUP/B_XL2_N24"
+              - "/AMB/PICKUP/B_XL2_N25"
+              - "/AMB/PICKUP/B_XL2_N27"
+              - "/AMB/PICKUP/B_XL2_N29"
+              - "/AMB/PICKUP/B_XL2_N31"
+              - "/AMB/PICKUP/B_XL2_P04"
+              - "/AMB/PICKUP/B_XL2_P16"
+              - "/AMB/PICKUP/B_XL2_P18"
+              - "/AMB/PICKUP/B_XL2_P21"
+              - "/AMB/PICKUP/B_XL2_P23"
+              - "/AMB/PICKUP/B_XL2_P32"
+              - "/AMB/PICKUP/B_XL2_P34"
+              - "/AMB/PICKUP/B_XU1_N01"
+              - "/AMB/PICKUP/B_XU1_N03"
+              - "/AMB/PICKUP/B_XU1_N07"
+              - "/AMB/PICKUP/B_XU1_N09"
+              - "/AMB/PICKUP/B_XU1_N13"
+              - "/AMB/PICKUP/B_XU1_N17"
+              - "/AMB/PICKUP/B_XU1_N20"
+              - "/AMB/PICKUP/B_XU1_N22"
+              - "/AMB/PICKUP/B_XU1_N29"
+              - "/AMB/PICKUP/B_XU1_N33"
+              - "/AMB/PICKUP/B_XU1_P04"
+              - "/AMB/PICKUP/B_XU1_P14"
+              - "/AMB/PICKUP/B_XU1_P19"
+              - "/AMB/PICKUP/B_XU1_P21"
+              - "/AMB/PICKUP/B_XU1_P23"
+              - "/AMB/PICKUP/B_XU1_P26"
+              - "/AMB/PICKUP/B_XU1_P34"
+              - "/AMB/PICKUP/B_XU1_P36"
+              - "/AMB/PICKUP/B_XU2_N01"
+              - "/AMB/PICKUP/B_XU2_N03"
+              - "/AMB/PICKUP/B_XU2_N07"
+              - "/AMB/PICKUP/B_XU2_N09"
+              - "/AMB/PICKUP/B_XU2_N13"
+              - "/AMB/PICKUP/B_XU2_N17"
+              - "/AMB/PICKUP/B_XU2_N20"
+              - "/AMB/PICKUP/B_XU2_N22"
+              - "/AMB/PICKUP/B_XU2_N24"
+              - "/AMB/PICKUP/B_XU2_N27"
+              - "/AMB/PICKUP/B_XU2_N33"
+              - "/AMB/PICKUP/B_XU2_N35"
+              - "/AMB/PICKUP/B_XU2_P02"
+              - "/AMB/PICKUP/B_XU2_P04"
+              - "/AMB/PICKUP/B_XU2_P14"
+              - "/AMB/PICKUP/B_XU2_P18"
+              - "/AMB/PICKUP/B_XU2_P19"
+              - "/AMB/PICKUP/B_XU2_P21"
+              - "/AMB/PICKUP/B_XU2_P23"
+              - "/AMB/PICKUP/B_XU2_P26"
+              - "/AMB/PICKUP/B_XU2_P30"
+              - "/AMB/PICKUP/B_XU2_P34"
+
+        dimensions:
+          b_field_pol_probe_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_tor_probe_field:
+        imas: "magnetics.b_field_tor_probe[:].field.data"
+        target_units: "T"
+        source:
+          - name: "ASM/SAD/OUT"
+            channels:
+              - "/AMB/SADDLE/S_NL_007_5"
+              - "/AMB/SADDLE/S_NL_022_5"
+              - "/AMB/SADDLE/S_NL_037_5"
+              - "/AMB/SADDLE/S_NL_052_5"
+              - "/AMB/SADDLE/S_NL_067_5"
+              - "/AMB/SADDLE/S_NL_082_5"
+              - "/AMB/SADDLE/S_NL_097_5"
+              - "/AMB/SADDLE/S_NL_112_5"
+              - "/AMB/SADDLE/S_NL_127_5"
+              - "/AMB/SADDLE/S_NL_142_5"
+              - "/AMB/SADDLE/S_NL_157_5"
+              - "/AMB/SADDLE/S_NL_172_5"
+              - "/AMB/SADDLE/S_NL_187_5"
+              - "/AMB/SADDLE/S_NL_202_5"
+              - "/AMB/SADDLE/S_NL_232_5"
+              - "/AMB/SADDLE/S_NL_247_5"
+              - "/AMB/SADDLE/S_NL_262_5"
+              - "/AMB/SADDLE/S_NL_277_5"
+              - "/AMB/SADDLE/S_NL_292_5"
+              - "/AMB/SADDLE/S_NL_307_5"
+              - "/AMB/SADDLE/S_NL_322_5"
+              - "/AMB/SADDLE/S_NL_337_5"
+              - "/AMB/SADDLE/S_NL_352_5"
+              - "/AMB/SADDLE/S_NU_007_5"
+              - "/AMB/SADDLE/S_NU_022_5"
+              - "/AMB/SADDLE/S_NU_037_5"
+              - "/AMB/SADDLE/S_NU_052_5"
+              - "/AMB/SADDLE/S_NU_067_5"
+              - "/AMB/SADDLE/S_NU_082_5"
+              - "/AMB/SADDLE/S_NU_097_5"
+              - "/AMB/SADDLE/S_NU_127_5"
+              - "/AMB/SADDLE/S_NU_142_5"
+              - "/AMB/SADDLE/S_NU_157_5"
+              - "/AMB/SADDLE/S_NU_187_5"
+              - "/AMB/SADDLE/S_NU_202_5"
+              - "/AMB/SADDLE/S_NU_232_5"
+              - "/AMB/SADDLE/S_NU_247_5"
+              - "/AMB/SADDLE/S_NU_262_5"
+              - "/AMB/SADDLE/S_NU_277_5"
+              - "/AMB/SADDLE/S_NU_292_5"
+              - "/AMB/SADDLE/S_NU_307_5"
+              - "/AMB/SADDLE/S_NU_322_5"
+              - "/AMB/SADDLE/S_NU_337_5"
+              - "/AMB/SADDLE/S_NU_352_5"
+              - "/AMB/SADDLE/S_O_015A"
+              - "/AMB/SADDLE/S_O_015B"
+              - "/AMB/SADDLE/S_O_045A"
+              - "/AMB/SADDLE/S_O_075A"
+              - "/AMB/SADDLE/S_O_075B"
+              - "/AMB/SADDLE/S_O_105A"
+              - "/AMB/SADDLE/S_O_105B"
+              - "/AMB/SADDLE/S_O_135A"
+              - "/AMB/SADDLE/S_O_135B"
+              - "/AMB/SADDLE/S_O_165A"
+              - "/AMB/SADDLE/S_O_165B"
+              - "/AMB/SADDLE/S_O_195A"
+              - "/AMB/SADDLE/S_O_195B"
+              - "/AMB/SADDLE/S_O_225A"
+              - "/AMB/SADDLE/S_O_255A"
+              - "/AMB/SADDLE/S_O_255B"
+              - "/AMB/SADDLE/S_O_285A"
+              - "/AMB/SADDLE/S_O_315B"
+              - "/AMB/SADDLE/S_O_345B"
+        dimensions:
+          b_field_tor_probe_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_tor_probe_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        units: "V"
+        source:
+          - name: "XMO/OMAHA"
+            channels:
+              - "/xmc/acq216_202/ch01"
+              - "/xmc/acq216_202/ch02"
+              - "/xmc/acq216_202/ch03"
+              - "/xmc/acq216_202/ch04"
+              - "/xmc/acq216_202/ch05"
+              - "/xmc/acq216_202/ch06"
+              - "/xmc/acq216_202/ch07"
+              - "/xmc/acq216_202/ch08"
+              - "/xmc/acq216_202/ch09"
+              - "/xmc/acq216_202/ch10"
+              - "/xmc/acq216_202/ch11"
+              - "/xmc/acq216_202/ch12"
+              - "/xmc/acq216_202/ch13"
+              - "/xmc/acq216_202/ch14"
+              - "/xmc/acq216_202/ch15"
+        dimensions:
+          b_field_tor_probe_channel:
+          b_field_tor_probe_voltage_time:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+
+      flux_loop_flux:
+        imas: "magnetics.flux_loop[:].flux.data"
+        source: 
+          - name: "AMB_FL"
+            channels:
+              - "/AMB/FLUX/F_BL_01"
+              - "/AMB/FLUX/F_BL_02"
+              - "/AMB/FLUX/F_BL_03"
+              - "/AMB/FLUX/F_BL_04"
+              - "/AMB/FLUX/F_BU_01"
+              - "/AMB/FLUX/F_BU_02"
+              - "/AMB/FLUX/F_BU_03"
+              - "/AMB/FLUX/F_BU_04"
+              - "/AMB/FLUX/F_C_A01"
+              - "/AMB/FLUX/F_C_A02"
+              - "/AMB/FLUX/F_C_A03"
+              - "/AMB/FLUX/F_C_A04"
+              - "/AMB/FLUX/F_C_A05"
+              - "/AMB/FLUX/F_C_A06"
+              - "/AMB/FLUX/F_C_A07"
+              - "/AMB/FLUX/F_C_A08"
+              - "/AMB/FLUX/F_C_A09"
+              - "/AMB/FLUX/F_C_A10"
+              - "/AMB/FLUX/F_C_A11"
+              - "/AMB/FLUX/F_C_A12"
+              - "/AMB/FLUX/F_C_B01"
+              - "/AMB/FLUX/F_C_B02"
+              - "/AMB/FLUX/F_C_B03"
+              - "/AMB/FLUX/F_C_B04"
+              - "/AMB/FLUX/F_C_B05"
+              - "/AMB/FLUX/F_C_B06"
+              - "/AMB/FLUX/F_C_B07"
+              - "/AMB/FLUX/F_C_B08"
+              - "/AMB/FLUX/F_C_B09"
+              - "/AMB/FLUX/F_C_B10"
+              - "/AMB/FLUX/F_C_B11"
+              - "/AMB/FLUX/F_C_B12"
+              - "/AMB/FLUX/F_D1L_01"
+              - "/AMB/FLUX/F_D1L_02"
+              - "/AMB/FLUX/F_D1L_03"
+              - "/AMB/FLUX/F_D1L_04"
+              - "/AMB/FLUX/F_D1U_01"
+              - "/AMB/FLUX/F_D1U_02"
+              - "/AMB/FLUX/F_D1U_03"
+              - "/AMB/FLUX/F_D1U_04"
+              - "/AMB/FLUX/F_D2L_01"
+              - "/AMB/FLUX/F_D2L_02"
+              - "/AMB/FLUX/F_D2L_03"
+              - "/AMB/FLUX/F_D2L_04"
+              - "/AMB/FLUX/F_D2U_01"
+              - "/AMB/FLUX/F_D2U_03"
+              - "/AMB/FLUX/F_D2U_04"
+              - "/AMB/FLUX/F_D3L_01"
+              - "/AMB/FLUX/F_D3L_02"
+              - "/AMB/FLUX/F_D3L_03"
+              - "/AMB/FLUX/F_D3L_04"
+              - "/AMB/FLUX/F_D3U_01"
+              - "/AMB/FLUX/F_D3U_02"
+              - "/AMB/FLUX/F_D3U_03"
+              - "/AMB/FLUX/F_D3U_04"
+              - "/AMB/FLUX/F_DPL_01"
+              - "/AMB/FLUX/F_DPL_02"
+              - "/AMB/FLUX/F_DPL_03"
+              - "/AMB/FLUX/F_DPL_04"
+              - "/AMB/FLUX/F_DPU_01"
+              - "/AMB/FLUX/F_DPU_02"
+              - "/AMB/FLUX/F_DPU_03"
+              - "/AMB/FLUX/F_DPU_04"
+              - "/AMB/FLUX/F_NL_01"
+              - "/AMB/FLUX/F_NL_02"
+              - "/AMB/FLUX/F_NL_03"
+              - "/AMB/FLUX/F_NL_04"
+              - "/AMB/FLUX/F_NL_06"
+              - "/AMB/FLUX/F_NL_A05"
+              - "/AMB/FLUX/F_NU_01"
+              - "/AMB/FLUX/F_NU_02"
+              - "/AMB/FLUX/F_NU_03"
+              - "/AMB/FLUX/F_NU_04"
+              - "/AMB/FLUX/F_NU_A05"
+              - "/AMB/FLUX/F_NU_B05"
+              - "/AMB/FLUX/F_P5L_01"
+              - "/AMB/FLUX/F_P5L_02"
+              - "/AMB/FLUX/F_P5L_03"
+              - "/AMB/FLUX/F_P5L_04"
+              - "/AMB/FLUX/F_P5U_01"
+              - "/AMB/FLUX/F_P5U_02"
+              - "/AMB/FLUX/F_P5U_03"
+              - "/AMB/FLUX/F_P5U_04"
+              - "/AMB/FLUX/F_P6L_01"
+              - "/AMB/FLUX/F_P6U_01"
+              - "/AMB/FLUX/F_XL_01"
+              - "/AMB/FLUX/F_XL_03"
+              - "/AMB/FLUX/F_XL_04"
+              - "/AMB/FLUX/F_XU_01"
+              - "/AMB/FLUX/F_XU_02"
+              - "/AMB/FLUX/F_XU_03"
+              - "/AMB/FLUX/F_XU_04"
+              - "/AMB/FLUX/F_XU_05"
+              - "/AMB/FLUX/F_XU_06"
+              - "/AMB/FLUX/F_XU_07"
+        dimensions:
+          flux_loop_channel:
+          time:
+            imas: "magnetics.time"
+
+      flux_loop_voltage:
+        imas: "magnetics.flux_loop[:].voltage.data"
+        source: 
+          - name: "AMB_LOOPV"
+            channels:
+              - "/AMB/LOOPV/LV_BL_01"
+              - "/AMB/LOOPV/LV_BL_02"
+              - "/AMB/LOOPV/LV_BL_03"
+              - "/AMB/LOOPV/LV_BL_04"
+              - "/AMB/LOOPV/LV_BU_01"
+              - "/AMB/LOOPV/LV_BU_02"
+              - "/AMB/LOOPV/LV_BU_03"
+              - "/AMB/LOOPV/LV_BU_04"
+              - "/AMB/LOOPV/LV_C_A01"
+              - "/AMB/LOOPV/LV_C_A02"
+              - "/AMB/LOOPV/LV_C_A03"
+              - "/AMB/LOOPV/LV_C_A04"
+              - "/AMB/LOOPV/LV_C_A05"
+              - "/AMB/LOOPV/LV_C_A06"
+              - "/AMB/LOOPV/LV_C_A07"
+              - "/AMB/LOOPV/LV_C_A08"
+              - "/AMB/LOOPV/LV_C_A09"
+              - "/AMB/LOOPV/LV_C_A10"
+              - "/AMB/LOOPV/LV_C_A11"
+              - "/AMB/LOOPV/LV_C_A12"
+              - "/AMB/LOOPV/LV_C_B01"
+              - "/AMB/LOOPV/LV_C_B02"
+              - "/AMB/LOOPV/LV_C_B03"
+              - "/AMB/LOOPV/LV_C_B04"
+              - "/AMB/LOOPV/LV_C_B05"
+              - "/AMB/LOOPV/LV_C_B06"
+              - "/AMB/LOOPV/LV_C_B07"
+              - "/AMB/LOOPV/LV_C_B08"
+              - "/AMB/LOOPV/LV_C_B09"
+              - "/AMB/LOOPV/LV_C_B10"
+              - "/AMB/LOOPV/LV_C_B11"
+              - "/AMB/LOOPV/LV_C_B12"
+              - "/AMB/LOOPV/LV_D1L_01"
+              - "/AMB/LOOPV/LV_D1L_02"
+              - "/AMB/LOOPV/LV_D1L_03"
+              - "/AMB/LOOPV/LV_D1L_04"
+              - "/AMB/LOOPV/LV_D1U_01"
+              - "/AMB/LOOPV/LV_D1U_02"
+              - "/AMB/LOOPV/LV_D1U_03"
+              - "/AMB/LOOPV/LV_D1U_04"
+              - "/AMB/LOOPV/LV_D2L_01"
+              - "/AMB/LOOPV/LV_D2L_02"
+              - "/AMB/LOOPV/LV_D2L_03"
+              - "/AMB/LOOPV/LV_D2L_04"
+              - "/AMB/LOOPV/LV_D2U_01"
+              - "/AMB/LOOPV/LV_D2U_03"
+              - "/AMB/LOOPV/LV_D2U_04"
+              - "/AMB/LOOPV/LV_D3L_01"
+              - "/AMB/LOOPV/LV_D3L_02"
+              - "/AMB/LOOPV/LV_D3L_03"
+              - "/AMB/LOOPV/LV_D3L_04"
+              - "/AMB/LOOPV/LV_D3U_01"
+              - "/AMB/LOOPV/LV_D3U_02"
+              - "/AMB/LOOPV/LV_D3U_03"
+              - "/AMB/LOOPV/LV_D3U_04"
+              - "/AMB/LOOPV/LV_DPL_01"
+              - "/AMB/LOOPV/LV_DPL_02"
+              - "/AMB/LOOPV/LV_DPL_03"
+              - "/AMB/LOOPV/LV_DPL_04"
+              - "/AMB/LOOPV/LV_DPU_01"
+              - "/AMB/LOOPV/LV_DPU_02"
+              - "/AMB/LOOPV/LV_DPU_03"
+              - "/AMB/LOOPV/LV_DPU_04"
+              - "/AMB/LOOPV/LV_NL_01"
+              - "/AMB/LOOPV/LV_NL_02"
+              - "/AMB/LOOPV/LV_NL_03"
+              - "/AMB/LOOPV/LV_NL_04"
+              - "/AMB/LOOPV/LV_NL_06"
+              - "/AMB/LOOPV/LV_NL_A05"
+              - "/AMB/LOOPV/LV_NU_01"
+              - "/AMB/LOOPV/LV_NU_02"
+              - "/AMB/LOOPV/LV_NU_03"
+              - "/AMB/LOOPV/LV_NU_04"
+              - "/AMB/LOOPV/LV_NU_A05"
+              - "/AMB/LOOPV/LV_NU_B05"
+              - "/AMB/LOOPV/LV_P5L_01"
+              - "/AMB/LOOPV/LV_P5L_02"
+              - "/AMB/LOOPV/LV_P5L_03"
+              - "/AMB/LOOPV/LV_P5L_04"
+              - "/AMB/LOOPV/LV_P5U_01"
+              - "/AMB/LOOPV/LV_P5U_02"
+              - "/AMB/LOOPV/LV_P5U_03"
+              - "/AMB/LOOPV/LV_P5U_04"
+              - "/AMB/LOOPV/LV_P6L_01"
+              - "/AMB/LOOPV/LV_P6U_01"
+              - "/AMB/LOOPV/LV_XL_01"
+              - "/AMB/LOOPV/LV_XL_03"
+              - "/AMB/LOOPV/LV_XL_04"
+              - "/AMB/LOOPV/LV_XU_01"
+              - "/AMB/LOOPV/LV_XU_02"
+              - "/AMB/LOOPV/LV_XU_03"
+              - "/AMB/LOOPV/LV_XU_04"
+              - "/AMB/LOOPV/LV_XU_05"
+              - "/AMB/LOOPV/LV_XU_06"
+              - "/AMB/LOOPV/LV_XU_07"
+
+        dimensions:
+          flux_loop_channel:
+          time:
+            imas: "magnetics.time"
+
+      rogowski_coil_current:
+        imas: "magnetics.rogowski_coil[:].current.data"
+        target_units: "A"
+        source:
+          - name: "AMH/HALO"
+            channels:
+              - "/AMC/HALO/H_CC_L_01"
+              - "/AMC/HALO/H_CC_U_01"
+              - "/AMC/HALO/H_CC_U_02"
+              - "/AMC/HALO/H_D2L_01"
+              - "/AMC/HALO/H_D2L_02"
+              - "/AMC/HALO/H_D2L_03"
+              - "/AMC/HALO/H_D3L_01"
+              - "/AMC/HALO/H_D3L_02"
+              - "/AMC/HALO/H_D3L_03"
+              - "/AMC/HALO/H_D3L_04"
+              - "/AMC/HALO/H_D3L_05"
+              - "/AMC/HALO/H_D3L_06"
+              - "/AMC/HALO/H_D3U_01"
+              - "/AMC/HALO/H_D3U_02"
+              - "/AMC/HALO/H_D3U_03"
+              - "/AMC/HALO/H_D5L_01"
+              - "/AMC/HALO/H_D5L_02"
+              - "/AMC/HALO/H_D5L_03"
+              - "/AMC/HALO/H_D5L_04"
+              - "/AMC/HALO/H_D5L_05"
+              - "/AMC/HALO/H_D5L_06"
+              - "/AMC/HALO/H_D5U_01"
+              - "/AMC/HALO/H_D5U_02"
+              - "/AMC/HALO/H_D5U_03"
+              - "/AMC/HALO/H_D5U_04"
+              - "/AMC/HALO/H_DPL_01"
+              - "/AMC/HALO/H_DPL_02"
+              - "/AMC/HALO/H_DPL_03"
+              - "/AMC/HALO/H_DPL_04"
+              - "/AMC/HALO/H_DPU_01"
+              - "/AMC/HALO/H_DPU_02"
+              - "/AMC/HALO/H_P6L_01"
+              - "/AMC/HALO/H_P6L_02"
+              - "/AMC/HALO/H_P6L_03"
+              - "/AMC/HALO/H_P6L_04"
+              - "/AMC/HALO/H_P6U_01"
+              - "/AMC/HALO/H_P6U_02"
+              - "/AMC/HALO/H_P6U_03"
+      
+        dimensions:
+          rogowski_coil_channel:
+          time:
+            imas: "magnetics.time"
+
+
+  magnetics_omaha:
+    imas: "magnetics"
+    profiles:
+      b_field_tor_probe_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        units: "V"
+        source:
+          - name: "XMO/OMAHA"
+            channels:
+              - "/xmc/acq216_202/ch01"
+              - "/xmc/acq216_202/ch02"
+              - "/xmc/acq216_202/ch03"
+              - "/xmc/acq216_202/ch04"
+              - "/xmc/acq216_202/ch05"
+              - "/xmc/acq216_202/ch06"
+              - "/xmc/acq216_202/ch07"
+              - "/xmc/acq216_202/ch08"
+              - "/xmc/acq216_202/ch09"
+              - "/xmc/acq216_202/ch10"
+              - "/xmc/acq216_202/ch11"
+              - "/xmc/acq216_202/ch12"
+              - "/xmc/acq216_202/ch13"
+              - "/xmc/acq216_202/ch14"
+              - "/xmc/acq216_202/ch15"
+        dimensions:
+          b_field_tor_probe_channel:
+          time:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+  spectrometer_visible:
     interpolate:
       time: 
         step: 2e-5
 
     profiles:
-      dalpha_mid_plane_center:
-        source: "XIM/Da/HM10/R"
+      filter_spectrometer:
+        imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
+        units: "V"
+        source:
+          - name: "XIM_DA"
+            channels:
+              - "XIM/Da/HM10/R"
+              - "XIM/Da/HM10/T"
         dimensions:
+          channel:
           time:
-      dalpha_mid_plane_wide:
-        source: "XIM/Da/HM10/T"
-        dimensions:
-          time:
-      # dalpha_tangential:
-      #   source: "XIM_DA/HU10/T"
-      #   dimensions:
-      #     time:
-
-  # flux_loops:
-  #   profiles:
-  #     fl_cc03: 
-  #       source: "AMB_FL/CC03"
-  #       dimensions:
-  #         time:
-  #     fl_cc09: 
-  #       source: "AMB_FL/CC09"
-  #       dimensions:
-  #         time:
-  #     fl_p4l_4: 
-  #       source: "AMB_FL/P4U/4"
-  #       dimensions:
-  #         time:
-  #     fl_p4u_4: 
-  #       source: "AMB_FL/P4U/4"
-  #       dimensions:
-  #         time:
-  #     fl_p5l_1: 
-  #       source: "AMB_FL/P5L/1"
-  #       dimensions:
-  #         time:
-  #     fl_p5u_1: 
-  #       source: "AMB_FL/P5U/1"
-  #       dimensions:
-  #         time:
-
-  # saddle_coils:
-  #   profiles:
-  #     m1:
-  #       source: "xmb/sad/out/m01"
-  #       dimensions:
-  #         time:
-  #     m3:
-  #       source: "xmb/sad/out/m03"
-  #       dimensions:
-  #         time:
-  #     m5:
-  #       source: "xmb/sad/out/m05"
-  #       dimensions:
-  #         time:
-  #     m7:
-  #       source: "xmb/sad/out/m07"
-  #       dimensions:
-  #         time:
-
-  # magnetics:
-  #   profiles:
-  #     # '04', '12', '20', '28', '36'
-  #     ccbv_04:
-  #       source: "xma/ccbv/04"
-  #       dimensions:
-  #         time:
-  #     ccbv_12:
-  #       source: "xma/ccbv/12"
-  #       dimensions:
-  #         time:
-  #     ccbv_20:
-  #       source: "xma/ccbv/20"
-  #       dimensions:
-  #         time:
-  #     ccbv_28:
-  #       source: "xma/ccbv/28"
-  #       dimensions:
-  #         time:
-  #     ccbv_36:
-  #       source: "xma/ccbv/36"
-  #       dimensions:
-  #         time:
-
-  #     # ['03', '06', '14','17']
-  #     obr_03:
-  #       source: "xma/obr/03"
-  #       dimensions:
-  #         time:
-  #     obr_06:
-  #       source: "xma/obr/06"
-  #       dimensions:
-  #         time:
-  #     obr_14:
-  #       source: "xma/obr/14"
-  #       dimensions:
-  #         time:
-  #     obr_17:
-  #       source: "xma/obr/17"
-  #       dimensions:
-  #         time:
-      
-  #     # ['03', '06', '14','17']
-  #     obv_03:
-  #       source: "xma/obr/03"
-  #       dimensions:
-  #         time:
-  #     obv_06:
-  #       source: "xma/obr/06"
-  #       dimensions:
-  #         time:
-  #     obv_14:
-  #       source: "xma/obr/14"
-  #       dimensions:
-  #         time:
-  #     obv_17:
-  #       source: "xma/obr/17"
-  #       dimensions:
-  #         time:
-
-  # mirnov:
-  #   interpolate:
-  #     time:
-  #       step: 2e-6
-  #   profiles:
-  #     omv_110:
-  #       source: "xmc/omv/110"
-  #       dimensions:
-  #         time:
-  #     omv_210:
-  #       source: "xmc/omv/210"
-  #       dimensions:
-  #         time:
-  #     omv_310:
-  #       source: "xmc/omv/310"
-  #       dimensions:
-  #         time:
-
-    
-  # mirnov_fft:
-  #   transforms:
-  #     fftdecompose:
-
-  #   interpolate:
-  #     time:
-  #       step: 2e-6
-  #   profiles:
-  #     omv_110:
-  #       source: "xmc/omv/110"
-  #       dimensions:
-  #         time:
-  #     omv_210:
-  #       source: "xmc/omv/210"
-  #       dimensions:
-  #         time:
-  #     omv_310:
-  #       source: "xmc/omv/310"
-  #       dimensions:
-  #         time:
+            imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
 
   thomson_scattering:
     imas: thomson_scattering
@@ -473,19 +1006,19 @@ datasets:
         method: 'linear'
 
     profiles:
-      te_core:
+      t_e_core:
         source: "ayc/t_e_core"
         dimensions:
           time:
             source: "ayc/time"
 
-      ne_core:
+      n_e_core:
         source: "ayc/n_e_core"
         dimensions:
           time:
             source: "ayc/time"
 
-      te:
+      t_e:
         imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayc/t_e"
         dimensions:
@@ -496,7 +1029,7 @@ datasets:
             imas: "thomson_scattering.channel[:].position.r"
             source: "ayc/r"
 
-      ne:
+      n_e:
         imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayc/n_e"
         dimensions:
@@ -507,13 +1040,70 @@ datasets:
             imas: "thomson_scattering.channel[:].position.r"
             source: "ayc/r"
 
-      pe:
+      p_e:
         source: "ayc/p_e"
         dimensions:
           time:
             source: "ayc/time"
           major_radius: 
             source: "ayc/r"
+
+  thomson_scattering_divertor:
+    imas: thomson_scattering
+    interpolate:
+      time:
+        step: 0.005
+        fill: 'none'
+        dropna: False
+      major_radius:
+        start: 0.3
+        end: 1.5
+        step: 0.01
+        fill: 'none'
+        method: 'linear'
+
+    profiles:
+      t_e_core:
+        source: "ayd/t_e_core"
+        dimensions:
+          time:
+            source: "ayd/time"
+
+      n_e_core:
+        source: "ayd/n_e_core"
+        dimensions:
+          time:
+            source: "ayd/time"
+
+      t_e:
+        imas: "thomson_scattering.channel[:].t_e.data"
+        source: "ayd/t_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].t_e.time"
+            source: "ayd/time"
+          major_radius: 
+            imas: "thomson_scattering.channel[:].position.r"
+            source: "ayd/r"
+
+      n_e:
+        imas: "thomson_scattering.channel[:].n_e.data"
+        source: "ayd/n_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].n_e.time"
+            source: "ayd/time"
+          major_radius: 
+            imas: "thomson_scattering.channel[:].position.r"
+            source: "ayd/r"
+
+      p_e:
+        source: "ayd/p_e"
+        dimensions:
+          time:
+            source: "ayd/time"
+          major_radius: 
+            source: "ayd/r"
 
   charge_exchange:
     imas: charge_exchange
@@ -530,18 +1120,18 @@ datasets:
         method: 'linear'
 
     profiles:
-      ti_core:
+      t_i_core:
         source: "act/cel3/ss/t_i_core" 
         dimensions:
           time:
             source: "act/cel3/ss/time"
-      vi_core:
+      v_i_core:
         source: "act/cel3/ss/v_i_core" 
         dimensions:
           time:
             source: "act/cel3/ss/time"
           
-      ti:
+      t_i:
         imas: "charge_exchange.channel[:].t_i_average.data"
         source: "act/cel3/ss/pvb/c5291/temperature" 
         dimensions:
@@ -551,7 +1141,7 @@ datasets:
           major_radius:
             source: "/act/cel3/ss/major_radius"
 
-      vi:
+      v_i:
         source: "act/cel3/ss/pvb/c5291/velocity" 
         dimensions:
           time:
@@ -560,13 +1150,13 @@ datasets:
           major_radius:
             source: "/act/cel3/ss/major_radius"
             
-  soft_xrays:
+  soft_x_rays:
     interpolate:
       time:
         step: 2e-6
 
     profiles:
-      hcam_l:
+      horizontal_cam_lower:
         source: 
           - name: "ASX/HCAM/L"
             channels:
@@ -588,8 +1178,9 @@ datasets:
           hcam_l_channel:
           time: 
             source: "ASX/TIME"
+            imas: "soft_x_rays.time"
 
-      hcam_u:
+      horizontal_cam_upper:
         source: 
           - name: "ASX/HCAM/U"
             channels:
@@ -611,15 +1202,18 @@ datasets:
           hcam_u_channel:
           time: 
             source: "ASX/TIME"
+            imas: "soft_x_rays.time"
 
-  cameras:
+  camera_visible:
     interpolate:
       time:
         step: 0.002
     profiles:
-      camera_a:
+      camera_center:
         source: "RBA"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
         dimensions:
           time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
           width_a: null
           height_a: null

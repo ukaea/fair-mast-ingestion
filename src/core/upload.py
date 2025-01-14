@@ -34,11 +34,16 @@ class UploadS3:
         ]
 
         logger.debug(" ".join(args))
-
-        subprocess.run(
-            args,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-            env=env,
-            check=True,
-        )
+        try:
+            subprocess.run(
+                args,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT,
+                env=env,
+                capture_output=True,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            logger.error("Command failed with error code:", e.returncode)
+            logger.error("Error message:", e.stderr)
+            raise e

@@ -43,6 +43,6 @@ class UploadS3:
             )
             logger.info(f"Uploaded {local_file} to {remote_file} successfully.")
         except subprocess.CalledProcessError as e:
-            logger.error("Command failed with error code:", e.returncode)
-            logger.error("Error message:", e.stderr)
+            logger.error(f"Command failed with error code: {e.returncode}")
+            logger.error(f"Error message: {e.stderr.decode('utf-8')}")
             raise e

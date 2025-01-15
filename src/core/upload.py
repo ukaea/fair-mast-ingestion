@@ -23,9 +23,9 @@ class UploadS3:
         args = [
             "s5cmd",
             "--credentials-file",
-            self.config.credentials_file,
+            str(self.config.credentials_file),
             "--endpoint-url",
-            self.config.endpoint_url,
+            str(self.config.endpoint_url),
             "cp",
             "--acl",
             "public-read",

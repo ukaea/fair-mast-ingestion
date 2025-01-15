@@ -104,6 +104,15 @@
     "asx/upper_false_inv_rad": {
         "time": "npts"
     },
+    "alp/inner_up_r": {
+        "dim_0": "npts_inner_up"
+    },
+    "alp/inner_up_z": {
+        "dim_0": "npts_inner_ip"
+    },
+    "alp/inner_up_time": {
+        "dim_0": "time"
+    },
     "alp/inner_lo_chisq": {
         "dim_0": "time",
         "dim_1": "npts_inner"
@@ -239,6 +248,54 @@
     "alp/outer_up_z": {
         "dim_0": "npts_outer"
     },
+
+    "alp/oul_sec4_chisq": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_density": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_jsat": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_jsol": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_power": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_r": {"dim_0": "npts_oul_sec4"},
+    "alp/oul_sec4_te": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_time": {"dim_0": "time"},
+    "alp/oul_sec4_timemid": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_vfloat": {"dim_0": "time", "dim_1": "npts_oul_sec4"},
+    "alp/oul_sec4_z": {"dim_0": "npts_oul_sec4"},
+
+    "alp/oul_sec6_chisq": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_density": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_jsat": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_jsol": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_power": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_r": {"dim_0": "npts_oul_sec6"},
+    "alp/oul_sec6_te": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_time": {"dim_0": "time"},
+    "alp/oul_sec6_timemid": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_vfloat": {"dim_0": "time", "dim_1": "npts_oul_sec6"},
+    "alp/oul_sec6_z": {"dim_0": "npts_oul_sec6"},
+
+    "alp/oup_sec4_chisq": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_density": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_jsat": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_jsol": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_power": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_r": {"dim_0": "npts_oup_sec4"},
+    "alp/oup_sec4_te": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_time": {"dim_0": "time"},
+    "alp/oup_sec4_timemid": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_vfloat": {"dim_0": "time", "dim_1": "npts_oup_sec4"},
+    "alp/oup_sec4_z": {"dim_0": "npts_oup_sec4"},
+
+    "alp/oup_sec6_chisq": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_density": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_jsat": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_jsol": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_power": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_r": {"dim_0": "npts_oup_sec6"},
+    "alp/oup_sec6_te": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_time": {"dim_0": "time"},
+    "alp/oup_sec6_timemid": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_vfloat": {"dim_0": "time", "dim_1": "npts_oup_sec6"},
+    "alp/oup_sec6_z": {"dim_0": "npts_oup_sec6"},
 
     "efm/areap_c": {
         "psi": "psi_norm"

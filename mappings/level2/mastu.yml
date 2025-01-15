@@ -654,7 +654,7 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      b_field_tor_probe_voltage:
+      b_field_tor_probe_voltage_fast:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
         source:
@@ -677,7 +677,7 @@ datasets:
               - "/xmc/acq216_202/ch15"
         dimensions:
           b_field_tor_probe_channel:
-          b_field_tor_probe_voltage_time:
+          b_field_tor_probe_voltage_fast_time:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
 
@@ -942,36 +942,6 @@ datasets:
           time:
             imas: "magnetics.time"
 
-
-  magnetics_omaha:
-    imas: "magnetics"
-    profiles:
-      b_field_tor_probe_voltage:
-        imas: "magnetics.b_field_tor_probe[:].voltage.data"
-        units: "V"
-        source:
-          - name: "XMO/OMAHA"
-            channels:
-              - "/xmc/acq216_202/ch01"
-              - "/xmc/acq216_202/ch02"
-              - "/xmc/acq216_202/ch03"
-              - "/xmc/acq216_202/ch04"
-              - "/xmc/acq216_202/ch05"
-              - "/xmc/acq216_202/ch06"
-              - "/xmc/acq216_202/ch07"
-              - "/xmc/acq216_202/ch08"
-              - "/xmc/acq216_202/ch09"
-              - "/xmc/acq216_202/ch10"
-              - "/xmc/acq216_202/ch11"
-              - "/xmc/acq216_202/ch12"
-              - "/xmc/acq216_202/ch13"
-              - "/xmc/acq216_202/ch14"
-              - "/xmc/acq216_202/ch15"
-        dimensions:
-          b_field_tor_probe_channel:
-          time:
-            imas: "magnetics.b_field_tor_probe[:].voltage.time"
-
   spectrometer_visible:
     interpolate:
       time: 
@@ -1158,50 +1128,172 @@ datasets:
     profiles:
       horizontal_cam_lower:
         source: 
-          - name: "ASX/HCAM/L"
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 44395
+              shot_max: 46353
             channels:
-              - '/ASX/HCAM/L/ch01'
-              - '/ASX/HCAM/L/ch02'
-              - '/ASX/HCAM/L/ch03'
-              - '/ASX/HCAM/L/ch04'
-              - '/ASX/HCAM/L/ch05'
-              - '/ASX/HCAM/L/ch06'
-              - '/ASX/HCAM/L/ch07'
-              - '/ASX/HCAM/L/ch08'
-              - '/ASX/HCAM/L/ch09'
-              - '/ASX/HCAM/L/ch10'
-              - '/ASX/HCAM/L/ch11'
-              - '/ASX/HCAM/L/ch12'
-              - '/ASX/HCAM/L/ch13'
-              - '/ASX/HCAM/L/ch14'
+              - '/XSX/HCAM/L/CH01'
+              - '/XSX/HCAM/L/CH02'
+              - '/XSX/HCAM/L/CH03'
+              - '/XSX/HCAM/L/CH04'
+              - '/XSX/HCAM/L/CH05'
+              - '/XSX/HCAM/L/CH06'
+              - '/XSX/HCAM/L/CH07'
+              - '/XSX/HCAM/L/CH08'
+              - '/XSX/HCAM/L/CH09'
+              - '/XSX/HCAM/L/CH10'
+              - '/XSX/HCAM/L/CH11'
+              - '/XSX/HCAM/L/CH12'
+              - '/XSX/HCAM/L/CH13'
+              - '/XSX/HCAM/L/CH14'
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 46353
+              shot_max: 49476
+            channels:
+              - '/xsx/SAnx05-01/ch14'
+              - '/xsx/SAnx05-01/ch13'
+              - '/xsx/SAnx05-01/ch12'
+              - '/xsx/SAnx05-01/ch11'
+              - '/xsx/SAnx05-01/ch10'
+              - '/xsx/SAnx05-01/ch09'
+              - '/xsx/SAnx05-01/ch08'
+              - '/xsx/SAnx05-01/ch07'
+              - '/xsx/SAnx05-01/ch06'
+              - '/xsx/SAnx05-01/ch05'
+              - '/xsx/SAnx05-01/ch04'
+              - '/xsx/SAnx05-01/ch03'
+              - '/xsx/SAnx05-01/ch02'
+              - '/xsx/SAnx05-01/ch01'
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 49476
+              shot_max: 49904
+            channels:
+              - '/XSX/HCAM/L/CH01'
+              - '/XSX/HCAM/L/CH02'
+              - '/XSX/HCAM/L/CH03'
+              - '/XSX/HCAM/L/CH04'
+              - '/XSX/HCAM/L/CH05'
+              - '/XSX/HCAM/L/CH06'
+              - '/XSX/HCAM/L/CH07'
+              - '/XSX/HCAM/L/CH08'
+              - '/XSX/HCAM/L/CH09'
+              - '/XSX/HCAM/L/CH10'
+              - '/XSX/HCAM/L/CH11'
+              - '/XSX/HCAM/L/CH12'
+              - '/XSX/HCAM/L/CH13'
+              - '/XSX/HCAM/L/CH14'
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 49904
+              shot_max: 51056
+            channels:
+              - '/XSX/HCAM/L/CH01/DATA'
+              - '/XSX/HCAM/L/CH02/DATA'
+              - '/XSX/HCAM/L/CH03/DATA'
+              - '/XSX/HCAM/L/CH04/DATA'
+              - '/XSX/HCAM/L/CH05/DATA'
+              - '/XSX/HCAM/L/CH06/DATA'
+              - '/XSX/HCAM/L/CH07/DATA'
+              - '/XSX/HCAM/L/CH08/DATA'
+              - '/XSX/HCAM/L/CH09/DATA'
+              - '/XSX/HCAM/L/CH10/DATA'
+              - '/XSX/HCAM/L/CH11/DATA'
+              - '/XSX/HCAM/L/CH12/DATA'
+              - '/XSX/HCAM/L/CH13/DATA'
+              - '/XSX/HCAM/L/CH14/DATA'
         dimensions:
           hcam_l_channel:
           time: 
-            source: "ASX/TIME"
             imas: "soft_x_rays.time"
 
       horizontal_cam_upper:
         source: 
-          - name: "ASX/HCAM/U"
+          - name: "XSX/HCAM/U"
+            shot_range:
+              shot_min: 44395
+              shot_max: 46353
             channels:
-              - '/ASX/HCAM/U/ch01'
-              - '/ASX/HCAM/U/ch02'
-              - '/ASX/HCAM/U/ch03'
-              - '/ASX/HCAM/U/ch04'
-              - '/ASX/HCAM/U/ch05'
-              - '/ASX/HCAM/U/ch06'
-              - '/ASX/HCAM/U/ch07'
-              - '/ASX/HCAM/U/ch08'
-              - '/ASX/HCAM/U/ch09'
-              - '/ASX/HCAM/U/ch10'
-              - '/ASX/HCAM/U/ch11'
-              - '/ASX/HCAM/U/ch12'
-              - '/ASX/HCAM/U/ch13'
-              - '/ASX/HCAM/U/ch14'
+              - '/XSX/HCAM/U/CH01'
+              - '/XSX/HCAM/U/CH02'
+              - '/XSX/HCAM/U/CH03'
+              - '/XSX/HCAM/U/CH04'
+              - '/XSX/HCAM/U/CH05'
+              - '/XSX/HCAM/U/CH06'
+              - '/XSX/HCAM/U/CH07'
+              - '/XSX/HCAM/U/CH08'
+              - '/XSX/HCAM/U/CH09'
+              - '/XSX/HCAM/U/CH10'
+              - '/XSX/HCAM/U/CH11'
+              - '/XSX/HCAM/U/CH12'
+              - '/XSX/HCAM/U/CH13'
+              - '/XSX/HCAM/U/CH14'
+
+          - name: "XSX/HCAM/U"
+            shot_range:
+                    shot_min: 46353
+                    shot_max: 49476
+            channels:
+              - '/xsx/SAnx05-01/ch46'
+              - '/xsx/SAnx05-01/ch45'
+              - '/xsx/SAnx05-01/ch44'
+              - '/xsx/SAnx05-01/ch43'
+              - '/xsx/SAnx05-01/ch42'
+              - '/xsx/SAnx05-01/ch41'
+              - '/xsx/SAnx05-01/ch40'
+              - '/xsx/SAnx05-01/ch39'
+              - '/xsx/SAnx05-01/ch38'
+              - '/xsx/SAnx05-01/ch37'
+              - '/xsx/SAnx05-01/ch36'
+              - '/xsx/SAnx05-01/ch35'
+              - '/xsx/SAnx05-01/ch34'
+              - '/xsx/SAnx05-01/ch33'
+
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 49476
+              shot_max: 49904
+            channels:
+              - '/XSX/HCAM/U/CH01'
+              - '/XSX/HCAM/U/CH02'
+              - '/XSX/HCAM/U/CH03'
+              - '/XSX/HCAM/U/CH04'
+              - '/XSX/HCAM/U/CH05'
+              - '/XSX/HCAM/U/CH06'
+              - '/XSX/HCAM/U/CH07'
+              - '/XSX/HCAM/U/CH08'
+              - '/XSX/HCAM/U/CH09'
+              - '/XSX/HCAM/U/CH10'
+              - '/XSX/HCAM/U/CH11'
+              - '/XSX/HCAM/U/CH12'
+              - '/XSX/HCAM/U/CH13'
+              - '/XSX/HCAM/U/CH14'
+
+          - name: "XSX/HCAM/U"
+            shot_range:
+              shot_min: 49904
+              shot_max: 51056
+            channels:
+              - '/XSX/HCAM/U/CH01/DATA'
+              - '/XSX/HCAM/U/CH02/DATA'
+              - '/XSX/HCAM/U/CH03/DATA'
+              - '/XSX/HCAM/U/CH04/DATA'
+              - '/XSX/HCAM/U/CH05/DATA'
+              - '/XSX/HCAM/U/CH06/DATA'
+              - '/XSX/HCAM/U/CH07/DATA'
+              - '/XSX/HCAM/U/CH08/DATA'
+              - '/XSX/HCAM/U/CH09/DATA'
+              - '/XSX/HCAM/U/CH10/DATA'
+              - '/XSX/HCAM/U/CH11/DATA'
+              - '/XSX/HCAM/U/CH12/DATA'
+              - '/XSX/HCAM/U/CH13/DATA'
+              - '/XSX/HCAM/U/CH14/DATA'
+
         dimensions:
           hcam_u_channel:
           time: 
-            source: "ASX/TIME"
             imas: "soft_x_rays.time"
 
   camera_visible:

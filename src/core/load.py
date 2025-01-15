@@ -158,7 +158,6 @@ class UDALoader(BaseLoader):
         return lookup[status]
 
     def get_signal_infos(self, shot_num: int) -> t.List[SignalInfo]:
-        import pyuda
 
         client = self._get_client()
         signals = client.list_signals(shot=shot_num)

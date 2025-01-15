@@ -181,15 +181,11 @@ def process_shot(shot: int, **kwargs):
     logger.info(f"Done shot {shot}!")
 
 
-def safe_process_shot(*args, **kwargs):
+def safe_process_shot(shot, *args, **kwargs):
     try:
-        process_shot(*args, **kwargs)
-    except MissingProfileError as e:
-        logger.warning(e)
-    except MissingSourceError as e:
-        logger.warning(e)
-    except RuntimeError as e:
-        logger.warning(e)
+        process_shot(shot, *args, **kwargs)
+    except Exception as e:
+        logger.warning(f"Failed to process shot {shot}: {e}")
 
 
 def main():

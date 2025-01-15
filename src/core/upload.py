@@ -37,8 +37,6 @@ class UploadS3:
         try:
             subprocess.run(
                 args,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT,
                 env=env,
                 capture_output=True,
                 check=True,

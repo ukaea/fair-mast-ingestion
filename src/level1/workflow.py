@@ -51,7 +51,9 @@ class IngestionWorkflow:
             self.upload_dataset(shot)
             logger.info(f"Done shot #{shot}")
         except Exception as e:
-            logger.error(f"Failed to run workflow with error {type(e)}: {e}\n")
+            logger.error(
+                f"Failed to run workflow for {shot} with error {type(e)}: {e}\n"
+            )
             logger.debug(traceback.print_exception(e))
 
     def create_dataset(self, shot: int):

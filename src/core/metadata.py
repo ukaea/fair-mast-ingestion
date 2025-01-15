@@ -141,6 +141,10 @@ class MetadataWriter:
             )
             datas.append(data.model_dump())
 
+        if len(datas) == 0:
+            logger.warning(f"No signals found for shot {shot} and source {source_name}")
+            return
+
         self._delete_signals(source_name, shot)
         self._perform_upsert(self.signals_table, datas)
 

@@ -97,12 +97,24 @@ class UDALoader(BaseLoader):
         self._include_error = include_error
 
     def list_datasets(self, shot: int):
-        source_infos = self.get_source_infos(shot)
+        import pyuda
+
+        try:
+            source_infos = self.get_source_infos(shot)
+        except pyuda.ClientException:
+            raise MissingMetadataError("Could not load source metadata for shot {shot}")
+
         return source_infos
 
     def list_signals(self, shot: int):
-        signal_infos = self.get_signal_infos(shot)
-        image_infos = self.get_image_infos(shot)
+        import pyuda
+
+        try:
+            signal_infos = self.get_signal_infos(shot)
+            image_infos = self.get_image_infos(shot)
+        except pyuda.ClientException:
+            raise MissingMetadataError("Could not load signal metadata for shot {shot}")
+
         infos = signal_infos + image_infos
         return infos
 
@@ -145,10 +157,7 @@ class UDALoader(BaseLoader):
         import pyuda
 
         client = self._get_client()
-        try:
-            signals = client.list_signals(shot=shot_num)
-        except pyuda.ServerException:
-            raise MissingMetadataError()
+        signals = client.list_signals(shot=shot_num)
 
         infos = [
             SignalInfo(

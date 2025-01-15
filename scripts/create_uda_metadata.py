@@ -1,10 +1,12 @@
 import argparse
 import logging
 from pathlib import Path
+
 import pandas as pd
 
+from src.core.load import MissingMetadataError, MissingProfileError, UDALoader
+from src.core.log import logger
 from src.core.workflow_manager import WorkflowManager
-from src.core.load import MissingMetadataError, UDALoader
 
 
 def write_dataset(shot_num: int, output_dir: str):
@@ -13,11 +15,25 @@ def write_dataset(shot_num: int, output_dir: str):
         infos = loader.get_signal_infos(shot_num)
     except MissingMetadataError:
         return
+
     infos = [info.model_dump() for info in infos]
-    infos = pd.DataFrame(infos)
+
+    final_infos = []
+    for info in infos:
+        name = info["name"]
+        logger.info(f"Loading {name}")
+        try:
+            item = loader.load(shot_num, name)
+            info["dims"] = item.sizes.keys()
+            info["sizes"] = item.sizes.values()
+            final_infos.append(info)
+        except MissingProfileError:
+            continue
+
+    infos = pd.DataFrame(final_infos)
+    print(infos)
     file_name = Path(output_dir) / f"{shot_num}.parquet"
     infos.to_parquet(file_name)
-    return infos
 
 
 def main():

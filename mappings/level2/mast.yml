@@ -561,6 +561,32 @@ datasets:
           time:
             imas: "magnetics.time"
 
+      b_field_tor_probe_fast_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        units: "V"
+        source:
+          - name: "XMO/OMAHA"
+            channels:
+              - /xmo/OMAHA/1LZ
+              - /xmo/OMAHA/2LT
+              - /xmo/OMAHA/2LZ
+              - /xmo/OMAHA/3LT
+              - /xmo/OMAHA/3LZ
+              - /xmo/OMAHA/4LR
+              - /xmo/OMAHA/4LT
+              - /xmo/OMAHA/4LZ
+              - /xmo/OMAHA/5LT
+              - /xmo/OMAHA/5LZ
+              - /xmo/OMAHA/5UR
+              - /xmo/OMAHA/5UT
+              - /xmo/OMAHA/5UZ
+              - /xmo/OMAHA/6LZ
+        dimensions:
+          b_field_tor_probe_fast_channel:
+          b_field_tor_probe_fast_time:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+
       rogowski_coil_current:
         imas: "magnetics.rogowski_coil[:].current.data"
         target_units: "A"

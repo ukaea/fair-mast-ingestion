@@ -7,7 +7,7 @@
     "alp": {"name": "langmuir_probes", "imas": "langmuir_probes"},
     "ama": {"name": "magnetics_a", "imas": "magnetics"},
     "amb": {"name": "magnetics_b", "imas": "magnetics"},
-    "amc": {"name": "magnetics_c", "imas": "magnetics"},
+    "ams": {"name": "mse", "imas": "mse"},
     "anb": {"name": "nbi", "imas": "nbi"},
     "ane": {"name": "interferometer", "imas": "interferometer"},
     "anu": {"name": "neutron_diagnostic", "imas": "neutron_diagnostic"},
@@ -33,6 +33,5 @@
     "xmb": {"name": "magnetics_raw_b", "imas": "magnetics"},
     "xmc": {"name": "magnetics_raw_c", "imas": "magnetics"},
     "xmo": {"name": "magnetics_omaha", "imas": "magnetics"},
-    "xms": {"name": "mse", "imas": "mse"},
     "xsx": {"name": "soft_x_rays", "imas": "soft_x_rays"}
 }

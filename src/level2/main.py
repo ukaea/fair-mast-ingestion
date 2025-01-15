@@ -186,6 +186,7 @@ def safe_process_shot(shot, *args, **kwargs):
         process_shot(shot, *args, **kwargs)
     except Exception as e:
         logger.warning(f"Failed to process shot {shot}: {e}")
+        logger.debug("Exception information", exc_info=True)
 
 
 def main():

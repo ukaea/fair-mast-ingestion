@@ -113,6 +113,12 @@ class DatasetReader:
         item = self._convert_units(item, profile.target_units)
         item = item.sortby(dim_names)
         item = item.drop_duplicates(dim=...)
+
+        if item.isnull().all():
+            raise MissingProfileError(
+                f"All values are NaN for shot {self._shot} and profile {profile_name}"
+            )
+
         return item
 
     def apply_interpolation(

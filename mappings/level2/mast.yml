@@ -63,7 +63,7 @@ datasets:
             units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.r"
 
-      phi:
+      psi:
         source: "EFM_PSI(R,Z)" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
         dimensions:

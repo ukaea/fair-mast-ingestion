@@ -76,5 +76,9 @@ class IngestionWorkflow:
         local_file = self.config.writer.options["output_path"] / Path(file_name)
         remote_file = f"{self.config.upload.base_path}/"
 
+        if not local_file.exists():
+            logger.warning(f"File {local_file} does not exist")
+            return
+
         uploader = UploadS3(self.config.upload)
         uploader.upload(local_file, remote_file)

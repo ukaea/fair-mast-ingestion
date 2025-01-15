@@ -2,7 +2,7 @@ from typing import Optional
 
 import xarray as xr
 
-from src.core.load import BaseLoader, MissingProfileError
+from src.core.load import BaseLoader, MissingMetadataError, MissingProfileError
 from src.core.log import logger
 from src.core.metadata import MetadataWriter
 from src.core.utils import harmonise_name, read_json_file
@@ -34,7 +34,11 @@ class DatasetBuilder:
         self.metadata_writer = metadata_writer
 
     def create(self, shot: int):
-        dataset_infos = self.list_datasets(shot)
+        try:
+            dataset_infos = self.list_datasets(shot)
+        except MissingMetadataError as e:
+            logger.warning(f"Skipping shot {shot} as metadata is missing: {e}")
+            return
 
         for dataset_info in dataset_infos:
             group_name = dataset_info.name

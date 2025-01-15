@@ -55,8 +55,10 @@ class MetadataWriter:
         self.engine = create_engine(uri)
         self.data = []
         self.remote_path = remote_path
-        self.signals_table = self.create_signals_table()
-        self.sources_table = self.create_sources_table()
+
+        with self._get_lock():
+            self.signals_table = self.create_signals_table()
+            self.sources_table = self.create_sources_table()
 
     def create_sources_table(self) -> Table:
         metadata = MetaData()

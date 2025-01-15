@@ -231,7 +231,7 @@ class DatasetReader:
 
             for source in sources:
                 shot_range = source.shot_range
-                if shot_range.shot_min < self._shot < shot_range.shot_max:
+                if shot_range.shot_min <= self._shot < shot_range.shot_max:
                     return source
 
             raise MissingProfileError(

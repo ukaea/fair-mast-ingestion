@@ -55,7 +55,9 @@ def trim_ip_range(dataset: xr.Dataset, delta_time: float) -> xr.Dataset:
 
 
 def check_plasma_current(plasma_current: xr.DataArray, tdelta: float) -> bool:
-    current_check = np.sum(abs(plasma_current.values) > 200) > 250 * tdelta / (2e-4)
+    current_check = np.sum(abs(plasma_current.values) > 200 * 1000) > 250 * tdelta / (
+        2e-4
+    )
     return current_check
 
 

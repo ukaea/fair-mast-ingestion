@@ -141,19 +141,26 @@ def process_shot(shot: int, **kwargs):
     mapping_file = Path(args.mapping_file)
     if mapping_file.is_dir():
         mapping_file = mapping_file / f"{shot}.yml"
+
     mapping = load_mapping_file(mapping_file)
+
     config = load_config_file(args.config_file)
     if args.output_path is not None:
         config.writer.options["output_path"] = args.output_path
 
-    loader = get_default_loader(config.readers[mapping.default_loader])
-
-    set_mapping_time_bounds(mapping, shot, tdelta, loader)
-
     writer = dataset_writer_registry.create(config.writer.type, **config.writer.options)
+    metadata_writer = create_metadata_writer(writer, config)
 
     file_name = f"{shot}.{writer.file_extension}"
-    metadata_writer = create_metadata_writer(writer, config)
+    local_file = config.writer.options["output_path"] / Path(file_name)
+
+    if local_file.exists() and not kwargs.get('force', True):
+        logger.info(f'Skipping shot {shot} as it already exists')
+        return
+
+    loader = get_default_loader(config.readers[mapping.default_loader])
+    set_mapping_time_bounds(mapping, shot, tdelta, loader)
+
 
     for group_name in mapping.datasets.keys():
         if len(dataset_names) == 0 or group_name in dataset_names:
@@ -172,7 +179,6 @@ def process_shot(shot: int, **kwargs):
                 metadata_writer.write(shot, dataset)
 
     if config.upload is not None:
-        local_file = config.writer.options["output_path"] / Path(file_name)
         remote_file = f"{config.upload.base_path}/"
 
         uploader = UploadS3(config.upload)
@@ -202,6 +208,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-o", "--output-path", type=str, default=None)
     parser.add_argument("-n", "--n-workers", type=int, default=None)
+    parser.add_argument("-f", "--force", action="store_true")
     args = parser.parse_args()
 
     if args.verbose:

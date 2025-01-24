@@ -312,7 +312,7 @@ datasets:
   pf_active:
     imas: "pf_active"
     profiles:
-      coils:
+      coils_current:
         imas: "pf_active.coil[:].current.data"
         source:
           - name: "AMC" 
@@ -344,6 +344,21 @@ datasets:
           time: 
             imas: "pf_active.coil[:].current.time"
 
+      coil_voltage:
+        imas: "pf_active.coil[:].voltage.data"
+        source:
+          - name: "XDC/PF"
+            channels:
+              - '/xdc/pf/f/p1'
+              - '/xdc/pf/f/p4'
+              - '/xdc/pf/f/p5'
+              - '/xdc/pf/f/pc'
+              - '/xdc/pf/f/px'
+        dimensions:
+          channel:
+          time: 
+            imas: "pf_active.coil[:].voltage.time"
+      
   magnetics:
     imas: "magnetics"
 

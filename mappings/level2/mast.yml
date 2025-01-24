@@ -392,14 +392,65 @@ datasets:
           time:
             imas: "summary.time"
 
+  gas_injection:
+    imas: "gas_injection"
+    profiles:
+      valve_voltage:
+        imas: "gas_injection.valve[:].voltage.data"
+        source: 
+          - name: "XDC/GAS"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+            channels:
+              - "XDC/GAS/T/G1"
+              - "XDC/GAS/T/G2"
+              - "XDC/GAS/T/G3"
+              - "XDC/GAS/T/G4"
+              - "XDC/GAS/T/G5"
+              - "XDC/GAS/T/G6"
+              - "XDC/GAS/T/G7"
+              - "XDC/GAS/T/G8"
+              - "XDC/GAS/T/G9"
+              - "XDC/GAS/T/G10"
+              - "XDC/GAS/T/G11"
+              - "XDC/GAS/T/G12"
+
+          - name: "XDC/GAS"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+            channels:
+              - "XDC_GAS_T_G1"
+              - "XDC_GAS_T_G2"
+              - "XDC_GAS_T_G3"
+              - "XDC_GAS_T_G4"
+              - "XDC_GAS_T_G5"
+              - "XDC_GAS_T_G6"
+              - "XDC_GAS_T_G7"
+              - "XDC_GAS_T_G8"
+              - "XDC_GAS_T_G9"
+              - "XDC_GAS_T_G10"
+              - "XDC_GAS_T_G11"
+              - "XDC_GAS_T_G12"
+
+        dimensions:
+          valve_channel:
+          time: 
+            imas: "gas_injection.valve[:].voltage.time"
+
   pf_active:
     imas: "pf_active"
     profiles:
-      coils:
+      coils_current:
         imas: "pf_active.coil[:].current.data"
         source:
           - name: "AMC" 
             channels:
+             - "AMC_P2IL COIL CURRENT"
+             - "AMC_P2IU COIL CURRENT"
+             - "AMC_P2OL COIL CURRENT"
+             - "AMC_P2OU COIL CURRENT"
              - "AMC_P3L COIL CURRENT"
              - "AMC_P3U COIL CURRENT"
              - "AMC_P4L COIL CURRENT"
@@ -411,10 +462,49 @@ datasets:
           time: 
             imas: "pf_active.coil[:].current.time"
 
+      coil_voltage:
+        imas: "pf_active.coil[:].voltage.data"
+        source:
+          - name: "XDC/PF"
+            shot_range:
+              shot_min: 28410
+              shot_max: 30471
+            channels:
+              - '/xdc/pf/f/p1'
+              - '/xdc/pf/f/p2'
+              - '/xdc/pf/f/p4'
+              - '/xdc/pf/f/p5'
+          - name: "XDC/PF"
+            shot_range:
+              shot_min: 11695
+              shot_max: 28355
+            channels:
+              - '/xdc/pf/f/p1'
+              - '/xdc/pf/f/p2'
+              - '/xdc/pf/f/p4'
+              - '/xdc/pf/f/p5'
+        dimensions:
+          channel:
+          time: 
+            imas: "pf_active.coil[:].voltage.time"
+      
+
   magnetics:
     interpolate:
       time:
         step: 0.0002
+        method: 'zero'
+
+      time_saddle:
+        step: 2e-5
+        methdo: 'zero'
+
+      time_mirnov:
+        step: 2e-6
+        method: 'zero'
+
+      time_omaha:
+        step: 1e-7
         method: 'zero'
 
     imas: "magnetics"
@@ -427,11 +517,12 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      b_field_pol_probe_field:
+      b_field_pol_probe_ccbv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Centre column Bv array"
         units: "T"
         source:
-          - name: "AMB"
+          - name: "AMB/CCBV"
             channels:
             - "AMB_CCBV01"
             - "AMB_CCBV02"
@@ -473,24 +564,18 @@ datasets:
             - "AMB_CCBV38"
             - "AMB_CCBV39"
             - "AMB_CCBV40"
-            - "AMB_OBR01"
-            - "AMB_OBR02"
-            - "AMB_OBR03"
-            - "AMB_OBR04"
-            - "AMB_OBR05"
-            - "AMB_OBR06"
-            - "AMB_OBR07"
-            - "AMB_OBR08"
-            - "AMB_OBR09"
-            - "AMB_OBR10"
-            - "AMB_OBR11"
-            - "AMB_OBR12"
-            - "AMB_OBR13"
-            - "AMB_OBR14"
-            - "AMB_OBR15"
-            - "AMB_OBR16"
-            - "AMB_OBR17"
-            - "AMB_OBR18"
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_pol_probe_obv_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Outer Bv array"
+        units: "T"
+        source:
+          - name: "AMB/OBV"
+            channels:
             - "AMB_OBV01"
             - "AMB_OBV02"
             - "AMB_OBV03"
@@ -510,7 +595,37 @@ datasets:
             - "AMB_OBV17"
             - "AMB_OBV18"
         dimensions:
-          b_field_pol_probe_channel:
+          b_field_pol_probe_obv_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_pol_probe_obr_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Outer Br array"
+        units: "T"
+        source:
+          - name: "AMB/OBR"
+            channels:
+            - "AMB_OBR01"
+            - "AMB_OBR02"
+            - "AMB_OBR03"
+            - "AMB_OBR04"
+            - "AMB_OBR05"
+            - "AMB_OBR06"
+            - "AMB_OBR07"
+            - "AMB_OBR08"
+            - "AMB_OBR09"
+            - "AMB_OBR10"
+            - "AMB_OBR11"
+            - "AMB_OBR12"
+            - "AMB_OBR13"
+            - "AMB_OBR14"
+            - "AMB_OBR15"
+            - "AMB_OBR16"
+            - "AMB_OBR17"
+            - "AMB_OBR18"
+        dimensions:
+          b_field_pol_probe_obr_channel:
           time:
             imas: "magnetics.time"
 
@@ -539,7 +654,7 @@ datasets:
           time:
             imas: "magnetics.time"
       
-      b_field_tor_probe_field:
+      b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         target_units: "T"
         source:
@@ -558,33 +673,49 @@ datasets:
               - "ASM_SAD/M11"
         dimensions:
           b_field_tor_probe_channel:
-          time:
+          time_saddle:
             imas: "magnetics.time"
 
-      b_field_tor_probe_fast_voltage:
+      b_field_tor_probe_saddle_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
         source:
-          - name: "XMO/OMAHA"
+          - name: "XMB/SAD/OUT"
+            shot_range:
+              shot_min: 27620
+              shot_max: 30473
             channels:
-              - /xmo/OMAHA/1LZ
-              - /xmo/OMAHA/2LT
-              - /xmo/OMAHA/2LZ
-              - /xmo/OMAHA/3LT
-              - /xmo/OMAHA/3LZ
-              - /xmo/OMAHA/4LR
-              - /xmo/OMAHA/4LT
-              - /xmo/OMAHA/4LZ
-              - /xmo/OMAHA/5LT
-              - /xmo/OMAHA/5LZ
-              - /xmo/OMAHA/5UR
-              - /xmo/OMAHA/5UT
-              - /xmo/OMAHA/5UZ
-              - /xmo/OMAHA/6LZ
+              - "XMB/SAD/OUT/M01"
+              - "XMB/SAD/OUT/M02"
+              - "XMB/SAD/OUT/M03"
+              - "XMB/SAD/OUT/M04"
+              - "XMB/SAD/OUT/M05"
+              - "XMB/SAD/OUT/M06"
+              - "XMB/SAD/OUT/M07"
+              - "XMB/SAD/OUT/M08"
+              - "XMB/SAD/OUT/M09"
+              - "XMB/SAD/OUT/M10"
+              - "XMB/SAD/OUT/M11"
+          - name: "XMB/SAD/OUT"
+            shot_range:
+              shot_min: 11708
+              shot_max: 27619
+            channels:
+              - "XMB_SAD/OUT/M01"
+              - "XMB_SAD/OUT/M02"
+              - "XMB_SAD/OUT/M03"
+              - "XMB_SAD/OUT/M04"
+              - "XMB_SAD/OUT/M05"
+              - "XMB_SAD/OUT/M06"
+              - "XMB_SAD/OUT/M07"
+              - "XMB_SAD/OUT/M08"
+              - "XMB_SAD/OUT/M09"
+              - "XMB_SAD/OUT/M10"
+              - "XMB_SAD/OUT/M11"
         dimensions:
-          b_field_tor_probe_fast_channel:
-          b_field_tor_probe_fast_time:
-            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+          b_field_tor_probe_saddle_channel:
+          time_saddle:
+            imas: "magnetics.time"
 
 
       rogowski_coil_current:
@@ -646,6 +777,248 @@ datasets:
           time:
             imas: "magnetics.time"
 
+      b_field_pol_probe_omv_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        description: "Outboard vertical mirnov array"
+        source:
+          - name: "XMC/OMV"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/OMV/110"
+              - "xmc/OMV/201"
+              - "xmc/OMV/202"
+              - "xmc/OMV/203"
+              - "xmc/OMV/204"
+              - "xmc/OMV/205"
+              - "xmc/OMV/206"
+              - "xmc/OMV/207"
+              - "xmc/OMV/208"
+              - "xmc/OMV/209"
+              - "xmc/OMV/210"
+              - "xmc/OMV/211"
+              - "xmc/OMV/212"
+              - "xmc/OMV/213"
+              - "xmc/OMV/214"
+              - "xmc/OMV/215"
+              - "xmc/OMV/216"
+              - "xmc/OMV/217"
+              - "xmc/OMV/218"
+              - "xmc/OMV/219"
+              - "xmc/OMV/310"
+          
+          - name: "XMC/OMV"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_OMV/110"
+              - "XMC_OMV/201"
+              - "XMC_OMV/202"
+              - "XMC_OMV/203"
+              - "XMC_OMV/204"
+              - "XMC_OMV/205"
+              - "XMC_OMV/206"
+              - "XMC_OMV/207"
+              - "XMC_OMV/208"
+              - "XMC_OMV/209"
+              - "XMC_OMV/210"
+              - "XMC_OMV/211"
+              - "XMC_OMV/212"
+              - "XMC_OMV/213"
+              - "XMC_OMV/214"
+              - "XMC_OMV/215"
+              - "XMC_OMV/216"
+              - "XMC_OMV/217"
+              - "XMC_OMV/218"
+              - "XMC_OMV/219"
+              - "XMC_OMV/310"
+
+        dimensions:
+          b_field_pol_probe_omv_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_pol_probe[:].voltage.time"
+
+      b_field_tor_probe_cc_field:
+        imas: "magnetics.b_field_tor_probe[:].field.data"
+        description: "Centre column toroidal mirnov array"
+        units: "T"
+        scale: 2e-6
+        source:
+          - name: "XMC/CC/MT"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/CC/MT/201"
+              - "xmc/CC/MT/202"
+              - "xmc/CC/MT/203"
+              - "xmc/CC/MT/204"
+              - "xmc/CC/MT/205"
+              - "xmc/CC/MT/206"
+              - "xmc/CC/MT/207"
+              - "xmc/CC/MT/208"
+              - "xmc/CC/MT/209"
+              - "xmc/CC/MT/210"
+              - "xmc/CC/MT/211"
+              - "xmc/CC/MT/212"
+              - "xmc/CC/MV/201"
+          
+          - name: "XMC/CC/MT"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_CC/MT/201"
+              - "XMC_CC/MT/202"
+              - "XMC_CC/MT/203"
+              - "XMC_CC/MT/204"
+              - "XMC_CC/MT/205"
+              - "XMC_CC/MT/206"
+              - "XMC_CC/MT/207"
+              - "XMC_CC/MT/208"
+              - "XMC_CC/MT/209"
+              - "XMC_CC/MT/210"
+              - "XMC_CC/MT/211"
+              - "XMC_CC/MT/212"
+              - "XMC_CC/MV/201"
+
+        dimensions:
+          b_field_tor_probe_cc_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_tor_probe[:].field.time"
+
+      b_field_pol_probe_cc_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Centre column poloidal mirnov array"
+        units: "T"
+        scale: 2e-6
+        source:
+          - name: "XMC/CC/MV"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/CC/MV/201"
+              - "xmc/CC/MV/202"
+              - "xmc/CC/MV/203"
+              - "xmc/CC/MV/204"
+              - "xmc/CC/MV/205"
+              - "xmc/CC/MV/206"
+              - "xmc/CC/MV/207"
+              - "xmc/CC/MV/208"
+              - "xmc/CC/MV/209"
+              - "xmc/CC/MV/210"
+              - "xmc/CC/MV/211"
+              - "xmc/CC/MV/212"
+              - "xmc/CC/MV/213"
+              - "xmc/CC/MV/214"
+              - "xmc/CC/MV/215"
+              - "xmc/CC/MV/216"
+              - "xmc/CC/MV/217"
+              - "xmc/CC/MV/218"
+              - "xmc/CC/MV/219"
+              - "xmc/CC/MV/220"
+              - "xmc/CC/MV/221"
+              - "xmc/CC/MV/222"
+              - "xmc/CC/MV/223"
+              - "xmc/CC/MV/224"
+              - "xmc/CC/MV/226"
+              - "xmc/CC/MV/227"
+              - "xmc/CC/MV/228"
+              - "xmc/CC/MV/229"
+              - "xmc/CC/MV/230"
+              - "xmc/CC/MV/231"
+              - "xmc/CC/MV/232"
+              - "xmc/CC/MV/233"
+              - "xmc/CC/MV/234"
+              - "xmc/CC/MV/235"
+              - "xmc/CC/MV/236"
+              - "xmc/CC/MV/237"
+              - "xmc/CC/MV/238"
+              - "xmc/CC/MV/239"
+              - "xmc/CC/MV/240"
+
+          - name: "XMC/CC/MV"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_CC/MV/201"
+              - "XMC_CC/MV/202"
+              - "XMC_CC/MV/203"
+              - "XMC_CC/MV/204"
+              - "XMC_CC/MV/205"
+              - "XMC_CC/MV/206"
+              - "XMC_CC/MV/207"
+              - "XMC_CC/MV/208"
+              - "XMC_CC/MV/209"
+              - "XMC_CC/MV/210"
+              - "XMC_CC/MV/211"
+              - "XMC_CC/MV/212"
+              - "XMC_CC/MV/213"
+              - "XMC_CC/MV/214"
+              - "XMC_CC/MV/215"
+              - "XMC_CC/MV/216"
+              - "XMC_CC/MV/217"
+              - "XMC_CC/MV/218"
+              - "XMC_CC/MV/219"
+              - "XMC_CC/MV/220"
+              - "XMC_CC/MV/221"
+              - "XMC_CC/MV/222"
+              - "XMC_CC/MV/223"
+              - "XMC_CC/MV/224"
+              - "XMC_CC/MV/226"
+              - "XMC_CC/MV/227"
+              - "XMC_CC/MV/228"
+              - "XMC_CC/MV/229"
+              - "XMC_CC/MV/230"
+              - "XMC_CC/MV/231"
+              - "XMC_CC/MV/232"
+              - "XMC_CC/MV/233"
+              - "XMC_CC/MV/234"
+              - "XMC_CC/MV/235"
+              - "XMC_CC/MV/236"
+              - "XMC_CC/MV/237"
+              - "XMC_CC/MV/238"
+              - "XMC_CC/MV/239"
+              - "XMC_CC/MV/240"
+
+        dimensions:
+          b_field_pol_probe_cc_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_pol_probe[:].field.time"
+
+      b_field_tor_probe_omaha_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        description: "High frequency OMAHA toroidal mirnov array"
+        units: "V"
+        source:
+          - name: "XMO/OMAHA"
+            shot_range:
+              shot_min: 26326
+              shot_max: 30473
+            channels:
+              - /xmo/OMAHA/1LZ
+              - /xmo/OMAHA/2LT
+              - /xmo/OMAHA/2LZ
+              - /xmo/OMAHA/3LT
+              - /xmo/OMAHA/3LZ
+              - /xmo/OMAHA/4LR
+              - /xmo/OMAHA/4LT
+              - /xmo/OMAHA/4LZ
+              - /xmo/OMAHA/5LT
+              - /xmo/OMAHA/5LZ
+              - /xmo/OMAHA/5UR
+              - /xmo/OMAHA/5UT
+              - /xmo/OMAHA/5UZ
+              - /xmo/OMAHA/6LZ
+        dimensions:
+          b_field_tor_probe_omaha_channel:
+          time_omaha:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
   spectrometer_visible:
     interpolate:
       time: 
@@ -665,6 +1038,12 @@ datasets:
           channel:
           time:
             imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
+        
+      density_gradient:
+        source: "ADG_DENSITY_GRADIENT"
+        dimensions:
+          time:
+          
 
   thomson_scattering:
     imas: thomson_scattering

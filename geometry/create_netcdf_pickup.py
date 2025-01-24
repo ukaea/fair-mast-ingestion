@@ -78,7 +78,7 @@ def parquet_to_netcdf(netcdf_file, headerdict):
         ov_t2_group = outer_vessel_group.createGroup("t2")
 
         # Define data types
-        unitvector_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
+        unitvector_dtype = np.dtype([("r", ">i4"), ("z", ">i4"), ("phi", ">i4")])
         coord_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
         geom_dtype = np.dtype([("length", "<f8")])
         geom_2layers_dtype = np.dtype([

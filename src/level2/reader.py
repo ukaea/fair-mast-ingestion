@@ -40,10 +40,11 @@ class DatasetReader:
         dataset = self._mapping.datasets[dataset_name]
 
         profiles = {}
-        for profile_name in dataset.profiles.keys():
+        for profile_name, profile_info in dataset.profiles.items():
             try:
                 logger.debug(f"Create profile {profile_name}")
                 profile = self.read_profile(shot, dataset_name, profile_name)
+                logger.debug(f"Loaded profile {profile_name}")
             except MissingSourceError as e:
                 logger.warning(e)
                 continue

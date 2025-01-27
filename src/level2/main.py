@@ -174,6 +174,9 @@ def process_shot(shot: int, **kwargs):
                 if len(dataset) == 0:
                     continue
 
+                logger.info(
+                    f"Writing {group_name} for shot {shot} from {mapping.facility}"
+                )
                 writer.write(file_name, group_name, dataset)
 
                 metadata_writer.write(shot, dataset)

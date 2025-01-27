@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from netCDF4 import Dataset
-import os
 
 def set_orientation(data, poloidal_angle):
     """Set orientation based on poloidal angle."""

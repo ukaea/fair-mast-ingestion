@@ -1,61 +1,42 @@
+from pathlib import Path
+import xarray as xr
 import argparse
 import logging
-from pathlib import Path
 
-import pandas as pd
 import s3fs
 import zarr
-from dask.distributed import Client, as_completed
-from dask_mpi import initialize
 
-from src.core.utils import read_shot_file
+from src.core.log import logger
+from src.core.metadata import MetadataWriter
+from src.core.workflow_manager import WorkflowManager
 
 
-class SignalMetaDataParser:
-    def __init__(self, bucket_path: str, output_path: str, fs: s3fs.S3FileSystem):
+class ShotMetadataParser:
+    def __init__(self, db_path: str, bucket_path: str, endpoint_url: str):
         self.bucket_path = bucket_path
-        self.output_path = Path(output_path)
-        self.fs = fs
+        self.endpoint_url = endpoint_url
+        self.fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
+        self.db_uri = f"sqlite:////{db_path}"
 
     def __call__(self, shot: int):
         path = f"{self.bucket_path}/{shot}.zarr"
         store = zarr.storage.FSStore(path, fs=self.fs)
+        writer = MetadataWriter(self.db_uri, self.bucket_path)
 
-        items = []
-        if not self.fs.exists(path):
-            return shot
+        logger.info(f"Processing shot {shot}")
 
-        with zarr.open_consolidated(store) as f:
-            for source in f.keys():
-                if f[source].attrs.get("type", "") == "Image":
-                    metadata = f[source].attrs
-                    metadata = dict(metadata)
-                    metadata["group"] = f"{source}"
-                    metadata["shape"] = f[source]["data"].shape
-                    metadata["rank"] = sum(metadata["shape"])
-                    items.append(metadata)
-                else:
-                    for key in f[source].keys():
-                        metadata = f[source][key].attrs
-                        metadata = dict(metadata)
-                        metadata["group"] = f"{source}/{key}"
-                        try:
-                            metadata["shape"] = f[source][key]["data"].shape
-                            metadata["rank"] = len(metadata["shape"])
-                        except Exception:
-                            # Special case: if group name written with a "/" as the first character
-                            # the structure is slightly different!
-                            metadata["shape"] = f[source][key].shape
-                            metadata["rank"] = len(metadata["shape"])
-                        items.append(metadata)
-
-        df = pd.DataFrame(items)
-        df.to_parquet(self.output_path / f"{shot}.parquet")
-        return shot
+        try:
+            with zarr.open_consolidated(store) as f:
+                for source in f.keys():
+                    logger.debug(f"Writing metadata for {source} from shot {shot}")
+                    dataset = xr.open_zarr(store, group=source)
+                    writer.write(shot, dataset)
+        except KeyError:
+            logger.info(f"Skipping {shot} as it does not exist.")
+            return
 
 
 def main():
-    initialize()
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(
@@ -63,31 +44,25 @@ def main():
         description="Parse the MAST archive and writer to Zarr files. Upload to S3",
     )
 
-    parser.add_argument("shot_file")
-    parser.add_argument("bucket_path")
-    parser.add_argument("output_path")
+    parser.add_argument("--shot-min", type=int, default=None)
+    parser.add_argument("--shot-max", type=int, default=None)
+    parser.add_argument(
+        "--endpoint-url", type=str, default="https://s3.echo.stfc.ac.uk"
+    )
+    parser.add_argument("--bucket-path", type=str, default="s3://mast/level2/shots")
+    parser.add_argument("--output-file", type=str, default="./metadata.db")
+    parser.add_argument("-n", "--n-workers", type=int, default=None)
 
     args = parser.parse_args()
 
-    client = Client()
-    endpoint_url = "https://s3.echo.stfc.ac.uk"
-    fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
+    shots = range(args.shot_min, args.shot_max)
 
-    shot_list = read_shot_file(args.shot_file)
+    db_path = args.output_file
+    db_path = Path(db_path).absolute()
 
-    path = Path(args.output_path) / "signals"
-    path.mkdir(exist_ok=True, parents=True)
-    parser = SignalMetaDataParser(args.bucket_path, path, fs)
-
-    tasks = []
-    for shot in shot_list:
-        task = client.submit(parser, shot)
-        tasks.append(task)
-
-    n = len(tasks)
-    for i, task in enumerate(as_completed(tasks)):
-        shot = task.result()
-        logging.info(f"Finished shot {shot} - {i+1}/{n} - {(i+1)/n*100:.2f}%")
+    metadata_parser = ShotMetadataParser(db_path, args.bucket_path, args.endpoint_url)
+    workflow_manager = WorkflowManager(metadata_parser)
+    workflow_manager.run_workflows(shots, n_workers=args.n_workers)
 
 
 if __name__ == "__main__":

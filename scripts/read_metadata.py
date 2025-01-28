@@ -1,9 +1,9 @@
-from pathlib import Path
-import xarray as xr
 import argparse
 import logging
+from pathlib import Path
 
 import s3fs
+import xarray as xr
 import zarr
 
 from src.core.log import logger

@@ -1,4 +1,4 @@
-metadatabase_file: level2.db
+metadatabase_file: /common/tmp/sjackson/level2.stfc.db
 readers:
   uda:
     type: 'uda'
@@ -12,27 +12,16 @@ readers:
           anon: True 
           endpoint_url: "https://s3.echo.stfc.ac.uk"
 
-# writer:
-#   type: "parquet"
-#   options:
-#     output_path: "/common/tmp/sjackson/benchmarks/parquet"
-# writer:
-#   type: "netcdf"
-#   options:
-#     output_path: "/common/tmp/sjackson/benchmarks/netcdf"
-# writer:
-#   type: "icechunk"
-#   options:
-#     output_path: "/common/tmp/sjackson/benchmarks/icechunk"
 writer:
   type: "zarr"
   options:
     zarr_format: 2
-    output_path: "/common/tmp/sjackson/upload-tmp/zarr/level2/"
+    # output_path: "/common/tmp/sjackson/upload-tmp/zarr/mast/level2/"
+    output_path: "./data-test"
 
 # upload:
-#   base_path: "s3://mast/test/level2/shots"
+#   base_path: "s3://fairmast/mastu/level2/shots"
 #   mode: 's5cmd'
-#   credentials_file: "../fair-mast-ingestion/.s5cfg.stfc"
-#   endpoint_url: "https://s3.echo.stfc.ac.uk"
+#   credentials_file: "../fair-mast-ingestion/.s5cfg.ukaea"
+#   endpoint_url: "http://mon3.cepheus.hpc.l:8000"
 

@@ -242,6 +242,15 @@ datasets:
             source: "epm/time"
           n_boundary_coords:
 
+      vloop_static:
+        source: "/esm/vloop_static" 
+        dimensions:
+          time:
+      vloop_dynamic:
+        source: "/esm/vloop_dynamic" 
+        dimensions:
+          time:
+
   pulse_schedule:
     imas: pulse_schedule
     profiles:
@@ -292,43 +301,21 @@ datasets:
         dimensions:
           time:
             imas: "summary.time"
-      vloop_static:
-        source: "/esm/vloop_static" 
-        dimensions:
-          time:
-      vloop_dynamic:
-        source: "/esm/vloop_dynamic" 
-        dimensions:
-          time:
-      sol_current:
-        source: "/AMC/ROGEXT/P1"
-        dimensions:
-          time:
-      # gas_pressure:
-      #   source: "AGA_FIG"
-      #   dimensions:
-      #     time:
 
   pf_active:
     imas: "pf_active"
     profiles:
+      solenoid_current:
+        source: "/AMC/ROGEXT/P1"
+        dimensions:
+          time:
+            imas: "summary.time"
+
       coils_current:
         imas: "pf_active.coil[:].current.data"
         source:
           - name: "AMC" 
             channels:
-               - "/AMC/ROGEXT/D1L"
-               - "/AMC/ROGEXT/D1U"
-               - "/AMC/ROGEXT/D2L"
-               - "/AMC/ROGEXT/D2U"
-               - "/AMC/ROGEXT/D3L"
-               - "/AMC/ROGEXT/D3U"
-               - "/AMC/ROGEXT/D5L"
-               - "/AMC/ROGEXT/D5U"
-               - "/AMC/ROGEXT/D6L"
-               - "/AMC/ROGEXT/D6U"
-               - "/AMC/ROGEXT/D7L"
-               - "/AMC/ROGEXT/D7U"
                - "/AMC/ROGEXT/P1"
                - "/AMC/ROGEXT/P4L"
                - "/AMC/ROGEXT/P4U"
@@ -366,7 +353,8 @@ datasets:
       time:
         step: 0.0002
         method: 'zero'
-      b_field_tor_probe_voltage_time:
+
+      b_field_tor_probe_omaha_time:
         step: 0.000001
         method: 'zero'
 
@@ -595,56 +583,12 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      b_field_tor_probe_field:
+      b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         target_units: "T"
         source:
           - name: "ASM/SAD/OUT"
             channels:
-              - "/AMB/SADDLE/S_NL_007_5"
-              - "/AMB/SADDLE/S_NL_022_5"
-              - "/AMB/SADDLE/S_NL_037_5"
-              - "/AMB/SADDLE/S_NL_052_5"
-              - "/AMB/SADDLE/S_NL_067_5"
-              - "/AMB/SADDLE/S_NL_082_5"
-              - "/AMB/SADDLE/S_NL_097_5"
-              - "/AMB/SADDLE/S_NL_112_5"
-              - "/AMB/SADDLE/S_NL_127_5"
-              - "/AMB/SADDLE/S_NL_142_5"
-              - "/AMB/SADDLE/S_NL_157_5"
-              - "/AMB/SADDLE/S_NL_172_5"
-              - "/AMB/SADDLE/S_NL_187_5"
-              - "/AMB/SADDLE/S_NL_202_5"
-              - "/AMB/SADDLE/S_NL_232_5"
-              - "/AMB/SADDLE/S_NL_247_5"
-              - "/AMB/SADDLE/S_NL_262_5"
-              - "/AMB/SADDLE/S_NL_277_5"
-              - "/AMB/SADDLE/S_NL_292_5"
-              - "/AMB/SADDLE/S_NL_307_5"
-              - "/AMB/SADDLE/S_NL_322_5"
-              - "/AMB/SADDLE/S_NL_337_5"
-              - "/AMB/SADDLE/S_NL_352_5"
-              - "/AMB/SADDLE/S_NU_007_5"
-              - "/AMB/SADDLE/S_NU_022_5"
-              - "/AMB/SADDLE/S_NU_037_5"
-              - "/AMB/SADDLE/S_NU_052_5"
-              - "/AMB/SADDLE/S_NU_067_5"
-              - "/AMB/SADDLE/S_NU_082_5"
-              - "/AMB/SADDLE/S_NU_097_5"
-              - "/AMB/SADDLE/S_NU_127_5"
-              - "/AMB/SADDLE/S_NU_142_5"
-              - "/AMB/SADDLE/S_NU_157_5"
-              - "/AMB/SADDLE/S_NU_187_5"
-              - "/AMB/SADDLE/S_NU_202_5"
-              - "/AMB/SADDLE/S_NU_232_5"
-              - "/AMB/SADDLE/S_NU_247_5"
-              - "/AMB/SADDLE/S_NU_262_5"
-              - "/AMB/SADDLE/S_NU_277_5"
-              - "/AMB/SADDLE/S_NU_292_5"
-              - "/AMB/SADDLE/S_NU_307_5"
-              - "/AMB/SADDLE/S_NU_322_5"
-              - "/AMB/SADDLE/S_NU_337_5"
-              - "/AMB/SADDLE/S_NU_352_5"
               - "/AMB/SADDLE/S_O_015A"
               - "/AMB/SADDLE/S_O_015B"
               - "/AMB/SADDLE/S_O_045A"
@@ -665,34 +609,39 @@ datasets:
               - "/AMB/SADDLE/S_O_315B"
               - "/AMB/SADDLE/S_O_345B"
         dimensions:
-          b_field_tor_probe_channel:
+          b_field_tor_probe_saddle_channel:
           time:
             imas: "magnetics.time"
 
-      b_field_tor_probe_fast_voltage:
+      b_field_tor_probe_omaha_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
         source:
           - name: "XMO/OMAHA"
             channels:
-              - "/xmc/acq216_202/ch01"
-              - "/xmc/acq216_202/ch02"
-              - "/xmc/acq216_202/ch03"
-              - "/xmc/acq216_202/ch04"
-              - "/xmc/acq216_202/ch05"
-              - "/xmc/acq216_202/ch06"
-              - "/xmc/acq216_202/ch07"
-              - "/xmc/acq216_202/ch08"
-              - "/xmc/acq216_202/ch09"
-              - "/xmc/acq216_202/ch10"
-              - "/xmc/acq216_202/ch11"
-              - "/xmc/acq216_202/ch12"
-              - "/xmc/acq216_202/ch13"
-              - "/xmc/acq216_202/ch14"
-              - "/xmc/acq216_202/ch15"
+              # Important! These channels match the ordering of the saddle coil fields above!
+              - "/XMB/SANX13-01/CH03"
+              - "/XMB/SANX13-01/CH02"
+              - "/XMB/SANX13-01/CH04"
+              - "/XMB/SANX13-01/CH19"
+              - "/XMB/SANX13-01/CH18"
+              - "/XMB/SANX13-01/CH20"
+              - "/XMB/SANX13-01/CH13"
+              - "/XMB/SANX13-01/CH15"
+              - "/XMB/SANX13-01/CH14"
+              - "/XMB/SANX13-01/CH16"
+              - "/XMB/SANX13-01/CH09"
+              - "/XMB/SANX13-01/CH11"
+              - "/XMB/SANX13-01/CH10"
+              - "/XMB/SANX13-01/CH12"
+              - "/XMB/SANX13-01/CH05"
+              - "/XMB/SANX13-01/CH07"
+              - "/XMB/SANX13-01/CH06"
+              - "/XMB/SANX13-01/CH08"
+              - "/XMB/SANX13-01/CH01"
         dimensions:
-          b_field_tor_probe_fast_channel:
-          b_field_tor_probe_fast_time:
+          b_field_tor_probe_omaha_channel:
+          b_field_tor_probe_omaha_time:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
 
@@ -907,55 +856,55 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      rogowski_coil_current:
-        imas: "magnetics.rogowski_coil[:].current.data"
-        target_units: "A"
-        source:
-          - name: "AMH/HALO"
-            channels:
-              - "/AMC/HALO/H_CC_L_01"
-              - "/AMC/HALO/H_CC_U_01"
-              - "/AMC/HALO/H_CC_U_02"
-              - "/AMC/HALO/H_D2L_01"
-              - "/AMC/HALO/H_D2L_02"
-              - "/AMC/HALO/H_D2L_03"
-              - "/AMC/HALO/H_D3L_01"
-              - "/AMC/HALO/H_D3L_02"
-              - "/AMC/HALO/H_D3L_03"
-              - "/AMC/HALO/H_D3L_04"
-              - "/AMC/HALO/H_D3L_05"
-              - "/AMC/HALO/H_D3L_06"
-              - "/AMC/HALO/H_D3U_01"
-              - "/AMC/HALO/H_D3U_02"
-              - "/AMC/HALO/H_D3U_03"
-              - "/AMC/HALO/H_D5L_01"
-              - "/AMC/HALO/H_D5L_02"
-              - "/AMC/HALO/H_D5L_03"
-              - "/AMC/HALO/H_D5L_04"
-              - "/AMC/HALO/H_D5L_05"
-              - "/AMC/HALO/H_D5L_06"
-              - "/AMC/HALO/H_D5U_01"
-              - "/AMC/HALO/H_D5U_02"
-              - "/AMC/HALO/H_D5U_03"
-              - "/AMC/HALO/H_D5U_04"
-              - "/AMC/HALO/H_DPL_01"
-              - "/AMC/HALO/H_DPL_02"
-              - "/AMC/HALO/H_DPL_03"
-              - "/AMC/HALO/H_DPL_04"
-              - "/AMC/HALO/H_DPU_01"
-              - "/AMC/HALO/H_DPU_02"
-              - "/AMC/HALO/H_P6L_01"
-              - "/AMC/HALO/H_P6L_02"
-              - "/AMC/HALO/H_P6L_03"
-              - "/AMC/HALO/H_P6L_04"
-              - "/AMC/HALO/H_P6U_01"
-              - "/AMC/HALO/H_P6U_02"
-              - "/AMC/HALO/H_P6U_03"
+      # rogowski_coil_current:
+      #   imas: "magnetics.rogowski_coil[:].current.data"
+      #   target_units: "A"
+      #   source:
+      #     - name: "AMH/HALO"
+      #       channels:
+      #         - "/AMC/HALO/H_CC_L_01"
+      #         - "/AMC/HALO/H_CC_U_01"
+      #         - "/AMC/HALO/H_CC_U_02"
+      #         - "/AMC/HALO/H_D2L_01"
+      #         - "/AMC/HALO/H_D2L_02"
+      #         - "/AMC/HALO/H_D2L_03"
+      #         - "/AMC/HALO/H_D3L_01"
+      #         - "/AMC/HALO/H_D3L_02"
+      #         - "/AMC/HALO/H_D3L_03"
+      #         - "/AMC/HALO/H_D3L_04"
+      #         - "/AMC/HALO/H_D3L_05"
+      #         - "/AMC/HALO/H_D3L_06"
+      #         - "/AMC/HALO/H_D3U_01"
+      #         - "/AMC/HALO/H_D3U_02"
+      #         - "/AMC/HALO/H_D3U_03"
+      #         - "/AMC/HALO/H_D5L_01"
+      #         - "/AMC/HALO/H_D5L_02"
+      #         - "/AMC/HALO/H_D5L_03"
+      #         - "/AMC/HALO/H_D5L_04"
+      #         - "/AMC/HALO/H_D5L_05"
+      #         - "/AMC/HALO/H_D5L_06"
+      #         - "/AMC/HALO/H_D5U_01"
+      #         - "/AMC/HALO/H_D5U_02"
+      #         - "/AMC/HALO/H_D5U_03"
+      #         - "/AMC/HALO/H_D5U_04"
+      #         - "/AMC/HALO/H_DPL_01"
+      #         - "/AMC/HALO/H_DPL_02"
+      #         - "/AMC/HALO/H_DPL_03"
+      #         - "/AMC/HALO/H_DPL_04"
+      #         - "/AMC/HALO/H_DPU_01"
+      #         - "/AMC/HALO/H_DPU_02"
+      #         - "/AMC/HALO/H_P6L_01"
+      #         - "/AMC/HALO/H_P6L_02"
+      #         - "/AMC/HALO/H_P6L_03"
+      #         - "/AMC/HALO/H_P6L_04"
+      #         - "/AMC/HALO/H_P6U_01"
+      #         - "/AMC/HALO/H_P6U_02"
+      #         - "/AMC/HALO/H_P6U_03"
       
-        dimensions:
-          rogowski_coil_channel:
-          time:
-            imas: "magnetics.time"
+      #   dimensions:
+      #     rogowski_coil_channel:
+      #     time:
+      #       imas: "magnetics.time"
 
   spectrometer_visible:
     interpolate:

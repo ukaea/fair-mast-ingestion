@@ -1033,9 +1033,11 @@ datasets:
     interpolate:
       time: 
         step: 2e-5
+      time_bes:
+        step: 5e-7
 
     profiles:
-      filter_spectrometer:
+      filter_spectrometer_dalpha_voltage:
         imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
         units: "V"
         source:
@@ -1045,12 +1047,57 @@ datasets:
               - "XIM_DA/HM10/T"
               - "XIM_DA/HU10/T"
         dimensions:
-          channel:
+          dalpha_channel:
           time:
             imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
+
+      filter_spectrometer_bes_voltage:
+        imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
+        units: "V"
+        source:
+          - name: "xbt/channel"
+            channels:
+              - "xbt/channel01"
+              - "xbt/channel02"
+              - "xbt/channel03"
+              - "xbt/channel04"
+              - "xbt/channel05"
+              - "xbt/channel06"
+              - "xbt/channel07"
+              - "xbt/channel08"
+              - "xbt/channel09"
+              - "xbt/channel10"
+              - "xbt/channel11"
+              - "xbt/channel12"
+              - "xbt/channel13"
+              - "xbt/channel14"
+              - "xbt/channel15"
+              - "xbt/channel16"
+              - "xbt/channel17"
+              - "xbt/channel18"
+              - "xbt/channel19"
+              - "xbt/channel20"
+              - "xbt/channel21"
+              - "xbt/channel22"
+              - "xbt/channel23"
+              - "xbt/channel24"
+              - "xbt/channel25"
+              - "xbt/channel26"
+              - "xbt/channel27"
+              - "xbt/channel28"
+              - "xbt/channel29"
+              - "xbt/channel30"
+              - "xbt/channel31"
+              - "xbt/channel32"
+        dimensions:
+          bes_channel:
+          time_bes:
+            imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
+
         
       density_gradient:
         source: "ADG_DENSITY_GRADIENT"
+        units: "m^-4"
         dimensions:
           time:
           

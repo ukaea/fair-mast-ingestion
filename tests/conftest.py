@@ -11,7 +11,7 @@ def fake_dataset():
             time=("time", np.random.random(10)),
             error=("time", np.random.random(10)),
         ),
-        attrs={"name": "amc/plasma_current", "shot_id": 30420},
+        attrs={"name": "plasma_current", "shot_id": 30420, "source": "amc"},
     )
 
 
@@ -21,7 +21,7 @@ def fake_image():
         data_vars=dict(
             data=(("frames", "heigth", "width"), np.random.random((20, 10, 10))),
         ),
-        attrs={"name": "rbb", "shot_id": 30420},
+        attrs={"name": "rbb", "shot_id": 30420, "source": "rbb"},
     )
 
 

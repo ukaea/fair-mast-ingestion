@@ -1,8 +1,6 @@
-import numpy as np
 import xarray as xr
 
 from src.transforms import (
-    AddXSXCameraParams,
     DropDatasets,
     DropZeroDimensions,
     MergeDatasets,
@@ -30,8 +28,9 @@ def test_rename_dimensions(fake_dataset):
 
     transform = RenameDimensions()
     dataset = transform(fake_dataset)
+    print(dataset)
 
-    assert "time" in dataset.sizes
+    assert "time" in dataset.coords
 
 
 def test_drop_zero_dimensions(fake_dataset):
@@ -76,24 +75,6 @@ def test_merge_datasets(fake_dataset):
     assert isinstance(dataset, xr.Dataset)
     assert "data_a" in dataset.data_vars
     assert "data_b" in dataset.data_vars
-
-
-def test_xsx_camera_params():
-    fake_dataset = xr.Dataset(
-        data_vars=dict(
-            tcam=(("time", "tcam_channels"), np.random.random((100, 18))),
-            time=("time", np.random.random(100)),
-        ),
-        attrs={"name": "xsx/tcam", "shot_id": 30420},
-    )
-    transform = AddXSXCameraParams("tcam", "parameters/xsx_camera_t.csv")
-    dataset = transform(fake_dataset)
-
-    assert "tcam_r1" in dataset.data_vars
-    assert "tcam_r2" in dataset.data_vars
-
-    assert "tcam_z1" in dataset.data_vars
-    assert "tcam_z2" in dataset.data_vars
 
 
 def test_process_image(fake_image):

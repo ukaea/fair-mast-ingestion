@@ -34,7 +34,6 @@ schema = pa.schema(
 
 
 class SignalMetaDataParser:
-
     def __init__(self, bucket_path: str, output_path: str, fs: s3fs.S3FileSystem):
         self.bucket_path = bucket_path
         self.output_path = Path(output_path)

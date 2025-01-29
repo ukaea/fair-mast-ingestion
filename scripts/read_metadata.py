@@ -51,7 +51,7 @@ def main():
     )
     parser.add_argument("--bucket-path", type=str, default="s3://mast/level2/shots")
     parser.add_argument("--output-file", type=str, default="./metadata.db")
-    parser.add_argument("-n", "--n-workers", type=int, default=None)
+    parser.add_argument("-n", "--n-workers", type=int, default=4)
 
     args = parser.parse_args()
 

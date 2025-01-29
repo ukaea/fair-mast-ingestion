@@ -4,8 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.core.load import MissingMetadataError, MissingProfileError, UDALoader
-from src.core.log import logger
+from src.core.load import MissingMetadataError, UDALoader
 from src.core.workflow_manager import WorkflowManager
 
 
@@ -18,20 +17,19 @@ def write_dataset(shot_num: int, output_dir: str):
 
     infos = [info.model_dump() for info in infos]
 
-    final_infos = []
-    for info in infos:
-        name = info["name"]
-        logger.info(f"Loading {name}")
-        try:
-            item = loader.load(shot_num, name)
-            info["dims"] = item.sizes.keys()
-            info["sizes"] = item.sizes.values()
-            final_infos.append(info)
-        except MissingProfileError:
-            continue
+    # final_infos = []
+    # for info in infos:
+    #     name = info["name"]
+    #     logger.debug(f"Loading {name}")
+    #     try:
+    #         item = loader.load(shot_num, name)
+    #         info["dims"] = item.sizes.keys()
+    #         info["sizes"] = item.sizes.values()
+    #         final_infos.append(info)
+    #     except MissingProfileError:
+    #         continue
 
-    infos = pd.DataFrame(final_infos)
-    print(infos)
+    infos = pd.DataFrame(infos)
     file_name = Path(output_dir) / f"{shot_num}.parquet"
     infos.to_parquet(file_name)
 

@@ -304,6 +304,7 @@ datasets:
     imas: pulse_schedule
     profiles:
       i_plasma:
+        target_units: "A"
         source:
           - name: "/xdc/ip/t/ipref"
             shot_range:
@@ -445,6 +446,7 @@ datasets:
     profiles:
       solenoid_current:
         source: "AMC_SOL CURRENT"
+        target_units: "A"
         scale: 0.5                # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
         dimensions:
           time:

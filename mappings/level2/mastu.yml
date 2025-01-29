@@ -254,12 +254,13 @@ datasets:
   pulse_schedule:
     imas: pulse_schedule
     profiles:
-      ref_plasma_current:
+      i_plasma:
         source: "XDC/PLASMA/T/IP_REF"
         imas: "pulse_schedule.flux_control.i_plasma" 
+        target_units: "A"
         dimensions:
           time:
-      ref_plasma_density:
+      n_e_line:
         source: "xdc/fuelling/t/density_ref_target"
         imas: "pulse_schedule.density_control.n_e_line"
         dimensions:

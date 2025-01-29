@@ -731,7 +731,6 @@ datasets:
           time_saddle:
             imas: "magnetics.time"
 
-
       # rogowski_coil_current:
       #   imas: "magnetics.rogowski_coil[:].current.data"
       #   target_units: "A"

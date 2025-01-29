@@ -123,11 +123,14 @@ def set_mapping_time_bounds(
         raise RuntimeError(f"No Plasma Current for shot {shot}")
 
     plasma_current = trim_ip_range(plasma_current, tdelta)
-    tmin = float(plasma_current.time.values.min())
-    tmax = float(plasma_current.time.values.max())
 
-    mapping.global_interpolate.tmin = tmin
-    mapping.global_interpolate.tmax = tmax
+    if mapping.global_interpolate.tmin is None:
+        tmin = float(plasma_current.time.values.min())
+        mapping.global_interpolate.tmin = tmin
+
+    if mapping.global_interpolate.tmax is None:
+        tmax = float(plasma_current.time.values.max())
+        mapping.global_interpolate.tmax = tmax
 
 
 def process_shot(shot: int, **kwargs):
@@ -154,13 +157,12 @@ def process_shot(shot: int, **kwargs):
     file_name = f"{shot}.{writer.file_extension}"
     local_file = config.writer.options["output_path"] / Path(file_name)
 
-    if local_file.exists() and not kwargs.get('force', True):
-        logger.info(f'Skipping shot {shot} as it already exists')
+    if local_file.exists() and not kwargs.get("force", True):
+        logger.info(f"Skipping shot {shot} as it already exists")
         return
 
     loader = get_default_loader(config.readers[mapping.default_loader])
     set_mapping_time_bounds(mapping, shot, tdelta, loader)
-
 
     for group_name in mapping.datasets.keys():
         if len(dataset_names) == 0 or group_name in dataset_names:

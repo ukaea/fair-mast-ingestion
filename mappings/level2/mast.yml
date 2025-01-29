@@ -3,7 +3,6 @@ default_loader: "uda"
 plasma_current: "summary/ip"
 
 global_interpolate:
-  tmin: -0.5
   params:
     time:
       step: 0.00025
@@ -304,7 +303,7 @@ datasets:
   pulse_schedule:
     imas: pulse_schedule
     profiles:
-      ref_plasma_current:
+      i_plasma:
         source:
           - name: "/xdc/ip/t/ipref"
             shot_range:
@@ -317,7 +316,7 @@ datasets:
         imas: "pulse_schedule.flux_control.i_plasma" 
         dimensions:
           time:
-      ref_plasma_density:
+      n_e_line:
         source:
           - name: "/xdc/density/t/nelref"
             shot_range:
@@ -369,94 +368,104 @@ datasets:
         dimensions:
           time:
             imas: "summary.time"
-      sol_current:
-        source: "AMC_SOL CURRENT"
-        dimensions:
-          time:
-            imas: "summary.time"
-      gas_pressure:
-        source: "AGA_FIG"
-        dimensions:
-          time:
-            imas: "summary.time"
-      gas_inboard_total:
-        source: "AGA_INBOARD_TOTAL"
-        units: 'cps'
-        dimensions:
-          time:
-            imas: "summary.time"
-      gas_outboard_total:
-        source: "AGA_OUTBOARD_TOTAL"
-        units: 'cps'
-        dimensions:
-          time:
-            imas: "summary.time"
 
   gas_injection:
     imas: "gas_injection"
     profiles:
-      valve_voltage:
-        imas: "gas_injection.valve[:].voltage.data"
-        source: 
-          - name: "XDC/GAS"
-            shot_range:
-              shot_min: 28356
-              shot_max: 30471
-            channels:
-              - "XDC/GAS/T/G1"
-              - "XDC/GAS/T/G2"
-              - "XDC/GAS/T/G3"
-              - "XDC/GAS/T/G4"
-              - "XDC/GAS/T/G5"
-              - "XDC/GAS/T/G6"
-              - "XDC/GAS/T/G7"
-              - "XDC/GAS/T/G8"
-              - "XDC/GAS/T/G9"
-              - "XDC/GAS/T/G10"
-              - "XDC/GAS/T/G11"
-              - "XDC/GAS/T/G12"
-
-          - name: "XDC/GAS"
-            shot_range:
-              shot_min: 1
-              shot_max: 28355
-            channels:
-              - "XDC_GAS_T_G1"
-              - "XDC_GAS_T_G2"
-              - "XDC_GAS_T_G3"
-              - "XDC_GAS_T_G4"
-              - "XDC_GAS_T_G5"
-              - "XDC_GAS_T_G6"
-              - "XDC_GAS_T_G7"
-              - "XDC_GAS_T_G8"
-              - "XDC_GAS_T_G9"
-              - "XDC_GAS_T_G10"
-              - "XDC_GAS_T_G11"
-              - "XDC_GAS_T_G12"
-
+      total_injected:
+        source: "AGA_INTEG_GAS"
+        units: 'counts'
         dimensions:
-          valve_channel:
-          time: 
-            imas: "gas_injection.valve[:].voltage.time"
+          time:
+            imas: "gas_injection.time"
+      pressure:
+        source: "AGA_FIG"
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+      inboard_total:
+        source: "AGA_INBOARD_TOTAL"
+        units: 'cps'
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+      outboard_total:
+        source: "AGA_OUTBOARD_TOTAL"
+        units: 'cps'
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+
+      # valve_voltage:
+      #   imas: "gas_injection.valve[:].voltage.data"
+      #   source: 
+      #     - name: "XDC/GAS"
+      #       shot_range:
+      #         shot_min: 28356
+      #         shot_max: 30471
+      #       channels:
+      #         - "XDC/GAS/T/G1"
+      #         - "XDC/GAS/T/G2"
+      #         - "XDC/GAS/T/G3"
+      #         - "XDC/GAS/T/G4"
+      #         - "XDC/GAS/T/G5"
+      #         - "XDC/GAS/T/G6"
+      #         - "XDC/GAS/T/G7"
+      #         - "XDC/GAS/T/G8"
+      #         - "XDC/GAS/T/G9"
+      #         - "XDC/GAS/T/G10"
+      #         - "XDC/GAS/T/G11"
+      #         - "XDC/GAS/T/G12"
+
+      #     - name: "XDC/GAS"
+      #       shot_range:
+      #         shot_min: 1
+      #         shot_max: 28355
+      #       channels:
+      #         - "XDC_GAS_T_G1"
+      #         - "XDC_GAS_T_G2"
+      #         - "XDC_GAS_T_G3"
+      #         - "XDC_GAS_T_G4"
+      #         - "XDC_GAS_T_G5"
+      #         - "XDC_GAS_T_G6"
+      #         - "XDC_GAS_T_G7"
+      #         - "XDC_GAS_T_G8"
+      #         - "XDC_GAS_T_G9"
+      #         - "XDC_GAS_T_G10"
+      #         - "XDC_GAS_T_G11"
+      #         - "XDC_GAS_T_G12"
+
+      #   dimensions:
+      #     valve_channel:
+      #     time: 
+      #       imas: "gas_injection.valve[:].voltage.time"
 
   pf_active:
     imas: "pf_active"
     profiles:
-      coils_current:
+      solenoid_current:
+        source: "AMC_SOL CURRENT"
+        scale: 0.5                # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
+        dimensions:
+          time:
+            imas: "summary.time"
+
+      coil_current:
         imas: "pf_active.coil[:].current.data"
+        target_units: "A"
         source:
           - name: "AMC" 
             channels:
-             - "AMC_P2IL COIL CURRENT"
-             - "AMC_P2IU COIL CURRENT"
-             - "AMC_P2OL COIL CURRENT"
-             - "AMC_P2OU COIL CURRENT"
-             - "AMC_P3L COIL CURRENT"
-             - "AMC_P3U COIL CURRENT"
-             - "AMC_P4L COIL CURRENT"
-             - "AMC_P4U COIL CURRENT"
-             - "AMC_P5L COIL CURRENT"
-             - "AMC_P5U COIL CURRENT"
+             - "AMC_P2IL FEED CURRENT"
+             - "AMC_P2IU FEED CURRENT"
+             - "AMC_P2OL FEED CURRENT"
+             - "AMC_P2OU FEED CURRENT"
+             - "AMC_P3L FEED CURRENT"
+             - "AMC_P3U FEED CURRENT"
+             - "AMC_P4L FEED CURRENT"
+             - "AMC_P4U FEED CURRENT"
+             - "AMC_P5L FEED CURRENT"
+             - "AMC_P5U FEED CURRENT"
         dimensions:
           channel:
           time: 
@@ -479,10 +488,10 @@ datasets:
               shot_min: 11695
               shot_max: 28355
             channels:
-              - '/xdc/pf/f/p1'
-              - '/xdc/pf/f/p2'
-              - '/xdc/pf/f/p4'
-              - '/xdc/pf/f/p5'
+              - 'XDC_PF_F_P1'
+              - 'XDC_PF_F_P2'
+              - 'XDC_PF_F_P4'
+              - 'XDC_PF_F_P5'
         dimensions:
           channel:
           time: 
@@ -544,7 +553,7 @@ datasets:
             - "AMB_CCBV18"
             - "AMB_CCBV19"
             - "AMB_CCBV20"
-            - "AMB_CCBV22"
+            - "AMB_CCBV21"
             - "AMB_CCBV22"
             - "AMB_CCBV23"
             - "AMB_CCBV24"
@@ -554,7 +563,7 @@ datasets:
             - "AMB_CCBV28"
             - "AMB_CCBV29"
             - "AMB_CCBV30"
-            - "AMB_CCBV32"
+            - "AMB_CCBV31"
             - "AMB_CCBV32"
             - "AMB_CCBV33"
             - "AMB_CCBV34"
@@ -671,8 +680,9 @@ datasets:
               - "ASM_SAD/M09"
               - "ASM_SAD/M10"
               - "ASM_SAD/M11"
+              - "ASM_SAD/M12"
         dimensions:
-          b_field_tor_probe_channel:
+          b_field_tor_probe_saddle_channel:
           time_saddle:
             imas: "magnetics.time"
 
@@ -696,6 +706,7 @@ datasets:
               - "XMB/SAD/OUT/M09"
               - "XMB/SAD/OUT/M10"
               - "XMB/SAD/OUT/M11"
+              - "XMB/SAD/OUT/M12"
           - name: "XMB/SAD/OUT"
             shot_range:
               shot_min: 11708
@@ -712,70 +723,71 @@ datasets:
               - "XMB_SAD/OUT/M09"
               - "XMB_SAD/OUT/M10"
               - "XMB_SAD/OUT/M11"
+              - "XMB_SAD/OUT/M12"
         dimensions:
           b_field_tor_probe_saddle_channel:
           time_saddle:
             imas: "magnetics.time"
 
 
-      rogowski_coil_current:
-        imas: "magnetics.rogowski_coil[:].current.data"
-        target_units: "A"
-        source:
-          - name: "AMH/HALO"
-            channels:
-              - "AMH_HALO/CCU/2"
-              - "AMH_HALO/P2L/1"
-              - "AMH_HALO/P2L/2"
-              - "AMH_HALO/P2L/3"
-              - "AMH_HALO/P2L/4"
-              - "AMH_HALO/P2L/5"
-              - "AMH_HALO/P2L/6"
-              - "AMH_HALO/P2U/2"
-              - "AMH_HALO/P2U/3"
-              - "AMH_HALO/P2U/4"
-              - "AMH_HALO/P2U/5"
-              - "AMH_HALO/P2U/6"
-              - "AMH_HALO/P3L/1"
-              - "AMH_HALO/P3L/2"
-              - "AMH_HALO/P3L/4"
-              - "AMH_HALO/P3L/6"
-              - "AMH_HALO/P3U/2"
-              - "AMH_HALO/P3U/3"
-              - "AMH_HALO/P3U/4"
-              - "AMH_HALO/P3U/5"
-              - "AMH_HALO/P3U/6"
-              - "AMH_PHALO/EPL/I1"
-              - "AMH_PHALO/EPL/I2"
-              - "AMH_PHALO/EPL/I4"
-              - "AMH_PHALO/EPL/O1"
-              - "AMH_PHALO/EPL/O2"
-              - "AMH_PHALO/EPL/O3"
-              - "AMH_PHALO/EPL/O5"
-              - "AMH_PHALO/EPL/O6"
-              - "AMH_PHALO/EPU/I3"
-              - "AMH_PHALO/EPU/I4"
-              - "AMH_PHALO/EPU/O1"
-              - "AMH_PHALO/EPU/O3"
-              - "AMH_PHALO/EPU/O4"
-              - "AMH_PHALO/EPU/O6"
-              - "AMH_PHALO/P2L/I2"
-              - "AMH_PHALO/P2L/I3"
-              - "AMH_PHALO/P2L/I6"
-              - "AMH_PHALO/P2L/O1"
-              - "AMH_PHALO/P2L/O2"
-              - "AMH_PHALO/P2L/O4"
-              - "AMH_PHALO/P2U/I1"
-              - "AMH_PHALO/P2U/I2"
-              - "AMH_PHALO/P2U/I3"
-              - "AMH_PHALO/P2U/I4"
-              - "AMH_PHALO/P2U/I5"
-              - "AMH_PHALO/P2U/I6"
-              - "AMH_PHALO/P2U/O4"
-        dimensions:
-          rogowski_coil_channel:
-          time:
-            imas: "magnetics.time"
+      # rogowski_coil_current:
+      #   imas: "magnetics.rogowski_coil[:].current.data"
+      #   target_units: "A"
+      #   source:
+      #     - name: "AMH/HALO"
+      #       channels:
+      #         - "AMH_HALO/CCU/2"
+      #         - "AMH_HALO/P2L/1"
+      #         - "AMH_HALO/P2L/2"
+      #         - "AMH_HALO/P2L/3"
+      #         - "AMH_HALO/P2L/4"
+      #         - "AMH_HALO/P2L/5"
+      #         - "AMH_HALO/P2L/6"
+      #         - "AMH_HALO/P2U/2"
+      #         - "AMH_HALO/P2U/3"
+      #         - "AMH_HALO/P2U/4"
+      #         - "AMH_HALO/P2U/5"
+      #         - "AMH_HALO/P2U/6"
+      #         - "AMH_HALO/P3L/1"
+      #         - "AMH_HALO/P3L/2"
+      #         - "AMH_HALO/P3L/4"
+      #         - "AMH_HALO/P3L/6"
+      #         - "AMH_HALO/P3U/2"
+      #         - "AMH_HALO/P3U/3"
+      #         - "AMH_HALO/P3U/4"
+      #         - "AMH_HALO/P3U/5"
+      #         - "AMH_HALO/P3U/6"
+      #         - "AMH_PHALO/EPL/I1"
+      #         - "AMH_PHALO/EPL/I2"
+      #         - "AMH_PHALO/EPL/I4"
+      #         - "AMH_PHALO/EPL/O1"
+      #         - "AMH_PHALO/EPL/O2"
+      #         - "AMH_PHALO/EPL/O3"
+      #         - "AMH_PHALO/EPL/O5"
+      #         - "AMH_PHALO/EPL/O6"
+      #         - "AMH_PHALO/EPU/I3"
+      #         - "AMH_PHALO/EPU/I4"
+      #         - "AMH_PHALO/EPU/O1"
+      #         - "AMH_PHALO/EPU/O3"
+      #         - "AMH_PHALO/EPU/O4"
+      #         - "AMH_PHALO/EPU/O6"
+      #         - "AMH_PHALO/P2L/I2"
+      #         - "AMH_PHALO/P2L/I3"
+      #         - "AMH_PHALO/P2L/I6"
+      #         - "AMH_PHALO/P2L/O1"
+      #         - "AMH_PHALO/P2L/O2"
+      #         - "AMH_PHALO/P2L/O4"
+      #         - "AMH_PHALO/P2U/I1"
+      #         - "AMH_PHALO/P2U/I2"
+      #         - "AMH_PHALO/P2U/I3"
+      #         - "AMH_PHALO/P2U/I4"
+      #         - "AMH_PHALO/P2U/I5"
+      #         - "AMH_PHALO/P2U/I6"
+      #         - "AMH_PHALO/P2U/O4"
+      #   dimensions:
+      #     rogowski_coil_channel:
+      #     time:
+      #       imas: "magnetics.time"
 
       b_field_pol_probe_omv_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
@@ -1387,5 +1399,5 @@ datasets:
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
-          height_b:
-          width_b:
+          height_c:
+          width_c:

@@ -158,7 +158,6 @@ class UDALoader(BaseLoader):
         return lookup[status]
 
     def get_signal_infos(self, shot_num: int) -> t.List[SignalInfo]:
-
         client = self._get_client()
         signals = client.list_signals(shot=shot_num)
 
@@ -215,35 +214,57 @@ class UDALoader(BaseLoader):
         return dataset
 
     def load_channels(self, shot_num: int, name: str, channels: list[str]):
-        signals = []
-        loaded_channels = []
+        signals = {}
+
+        # Load channels, skipping an missing channels
+        shape, dims, coords = None, None, None
         for channel in channels:
             try:
                 signal = self.load_signal(shot_num, channel)
-                signals.append(signal)
-                loaded_channels.append(channel)
+                signals[channel] = signal
+                if shape is None:
+                    shape = signal.shape
+                    dims = list(signal.sizes.keys())
+                    coords = signal.coords
             except MissingSourceError:
                 continue
 
+        # Edge case: could not load any channels.
         if len(signals) == 0:
             raise MissingSourceError(
                 f'Could not load profile {name} for shot "{shot_num}". Could not load any channels!'
             )
 
-        channels = xr.DataArray(data=loaded_channels, dims=["channels"])
-        channels.name = "channels"
+        # Fill any missing channels with NaN
+        for channel in channels:
+            if channel not in signals:
+                signals[channel] = xr.DataArray(
+                    np.full(shape, np.nan), dims=dims, coords=coords
+                )
 
-        first_signal = signals[0]
-        for i, signal in enumerate(signals):
+        assert (
+            len(signals) == len(channels)
+        ), "Number of channels must match number of signals loaded. Check mapping names for duplicates."
+
+        channels_dim = xr.DataArray(data=channels, dims=["channels"])
+        channels_dim.name = "channels"
+
+        # Sometimes channels have inconsistent binning, harmonise them here.
+        first_signal = None
+        for name, signal in signals.items():
+            if first_signal is None:
+                first_signal = signal
+
             dim_map = {
                 dim_name: new_dim_name
                 for dim_name, new_dim_name in zip(signal.dims, first_signal.dims)
             }
             signal = signal.rename(dim_map)
             signal = signal.interp_like(first_signal, method="zero")
-            signals[i] = signal
+            signals[name] = signal
 
-        signals = xr.concat(signals, dim=channels)
+        signals = [signals[channel] for channel in channels]
+        signals = xr.concat(signals, dim=channels_dim)
         return signals
 
     def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:

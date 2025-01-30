@@ -1,5 +1,7 @@
+from pathlib import Path
 from typing import Optional
 
+import pandas as pd
 import xarray as xr
 from distributed import Lock
 from pydantic import BaseModel
@@ -48,6 +50,74 @@ class SignalMetadata(BaseModel):
 
     class Config:
         extra = "ignore"
+
+
+class ParquetMetadataWriter:
+    def __init__(self, path: str, remote_path: str):
+        self.path = Path(path)
+        self.remote_path = remote_path
+        self.sources = []
+        self.signals = []
+
+        (self.path / "signals").mkdir(exist_ok=True)
+        (self.path / "sources").mkdir(exist_ok=True)
+
+    def write(self, shot: int, dataset: xr.Dataset):
+        source = self.write_source(shot, dataset)
+        signals = self.write_signals(shot, dataset)
+
+        self.sources.append(source)
+        self.signals.extend(signals)
+
+    def write_source(self, shot: int, dataset: xr.Dataset):
+        name = dataset.attrs["name"]
+        url = f"{self.remote_path}/{shot}.zarr/{name}"
+        data = SourceMetadata(
+            uuid=get_uuid(name, shot),
+            shot_id=shot,
+            url=url,
+            **dataset.attrs,
+        )
+        data = data.model_dump()
+        return data
+
+    def write_signals(self, shot: int, dataset: xr.Dataset):
+        datas = []
+
+        source_name = dataset.attrs["name"]
+
+        for item in dataset.data_vars.values():
+            full_name = f"{source_name}/{item.attrs['name']}"
+            url = f"{self.remote_path}/{shot}.zarr/{full_name}"
+
+            rank = len(item.shape)
+            shape = ",".join(list(map(str, item.shape)))
+            dims = ",".join(list(item.sizes.keys()))
+
+            data = SignalMetadata(
+                uuid=get_uuid(full_name, shot),
+                shot_id=shot,
+                url=url,
+                source=source_name,
+                shape=shape,
+                dimensions=dims,
+                rank=rank,
+                **item.attrs,
+            )
+            datas.append(data.model_dump())
+
+        if len(datas) == 0:
+            logger.warning(f"No signals found for shot {shot} and source {source_name}")
+            return
+
+        return datas
+
+    def save(self, shot: int):
+        sources = pd.DataFrame(self.sources)
+        sources.to_parquet(self.path / f"sources/{shot}.parquet")
+
+        signals = pd.DataFrame(self.signals)
+        sources.to_parquet(self.path / f"signals/{shot}.parquet")
 
 
 class MetadataWriter:

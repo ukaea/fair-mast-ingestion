@@ -21,9 +21,6 @@ from src.core.workflow_manager import WorkflowManager
 from src.core.writer import dataset_writer_registry
 from src.level2.reader import DatasetReader
 
-MIN_SHOT = 11695
-MAX_SHOT = 30472
-
 
 def running_mean(x, N=300):
     cumsum = np.cumsum(np.insert(x, 0, 0))
@@ -152,7 +149,6 @@ def process_shot(shot: int, **kwargs):
         config.writer.options["output_path"] = args.output_path
 
     writer = dataset_writer_registry.create(config.writer.type, **config.writer.options)
-    metadata_writer = create_metadata_writer(writer, config)
 
     file_name = f"{shot}.{writer.file_extension}"
     local_file = config.writer.options["output_path"] / Path(file_name)
@@ -180,8 +176,6 @@ def process_shot(shot: int, **kwargs):
                     f"Writing {group_name} for shot {shot} from {mapping.facility}"
                 )
                 writer.write(file_name, group_name, dataset)
-
-                metadata_writer.write(shot, dataset)
 
     if config.upload is not None:
         remote_file = f"{config.upload.base_path}/"

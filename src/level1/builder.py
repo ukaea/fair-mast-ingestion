@@ -20,7 +20,6 @@ class DatasetBuilder:
         self,
         loader: BaseLoader,
         writer: DatasetWriter,
-        metadata_writer: MetadataWriter,
         pipelines: Pipelines,
         include_datasets: Optional[list[str]],
         exclude_datasets: Optional[list[str]],
@@ -31,7 +30,6 @@ class DatasetBuilder:
         self.include_datasets = include_datasets
         self.exclude_datasets = exclude_datasets
         self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
-        self.metadata_writer = metadata_writer
 
     def create(self, shot: int):
         try:
@@ -63,9 +61,6 @@ class DatasetBuilder:
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"
             self.writer.write(file_name, group_name, dataset)
-
-            logger.info(f"Writing metadata for {group_name} and shot #{shot}")
-            self.metadata_writer.write(shot, dataset)
 
     def load_datasets(self, shot, group_name: str) -> dict[str, xr.Dataset]:
         signal_infos = self.loader.list_signals(shot)

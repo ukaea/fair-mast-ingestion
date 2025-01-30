@@ -38,14 +38,6 @@ class IngestionWorkflow:
         self.loader = loader_registry.create("uda", include_error=True)
         self.pipelines = pipelines_registry.create(self.facility)
 
-        db_path = Path(self.config.metadatabase_file).absolute()
-        uri = f"sqlite:////{db_path}"
-        if self.config.upload is not None:
-            remote_path = f"{self.config.upload.base_path}/"
-        else:
-            remote_path = self.writer.output_path
-        self.metadata_writer = MetadataWriter(uri, remote_path)
-
         try:
             self.create_dataset(shot)
             self.upload_dataset(shot)
@@ -60,7 +52,6 @@ class IngestionWorkflow:
         builder = DatasetBuilder(
             self.loader,
             self.writer,
-            self.metadata_writer,
             self.pipelines,
             self.include_sources,
             self.exclude_sources,

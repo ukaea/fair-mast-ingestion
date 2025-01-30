@@ -117,7 +117,7 @@ class ParquetMetadataWriter:
         sources.to_parquet(self.path / f"sources/{shot}.parquet")
 
         signals = pd.DataFrame(self.signals)
-        sources.to_parquet(self.path / f"signals/{shot}.parquet")
+        signals.to_parquet(self.path / f"signals/{shot}.parquet")
 
 
 class MetadataWriter:

@@ -41,7 +41,7 @@ source .venv/bin/activate
 Update pip and install required packages:
 
 ```sh
-uv pip install git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python
+uv pip install git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git#subdirectory=uda/python
 uv pip install -e .
 uv pip install -e ".[dev]"
 uv pip install -e ".[mpi]"

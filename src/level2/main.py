@@ -89,20 +89,6 @@ def get_default_loader(config: ReaderConfig) -> BaseLoader:
     return loader
 
 
-def create_metadata_writer(
-    writer: BaseLoader, config: IngestionConfig
-) -> MetadataWriter:
-    db_path = Path(config.metadatabase_file).absolute()
-    uri = f"sqlite:////{db_path}"
-    if config.upload is not None:
-        remote_path = f"{config.upload.base_path}/"
-    else:
-        remote_path = writer.output_path
-
-    metadata_writer = MetadataWriter(uri, remote_path)
-    return metadata_writer
-
-
 def set_mapping_time_bounds(
     mapping: Mapping, shot: int, tdelta: float, loader: BaseLoader
 ):

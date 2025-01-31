@@ -59,9 +59,6 @@ class ParquetMetadataWriter:
         self.sources = []
         self.signals = []
 
-        (self.path / "signals").mkdir(exist_ok=True)
-        (self.path / "sources").mkdir(exist_ok=True)
-
     def write(self, shot: int, dataset: xr.Dataset):
         source = self.write_source(shot, dataset)
         signals = self.write_signals(shot, dataset)

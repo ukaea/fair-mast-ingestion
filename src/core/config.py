@@ -25,7 +25,6 @@ class IngestionConfig(BaseModel):
     upload: Optional[UploadConfig] = None
     readers: dict[str, ReaderConfig]
     writer: WriterConfig
-    metadatabase_file: Optional[str] = "metadatabase.db"
 
 
 def load_config(config_file: str) -> IngestionConfig:

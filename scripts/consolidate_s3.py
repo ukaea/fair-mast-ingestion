@@ -4,10 +4,9 @@ import shutil
 import subprocess
 
 import zarr
-from dask.distributed import Client, as_completed
-from dask_mpi import initialize
-
-from src.uploader import UploadConfig
+from pathlib import Path
+from src.core.workflow_manager import WorkflowManager
+from src.core.config import UploadConfig
 
 
 def consolidate(shot):
@@ -16,35 +15,50 @@ def consolidate(shot):
     with zarr.open(shot) as f:
         for source in f.keys():
             zarr.consolidate_metadata(f"{shot}/{source}")
-            for signal in f[source].keys():
-                zarr.consolidate_metadata(f"{shot}/{source}/{signal}")
+
 
 def download_shot(shot, local_path, config):
     """Download the Zarr file for the given shot number."""
     download_command = [
         "s5cmd",
-        "--credentials-file", config.credentials_file,
-        "--endpoint-url", config.endpoint_url,
-        "cp", f"{config.url}{shot}*", local_path
+        "--credentials-file",
+        config.credentials_file,
+        "--endpoint-url",
+        config.endpoint_url,
+        "cp",
+        f"{config.base_path}{shot}*",
+        local_path,
     ]
 
-    return subprocess.run(download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    return subprocess.run(
+        download_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+
 
 def upload_shot(shot, local_path, config):
     """Upload the consolidated Zarr file back to S3."""
     upload_command = [
         "s5cmd",
-        "--credentials-file", config.credentials_file,
-        "--endpoint-url", config.endpoint_url,
-        "cp", "--acl", "public-read", f"{local_path}/{shot}.zarr", config.url
+        "--credentials-file",
+        config.credentials_file,
+        "--endpoint-url",
+        config.endpoint_url,
+        "cp",
+        "--acl",
+        "public-read",
+        f"{local_path}/{shot}.zarr",
+        config.base_path,
     ]
 
-    return subprocess.run(upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    return subprocess.run(
+        upload_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+
 
 def process_shots(shot, local_path, config):
     """Process the Zarr files for the given shot number."""
     logging.info(f"Processing shot {shot}...")
-    
+
     download_result = download_shot(shot, local_path, config)
     if download_result.returncode == 0:
         logging.info(f"Successfully downloaded shot {shot}")
@@ -55,7 +69,9 @@ def process_shots(shot, local_path, config):
         if upload_result.returncode == 0:
             logging.info(f"Successfully uploaded consolidated file: {shot}.zarr")
         else:
-            logging.error(f"Failed to upload {shot}.zarr: {upload_result.stderr.strip()}")
+            logging.error(
+                f"Failed to upload {shot}.zarr: {upload_result.stderr.strip()}"
+            )
 
         # Remove the downloaded Zarr directory
         shutil.rmtree(f"{local_path}/{shot}.zarr")
@@ -63,14 +79,13 @@ def process_shots(shot, local_path, config):
     else:
         logging.error(f"Failed to download {shot}: {download_result.stderr.strip()}")
 
-if __name__ == "__main__":
-    initialize()
 
+if __name__ == "__main__":
     logging.basicConfig(
         filename="process_shots.log",  # Log to a file named 'process_shots.log'
-        level=logging.INFO,            # Log level: INFO and above (INFO, WARNING, ERROR)
+        level=logging.INFO,  # Log level: INFO and above (INFO, WARNING, ERROR)
         format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
-        datefmt="%Y-%m-%d %H:%M:%S"   # Time format
+        datefmt="%Y-%m-%d %H:%M:%S",  # Time format
     )
 
     parser = argparse.ArgumentParser(
@@ -80,29 +95,26 @@ if __name__ == "__main__":
 
     parser.add_argument("bucket_path")
     parser.add_argument("local_path")
-    parser.add_argument("--credentials_file", default=".s5cfg.stfc")
+    parser.add_argument("-n", "--n-workers", type=int, default=None)
+    parser.add_argument("--credentials-file", default=".s5cfg.stfc")
     parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
-    parser.add_argument("--start_shot", type=int, default=11695)
-    parser.add_argument("--end_shot", type=int, default=30472)
+    parser.add_argument("--start-shot", type=int, default=11695)
+    parser.add_argument("--end-shot", type=int, default=30472)
 
     args = parser.parse_args()
 
     config = UploadConfig(
-            credentials_file=args.credentials_file,
-            endpoint_url=args.endpoint_url,
-            url=args.bucket_path,
-        )
+        credentials_file=args.credentials_file,
+        endpoint_url=args.endpoint_url,
+        base_path=args.bucket_path,
+    )
 
-    dask_client = Client()
+    Path(args.local_path).mkdir(exist_ok=True, parents=True)
 
     shot_list = list(range(args.start_shot, args.end_shot))
     tasks = []
 
-    # Submit tasks to the Dask cluster
-    for shot in shot_list:
-        task = dask_client.submit(process_shots, shot, args.local_path, config)
-        tasks.append(task)
-
-    n = len(tasks)
-    for i, task in enumerate(as_completed(tasks)):
-        logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
+    workflow_manager = WorkflowManager(process_shots)
+    workflow_manager.run_workflows(
+        shot_list, args.n_workers, local_path=args.local_path, config=config
+    )

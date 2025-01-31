@@ -3,8 +3,9 @@ import multiprocessing as mp
 from functools import partial
 
 import pandas as pd
-import requests
 import pycpf
+import requests
+
 from src.core.log import logger
 
 

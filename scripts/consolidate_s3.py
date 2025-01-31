@@ -2,11 +2,12 @@ import argparse
 import logging
 import shutil
 import subprocess
+from pathlib import Path
 
 import zarr
-from pathlib import Path
-from src.core.workflow_manager import WorkflowManager
+
 from src.core.config import UploadConfig
+from src.core.workflow_manager import WorkflowManager
 
 
 def consolidate(shot):

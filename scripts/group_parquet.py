@@ -1,7 +1,7 @@
 import argparse
 
-import pyarrow.parquet as pq
 import pyarrow.dataset as ds
+import pyarrow.parquet as pq
 
 
 def main():

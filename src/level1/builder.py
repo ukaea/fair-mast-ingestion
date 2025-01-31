@@ -4,7 +4,6 @@ import xarray as xr
 
 from src.core.load import BaseLoader, MissingMetadataError, MissingProfileError
 from src.core.log import logger
-from src.core.metadata import MetadataWriter
 from src.core.utils import harmonise_name, read_json_file
 from src.core.writer import DatasetWriter
 from src.level1.pipelines import Pipelines

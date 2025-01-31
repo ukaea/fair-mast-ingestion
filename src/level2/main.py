@@ -8,13 +8,12 @@ import pint  # noqa: F401
 import pint_xarray  # noqa: F401
 import xarray as xr
 
-from src.core.config import IngestionConfig, ReaderConfig, load_config
+from src.core.config import ReaderConfig, load_config
 from src.core.load import (
     BaseLoader,
     loader_registry,
 )
 from src.core.log import logger
-from src.core.metadata import MetadataWriter
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
 from src.core.workflow_manager import WorkflowManager

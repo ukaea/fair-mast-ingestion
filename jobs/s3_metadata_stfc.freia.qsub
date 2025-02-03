@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Choose parallel environment
-#$ -pe mpi 16
+#$ -pe mpi 1
 
 # Specify the job name in the queue system
 #$ -N fairmast-metadata-writer
@@ -14,10 +14,10 @@
 #$ -l s_rt=48:00:00
 
 endpoint_url="https://s3.echo.stfc.ac.uk"
-bucket_path="s3://mast/level2/shots"
-output_path="/common/tmp/sjackson/fair-mast/metadata/s3/mast/level2"
+bucket_path="s3://mast/level1/shots"
+output_path="/common/tmp/sjackson/fair-mast/metadata/s3/mast/level1"
 
 source .venv/bin/activate
-python3 -m scripts.read_metadata --shot-min 11695 --shot-max 30475 -n 2 --output-path $output_path --bucket-path $bucket_path --endpoint-url $endpoint_url
-python3 -m scripts.group_parquet $output_path/sources ./mast-level2-sources.parquet
-python3 -m scripts.group_parquet $output_path/signals ./mast-level2-signals.parquet
+python3 -m scripts.read_metadata --shot-min 11695 --shot-max 30475 -n 16 --output-path $output_path --bucket-path $bucket_path --endpoint-url $endpoint_url
+python3 -m scripts.group_parquet $output_path/sources ./mast-level1-sources.parquet
+python3 -m scripts.group_parquet $output_path/signals ./mast-level1-signals.parquet

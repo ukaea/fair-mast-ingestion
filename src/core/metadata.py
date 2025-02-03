@@ -69,6 +69,11 @@ class ParquetMetadataWriter:
     def write_source(self, shot: int, dataset: xr.Dataset):
         name = dataset.attrs["name"]
         url = f"{self.remote_path}/{shot}.zarr/{name}"
+
+        for item in ["url", "shot_id", "uuid"]:
+            if item in dataset.attrs:
+                dataset.attrs.pop(item)
+
         data = SourceMetadata(
             uuid=get_uuid(name, shot),
             shot_id=shot,
@@ -90,6 +95,18 @@ class ParquetMetadataWriter:
             rank = len(item.shape)
             shape = ",".join(list(map(str, item.shape)))
             dims = ",".join(list(item.sizes.keys()))
+
+            for name in [
+                "url",
+                "shot_id",
+                "uuid",
+                "source",
+                "shape",
+                "dimensions",
+                "rank",
+            ]:
+                if name in item.attrs:
+                    item.attrs.pop(name)
 
             data = SignalMetadata(
                 uuid=get_uuid(full_name, shot),

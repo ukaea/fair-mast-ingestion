@@ -19,4 +19,4 @@ num_workers=8
 bucket_path="s3://mast/level1/shots/"
 local_path="/common/tmp/sjackson/fair-mast/consolidate"
 
-python3 -m scripts.consolidate_s3 $bucket_path $local_path -n $num_workers
+python3 -m scripts.consolidate_s3 $bucket_path $local_path -n $num_workers --start-shot 11695 --end-shot 14830

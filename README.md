@@ -28,21 +28,13 @@ Update pip and install required packages:
 
 ```sh
 python -m pip install -U pip
+python -m pip install git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python
 python -m pip install -e .
 ```
 
-The final step to installation is to have mastcodes:
+We must also source the SSL certificate information by running the following command. Without this UDA cannot connect to the UKAEA network.
 
 ```sh
-git clone git@git.ccfe.ac.uk:MAST-U/mastcodes.git
-cd mastcodes
-```
-
-Edit `uda/python/setup.py` and change the "version" to 1.3.9.
-
-```sh
-python -m pip install uda/python
-cd ..
 source ~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/uda-ssl.sh
 ```
 

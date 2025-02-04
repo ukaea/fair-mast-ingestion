@@ -1,5 +1,7 @@
+import json
 import sys
 import uuid
+from pathlib import Path
 
 from src.log import logger
 
@@ -7,6 +9,7 @@ from src.log import logger
 def harmonise_name(name: str) -> str:
     name = name.replace("/", "_")
     name = name.replace(" ", "_")
+    name = name.replace("-", "_")
     name = name.replace("(", "")
     name = name.replace(")", "")
     name = name.replace(",", "")
@@ -48,3 +51,8 @@ def read_shot_file(shot_file: str) -> list[int]:
         shot_nums = map(lambda x: x.strip(), shot_nums)
         shot_nums = list(sorted(map(int, shot_nums)))
     return shot_nums
+
+
+def read_json_file(file_name: str):
+    with Path(file_name).open("r") as handle:
+        return json.load(handle)

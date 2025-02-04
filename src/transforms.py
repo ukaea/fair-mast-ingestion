@@ -11,10 +11,9 @@ from pint import UnitRegistry
 from pint.errors import UndefinedUnitError
 
 from src.log import logger
+from src.utils import read_json_file
 
-DIMENSION_MAPPING_FILE = "mappings/mast/dimensions.json"
-UNITS_MAPPING_FILE = "mappings/mast/units.json"
-CUSTOM_UNITS_FILE = "mappings/mast/custom_units.txt"
+UNITS_MAPPING_FILE = "mappings/units.json"
 
 
 class BaseTransform(ABC):
@@ -38,9 +37,7 @@ class MapDict(BaseTransform):
 
 
 class RenameDimensions(BaseTransform):
-    def __init__(
-        self, mapping_file=DIMENSION_MAPPING_FILE, squeeze_dataset: bool = True
-    ) -> None:
+    def __init__(self, mapping_file: str, squeeze_dataset: bool = True) -> None:
         self.squeeze_dataset = squeeze_dataset
 
         with Path(mapping_file).open("r") as handle:
@@ -103,6 +100,16 @@ class DropDatasets(BaseTransform):
         return datasets
 
 
+class DropErrors(BaseTransform):
+    def __init__(self, keys: list[str]):
+        self.keys = keys
+
+    def __call__(self, datasets: dict[str, xr.Dataset]) -> dict[str, xr.Dataset]:
+        for key in self.keys:
+            datasets[key] = datasets[key].drop(f"{key}_error")
+        return datasets
+
+
 class DropCoordinates(BaseTransform):
     def __init__(self, name, keys: list[str]) -> None:
         self.name = name
@@ -128,11 +135,18 @@ class DropCoordinates(BaseTransform):
 
 
 class RenameVariables(BaseTransform):
-    def __init__(self, mapping: dict[str, str]):
-        self.mapping = mapping
+    def __init__(self, mapping_file: str):
+        self.mapping = read_json_file(mapping_file)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        for key, value in self.mapping.items():
+        group_name = dataset.attrs["source"]
+
+        if group_name not in self.mapping:
+            return dataset
+
+        for key, value in self.mapping[group_name].items():
+            if key in dataset.dims:
+                dataset = dataset.rename_dims({key: value})
             if key in dataset:
                 dataset = dataset.rename_vars({key: value})
         dataset = dataset.compute()
@@ -143,6 +157,31 @@ class MergeDatasets(BaseTransform):
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
         dataset = dataset.compute()
+        dataset.attrs = {}
+        return dataset
+
+
+class InterpolateAxis(BaseTransform):
+    def __init__(self, axis_name: str, method: str):
+        super().__init__()
+        self.axis_name = axis_name
+        self.method = method
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        axis_values = dataset[self.axis_name].values
+        amin = axis_values.min()
+        amax = axis_values.max()
+        adelta = axis_values[1] - axis_values[0]
+        coords = np.arange(amin, amax, adelta)
+
+        datasets = {}
+        for k, v in dataset.data_vars.items():
+            if self.axis_name in v.dims:
+                v = v.dropna(self.axis_name, how="all")
+                datasets[k] = v.interp({self.axis_name: coords}, method=self.method)
+            else:
+                datasets[k] = v
+        dataset = xr.merge(datasets.values())
         dataset.attrs = {}
         return dataset
 
@@ -253,32 +292,6 @@ class TransformUnits(BaseTransform):
         return item
 
 
-class ASXTransform(BaseTransform):
-    """ASX is very special.
-
-    The time points are actually the data and the data is blank.
-    This transformation renames them and used the correct dimension mappings.
-    """
-
-    def __init__(self) -> None:
-        with Path(DIMENSION_MAPPING_FILE).open("r") as handle:
-            self.dimension_mapping = json.load(handle)
-
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = dataset.squeeze()
-        name = dataset.attrs["name"]
-
-        if name not in self.dimension_mapping:
-            return dataset
-
-        dataset = dataset.rename_dims(self.dimension_mapping[name])
-        dataset = dataset.drop("data")
-        dataset["data"] = dataset["time"]
-        dataset = dataset.drop("time")
-        dataset = dataset.compute()
-        return dataset
-
-
 class LCFSTransform(BaseTransform):
     """LCFS transform for LCFS coordinates
 
@@ -367,8 +380,6 @@ class ProcessImage(BaseTransform):
     def __call__(self, dataset: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset: xr.Dataset = list(dataset.values())[0]
         dataset.attrs["units"] = "pixels"
-        dataset.attrs["shape"] = list(dataset.sizes.values())
-        dataset.attrs["rank"] = len(dataset.sizes.values())
         dataset = dataset.compute()
         return dataset
 

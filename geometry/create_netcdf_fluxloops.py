@@ -13,7 +13,7 @@ def create_fluxloop_variable(group, parquet_file, lp_cp, location, version):
         var = group.createVariable(row["uda_name"].replace("/", "_"), lp_cp, ("singleDim",))
 
         # Initialize data
-        data = np.empty(1, lp_cp.dtype)
+        data = np.empty(1, lp_cp.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
         data["location"] = location
@@ -36,17 +36,23 @@ def parquet_to_netcdf(netcdf_file, headerdict):
         mag_grp = ncfile.createGroup("magnetics")
         fluxloop_group = mag_grp.createGroup("fluxloops")
 
+        p2_group = fluxloop_group.createGroup("p2")
+        p3_group = fluxloop_group.createGroup("p3")
+        p4_group = fluxloop_group.createGroup("p4")
+        p5_group = fluxloop_group.createGroup("p5")
+        p6_group = fluxloop_group.createGroup("p6")
+
         # Create fluxloop subgroups
         fluxloop_subgroups = {
-            "p2_lower": fluxloop_group.createGroup("p2/lower"),
-            "p2_upper": fluxloop_group.createGroup("p2/upper"),
-            "p3_lower": fluxloop_group.createGroup("p3/lower"),
-            "p3_upper": fluxloop_group.createGroup("p3/upper"),
-            "p4_lower": fluxloop_group.createGroup("p4/lower"),
-            "p4_upper": fluxloop_group.createGroup("p4/upper"),
-            "p5_lower": fluxloop_group.createGroup("p5/lower"),
-            "p5_upper": fluxloop_group.createGroup("p5/upper"),
-            "p6_lower": fluxloop_group.createGroup("p6/lower"),
+            "p2_upper": p2_group.createGroup("upper"),
+            "p2_lower": p2_group.createGroup("lower"),
+            "p3_upper": p3_group.createGroup("upper"),
+            "p3_lower": p3_group.createGroup("lower"),
+            "p4_upper": p4_group.createGroup("upper"),
+            "p4_lower": p4_group.createGroup("lower"),
+            "p5_upper": p5_group.createGroup("upper"),
+            "p5_lower": p5_group.createGroup("lower"),
+            "p6_lower": p6_group.createGroup("lower"),
         }
 
         # Define data types
@@ -82,8 +88,6 @@ def parquet_to_netcdf(netcdf_file, headerdict):
         }
 
         version = headerdict["version"] + 0.1 * headerdict["revision"]
-
-        create_fluxloop_variable()
 
         # Process each parquet file
         for subgroup_key, (file_path, location) in parquet_files.items():
@@ -123,4 +127,4 @@ if __name__ == "__main__":
         "testedBy": "",
     }
 
-    parquet_to_netcdf("test.nc", headerdict)
+    parquet_to_netcdf("geometry/fluxloops.nc", headerdict)

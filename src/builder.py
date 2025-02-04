@@ -4,6 +4,7 @@ import xarray as xr
 
 from src.load import BaseLoader, MissingProfileError
 from src.log import logger
+from src.metadata import MetadataWriter
 from src.pipelines import Pipelines
 from src.utils import harmonise_name, read_json_file
 from src.writer import DatasetWriter
@@ -19,6 +20,7 @@ class DatasetBuilder:
         self,
         loader: BaseLoader,
         writer: DatasetWriter,
+        metadata_writer: MetadataWriter,
         pipelines: Pipelines,
         include_datasets: Optional[list[str]],
         exclude_datasets: Optional[list[str]],
@@ -29,6 +31,7 @@ class DatasetBuilder:
         self.include_datasets = include_datasets
         self.exclude_datasets = exclude_datasets
         self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
+        self.metadata_writer = metadata_writer
 
     def create(self, shot: int):
         dataset_infos = self.list_datasets(shot)
@@ -47,13 +50,18 @@ class DatasetBuilder:
             pipeline = self.pipelines.get(group_name)
 
             dataset: xr.Dataset = pipeline(datasets)
+            dataset, group_name = self._rename_group(dataset, group_name)
+
+            dataset.attrs["name"] = group_name
             dataset.attrs["description"] = dataset_info.description
             dataset.attrs["quality"] = dataset_info.quality
-            dataset, group_name = self._rename_group(dataset, group_name)
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"
             self.writer.write(file_name, group_name, dataset)
+
+            logger.info(f"Writing metadata for {group_name} and shot #{shot}")
+            self.metadata_writer.write(shot, dataset)
 
     def load_datasets(self, shot, group_name: str) -> dict[str, xr.Dataset]:
         signal_infos = self.loader.list_signals(shot)
@@ -153,6 +161,7 @@ class DatasetBuilder:
                 dataset = self.loader.load(shot, uda_name)
                 dataset.attrs["name"] = name
                 dataset.attrs["source"] = group_name
+                dataset.attrs["quality"] = signal_info.quality
                 datasets[name] = dataset
             except MissingProfileError as e:
                 if "StructuredData" not in str(e):

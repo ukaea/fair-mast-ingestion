@@ -19,6 +19,7 @@ class WriterConfig(BaseModel):
 class IngestionConfig(BaseModel):
     upload: Optional[UploadConfig] = None
     writer: WriterConfig
+    metadatabase_file: Optional[str] = "metadatabase.db"
 
 
 def load_config(config_file: str) -> IngestionConfig:

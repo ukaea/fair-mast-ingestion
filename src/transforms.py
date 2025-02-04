@@ -261,11 +261,11 @@ class TransformUnits(BaseTransform):
         self.ureg = UnitRegistry()
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        for array in dataset.data_vars.values():
-            self._update_units(array)
+        for key, array in dataset.data_vars.items():
+            dataset[key] = self._update_units(array)
 
-        for array in dataset.coords.values():
-            self._update_units(array)
+        for key, array in dataset.coords.items():
+            dataset[key] = self._update_units(array)
 
         dataset = dataset.compute()
         return dataset
@@ -277,6 +277,7 @@ class TransformUnits(BaseTransform):
         units = "dimensionless" if units == "" else units
         array.attrs["units"] = units
         units = self._parse_units(array)
+        return array
 
     def _parse_units(self, item: xr.DataArray):
         units = item.attrs["units"]

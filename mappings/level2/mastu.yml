@@ -79,7 +79,7 @@ datasets:
           major_radius:
             source: "epm/output/profiles2D/r"
             units: 'm'
-            imas: "equilibrium.time_slice[:].coordinate_system.z"
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
 
       elongation:
         source: "epm/output/separatrixGeometry/elongation" 
@@ -355,7 +355,7 @@ datasets:
         step: 0.0002
         method: 'zero'
 
-      b_field_tor_probe_omaha_time:
+      time_omaha:
         step: 0.000001
         method: 'zero'
 
@@ -642,7 +642,7 @@ datasets:
               - "/XMB/SANX13-01/CH01"
         dimensions:
           b_field_tor_probe_omaha_channel:
-          b_field_tor_probe_omaha_time:
+          time_omaha:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
 

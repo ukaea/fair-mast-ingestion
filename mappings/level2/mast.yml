@@ -684,9 +684,9 @@ datasets:
               - "ASM_SAD/M11"
               - "ASM_SAD/M12"
         dimensions:
-          b_field_tor_probe_saddle_channel:
+          b_field_tor_probe_saddle_field_channel:
           time_saddle:
-            imas: "magnetics.time"
+            imas: "magnetics.b_field_tor_probe[:].field.time"
 
       b_field_tor_probe_saddle_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
@@ -727,9 +727,9 @@ datasets:
               - "XMB_SAD/OUT/M11"
               - "XMB_SAD/OUT/M12"
         dimensions:
-          b_field_tor_probe_saddle_channel:
+          b_field_tor_probe_saddle_voltage_channel:
           time_saddle:
-            imas: "magnetics.time"
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
       # rogowski_coil_current:
       #   imas: "magnetics.rogowski_coil[:].current.data"
@@ -1225,7 +1225,7 @@ datasets:
     imas: charge_exchange
     interpolate:
       time:
-        step: 0.01
+        step: 0.005
         method: 'zero'
       major_radius:
         start: 0

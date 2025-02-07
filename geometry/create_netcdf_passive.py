@@ -21,6 +21,3 @@ def add_variables_to_group(group, parquet_file, var_type, location, version):
     data["dimensions"]["width"] = row["width"]
     data["angle"]["ang1"] = row["ang1"]
     data["angle"]["ang2"] = row["ang2"]
-
-
-    return

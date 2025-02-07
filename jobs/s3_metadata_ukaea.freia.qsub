@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Choose parallel environment
+#$ -pe mpi 1
+
+# Specify the job name in the queue system
+#$ -N fairmast-metadata-writer
+
+# Start the script in the current working directory
+#$ -cwd
+
+# Time requirements
+#$ -l h_rt=48:00:00
+#$ -l s_rt=48:00:00
+
+endpoint_url="http://mon3.cepheus.hpc.l:8000"
+bucket_path="s3://fairmast/mastu/level2/shots"
+output_path="/common/tmp/sjackson/fair-mast/metadata/s3/mastu/level2"
+
+source .venv/bin/activate
+# python3 -m scripts.read_metadata --shot-min 11695 --shot-max 30474 -n 16 --output-path /common/tmp/sjackson/fair-mast/metadata/s3/level2 --bucket-path s3://mast/level2/shots
+python3 -m scripts.read_metadata --shot-min 41139 --shot-max 51056 -n 16 --output-path $output_path --bucket-path $bucket_path --endpoint-url $endpoint_url
+python3 -m scripts.group_parquet $output_path/sources ./mastu-level2-sources.parquet
+python3 -m scripts.group_parquet $output_path/signals ./mastu-level2-signals.parquet

@@ -34,3 +34,6 @@ mpi = [
 ]
 
 [project.urls]
+
+[tool.ruff]
+exclude = [".venv", "notebooks"]

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Choose parallel environment
+#$ -pe mpi 16
+
+# Specify the job name in the queue system
+#$ -N fairmast-cpf-writer
+
+# Start the script in the current working directory
+#$ -cwd
+
+# Time requirements
+#$ -l h_rt=48:00:00
+#$ -l s_rt=48:00:00
+
+source .venv/bin/activate
+
+# Run script
+python3 -m scripts.create_cpf_metadata mast --shot-min 11695 --shot-max 30475
+python3 -m scripts.create_cpf_metadata mastu --shot-min 41139 --shot-max 51056

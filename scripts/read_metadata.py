@@ -27,14 +27,18 @@ class ShotMetadataParser:
         store = zarr.storage.FSStore(path, fs=self.fs)
         writer = ParquetMetadataWriter(self.output_path, self.bucket_path)
 
-        logger.info(f"Processing shot {shot}")
-
         try:
+            logger.info(f"Processing shot {shot}")
             with zarr.open_consolidated(store) as f:
                 for source in f.keys():
+                    # try:
                     logger.debug(f"Writing metadata for {source} from shot {shot}")
                     dataset = xr.open_zarr(store, group=source)
+                    dataset.attrs["name"] = source
                     writer.write(shot, dataset)
+                    # except Exception as e:
+                    #     logger.info(f"Skipping {source} for {shot} with reason {e}")
+                    #     continue
         except KeyError:
             logger.info(f"Skipping {shot} as it does not exist.")
             return

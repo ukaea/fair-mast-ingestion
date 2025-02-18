@@ -69,16 +69,14 @@ class ParquetMetadataWriter:
     def write_source(self, shot: int, dataset: xr.Dataset):
         name = dataset.attrs["name"]
         url = f"{self.remote_path}/{shot}.zarr/{name}"
-
-        for item in ["url", "shot_id", "uuid"]:
-            if item in dataset.attrs:
-                dataset.attrs.pop(item)
-
         data = SourceMetadata(
+            name=name,
             uuid=get_uuid(name, shot),
             shot_id=shot,
             url=url,
-            **dataset.attrs,
+            description=dataset.attrs.get("description", ""),
+            quality=dataset.attrs.get("quality", "Not Checked"),
+            imas=dataset.attrs.get("imas", ""),
         )
         data = data.model_dump()
         return data
@@ -88,27 +86,16 @@ class ParquetMetadataWriter:
 
         source_name = dataset.attrs["name"]
 
-        for item in dataset.data_vars.values():
-            full_name = f"{source_name}/{item.attrs['name']}"
+        for name, item in dataset.data_vars.items():
+            full_name = f"{source_name}/{name}"
             url = f"{self.remote_path}/{shot}.zarr/{full_name}"
 
             rank = len(item.shape)
             shape = ",".join(list(map(str, item.shape)))
             dims = ",".join(list(item.sizes.keys()))
 
-            for name in [
-                "url",
-                "shot_id",
-                "uuid",
-                "source",
-                "shape",
-                "dimensions",
-                "rank",
-            ]:
-                if name in item.attrs:
-                    item.attrs.pop(name)
-
             data = SignalMetadata(
+                name=name,
                 uuid=get_uuid(full_name, shot),
                 shot_id=shot,
                 url=url,
@@ -116,13 +103,15 @@ class ParquetMetadataWriter:
                 shape=shape,
                 dimensions=dims,
                 rank=rank,
-                **item.attrs,
+                units=dataset.attrs.get("units", ""),
+                description=dataset.attrs.get("description", ""),
+                quality=dataset.attrs.get("quality", "Not Checked"),
+                imas=dataset.attrs.get("imas", ""),
             )
             datas.append(data.model_dump())
 
         if len(datas) == 0:
             logger.warning(f"No signals found for shot {shot} and source {source_name}")
-            return
 
         return datas
 

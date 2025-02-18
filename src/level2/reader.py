@@ -112,7 +112,7 @@ class DatasetReader:
         item *= profile.scale
         item = self._parse_units(item)
         item = self._convert_units(item, profile.target_units)
-        item = item.sortby(dim_names)
+        item = item.sortby([name for name in dim_names if "channel" not in name])
         item = item.drop_duplicates(dim=...)
 
         if item.isnull().all():

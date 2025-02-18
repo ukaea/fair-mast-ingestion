@@ -279,7 +279,7 @@ datasets:
           time:
       line_average_n_e:
         imas: "summary.line_average.n_e.value"
-        source: "ANE/DENSITY"
+        source: "/esm/nebar"
         dimensions:
           time:
       power_nbi:
@@ -302,6 +302,18 @@ datasets:
         dimensions:
           time:
             imas: "summary.time"
+      greenwald_density:
+        source: "/esm/nG"
+        dimensions:
+          time:
+            imas: "summary.time"
+      greenwald_fraction:
+        source: "/esm/fG"
+        imas: "summary.global_quantities.greenwald_fraction.value"
+        dimensions:
+          time:
+            imas: "summary.time"
+        
 
   pf_active:
     imas: "pf_active"

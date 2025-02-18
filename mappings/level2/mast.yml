@@ -342,7 +342,7 @@ datasets:
           time:
             imas: "summary.time"
       line_average_n_e:
-        source: "ANE_DENSITY"
+        source: "ESM_NE_BAR"
         imas: "summary.line_average.n_e.value"
         dimensions:
           time:
@@ -366,6 +366,11 @@ datasets:
         imas: "summary.global_quantities.power_radiated.value"
         source: "ABM_PRAD_POL"
         target_units: "W"
+        dimensions:
+          time:
+            imas: "summary.time"
+      greenwald_density:
+        source: "ESM_N_GREENWALD"
         dimensions:
           time:
             imas: "summary.time"

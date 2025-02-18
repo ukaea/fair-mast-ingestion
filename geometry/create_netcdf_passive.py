@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from netCDF4 import Dataset
+import fnmatch
 
 def create_header(ncfile, headerdict):
     for key, value in headerdict.items():
@@ -41,37 +42,16 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
 
         """Create branches of passive structures group: central column, walls (horizontal & other), endcrown and P2 (lower & upper)."""
         centralcolumn_group = passive_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
+        
         wall_group = passive_group.createGroup("walls") # upper & lower horizontal, and vertical
         wall_group_horizontal = wall_group.createGroup("horizontal")
-        endcrown_group = passive_group.createGroup("endcrown")
+        wall_horiz_upper = wall_group_horizontal.createGroup("upper")
+        wall_horiz_lower = wall_group_horizontal.createGroup("lower")
+        wall_group_vertical = wall_group.createGroup("vertical") # mid goes into this
+        
         p2_group = passive_group.createGroup("p2")
         p2_lower = p2_group.createGroup("lower")
         p2_upper = p2_group.createGroup("upper")
-        
-        """Create subgroups of the above groups and branches."""
-        passive_subgroups = {
-            "centralcolumn_upper": centralcolumn_group.createGroup("upper"),
-            "centralcolumn_lower": centralcolumn_group.createGroup("lower"),
-            "p2_larm1": p2_lower.createGroup("arm1"),
-            "p2_larm2": p2_lower.createGroup("arm2"),
-            "p2_larm3": p2_lower.createGroup("arm3"),
-            "p2_ldivpl1": p2_lower.createGroup("divplate1"), # divertor plate
-            "p2_ldivpl2": p2_lower.createGroup("divplate2"),
-            "p2_uarm1": p2_upper.createGroup("arm1"),
-            "p2_uarm2": p2_upper.createGroup("arm2"),
-            "p2_uarm3": p2_upper.createGroup("arm3"),
-            "p2_udivpl1": p2_upper.createGroup("divplate1"),
-            "p2_udivpl2": p2_upper.createGroup("divplate2"),
-            "wall_horiz_upper": wall_group_horizontal.createGroup("upper"),
-            "wall_horiz_lower": wall_group_horizontal.createGroup("lower"),
-            "wall_group_vertical": wall_group.createGroup("vertical"),
-            "mid": passive_group.createGroup("mid"),
-            "endcrown_lower": endcrown_group.createGroup("lower"),
-            "endcrown_upper": endcrown_group.createGroup("upper"),
-            "incon": centralcolumn_group.createGroup("incon"),
-            "rodgr": centralcolumn_group.createGroup("rodgr"),
-            "ring": passive_group.createGroup("ring")
-        }
 
         coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
 
@@ -134,9 +114,31 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         version = headerdict["version"] + 0.1 * headerdict["revision"]
 
         for subgroup_key, (file_path) in parquet_files.items():
-            create_passive_variable(
-                passive_subgroups[subgroup_key], file_path[0], var_type, version
-            )
+            print(subgroup_key)
+            if subgroup_key == "centralcolumn_upper" or subgroup_key == "centralcolumn_lower" or subgroup_key == "endcrown_lower" or subgroup_key == "endcrown_upper" or subgroup_key == "incon" or subgroup_key == "rodgr" or subgroup_key == "ring":
+                create_passive_variable(
+                    centralcolumn_group, file_path[0], var_type, version
+                )
+
+        patterns = ["p2_l*", "p2_u*", "wall*upper", "wall*lower", "wall*vertical", "mid"]
+        groups = [p2_lower, p2_upper, wall_horiz_upper, wall_horiz_lower, wall_group_vertical, wall_group_vertical]
+
+        keys = list(parquet_files.keys())
+        
+        for i in range(0,len(patterns)): # indexing through patterns
+            
+            matching_keys = fnmatch.filter(keys, patterns[i]) # outputs list of pq file keys that match a pattern
+            matching_values = list(dict((k, parquet_files[k]) for k in matching_keys).values()) # gets filepaths corresponding to keys that match the pattern
+            matching_filepaths = []
+
+            for q in matching_values:
+                matching_filepaths.append(q[0])
+            
+            # print(matching_filepaths)
+            for n in matching_filepaths:
+                create_passive_variable(groups[i], n, var_type, version) # add variable to matching group
+
+
 
 if __name__ == "__main__":
     # Metadata for the NetCDF file

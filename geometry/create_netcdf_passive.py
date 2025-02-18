@@ -3,40 +3,43 @@ import numpy as np
 from datetime import datetime
 from netCDF4 import Dataset
 
-def add_variables_to_group(group, parquet_file, var_type, location, version):
+def create_header(ncfile, headerdict):
+    for key, value in headerdict.items():
+        setattr(ncfile, key, value)
+
+def create_passive_variable(group, parquet_file, var_type, version):
     """Create passive structure variables and add to group. Use AMM parquet files."""
     df = pd.read_parquet(parquet_file)
 
     for _, row in df.iterrows():
         var = group.createVariable(row["uda_name"].replace("/", "_"), var_type, ("singleDim",))
 
-    data = np.empty(1, var_type.dtype_view)
-    data["name"][:] = row["uda_name"].replace("/", "_")
-    data["version"] = version
-    data["location"] = location
-    data["circuit_number"] = row["circuit_number"]
-    data["coordinate"]["r"] = row["r"]
-    data["coordinate"]["z"] = row["z"]
-    data["dimensions"]["height"] = row["height"]
-    data["dimensions"]["width"] = row["width"]
-    data["angle"]["ang1"] = row["ang1"]
-    data["angle"]["ang2"] = row["ang2"]
+        data = np.empty(1, var_type.dtype_view)
+        data["name"][:] = row["uda_name"].replace("/", "_")
+        data["version"] = version
+        #data["location"] = location
+        data["circuit_number"] = row["circuit_number"]
+        data["coordinate"]["centreR"] = row["r"]
+        data["coordinate"]["centreZ"] = row["z"]
+        data["dimensions"]["dR"] = row["width"]
+        data["dimensions"]["dZ"] = row["height"]
+        data["angle"]["shapeAngle1"] = row["ang1"]
+        data["angle"]["shapeAngle2"] = row["ang2"]
 
-    var[:] = data
-    var.setnccattr("units", "SI units: degrees, m")
+        var[:] = data
+        #var.setnccattr("units", "SI units: degrees, m")
 
 def amm_parquet_to_netcdf(netcdf_file, headerdict):
     """Convert parquet file to netcdf."""
     with Dataset(netcdf_file, "w", format="NETCDF4") as ncfile:
 
-        # add global attributes
+        """Add global attributes."""
+        create_header(ncfile, headerdict)
 
-        for key, value in headerdict.items():
-            setattr(ncfile, key, value)
-
-        # create passive structures group
-
+        """Create passive structures group."""
         passive_group = ncfile.createGroup("passivegroup")
+
+        """Create branches of passive structures group: central column, walls (horizontal & other), endcrown and P2 (lower & upper)."""
         centralcolumn_group = passive_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
         wall_group = passive_group.createGroup("walls") # upper & lower horizontal, and vertical
         wall_group_horizontal = wall_group.createGroup("horizontal")
@@ -45,10 +48,7 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         p2_lower = p2_group.createGroup("lower")
         p2_upper = p2_group.createGroup("upper")
         
-        # mid divides cross section diagram into 3
-        # incon: maybe in the column?
-        # col may be colusseum
-
+        """Create subgroups of the above groups and branches."""
         passive_subgroups = {
             "centralcolumn_upper": centralcolumn_group.createGroup("upper"),
             "centralcolumn_lower": centralcolumn_group.createGroup("lower"),
@@ -73,25 +73,35 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
             "ring": passive_group.createGroup("ring")
         }
 
-        coord_dtype = np.dtype([("r", "<f8"), ("z", "<f8")])
-        # geom_dtype
-        passive_dtype = np.dtype([
-            ("name", "S50"),
-            ("version", "<f8"),
-            ("material", "S50"),
-            ("elementLabels", "<8S50"), # array of less than 8 S50s
-            ("efitGroup", "<8S50"),
-            ("resistivity", "<f8"),
-            ("resistivityError", "<f8"),
-            ("resistivityUnits", "S50"),
-            ("phi_cut", "<f4"),
-            (["centreR", "centreZ"], coord_dtype),
-            ("dR", "<f8"),
-            ("dZ", "<f8"),
+        coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
+
+        dims_dtype = np.dtype([("dR", "<f8"), ("dZ", "<f8")])
+        
+        geometry_dtype = np.dtype([
+            #("phi_cut", "<f8"),
             ("shapeAngle1", "<f8"),
             ("shapeAngle2", "<f8")
         ])
 
+        passive_dtype = np.dtype([
+            ("name", "S10"),
+            ("version", "<f8"),
+            ("circuit_number", "<f8"),
+            ("coordinate", coord_dtype),
+            ("dimensions", dims_dtype),
+            ("angle", geometry_dtype)
+            #("material", "b"),
+            #("elementLabels", "8b"), # array of less than 8 S50s
+            #("efitGroup", "b"),
+            #("resistivity", "<f8"),
+            #("resistivityError", "<f8"),
+            #("resistivityUnits", "b"), # resistivity only in PDFs not Parquets
+        ])
+
+
+        passive_group.createCompoundType(geometry_dtype, "GEOMETRY")
+        passive_group.createCompoundType(dims_dtype, "DIMENSIONS")
+        passive_group.createCompoundType(coord_dtype, "COORDINATES")
         var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
 
         passive_group.createDimension("singleDim", 1)
@@ -123,9 +133,9 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
 
         version = headerdict["version"] + 0.1 * headerdict["revision"]
 
-        for subgroup_key, (file_path, location) in parquet_files.items():
-            add_variables_to_group(
-                passive_subgroups[subgroup_key], file_path, var_type, location, version
+        for subgroup_key, (file_path) in parquet_files.items():
+            create_passive_variable(
+                passive_subgroups[subgroup_key], file_path[0], var_type, version
             )
 
 if __name__ == "__main__":
@@ -134,11 +144,11 @@ if __name__ == "__main__":
     "Conventions": "",
     "device": "MAST",
     "class": "magnetics",
-    "system": "fluxloops",
+    "system": "passivestructures",
     "configuration": "geometry",
     "shotRangeStart": 0,
     "shotRangeStop": 400000,
-    "content": "geometry of the fluxloops for MAST",
+    "content": "geometry of the passive structures for MAST",
     "comment": "",
     "units": "SI, degrees, m",
     "coordinateSystem": "Cylindrical",
@@ -152,9 +162,9 @@ if __name__ == "__main__":
     "owner": "jhodson",
     "signedOffBy": "",
     "signedOffDate": "",
-    "creatorCode": "python create_netcdf_fluxloops.py",
+    "creatorCode": "python create_netcdf_passive.py",
     "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
-    "createdBy": "jhodson",
+    "createdBy": "sfrankel",
     "testCode": "",
     "testDate": "",
     "testedBy": "",

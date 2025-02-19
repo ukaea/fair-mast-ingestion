@@ -30,11 +30,18 @@ def set_orientation(data, poloidal_angle):
 def create_mirnov_variable(group, parquet_file, var_type, version):
     """Create mirnov coil variables and add to group. Use XMC parquet files."""
     df = pd.read_parquet(parquet_file)
+    used_names = []
     for _, row in df.iterrows():
-        var = group.createVariable(row["uda_name"].replace("/", "_"), var_type, ("singleDim",))
 
+        namevar = str(row["uda_name"].replace("/", "_"))
         data = np.empty(1, var_type.dtype_view)
-        data["name"][:] = row["uda_name"].replace("/", "_")
+
+        if namevar not in used_names: # make sure no duplicates make it through
+            var = group.createVariable(row["uda_name"].replace("/", "_"), var_type, ("singleDim",))
+            data["name"][:] = row["uda_name"].replace("/", "_")
+            used_names.append(namevar)
+        else:
+            continue
         data["version"] = version
         if "r" in df.columns:
             data["coordinate"]["r"] = row["r"]

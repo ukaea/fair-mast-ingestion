@@ -44,7 +44,7 @@ def xsx_parquet_to_netcdf(netcdf_file, headerdict):
         tangential_group = camera_group.createGroup("tangential")
 
         """Define data types and combine into compound data types."""
-        coord_dtype = np.dtype([("r1", "<f8"), ("z1", "<f8"), ("r2", "<f8"), ("z2", "<f8"), ("theta", "<f8")])
+        coord_dtype = np.dtype([("r1", "<f8"), ("z1", "<f8"), ("r2", "<f8"), ("z2", "<f8"), ("angle", "<f8")])
         geometry_dtype = np.dtype([
             ("p", "<f8"),
             # corner radius

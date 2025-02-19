@@ -8,6 +8,7 @@ def create_header(ncfile, headerdict):
     for key, value in headerdict.items():
         setattr(ncfile, key, value)
 
+# information not provided
 def set_orientation(data, poloidal_angle):
     """Set orientation based on poloidal angle."""
     if poloidal_angle == 90:
@@ -29,17 +30,24 @@ def set_orientation(data, poloidal_angle):
 def create_mirnov_variable(group, parquet_file, var_type, version):
     """Create mirnov coil variables and add to group. Use XMC parquet files."""
     df = pd.read_parquet(parquet_file)
-
     for _, row in df.iterrows():
         var = group.createVariable(row["uda_name"].replace("/", "_"), var_type, ("singleDim",))
 
         data = np.empty(1, var_type.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
-        data["coordinate"]["r"] = row["r"]
-        data["coordinate"]["z"] = row["z"]
+        if "r" in df.columns:
+            data["coordinate"]["r"] = row["r"]
+        else:
+            continue
+        if "z" in df.columns:
+            data["coordinate"]["z"] = row["z"]
+        elif "z1" in df.columns():
+            data["coordinate"]["z1"] = row["z1"]
+            data["coordinate"]["z2"] = row["z2"]
+            data["coordinate"]["z3"] = row["z3"]
         data["coordinate"]["phi"] = row["toroidal_angle"]
-        data["geometry"]["length"] = row["length"]
+        # data["geometry"]["length"] = row["length"] # this information is not provided
         
         # set these values correctly from pdfs
         data["geometry"]["nturnsLayer1"] = 28
@@ -49,7 +57,7 @@ def create_mirnov_variable(group, parquet_file, var_type, version):
         data["geometry"]["areaLayer2"] = 0.037
         data["geometry"]["areaAve"] = 0.037 / 28
 
-        set_orientation(data, row["poloidal_angle"]) # issue: no poloidal angle provided
+        # set_orientation(data, row["poloidal_angle"]) # issue: no poloidal angle provided
 
         var[:] = data
         #var.setnccattr("units", "SI units: degrees, m")
@@ -86,7 +94,7 @@ def xmc_parquet_to_netcdf(netcdf_file, headerdict):
         ])
 
         mirnov_dtype = np.dtype([
-            ("name", "S10"),
+            ("name", "S30"),
             ("version", "<f8"),
             ("orientation", orientation_dtype),
             ("coordinate", coord_dtype),

@@ -36,10 +36,8 @@ def create_mirnov_variable(group, parquet_file, var_type, version):
         data = np.empty(1, var_type.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
-        #data["location"] = location
-        data["circuit_number"] = row["circuit_number"]
         data["coordinate"]["r"] = row["r"]
-        data["coordinate"]["r"] = row["z"]
+        data["coordinate"]["z"] = row["z"]
         data["coordinate"]["phi"] = row["toroidal_angle"]
         data["geometry"]["length"] = row["length"]
         
@@ -51,103 +49,70 @@ def create_mirnov_variable(group, parquet_file, var_type, version):
         data["geometry"]["areaLayer2"] = 0.037
         data["geometry"]["areaAve"] = 0.037 / 28
 
-        set_orientation(data, row["poloidal_angle"])
+        set_orientation(data, row["poloidal_angle"]) # issue: no poloidal angle provided
 
         var[:] = data
         #var.setnccattr("units", "SI units: degrees, m")
 
-def amm_parquet_to_netcdf(netcdf_file, headerdict):
+def xmc_parquet_to_netcdf(netcdf_file, headerdict):
     """Convert parquet file to netcdf."""
     with Dataset(netcdf_file, "w", format="NETCDF4") as ncfile:
 
         """Add global attributes."""
         create_header(ncfile, headerdict)
 
-        """Create passive structures group."""
-        passive_group = ncfile.createGroup("passivegroup")
+        """Create mirnov coils group."""
+        mirnov_group = ncfile.createGroup("mirnovgroup")
 
-        """Create branches of passive structures group: central column, walls (horizontal & other), endcrown and P2 (lower & upper)."""
-        centralcolumn_group = passive_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
-        
-        wall_group = passive_group.createGroup("walls") # upper & lower horizontal, and vertical
-        wall_group_horizontal = wall_group.createGroup("horizontal")
-        wall_horiz_upper = wall_group_horizontal.createGroup("upper")
-        wall_horiz_lower = wall_group_horizontal.createGroup("lower")
-        wall_group_vertical = wall_group.createGroup("vertical") # mid goes into this
-        
-        p2_group = passive_group.createGroup("p2")
-        p2_lower = p2_group.createGroup("lower")
-        p2_upper = p2_group.createGroup("upper")
+        """Group by central column (vertical and toroidal) and outer vessel wall (vertical) Mirnov arrays."""
+        centralcolumn_group = mirnov_group.createGroup("centralcolumn")
+        vessel_group = mirnov_group.createGroup("vesselwall")
 
-        coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
-
-        dims_dtype = np.dtype([("dR", "<f8"), ("dZ", "<f8")])
-        
+        """Define data types and combine into compound data types."""
+        unitvector_dtype = np.dtype([("r", ">i4"), ("z", ">i4"), ("phi", ">i4")])
+        coord_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
         geometry_dtype = np.dtype([
-            #("phi_cut", "<f8"),
-            ("shapeAngle1", "<f8"),
-            ("shapeAngle2", "<f8")
+            ("length", "<f8"),
+            ("nturnsLayer1", "<f8"),
+            ("nturnsLayer2", "<f8"),
+            ("nturnsTotal", "<f8"),
+            ("areaLayer1", "<f8"),
+            ("areaLayer2", "<f8"),
+            ("areaAve", "<f8")
+        ])
+        orientation_dtype = np.dtype([
+            ("measurement_direction", "S30"),
+            ("unit_vector", unitvector_dtype)
         ])
 
-        passive_dtype = np.dtype([
+        mirnov_dtype = np.dtype([
             ("name", "S10"),
             ("version", "<f8"),
-            ("circuit_number", "<f8"),
+            ("orientation", orientation_dtype),
             ("coordinate", coord_dtype),
-            ("dimensions", dims_dtype),
-            ("angle", geometry_dtype)
-            #("material", "b"),
-            #("elementLabels", "8b"), # array of less than 8 S50s
-            #("efitGroup", "b"),
-            #("resistivity", "<f8"),
-            #("resistivityError", "<f8"),
-            #("resistivityUnits", "b"), # resistivity only in PDFs not Parquets
+            ("geometry", geometry_dtype)
         ])
 
+        mirnov_group.createCompoundType(unitvector_dtype, "UNITVECTORS")
+        mirnov_group.createCompoundType(orientation_dtype, "ORIENTATION")
+        mirnov_group.createCompoundType(coord_dtype, "COORDINATES")
+        mirnov_group.createCompoundType(geometry_dtype, "GEOMETRY")
+        
+        var_type = mirnov_group.createCompoundType(mirnov_dtype, "MIRNOV")
 
-        passive_group.createCompoundType(geometry_dtype, "GEOMETRY")
-        passive_group.createCompoundType(dims_dtype, "DIMENSIONS")
-        passive_group.createCompoundType(coord_dtype, "COORDINATES")
-        var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
+        mirnov_group.createDimension("singleDim", 1)
 
-        passive_group.createDimension("singleDim", 1)
-
+        """Assign parquet file contents to appropriate groups."""
         parquet_files = {
-            "centralcolumn_upper": ("geometry/data/amm/amm_topcol.parquet", "CENTRALCOL UPPER"),
-            "centralcolumn_lower": ("geometry/data/amm/amm_botcol.parquet", "CENTRALCOL LOWER"),
-            "p2_larm1": ("geometry/data/amm/amm_p2larm1.parquet", "LOWER ARM 1"),
-            "p2_larm2": ("geometry/data/amm/amm_p2larm2.parquet", "LOWER ARM 2"),
-            "p2_larm3": ("geometry/data/amm/amm_p2larm3.parquet", "LOWER ARM 3"),
-            "p2_ldivpl1": ("geometry/data/amm/amm_p2ldivpl1.parquet", "LOWER DIVERTOR PLATE 1"), # divertor plate
-            "p2_ldivpl2": ("geometry/data/amm/amm_p2ldivpl2.parquet", "LOWER DIVERTOR PLATE 2"),
-            "p2_uarm1": ("geometry/data/amm/amm_p2uarm1.parquet", "UPPER ARM 1"),
-            "p2_uarm2": ("geometry/data/amm/amm_p2uarm2.parquet", "UPPER ARM 2"),
-            "p2_uarm3": ("geometry/data/amm/amm_p2uarm3.parquet", "UPPER ARM 3"),
-            "p2_udivpl1": ("geometry/data/amm/amm_p2udivpl1.parquet", "UPPER DIVERTOR PLATE 1"),
-            "p2_udivpl2": ("geometry/data/amm/amm_p2udivpl2.parquet", "UPPER DIVERTOR PLATE 2"),
-            "wall_horiz_upper": ("geometry/data/amm/amm_uhorw.parquet", "UPPER HORIZONTAL WALL"),
-            "wall_horiz_lower": ("geometry/data/amm/amm_lhorw.parquet", "LOWER HORIZONTAL WALL"),
-            "wall_group_vertical": ("geometry/data/amm/amm_vertw.parquet", "VERTICAL WALL"),
-            "mid": ("geometry/data/amm/amm_mid.parquet", "MID"),
-            "endcrown_lower": ("geometry/data/amm/amm_endcrown_l.parquet", "LOWER ENDCROWN"),
-            "endcrown_upper": ("geometry/data/amm/amm_endcrown_u.parquet", "UPPER ENDCROWN"),
-            "incon": ("geometry/data/amm/amm_incon.parquet", "INCON"),
-            "rodgr": ("geometry/data/amm/amm_rodr.parquet", "RODGR"), # not a typo
-            "ring": ("geometry/data/amm/amm_ring.parquet", "RING")
-
+            "centralcolumn_toroidal": ("geometry/data/xmc/ccmt.parquet", "CENTRALCOL TOROIDAL"),
+            "centralcolumn_vertical": ("geometry/data/xmc/ccmv.parquet", "CENTRALCOL VERTICAL"),
+            "outboard_vertical": ("geometry/data/xmc/xmc_omv.parquet", "OUTBOARD (VESSEL WALL) VERTICAL")
         }
 
         version = headerdict["version"] + 0.1 * headerdict["revision"]
 
-        for subgroup_key, (file_path) in parquet_files.items():
-            print(subgroup_key)
-            if subgroup_key == "centralcolumn_upper" or subgroup_key == "centralcolumn_lower" or subgroup_key == "endcrown_lower" or subgroup_key == "endcrown_upper" or subgroup_key == "incon" or subgroup_key == "rodgr" or subgroup_key == "ring":
-                create_passive_variable(
-                    centralcolumn_group, file_path[0], var_type, version
-                )
-
-        patterns = ["p2_l*", "p2_u*", "wall*upper", "wall*lower", "wall*vertical", "mid"]
-        groups = [p2_lower, p2_upper, wall_horiz_upper, wall_horiz_lower, wall_group_vertical, wall_group_vertical]
+        patterns = ["centralcolumn*", "outboard*"]
+        groups = [centralcolumn_group, vessel_group]
 
         keys = list(parquet_files.keys())
         
@@ -162,7 +127,7 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
             
             # print(matching_filepaths)
             for n in matching_filepaths:
-                create_passive_variable(groups[i], n, var_type, version) # add variable to matching group
+                create_mirnov_variable(groups[i], n, var_type, version) # add variable to matching group
 
 
 
@@ -172,11 +137,11 @@ if __name__ == "__main__":
     "Conventions": "",
     "device": "MAST",
     "class": "magnetics",
-    "system": "passivestructures",
+    "system": "mirnovcoils",
     "configuration": "geometry",
     "shotRangeStart": 0,
     "shotRangeStop": 400000,
-    "content": "geometry of the passive structures for MAST",
+    "content": "geometry of the mirnov coils for MAST",
     "comment": "",
     "units": "SI, degrees, m",
     "coordinateSystem": "Cylindrical",
@@ -190,7 +155,7 @@ if __name__ == "__main__":
     "owner": "jhodson",
     "signedOffBy": "",
     "signedOffDate": "",
-    "creatorCode": "python create_netcdf_passive.py",
+    "creatorCode": "python create_netcdf_mirnovs.py",
     "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
     "createdBy": "sfrankel",
     "testCode": "",
@@ -198,4 +163,4 @@ if __name__ == "__main__":
     "testedBy": "",
     }
         
-    amm_parquet_to_netcdf("geometry/passivestructures.nc", headerdict)
+    xmc_parquet_to_netcdf("geometry/mirnovs.nc", headerdict)

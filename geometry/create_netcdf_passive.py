@@ -18,17 +18,15 @@ def create_passive_variable(group, parquet_file, var_type, version):
         data = np.empty(1, var_type.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
-        #data["location"] = location
         data["circuit_number"] = row["circuit_number"]
-        data["coordinate"]["centreR"] = row["r"]
-        data["coordinate"]["centreZ"] = row["z"]
-        data["dimensions"]["dR"] = row["width"]
-        data["dimensions"]["dZ"] = row["height"]
-        data["angle"]["shapeAngle1"] = row["ang1"]
-        data["angle"]["shapeAngle2"] = row["ang2"]
+        data["centreR"] = row["r"]
+        data["centreZ"] = row["z"]
+        data["dR"] = row["dR"]
+        data["dZ"] = row["dZ"]
+        data["shapeAngle1"] = row["ang1"]
+        data["shapeAngle2"] = row["ang2"]
 
         var[:] = data
-        #var.setnccattr("units", "SI units: degrees, m")
 
 def amm_parquet_to_netcdf(netcdf_file, headerdict):
     """Convert parquet file to netcdf."""
@@ -38,38 +36,43 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         create_header(ncfile, headerdict)
 
         """Create passive structures group."""
-        passive_group = ncfile.createGroup("passivegroup")
+        passive_group = ncfile.createGroup("passive")
 
+        efit_group = passive_group.createGroup("efit")
         """Create branches of passive structures group: central column, walls (horizontal & other), endcrown and P2 (lower & upper)."""
-        centralcolumn_group = passive_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
+        centralcolumn_group = efit_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
         
-        wall_group = passive_group.createGroup("walls") # upper & lower horizontal, and vertical
+        wall_group = efit_group.createGroup("walls") # upper & lower horizontal, and vertical
         wall_group_horizontal = wall_group.createGroup("horizontal")
         wall_horiz_upper = wall_group_horizontal.createGroup("upper")
         wall_horiz_lower = wall_group_horizontal.createGroup("lower")
         wall_group_vertical = wall_group.createGroup("vertical") # mid goes into this
         
-        p2_group = passive_group.createGroup("p2")
+        p2_group = efit_group.createGroup("p2")
         p2_lower = p2_group.createGroup("lower")
         p2_upper = p2_group.createGroup("upper")
 
-        coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
+        #coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
 
-        dims_dtype = np.dtype([("dR", "<f8"), ("dZ", "<f8")])
+        #dims_dtype = np.dtype([("dR", "<f8"), ("dZ", "<f8")])
         
-        geometry_dtype = np.dtype([
-            #("phi_cut", "<f8"),
-            ("shapeAngle1", "<f8"),
-            ("shapeAngle2", "<f8")
-        ])
+        #geometry_dtype = np.dtype([
+        #    #("phi_cut", "<f8"),
+        #    ("shapeAngle1", "<f8"),
+        #    ("shapeAngle2", "<f8")
+        #])
 
         passive_dtype = np.dtype([
-            ("name", "S10"),
-            ("version", "<f8"),
-            ("circuit_number", "<f8"),
-            ("coordinate", coord_dtype),
-            ("dimensions", dims_dtype),
-            ("angle", geometry_dtype)
+            ("name", "S50"),
+            ("version", "s50"),
+            ("circuit_number", "f4"),
+            ("centreR", "f4"),
+            ("centreZ", "f4"),
+            ("dR", "f4"),
+            ("dZ", "f4"),
+            ("shapeAngle1", "f4"),
+            ("shapeAngle2", "f4"),
+            ("resistance", "f4"),
             #("material", "b"),
             #("elementLabels", "8b"), # array of less than 8 S50s
             #("efitGroup", "b"),
@@ -79,9 +82,9 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         ])
 
 
-        passive_group.createCompoundType(geometry_dtype, "GEOMETRY")
-        passive_group.createCompoundType(dims_dtype, "DIMENSIONS")
-        passive_group.createCompoundType(coord_dtype, "COORDINATES")
+        #passive_group.createCompoundType(geometry_dtype, "GEOMETRY")
+        #passive_group.createCompoundType(dims_dtype, "DIMENSIONS")
+        #passive_group.createCompoundType(coord_dtype, "COORDINATES")
         var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
 
         passive_group.createDimension("singleDim", 1)
@@ -106,7 +109,7 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
             "endcrown_lower": ("geometry/data/amm/amm_endcrown_l.parquet", "LOWER ENDCROWN"),
             "endcrown_upper": ("geometry/data/amm/amm_endcrown_u.parquet", "UPPER ENDCROWN"),
             "incon": ("geometry/data/amm/amm_incon.parquet", "INCON"),
-            "rodgr": ("geometry/data/amm/amm_rodr.parquet", "RODGR"), # not a typo
+            "rodgr": ("geometry/data/amm/amm_rodgr.parquet", "RODGR"),
             "ring": ("geometry/data/amm/amm_ring.parquet", "RING")
 
         }
@@ -142,6 +145,30 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
 
 if __name__ == "__main__":
     # Metadata for the NetCDF file
+
+    headerdict = {
+        "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
+        "coordinateSystem": "cylindrical",
+        "device": "MAST",
+        "shotRangeStart": "0LL",
+        "shotRangeStop": "400000LL",
+        "createdBy": "sfrankel",
+        "system": "passive structure",
+        "signedOffDate": "",
+        "class": "passive structure",
+        "units": "SI, degrees",
+        "version": 1,
+        "revision": 0,
+        "conventions": "",
+        "status": "development",
+        "releaseDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
+        "releaseTime": datetime.strftime(datetime.now(), "%H:%M:%S"),
+        "creatorCode": "python create_netcdf_passive.py",
+        "owner": "sfrankel",
+        "signedOffBy": "ldormangajic",
+        }
+    
+    """
     headerdict = {
     "Conventions": "",
     "device": "MAST",
@@ -171,7 +198,7 @@ if __name__ == "__main__":
     "testDate": "",
     "testedBy": "",
     }
-        
+    """    
     amm_parquet_to_netcdf("geometry/passivestructures.nc", headerdict)
 
 

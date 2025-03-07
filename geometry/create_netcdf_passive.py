@@ -52,16 +52,6 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         p2_lower = p2_group.createGroup("lower")
         p2_upper = p2_group.createGroup("upper")
 
-        #coord_dtype = np.dtype([("centreR", "<f8"), ("centreZ", "<f8")])
-
-        #dims_dtype = np.dtype([("dR", "<f8"), ("dZ", "<f8")])
-        
-        #geometry_dtype = np.dtype([
-        #    #("phi_cut", "<f8"),
-        #    ("shapeAngle1", "<f8"),
-        #    ("shapeAngle2", "<f8")
-        #])
-
         passive_dtype = np.dtype([
             ("name", "S50"),
             ("version", "s50"),
@@ -73,18 +63,8 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
             ("shapeAngle1", "f4"),
             ("shapeAngle2", "f4"),
             ("resistance", "f4"),
-            #("material", "b"),
-            #("elementLabels", "8b"), # array of less than 8 S50s
-            #("efitGroup", "b"),
-            #("resistivity", "<f8"),
-            #("resistivityError", "<f8"),
-            #("resistivityUnits", "b"), # resistivity only in PDFs not Parquets
         ])
 
-
-        #passive_group.createCompoundType(geometry_dtype, "GEOMETRY")
-        #passive_group.createCompoundType(dims_dtype, "DIMENSIONS")
-        #passive_group.createCompoundType(coord_dtype, "COORDINATES")
         var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
 
         passive_group.createDimension("singleDim", 1)
@@ -145,7 +125,6 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
 
 if __name__ == "__main__":
     # Metadata for the NetCDF file
-
     headerdict = {
         "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
         "coordinateSystem": "cylindrical",
@@ -166,39 +145,7 @@ if __name__ == "__main__":
         "creatorCode": "python create_netcdf_passive.py",
         "owner": "sfrankel",
         "signedOffBy": "ldormangajic",
-        }
-    
-    """
-    headerdict = {
-    "Conventions": "",
-    "device": "MAST",
-    "class": "magnetics",
-    "system": "passivestructures",
-    "configuration": "geometry",
-    "shotRangeStart": 0,
-    "shotRangeStop": 400000,
-    "content": "geometry of the passive structures for MAST",
-    "comment": "",
-    "units": "SI, degrees, m",
-    "coordinateSystem": "Cylindrical",
-    "structureCastType": "unknown",
-    "calibration": "None",
-    "version": 0,
-    "revision": 0,
-    "status": "development",
-    "releaseDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
-    "releaseTime": datetime.strftime(datetime.now(), "%H:%M:%S"),
-    "owner": "jhodson",
-    "signedOffBy": "",
-    "signedOffDate": "",
-    "creatorCode": "python create_netcdf_passive.py",
-    "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
-    "createdBy": "sfrankel",
-    "testCode": "",
-    "testDate": "",
-    "testedBy": "",
-    }
-    """    
+        } 
     amm_parquet_to_netcdf("geometry/passivestructures.nc", headerdict)
 
 

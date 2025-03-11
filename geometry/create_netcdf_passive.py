@@ -8,6 +8,34 @@ def create_header(ncfile, headerdict):
     for key, value in headerdict.items():
         setattr(ncfile, key, value)
 
+def create_passive_variable_mid(group, parquet_file, var_type, version):
+    df = pd.read_parquet(parquet_file)
+    df_ou, df_ol, df_iu, df_il = df[:3], df[3:6], df[6:9], df[9:12]
+    
+    subgroups = ["mid_ou", "mid_ol", "mid_iu", "mid_il"]
+    dfs = [df_ou, df_ol, df_iu, df_il]
+
+    for i in range(len(subgroups)):
+        subgroup = group.createGroup(subgroups[i])
+        df = dfs[i]
+        for _, row in df.iterrows():
+            var = subgroup.createVariable(row["uda_name"].replace("/", "_"), var_type, ("singleDim",))
+
+            data = np.empty(1, var_type.dtype_view)
+            data["name"][:] = row["uda_name"].replace("/", "_")
+            data["version"] = version
+            data["circuit_number"] = row["circuit_number"]
+            data["centreR"] = row["r"]
+            data["centreZ"] = row["z"]
+            data["dR"] = row["dR"]
+            data["dZ"] = row["dZ"]
+            data["shapeAngle1"] = row["ang1"]
+            data["shapeAngle2"] = row["ang2"]
+            data["resistivity"] = row["resistivity"]
+            data["resistivityUnits"] = "mOhms"
+
+            var[:] = data
+
 def create_passive_variable(group, parquet_file, var_type, version):
     """Create passive structure variables and add to group. Use AMM parquet files."""
     df = pd.read_parquet(parquet_file)
@@ -25,6 +53,8 @@ def create_passive_variable(group, parquet_file, var_type, version):
         data["dZ"] = row["dZ"]
         data["shapeAngle1"] = row["ang1"]
         data["shapeAngle2"] = row["ang2"]
+        data["resistivity"] = row["resistivity"] 
+        data["resistivityUnits"] = "mOhms" #looks like mili-Ohm, but looking at the MAST-U data it might be resistivity i.e. Ohm m
 
         var[:] = data
 
@@ -35,26 +65,9 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         """Add global attributes."""
         create_header(ncfile, headerdict)
 
-        """Create passive structures group."""
-        passive_group = ncfile.createGroup("passive")
-
-        efit_group = passive_group.createGroup("efit")
-        """Create branches of passive structures group: central column, walls (horizontal & other), endcrown and P2 (lower & upper)."""
-        centralcolumn_group = efit_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
-        
-        wall_group = efit_group.createGroup("walls") # upper & lower horizontal, and vertical
-        wall_group_horizontal = wall_group.createGroup("horizontal")
-        wall_horiz_upper = wall_group_horizontal.createGroup("upper")
-        wall_horiz_lower = wall_group_horizontal.createGroup("lower")
-        wall_group_vertical = wall_group.createGroup("vertical") # mid goes into this
-        
-        p2_group = efit_group.createGroup("p2")
-        p2_lower = p2_group.createGroup("lower")
-        p2_upper = p2_group.createGroup("upper")
-
         passive_dtype = np.dtype([
             ("name", "S50"),
-            ("version", "s50"),
+            ("version", "S50"),
             ("circuit_number", "f4"),
             ("centreR", "f4"),
             ("centreZ", "f4"),
@@ -62,66 +75,62 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
             ("dZ", "f4"),
             ("shapeAngle1", "f4"),
             ("shapeAngle2", "f4"),
-            ("resistance", "f4"),
+            ("resistivity", "f4"),
+            ("resistivityUnits", "S50")
         ])
 
-        var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
+        """Create passive structures and efit group."""
+        passive_group = ncfile.createGroup("passive")
+        efit_group = passive_group.createGroup("efit")
 
+        var_type = passive_group.createCompoundType(passive_dtype, "PASSIVE")
         passive_group.createDimension("singleDim", 1)
 
-        parquet_files = {
-            "centralcolumn_upper": ("geometry/data/amm/amm_topcol.parquet", "CENTRALCOL UPPER"),
-            "centralcolumn_lower": ("geometry/data/amm/amm_botcol.parquet", "CENTRALCOL LOWER"),
-            "p2_larm1": ("geometry/data/amm/amm_p2larm1.parquet", "LOWER ARM 1"),
-            "p2_larm2": ("geometry/data/amm/amm_p2larm2.parquet", "LOWER ARM 2"),
-            "p2_larm3": ("geometry/data/amm/amm_p2larm3.parquet", "LOWER ARM 3"),
-            "p2_ldivpl1": ("geometry/data/amm/amm_p2ldivpl1.parquet", "LOWER DIVERTOR PLATE 1"), # divertor plate
-            "p2_ldivpl2": ("geometry/data/amm/amm_p2ldivpl2.parquet", "LOWER DIVERTOR PLATE 2"),
-            "p2_uarm1": ("geometry/data/amm/amm_p2uarm1.parquet", "UPPER ARM 1"),
-            "p2_uarm2": ("geometry/data/amm/amm_p2uarm2.parquet", "UPPER ARM 2"),
-            "p2_uarm3": ("geometry/data/amm/amm_p2uarm3.parquet", "UPPER ARM 3"),
-            "p2_udivpl1": ("geometry/data/amm/amm_p2udivpl1.parquet", "UPPER DIVERTOR PLATE 1"),
-            "p2_udivpl2": ("geometry/data/amm/amm_p2udivpl2.parquet", "UPPER DIVERTOR PLATE 2"),
-            "wall_horiz_upper": ("geometry/data/amm/amm_uhorw.parquet", "UPPER HORIZONTAL WALL"),
-            "wall_horiz_lower": ("geometry/data/amm/amm_lhorw.parquet", "LOWER HORIZONTAL WALL"),
-            "wall_group_vertical": ("geometry/data/amm/amm_vertw.parquet", "VERTICAL WALL"),
-            "mid": ("geometry/data/amm/amm_mid.parquet", "MID"),
-            "endcrown_lower": ("geometry/data/amm/amm_endcrown_l.parquet", "LOWER ENDCROWN"),
-            "endcrown_upper": ("geometry/data/amm/amm_endcrown_u.parquet", "UPPER ENDCROWN"),
-            "incon": ("geometry/data/amm/amm_incon.parquet", "INCON"),
-            "rodgr": ("geometry/data/amm/amm_rodgr.parquet", "RODGR"),
-            "ring": ("geometry/data/amm/amm_ring.parquet", "RING")
+        """Create branches of passive structures group: central column, walls (horizontal & other), and P2 (lower & upper)."""
+        centralcolumn_group = efit_group.createGroup("centralcolumn") # topcol and botcol, but may be short for colusseum instead. may also contain incon?
+        wall_group = efit_group.createGroup("walls") # upper & lower horizontal, and vertical
+        p2_group = efit_group.createGroup("p2")
 
+        passive_subgroups = {
+            "incon" : centralcolumn_group.createGroup("incon"),
+            "ring_rodgr": centralcolumn_group.createGroup("ring_rodgr"),
+            "uhorw": wall_group.createGroup("uhorw"),
+            "lhorw": wall_group.createGroup("lhorw"),
+            "vertw": wall_group.createGroup("vertw"),
+            "p2larm": p2_group.createGroup("p2larm"),
+            "p2uarm": p2_group.createGroup("p2uarm"),
+            "p2ldivpl": p2_group.createGroup("p2ldivpl"),
+            "p2udivpl": p2_group.createGroup("p2udivpl")   
+        }
+
+        parquet_files = {
+            "topcol": ["geometry/data/amm/amm_topcol.parquet"],
+            "botcol": ["geometry/data/amm/amm_botcol.parquet"],
+            "endcrown_l": ["geometry/data/amm/amm_endcrown_l.parquet"],
+            "endcrown_u": ["geometry/data/amm/amm_endcrown_u.parquet"],
+            "incon": ["geometry/data/amm/amm_incon.parquet"],
+            "ring_rodgr": ["geometry/data/amm/amm_rodgr.parquet", "geometry/data/amm/amm_ring.parquet"],
+            "uhorw": ["geometry/data/amm/amm_uhorw.parquet"],
+            "lhorw": ["geometry/data/amm/amm_lhorw.parquet"],
+            "vertw": ["geometry/data/amm/amm_vertw.parquet"],
+            "mid": ["geometry/data/amm/amm_mid.parquet"],
+            "p2larm": ["geometry/data/amm/amm_p2larm1.parquet", "geometry/data/amm/amm_p2larm2.parquet", "geometry/data/amm/amm_p2larm3.parquet"],
+            "p2uarm": ["geometry/data/amm/amm_p2uarm1.parquet", "geometry/data/amm/amm_p2uarm2.parquet", "geometry/data/amm/amm_p2uarm3.parquet"],
+            "p2ldivpl": ["geometry/data/amm/amm_p2ldivpl1.parquet", "geometry/data/amm/amm_p2ldivpl2.parquet"],
+            "p2udivpl": ["geometry/data/amm/amm_p2udivpl1.parquet", "geometry/data/amm/amm_p2udivpl2.parquet"]
         }
 
         version = headerdict["version"] + 0.1 * headerdict["revision"]
 
+        cc = ["topcol", "botcol", "endcrown_l", "endcrown_u"]
         for subgroup_key, (file_path) in parquet_files.items():
-            print(subgroup_key)
-            if subgroup_key == "centralcolumn_upper" or subgroup_key == "centralcolumn_lower" or subgroup_key == "endcrown_lower" or subgroup_key == "endcrown_upper" or subgroup_key == "incon" or subgroup_key == "rodgr" or subgroup_key == "ring":
-                create_passive_variable(
-                    centralcolumn_group, file_path[0], var_type, version
-                )
-
-        patterns = ["p2_l*", "p2_u*", "wall*upper", "wall*lower", "wall*vertical", "mid"]
-        groups = [p2_lower, p2_upper, wall_horiz_upper, wall_horiz_lower, wall_group_vertical, wall_group_vertical]
-
-        keys = list(parquet_files.keys())
-        
-        for i in range(0,len(patterns)): # indexing through patterns
-            
-            matching_keys = fnmatch.filter(keys, patterns[i]) # outputs list of pq file keys that match a pattern
-            matching_values = list(dict((k, parquet_files[k]) for k in matching_keys).values()) # gets filepaths corresponding to keys that match the pattern
-            matching_filepaths = []
-
-            for q in matching_values:
-                matching_filepaths.append(q[0])
-            
-            # print(matching_filepaths)
-            for n in matching_filepaths:
-                create_passive_variable(groups[i], n, var_type, version) # add variable to matching group
-
-
+        #    print(subgroup_key)
+            if subgroup_key in cc:
+                create_passive_variable(centralcolumn_group, file_path, var_type, version)
+            elif subgroup_key == "mid":
+                create_passive_variable_mid(wall_group, file_path, var_type, version)
+            else:
+                create_passive_variable(passive_subgroups[subgroup_key], file_path, var_type, version)
 
 if __name__ == "__main__":
     # Metadata for the NetCDF file

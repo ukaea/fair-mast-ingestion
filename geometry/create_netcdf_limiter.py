@@ -59,8 +59,8 @@ def parquet_to_netcdf(netcdf_file, headerdict):
 
         coord_dtype = np.dtype([("name", "S50"),
                                 ("version", "S50"),
-                                ("r", "<f8", (37)),
-                                ("z", "<f8", (37)),
+                                ("R", "<f8", (37)),
+                                ("Z", "<f8", (37)),
                                 ("phi_cut", "<f8")])
 
     
@@ -78,8 +78,8 @@ def parquet_to_netcdf(netcdf_file, headerdict):
         data = np.empty(1, lc.dtype_view)
         data["name"] = "efit"
         data["version"] = version
-        data["r"] = df['R']
-        data["z"] = df["Z"]
+        data["R"] = df['r']
+        data["Z"] = df["z"]
         data["phi_cut"] = 0
 
         var[:] = data

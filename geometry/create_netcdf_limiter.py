@@ -57,7 +57,8 @@ def parquet_to_netcdf(netcdf_file, headerdict):
 
         lim_grp = ncfile.createGroup("limiter")  
 
-        coord_dtype = np.dtype([("version", "<f8"),
+        coord_dtype = np.dtype([("name", "S50"),
+                                ("version", "S50"),
                                 ("r", "<f8", (37)),
                                 ("z", "<f8", (37)),
                                 ("phi_cut", "<f8")])
@@ -75,6 +76,7 @@ def parquet_to_netcdf(netcdf_file, headerdict):
                                  ("singleDim",))
 
         data = np.empty(1, lc.dtype_view)
+        data["name"] = "efit"
         data["version"] = version
         data["r"] = df['r']
         data["z"] = df["z"]
@@ -86,33 +88,25 @@ if __name__ == "__main__":
 
     # Metadata for the netcdf file
     headerdict = {
-        "Conventions": "",
+        "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
+        "coordinateSystem": "cylindrical",
         "device": "MAST",
-        "class": "limiter",
-        "system": "limiter",
-        "configuration": "geometry",
         "shotRangeStart": 0,
-        "shotRangeStop": 400000,
-        "content": "geometry of the limiter for MAST",
-        "comment": "",
-        "units": "SI, m",
-        "coordinateSystem": "Cylindrical",
-        "structureCastType": "unknown",
-        "calibration": "None",
-        "version": 0,
+        "shotRangeEnd": 40000,
+        "createdBy": "jhodson",
+        "system": "limiter",
+        "signedOffDate": "",
+        "class": "limiter",
+        "units": "SI, m, degrees",
+        "version": 1,
         "revision": 0,
+        "conventions": "",
         "status": "development",
         "releaseDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
         "releaseTime": datetime.strftime(datetime.now(), "%H:%M:%S"),
+        "creatorCode": "python create_netcdf_limiter.py",
         "owner": "jhodson",
         "signedOffBy": "",
-        "signedOffDate": "",
-        "creatorCode": "python create_netcdf_limiter.py",
-        "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
-        "createdBy": "jhodson",
-        "testCode": "",
-        "testDate": "",
-        "testedBy": ""
     }
 
     # Example usage

@@ -78,8 +78,8 @@ def parquet_to_netcdf(netcdf_file, headerdict):
         data = np.empty(1, lc.dtype_view)
         data["name"] = "efit"
         data["version"] = version
-        data["r"] = df['r']
-        data["z"] = df["z"]
+        data["r"] = df['R']
+        data["z"] = df["Z"]
         data["phi_cut"] = 0
 
         var[:] = data

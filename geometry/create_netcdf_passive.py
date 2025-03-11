@@ -24,7 +24,7 @@ def create_passive_variable_mid(group, parquet_file, var_type, version):
             data = np.empty(1, var_type.dtype_view)
             data["name"][:] = row["uda_name"].replace("/", "_")
             data["version"] = version
-            data["circuit_number"] = row["circuit_number"]
+            data["phi_cut"] = 0
             data["centreR"] = row["r"]
             data["centreZ"] = row["z"]
             data["dR"] = row["dR"]
@@ -46,7 +46,7 @@ def create_passive_variable(group, parquet_file, var_type, version):
         data = np.empty(1, var_type.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
-        data["circuit_number"] = row["circuit_number"]
+        data["phi_cut"] = 0
         data["centreR"] = row["r"]
         data["centreZ"] = row["z"]
         data["dR"] = row["dR"]
@@ -68,7 +68,7 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
         passive_dtype = np.dtype([
             ("name", "S50"),
             ("version", "S50"),
-            ("circuit_number", "f4"),
+            ("phi_cut", "f4"),
             ("centreR", "f4"),
             ("centreZ", "f4"),
             ("dR", "f4"),
@@ -142,6 +142,7 @@ if __name__ == "__main__":
         "shotRangeStop": "400000LL",
         "createdBy": "sfrankel",
         "system": "passive structure",
+        "signal": "passive structure",
         "signedOffDate": "",
         "class": "passive structure",
         "units": "SI, degrees",

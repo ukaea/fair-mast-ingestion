@@ -16,7 +16,7 @@ writer:
   type: "zarr"
   options:
     zarr_format: 2
-    output_path: "/common/tmp/sjackson/upload-tmp/zarr/level1"
+    output_path: "/tmp/fair-mast-ingestion/level1"
 
 # upload:
 #   base_path: "s3://fairmast/mastu/level1/shots"

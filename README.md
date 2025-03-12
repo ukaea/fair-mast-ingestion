@@ -95,7 +95,7 @@ mpirun -n 4 python3 -m src.level2.main mappings/level2/mast.yml -v --shot 30421 
 
 ### Ingestion to S3
 
-To ingest to S3 you must edit the config files in `./configs` to include the an upload entry specifying the endpoint and location to upload data to.
+To ingest to S3 you must edit the config files in `./configs` to include the upload entry. You must specify the endpoint url and location to upload data to.
 For example the following config sets the base path and endpoint url for object storage at CSD3:
 
 ```yaml

@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from netCDF4 import Dataset
-import fnmatch
 
 def create_header(ncfile, headerdict):
     for key, value in headerdict.items():
@@ -29,8 +28,8 @@ def create_passive_variable_mid(group, parquet_file, var_type, version):
             data["centreZ"] = row["z"]
             data["dR"] = row["dR"]
             data["dZ"] = row["dZ"]
-            data["shapeAngle1"] = row["ang1"]
-            data["shapeAngle2"] = row["ang2"]
+            data["shapeAngle1"] = row["ang1"] if row["ang1"] >= 0 else np.float64(row["ang1"] + 360.0)
+            data["shapeAngle2"] = row["ang2"] if row["ang2"] >= 0 else np.float64(row["ang2"] + 360.0)
             data["resistivity"] = row["resistivity"]
             data["resistivityUnits"] = "mOhms"
 
@@ -51,8 +50,8 @@ def create_passive_variable(group, parquet_file, var_type, version):
         data["centreZ"] = row["z"]
         data["dR"] = row["dR"]
         data["dZ"] = row["dZ"]
-        data["shapeAngle1"] = row["ang1"]
-        data["shapeAngle2"] = row["ang2"]
+        data["shapeAngle1"] = row["ang1"] if row["ang1"] >= 0 else row["ang1"] + 360
+        data["shapeAngle2"] = row["ang2"] if row["ang2"] >= 0 else row["ang2"] + 360
         data["resistivity"] = row["resistivity"] 
         data["resistivityUnits"] = "mOhms" #looks like mili-Ohm, but looking at the MAST-U data it might be resistivity i.e. Ohm m
 
@@ -124,7 +123,7 @@ def amm_parquet_to_netcdf(netcdf_file, headerdict):
 
         cc = ["topcol", "botcol", "endcrown_l", "endcrown_u"]
         for subgroup_key, (file_path) in parquet_files.items():
-        #    print(subgroup_key)
+
             if subgroup_key in cc:
                 create_passive_variable(centralcolumn_group, file_path, var_type, version)
             elif subgroup_key == "mid":
@@ -157,14 +156,3 @@ if __name__ == "__main__":
         "signedOffBy": "ldormangajic",
         } 
     amm_parquet_to_netcdf("geometry/passivestructures.nc", headerdict)
-
-
-        
-
-        
-
-
-
-
-
-

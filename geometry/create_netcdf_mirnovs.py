@@ -103,7 +103,11 @@ def xmc_parquet_to_netcdf(netcdf_file, headerdict):
 
         mirnov_dtype = np.dtype([
             ("name", "S30"),
-            ("version", "<f8"),
+            ("refFrame", "S30"),
+            ("type", "S30"),
+            ("array", "S30"),
+            ("status", "S30"),
+            ("version", "S30"),
             ("orientation", orientation_dtype),
             ("coordinate", coord_dtype),
             ("geometry", geometry_dtype)

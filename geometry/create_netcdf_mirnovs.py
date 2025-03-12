@@ -77,14 +77,15 @@ def xmc_parquet_to_netcdf(netcdf_file, headerdict):
         create_header(ncfile, headerdict)
 
         """Create mirnov coils group."""
-        mirnov_group = ncfile.createGroup("mirnovgroup")
+        magnetics = ncfile.createGroup("magnetics")
+        mirnov_group = magnetics.createGroup("mirnov")
 
         """Group by central column (vertical and toroidal) and outer vessel wall (vertical) Mirnov arrays."""
-        centralcolumn_group = mirnov_group.createGroup("centralcolumn")
-        vessel_group = mirnov_group.createGroup("vesselwall")
+        centralcolumn_group = mirnov_group.createGroup("centrecolumn")
+        vessel_group = mirnov_group.createGroup("outervessel")
 
         """Define data types and combine into compound data types."""
-        unitvector_dtype = np.dtype([("r", ">i4"), ("z", ">i4"), ("phi", ">i4")])
+        unitvector_dtype = np.dtype([("length", "S30"), ("areaAve", "S30")])
         coord_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
         geometry_dtype = np.dtype([
             ("length", "<f8"),
@@ -96,8 +97,8 @@ def xmc_parquet_to_netcdf(netcdf_file, headerdict):
             ("areaAve", "<f8")
         ])
         orientation_dtype = np.dtype([
-            ("measurement_direction", "S30"),
-            ("unit_vector", unitvector_dtype)
+            ("unit_vector", coord_dtype),
+            ("measurement_direction", "S30")
         ])
 
         mirnov_dtype = np.dtype([
@@ -108,10 +109,12 @@ def xmc_parquet_to_netcdf(netcdf_file, headerdict):
             ("geometry", geometry_dtype)
         ])
 
-        mirnov_group.createCompoundType(unitvector_dtype, "UNITVECTORS")
-        mirnov_group.createCompoundType(orientation_dtype, "ORIENTATION")
-        mirnov_group.createCompoundType(coord_dtype, "COORDINATES")
+        mirnov_group.createCompoundType(coord_dtype, "COORDINATE")
         mirnov_group.createCompoundType(geometry_dtype, "GEOMETRY")
+        mirnov_group.createCompoundType(unitvector_dtype, "GEOMETRYUNITS")
+        mirnov_group.createCompoundType(orientation_dtype, "ORIENTATION")
+        
+        
         
         var_type = mirnov_group.createCompoundType(mirnov_dtype, "MIRNOV")
 

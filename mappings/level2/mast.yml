@@ -697,13 +697,13 @@ datasets:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
         source:
-          background_window:
-          t_min: 0
-          t_max: 10
           - name: "XMB/SAD/OUT"
             shot_range:
               shot_min: 27620
               shot_max: 30473
+            background_window:
+              tmin: 0
+              tmax: 10
             channels:
               - "XMB/SAD/OUT/M01"
               - "XMB/SAD/OUT/M02"
@@ -721,6 +721,9 @@ datasets:
             shot_range:
               shot_min: 11708
               shot_max: 27619
+            background_window:
+              tmin: 0
+              tmax: 10
             channels:
               - "XMB_SAD/OUT/M01"
               - "XMB_SAD/OUT/M02"

@@ -513,7 +513,7 @@ datasets:
 
       time_saddle:
         step: 2e-5
-        methdo: 'zero'
+        method: 'zero'
 
       time_mirnov:
         step: 2e-6
@@ -697,6 +697,9 @@ datasets:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
         source:
+          background_window:
+          t_min: 0
+          t_max: 10
           - name: "XMB/SAD/OUT"
             shot_range:
               shot_min: 27620

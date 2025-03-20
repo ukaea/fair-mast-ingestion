@@ -166,15 +166,16 @@ class BackgroundSubtractionTransform(BaseDatasetTransform):
 
     def transform_array(self, data: xr.DataArray) -> xr.DataArray:
         # subtracts background calculated from mean of data points between index start and end
-        time_dim = next((dim for dim in data.dims if dim.startswith("time")), None)    
-
+        #time_dim = next((dim for dim in data.dims if dim.startswith("time")), None)    
+        time_dim = "time_saddle"
         if not time_dim:
             logger.warning(f"Skipping background subtraction: No time dimension found in dataset {data.name}.")
             return data
         
-        background = data.isel(time_dim=slice(self.start, self.end)).mean(dim=time_dim)
+        background = data.isel(time_saddle=slice(self.start, self.end)).mean(dim=time_dim)
+        print(background)
         return data - background
 
 transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)
-transform_registry.register("background_subtraction", BackgroundSubtractionTransform)
+#transform_registry.register("background_subtraction", BackgroundSubtractionTransform)

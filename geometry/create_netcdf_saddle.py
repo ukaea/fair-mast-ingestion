@@ -18,10 +18,10 @@ def create_saddle_variable(group, parquet_file, var_type, version):
         data = np.empty(1, var_type.dtype_view)
         data["name"][:] = row["uda_name"].replace("/", "_")
         data["version"] = version
-        data["sector"] = row["sector"]
-        data["coordinate"]["r"] = row["r"]
-        data["coordinate"]["z"] = row["z"]
-        data["coordinate"]["phi"] = row["toroidal_angle"]
+        #data["sector"] = row["sector"]
+        data["centre"]["r"] = row["r"]
+        data["centre"]["z"] = row["z"]
+        data["centre"]["phi"] = row["toroidal_angle"]
         data["geometry"]["height"] = row["height"]
         data["geometry"]["width"] = row["width"]
         # missing: curved vs flat, coilPath, corner radius
@@ -36,38 +36,51 @@ def xmb_parquet_to_netcdf(netcdf_file, headerdict):
         """Add global attributes."""
         create_header(ncfile, headerdict)
 
+        magnetics = ncfile.createGroup("magnetics")
+
         """Create saddle coils group."""
-        saddle_group = ncfile.createGroup("saddlegroup")
+        saddlecoils = magnetics.createGroup("saddlecoils")
+        
+        # no centrecol/outervessel/psp info available
 
         """Group by lower, middle and upper saddle coils."""
-        lower_group = saddle_group.createGroup("lower")
-        middle_group = saddle_group.createGroup("middle")
-        upper_group = saddle_group.createGroup("upper")
+        upper_group = saddlecoils.createGroup("upper")
+        middle_group = saddlecoils.createGroup("middle")
+        lower_group = saddlecoils.createGroup("lower")
+        
+        
 
         """Define data types and combine into compound data types."""
         coord_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
+        path_dtype = np.dtype([("r", "<f8"), ("z", "<f8"), ("phi", "<f8")])
         geometry_dtype = np.dtype([
             ("height", "<f8"),
             ("width", "<f8"),
-            # corner radius
-            # area
-            # angle
+            ("cornerRadius", "<f8"),
+            ("area", "<f8"),
+            ("angle", "<f8")
         ])
 
         saddle_dtype = np.dtype([
             ("name", "S10"),
+            ("description", "S30"),
+            ("location", "S30"),
+            ("refFrame", "S10"),
+            ("status", "S10"),
             ("version", "<f8"),
-            ("sector", "<f8"),
-            ("coordinate", coord_dtype),
+            ("saddleType", "S10"),
+            ("centre", coord_dtype),
+            ("coilPath", path_dtype),
             ("geometry", geometry_dtype)
         ])
 
-        saddle_group.createCompoundType(coord_dtype, "COORDINATES")
-        saddle_group.createCompoundType(geometry_dtype, "GEOMETRY")
+        saddlecoils.createCompoundType(coord_dtype, "COORDINATE")
+        saddlecoils.createCompoundType(path_dtype, "COORDINATE_PATH")
+        saddlecoils.createCompoundType(geometry_dtype, "GEOMETRY")
         
-        var_type = saddle_group.createCompoundType(saddle_dtype, "SADDLECOIL")
+        var_type = saddlecoils.createCompoundType(saddle_dtype, "SADDLECOIL")
 
-        saddle_group.createDimension("singleDim", 1)
+        saddlecoils.createDimension("singleDim", 1)
 
         """Assign parquet file contents to appropriate groups."""
         parquet_files = {
@@ -101,30 +114,30 @@ def xmb_parquet_to_netcdf(netcdf_file, headerdict):
 if __name__ == "__main__":
     # Metadata for the NetCDF file
     headerdict = {
-    "Conventions": "",
+    "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
+    "coordinateSystem": "cylindrical",
     "device": "MAST",
-    "class": "magnetics",
-    "system": "saddlecoils",
-    "configuration": "geometry",
     "shotRangeStart": 0,
     "shotRangeStop": 400000,
-    "content": "geometry of the saddle coils for MAST",
-    "comment": "",
+    "createdBy": "sfrankel",
+    "system": "saddlecoils",
+    "signedOffDate": "",
+    "class": "magnetics",
     "units": "SI, degrees, m",
-    "coordinateSystem": "Cylindrical",
-    "structureCastType": "unknown",
-    "calibration": "None",
     "version": 0,
     "revision": 0,
+    "conventions": "MAST MetaData",
     "status": "development",
     "releaseDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
     "releaseTime": datetime.strftime(datetime.now(), "%H:%M:%S"),
+    "creatorCode": "python create_netcdf_saddles.py",
     "owner": "jhodson",
     "signedOffBy": "",
-    "signedOffDate": "",
-    "creatorCode": "python create_netcdf_saddles.py",
-    "creationDate": datetime.strftime(datetime.now(), "%Y-%m-%d"),
-    "createdBy": "sfrankel",
+    "configuration": "geometry",
+    "content": "geometry of the saddle coils for MAST",
+    "comment": "",
+    "structureCastType": "unknown",
+    "calibration": "None",
     "testCode": "",
     "testDate": "",
     "testedBy": "",

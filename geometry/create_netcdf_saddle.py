@@ -118,7 +118,7 @@ if __name__ == "__main__":
     "coordinateSystem": "cylindrical",
     "device": "MAST",
     "shotRangeStart": 0,
-    "shotRangeStop": 400000,
+    "shotRangeStop": 40000,
     "createdBy": "sfrankel",
     "system": "saddlecoils",
     "signedOffDate": "",

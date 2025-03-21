@@ -156,7 +156,7 @@ if __name__ == "__main__":
     "system": "omaha",
     "configuration": "geometry",
     "shotRangeStart": 0,
-    "shotRangeStop": 400000,
+    "shotRangeStop": 40000,
     "content": "geometry of the omaha coils for MAST",
     "comment": "",
     "units": "SI, degrees, m",

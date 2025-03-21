@@ -138,7 +138,7 @@ if __name__ == "__main__":
         "coordinateSystem": "cylindrical",
         "device": "MAST",
         "shotRangeStart": "0LL",
-        "shotRangeStop": "400000LL",
+        "shotRangeStop": "40000LL",
         "createdBy": "sfrankel",
         "system": "passive structure",
         "signal": "passive structure",

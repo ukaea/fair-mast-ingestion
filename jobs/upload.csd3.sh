@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -A UKAEA-AP002-CPU
-#SBATCH -p icelake
+#SBATCH -p ukaea-icl
 #SBATCH --job-name=fair-mast-ingest-level2-upload
 #SBATCH --output=fair-mast-ingest-upload_%A.out
 #SBATCH --time=36:00:00

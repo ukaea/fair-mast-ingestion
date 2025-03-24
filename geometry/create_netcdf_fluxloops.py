@@ -104,7 +104,7 @@ if __name__ == "__main__":
         "system": "fluxloops",
         "configuration": "geometry",
         "shotRangeStart": 0,
-        "shotRangeStop": 400000,
+        "shotRangeStop": 40000,
         "content": "geometry of the fluxloops for MAST",
         "comment": "",
         "units": "SI, degrees, m",

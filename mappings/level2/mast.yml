@@ -1,0 +1,1456 @@
+facility: "MAST"
+default_loader: "uda"
+plasma_current: "summary/ip"
+
+global_interpolate:
+  params:
+    time:
+      step: 0.00025
+      method: 'zero'
+      fill: 'ffill'
+      dropna: true
+
+datasets:
+  equilibrium:
+    imas: "equilibrium"
+
+    interpolate:
+      time:
+        step: 5.0e-3
+        dropna: True
+      z:
+        method: "none"
+      major_radius:
+        start: 0.06
+        step: 0.03
+        end: 2.0
+        method: "linear"
+      n_boundary_coords:
+        method: "none"
+        dropna: true
+      n_x_points:
+        method: "none"
+        dropna: true
+      profile_r:
+        method: "none"
+
+    profiles:
+      q:
+        source: "EFM_Q(R)" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.q"
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          profile_r:
+            units: 'dimensionless'
+
+      j_tor:
+        source: "EFM_PLASMA_CURR(R,Z)" 
+        imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          z:
+            source: "EFM_GRID(Z)"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+          major_radius:
+            source: "EFM_GRID(R)"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      psi:
+        source: "EFM_PSI(R,Z)" 
+        imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          z:
+            source: "EFM_GRID(Z)"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+          major_radius:
+            source: "EFM_GRID(R)"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      elongation:
+        source: "EFM_ELONGATION" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.elongation"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      elongation_axis:
+        source: "EFM_ELONGATION_AXIS" 
+        units: 'dimensionless'
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_r:
+        source:
+          - name: "EFM_XPOINT_R"
+            channels:
+              - EFM_XPOINT1_R(C)
+              - EFM_XPOINT2_R(C)
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
+        units: "dimensionless"
+        fill_value: -999
+        dimensions:
+          n_x_points:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_z:
+        source:
+          - name: "EFM_XPOINT_Z"
+            channels:
+              - EFM_XPOINT1_Z(C)
+              - EFM_XPOINT2_Z(C)
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
+        units: "dimensionless"
+        fill_value: -999
+        dimensions:
+          n_x_points:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      minor_radius:
+        source: "EFM_MINOR_RADIUS" 
+        imas: "equilibrium.time_slice[:].boundary.minor_radius" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_lower:
+        source: "EFM_TRIANG_LOWER" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_upper:
+        source: "EFM_TRIANG_UPPER" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      magnetic_axis_r:
+        source: "EFM_MAGNETIC_AXIS_R" 
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      magnetic_axis_z:
+        source: "EFM_MAGNETIC_AXIS_Z" 
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      beta_normal:
+        source: "EFM_BETAN" 
+        imas: "equilibrium.time_slice[:].global_quantities.beta_normal"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      beta_pol:
+        source: "EFM_BETAP" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      beta_tor:
+        source: "EFM_BETAT" 
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      bphi_rmag:
+        source: "EFM_BPHI_RMAG" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      bvac_rmag:
+        source: "EFM_BVAC_RMAG" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      li:
+        source: "EFM_LI" 
+        units: 'dimensionless'
+        imase_name: "equilibrium.time_slice[:].global_quantities.li_3"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      q_axis:
+        source: "EFM_Q_AXIS" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.q_axis"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      q90:
+        source: "EFM_Q_100" 
+        units: 'dimensionless'
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      q95:
+        source: "EFM_Q_95" 
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.q_95"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      q100:
+        source: "EFM_Q_100" 
+        units: 'dimensionless'
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      lcfs_r:
+        source: "EFM_LCFS(R)_(C)" 
+        imas: "equilibrium.time_slice[:].boundary.lcfs.r"
+        fill_value: 9.98876992e+08
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_boundary_coords:
+            units: 'dimensionless'
+      lcfs_z:
+        source: "EFM_LCFS(Z)_(C)" 
+        imas: "equilibrium.time_slice[:].boundary.lcfs.z"
+        fill_value: 9.98876992e+08
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_boundary_coords:
+            units: 'dimensionless'
+      whmd:
+        source: "EFM_WPLASMD" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      rpsi90_in:
+        source: "EFM_R(PSI90)_IN" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      rpsi90_out:
+        source: "EFM_R(PSI90)_OUT" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      rpsi95_in:
+        source: "EFM_R(PSI95)_IN" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      rpsi95_out:
+        source: "EFM_R(PSI95)_OUT" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      rpsi100_in:
+        source: "EFM_R(PSI100)_IN" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      rpsi100_out:
+        source: "EFM_R(PSI100)_OUT" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      vloop_static:
+        source: "ESM_V_LOOP_STATIC" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      vloop_dynamic:
+        source: "ESM_V_LOOP_DYNAMIC" 
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      ip_rating: 
+        source: ESM_EFM_RATING_IP
+        units: "dimensionless"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      da_rating:
+        source: ESM_EFM_RATING_DA
+        units: "dimensionless"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+  pulse_schedule:
+    imas: pulse_schedule
+    profiles:
+      i_plasma:
+        target_units: "A"
+        source:
+          - name: "/xdc/ip/t/ipref"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+          - name: "XDC_IP_T_IPREF"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+        imas: "pulse_schedule.flux_control.i_plasma" 
+        dimensions:
+          time:
+      n_e_line:
+        source:
+          - name: "/xdc/density/t/nelref"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+          - name: "XDC_DENSITY_T_NELREF"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+        imas: "pulse_schedule.density_control.n_e_line"
+        dimensions:
+          time:
+
+  summary:
+    imas: "summary"
+    profiles:
+      ip:
+        source: "AMC_PLASMA CURRENT"
+        imas: "summary.global_quantities.ip"
+        target_units: "A"
+        dimensions:
+          time:
+            imas: "summary.time"
+      line_average_n_e:
+        source: "ESM_NE_BAR"
+        imas: "summary.line_average.n_e.value"
+        dimensions:
+          time:
+            imas: "summary.time"
+      power_nbi:
+        source: "ANB_TOT_SUM_POWER"
+        target_units: "W"
+        imas: "summary.heating_current_drive.power_nbi"
+        dimensions:
+          time:
+            imas: "summary.time"
+      neutron_rates_total:
+        source: "ANU_NEUTRONS"
+        imas: "summary.fusion.neutron_rates.total"
+        units: "cps"
+        target_units: "Hz"
+        dimensions:
+          time:
+            imas: "summary.time"
+      power_radiated:
+        imas: "summary.global_quantities.power_radiated.value"
+        source: "ABM_PRAD_POL"
+        target_units: "W"
+        dimensions:
+          time:
+            imas: "summary.time"
+      greenwald_density:
+        source: "ESM_N_GREENWALD"
+        dimensions:
+          time:
+            imas: "summary.time"
+
+  gas_injection:
+    imas: "gas_injection"
+    profiles:
+      total_injected:
+        source: "AGA_INTEG_GAS"
+        units: 'counts'
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+      pressure:
+        source: "AGA_FIG"
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+      inboard_total:
+        source: "AGA_INBOARD_TOTAL"
+        units: 'cps'
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+      outboard_total:
+        source: "AGA_OUTBOARD_TOTAL"
+        units: 'cps'
+        dimensions:
+          time:
+            imas: "gas_injection.time"
+
+      # valve_voltage:
+      #   imas: "gas_injection.valve[:].voltage.data"
+      #   source: 
+      #     - name: "XDC/GAS"
+      #       shot_range:
+      #         shot_min: 28356
+      #         shot_max: 30471
+      #       channels:
+      #         - "XDC/GAS/T/G1"
+      #         - "XDC/GAS/T/G2"
+      #         - "XDC/GAS/T/G3"
+      #         - "XDC/GAS/T/G4"
+      #         - "XDC/GAS/T/G5"
+      #         - "XDC/GAS/T/G6"
+      #         - "XDC/GAS/T/G7"
+      #         - "XDC/GAS/T/G8"
+      #         - "XDC/GAS/T/G9"
+      #         - "XDC/GAS/T/G10"
+      #         - "XDC/GAS/T/G11"
+      #         - "XDC/GAS/T/G12"
+
+      #     - name: "XDC/GAS"
+      #       shot_range:
+      #         shot_min: 1
+      #         shot_max: 28355
+      #       channels:
+      #         - "XDC_GAS_T_G1"
+      #         - "XDC_GAS_T_G2"
+      #         - "XDC_GAS_T_G3"
+      #         - "XDC_GAS_T_G4"
+      #         - "XDC_GAS_T_G5"
+      #         - "XDC_GAS_T_G6"
+      #         - "XDC_GAS_T_G7"
+      #         - "XDC_GAS_T_G8"
+      #         - "XDC_GAS_T_G9"
+      #         - "XDC_GAS_T_G10"
+      #         - "XDC_GAS_T_G11"
+      #         - "XDC_GAS_T_G12"
+
+      #   dimensions:
+      #     valve_channel:
+      #     time: 
+      #       imas: "gas_injection.valve[:].voltage.time"
+
+  pf_active:
+    imas: "pf_active"
+    profiles:
+      solenoid_current:
+        source: "AMC_SOL CURRENT"
+        target_units: "A"
+        scale: 0.5                # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
+        dimensions:
+          time:
+            imas: "summary.time"
+
+      coil_current:
+        imas: "pf_active.coil[:].current.data"
+        target_units: "A"
+        source:
+          - name: "AMC" 
+            channels:
+             - "AMC_P2IL FEED CURRENT"
+             - "AMC_P2IU FEED CURRENT"
+             - "AMC_P2OL FEED CURRENT"
+             - "AMC_P2OU FEED CURRENT"
+             - "AMC_P3L FEED CURRENT"
+             - "AMC_P3U FEED CURRENT"
+             - "AMC_P4L FEED CURRENT"
+             - "AMC_P4U FEED CURRENT"
+             - "AMC_P5L FEED CURRENT"
+             - "AMC_P5U FEED CURRENT"
+        dimensions:
+          channel:
+          time: 
+            imas: "pf_active.coil[:].current.time"
+
+      coil_voltage:
+        imas: "pf_active.coil[:].voltage.data"
+        source:
+          - name: "XDC/PF"
+            shot_range:
+              shot_min: 28410
+              shot_max: 30471
+            channels:
+              - '/xdc/pf/f/p1'
+              - '/xdc/pf/f/p2'
+              - '/xdc/pf/f/p4'
+              - '/xdc/pf/f/p5'
+          - name: "XDC/PF"
+            shot_range:
+              shot_min: 11695
+              shot_max: 28355
+            channels:
+              - 'XDC_PF_F_P1'
+              - 'XDC_PF_F_P2'
+              - 'XDC_PF_F_P4'
+              - 'XDC_PF_F_P5'
+        dimensions:
+          channel:
+          time: 
+            imas: "pf_active.coil[:].voltage.time"
+      
+
+  magnetics:
+    interpolate:
+      time:
+        step: 0.0002
+        method: 'zero'
+
+      time_saddle:
+        step: 2e-5
+        methdo: 'zero'
+
+      time_mirnov:
+        step: 2e-6
+        method: 'zero'
+
+      time_omaha:
+        step: 1e-7
+        method: 'zero'
+
+    imas: "magnetics"
+    profiles:
+      ip: 
+        imas: "magnetics.ip[:].data"
+        source: "AMC_PLASMA CURRENT"
+        target_units: "A"
+        dimensions:
+          time:
+            imas: "magnetics.time"
+
+      b_field_pol_probe_ccbv_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Centre column Bv array"
+        units: "T"
+        source:
+          - name: "AMB/CCBV"
+            channels:
+            - "AMB_CCBV01"
+            - "AMB_CCBV02"
+            - "AMB_CCBV03"
+            - "AMB_CCBV04"
+            - "AMB_CCBV05"
+            - "AMB_CCBV06"
+            - "AMB_CCBV07"
+            - "AMB_CCBV08"
+            - "AMB_CCBV09"
+            - "AMB_CCBV10"
+            - "AMB_CCBV11"
+            - "AMB_CCBV12"
+            - "AMB_CCBV13"
+            - "AMB_CCBV14"
+            - "AMB_CCBV15"
+            - "AMB_CCBV16"
+            - "AMB_CCBV17"
+            - "AMB_CCBV18"
+            - "AMB_CCBV19"
+            - "AMB_CCBV20"
+            - "AMB_CCBV21"
+            - "AMB_CCBV22"
+            - "AMB_CCBV23"
+            - "AMB_CCBV24"
+            - "AMB_CCBV25"
+            - "AMB_CCBV26"
+            - "AMB_CCBV27"
+            - "AMB_CCBV28"
+            - "AMB_CCBV29"
+            - "AMB_CCBV30"
+            - "AMB_CCBV31"
+            - "AMB_CCBV32"
+            - "AMB_CCBV33"
+            - "AMB_CCBV34"
+            - "AMB_CCBV35"
+            - "AMB_CCBV36"
+            - "AMB_CCBV37"
+            - "AMB_CCBV38"
+            - "AMB_CCBV39"
+            - "AMB_CCBV40"
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_pol_probe_obv_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Outer Bv array"
+        units: "T"
+        source:
+          - name: "AMB/OBV"
+            channels:
+            - "AMB_OBV01"
+            - "AMB_OBV02"
+            - "AMB_OBV03"
+            - "AMB_OBV04"
+            - "AMB_OBV05"
+            - "AMB_OBV06"
+            - "AMB_OBV07"
+            - "AMB_OBV08"
+            - "AMB_OBV09"
+            - "AMB_OBV10"
+            - "AMB_OBV11"
+            - "AMB_OBV12"
+            - "AMB_OBV13"
+            - "AMB_OBV14"
+            - "AMB_OBV15"
+            - "AMB_OBV16"
+            - "AMB_OBV17"
+            - "AMB_OBV18"
+        dimensions:
+          b_field_pol_probe_obv_channel:
+          time:
+            imas: "magnetics.time"
+
+      b_field_pol_probe_obr_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Outer Br array"
+        units: "T"
+        source:
+          - name: "AMB/OBR"
+            channels:
+            - "AMB_OBR01"
+            - "AMB_OBR02"
+            - "AMB_OBR03"
+            - "AMB_OBR04"
+            - "AMB_OBR05"
+            - "AMB_OBR06"
+            - "AMB_OBR07"
+            - "AMB_OBR08"
+            - "AMB_OBR09"
+            - "AMB_OBR10"
+            - "AMB_OBR11"
+            - "AMB_OBR12"
+            - "AMB_OBR13"
+            - "AMB_OBR14"
+            - "AMB_OBR15"
+            - "AMB_OBR16"
+            - "AMB_OBR17"
+            - "AMB_OBR18"
+        dimensions:
+          b_field_pol_probe_obr_channel:
+          time:
+            imas: "magnetics.time"
+
+      flux_loop_flux:
+        imas: "magnetics.flux_loop[:].flux.data"
+        source: 
+          - name: "AMB_FL"
+            channels:
+             - "AMB_FL/CC03"
+             - "AMB_FL/CC04"
+             - "AMB_FL/CC05"
+             - "AMB_FL/CC07"
+             - "AMB_FL/CC09"
+             - "AMB_FL/P3L/4"
+             - "AMB_FL/P3U/1"
+             - "AMB_FL/P3U/4"
+             - "AMB_FL/P4L/1"
+             - "AMB_FL/P4L/4"
+             - "AMB_FL/P4U/4"
+             - "AMB_FL/P5L/1"
+             - "AMB_FL/P5L/4"
+             - "AMB_FL/P5U/1"
+             - "AMB_FL/P6L/1"
+        dimensions:
+          flux_loop_channel:
+          time:
+            imas: "magnetics.time"
+      
+      b_field_tor_probe_saddle_field:
+        imas: "magnetics.b_field_tor_probe[:].field.data"
+        target_units: "T"
+        source:
+          - name: "ASM/SAD/OUT"
+            channels:
+              - "ASM_SAD/M01"
+              - "ASM_SAD/M02"
+              - "ASM_SAD/M03"
+              - "ASM_SAD/M04"
+              - "ASM_SAD/M05"
+              - "ASM_SAD/M06"
+              - "ASM_SAD/M07"
+              - "ASM_SAD/M08"
+              - "ASM_SAD/M09"
+              - "ASM_SAD/M10"
+              - "ASM_SAD/M11"
+              - "ASM_SAD/M12"
+        dimensions:
+          b_field_tor_probe_saddle_field_channel:
+          time_saddle:
+            imas: "magnetics.b_field_tor_probe[:].field.time"
+
+      b_field_tor_probe_saddle_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        units: "V"
+        source:
+          - name: "XMB/SAD/OUT"
+            shot_range:
+              shot_min: 27620
+              shot_max: 30473
+            channels:
+              - "XMB/SAD/OUT/M01"
+              - "XMB/SAD/OUT/M02"
+              - "XMB/SAD/OUT/M03"
+              - "XMB/SAD/OUT/M04"
+              - "XMB/SAD/OUT/M05"
+              - "XMB/SAD/OUT/M06"
+              - "XMB/SAD/OUT/M07"
+              - "XMB/SAD/OUT/M08"
+              - "XMB/SAD/OUT/M09"
+              - "XMB/SAD/OUT/M10"
+              - "XMB/SAD/OUT/M11"
+              - "XMB/SAD/OUT/M12"
+          - name: "XMB/SAD/OUT"
+            shot_range:
+              shot_min: 11708
+              shot_max: 27619
+            channels:
+              - "XMB_SAD/OUT/M01"
+              - "XMB_SAD/OUT/M02"
+              - "XMB_SAD/OUT/M03"
+              - "XMB_SAD/OUT/M04"
+              - "XMB_SAD/OUT/M05"
+              - "XMB_SAD/OUT/M06"
+              - "XMB_SAD/OUT/M07"
+              - "XMB_SAD/OUT/M08"
+              - "XMB_SAD/OUT/M09"
+              - "XMB_SAD/OUT/M10"
+              - "XMB_SAD/OUT/M11"
+              - "XMB_SAD/OUT/M12"
+        dimensions:
+          b_field_tor_probe_saddle_voltage_channel:
+          time_saddle:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+      # rogowski_coil_current:
+      #   imas: "magnetics.rogowski_coil[:].current.data"
+      #   target_units: "A"
+      #   source:
+      #     - name: "AMH/HALO"
+      #       channels:
+      #         - "AMH_HALO/CCU/2"
+      #         - "AMH_HALO/P2L/1"
+      #         - "AMH_HALO/P2L/2"
+      #         - "AMH_HALO/P2L/3"
+      #         - "AMH_HALO/P2L/4"
+      #         - "AMH_HALO/P2L/5"
+      #         - "AMH_HALO/P2L/6"
+      #         - "AMH_HALO/P2U/2"
+      #         - "AMH_HALO/P2U/3"
+      #         - "AMH_HALO/P2U/4"
+      #         - "AMH_HALO/P2U/5"
+      #         - "AMH_HALO/P2U/6"
+      #         - "AMH_HALO/P3L/1"
+      #         - "AMH_HALO/P3L/2"
+      #         - "AMH_HALO/P3L/4"
+      #         - "AMH_HALO/P3L/6"
+      #         - "AMH_HALO/P3U/2"
+      #         - "AMH_HALO/P3U/3"
+      #         - "AMH_HALO/P3U/4"
+      #         - "AMH_HALO/P3U/5"
+      #         - "AMH_HALO/P3U/6"
+      #         - "AMH_PHALO/EPL/I1"
+      #         - "AMH_PHALO/EPL/I2"
+      #         - "AMH_PHALO/EPL/I4"
+      #         - "AMH_PHALO/EPL/O1"
+      #         - "AMH_PHALO/EPL/O2"
+      #         - "AMH_PHALO/EPL/O3"
+      #         - "AMH_PHALO/EPL/O5"
+      #         - "AMH_PHALO/EPL/O6"
+      #         - "AMH_PHALO/EPU/I3"
+      #         - "AMH_PHALO/EPU/I4"
+      #         - "AMH_PHALO/EPU/O1"
+      #         - "AMH_PHALO/EPU/O3"
+      #         - "AMH_PHALO/EPU/O4"
+      #         - "AMH_PHALO/EPU/O6"
+      #         - "AMH_PHALO/P2L/I2"
+      #         - "AMH_PHALO/P2L/I3"
+      #         - "AMH_PHALO/P2L/I6"
+      #         - "AMH_PHALO/P2L/O1"
+      #         - "AMH_PHALO/P2L/O2"
+      #         - "AMH_PHALO/P2L/O4"
+      #         - "AMH_PHALO/P2U/I1"
+      #         - "AMH_PHALO/P2U/I2"
+      #         - "AMH_PHALO/P2U/I3"
+      #         - "AMH_PHALO/P2U/I4"
+      #         - "AMH_PHALO/P2U/I5"
+      #         - "AMH_PHALO/P2U/I6"
+      #         - "AMH_PHALO/P2U/O4"
+      #   dimensions:
+      #     rogowski_coil_channel:
+      #     time:
+      #       imas: "magnetics.time"
+
+      b_field_pol_probe_omv_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        description: "Outboard vertical mirnov array"
+        source:
+          - name: "XMC/OMV"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/OMV/110"
+              # - "xmc/OMV/201"
+              # - "xmc/OMV/202"
+              # - "xmc/OMV/203"
+              # - "xmc/OMV/204"
+              # - "xmc/OMV/205"
+              # - "xmc/OMV/206"
+              # - "xmc/OMV/207"
+              # - "xmc/OMV/208"
+              # - "xmc/OMV/209"
+              - "xmc/OMV/210"
+              # - "xmc/OMV/211"
+              # - "xmc/OMV/212"
+              # - "xmc/OMV/213"
+              # - "xmc/OMV/214"
+              # - "xmc/OMV/215"
+              # - "xmc/OMV/216"
+              # - "xmc/OMV/217"
+              # - "xmc/OMV/218"
+              # - "xmc/OMV/219"
+              - "xmc/OMV/310"
+          
+          - name: "XMC/OMV"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_OMV/110"
+              # - "XMC_OMV/201"
+              # - "XMC_OMV/202"
+              # - "XMC_OMV/203"
+              # - "XMC_OMV/204"
+              # - "XMC_OMV/205"
+              # - "XMC_OMV/206"
+              # - "XMC_OMV/207"
+              # - "XMC_OMV/208"
+              # - "XMC_OMV/209"
+              - "XMC_OMV/210"
+              # - "XMC_OMV/211"
+              # - "XMC_OMV/212"
+              # - "XMC_OMV/213"
+              # - "XMC_OMV/214"
+              # - "XMC_OMV/215"
+              # - "XMC_OMV/216"
+              # - "XMC_OMV/217"
+              # - "XMC_OMV/218"
+              # - "XMC_OMV/219"
+              - "XMC_OMV/310"
+
+        dimensions:
+          b_field_pol_probe_omv_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_pol_probe[:].voltage.time"
+
+      b_field_tor_probe_cc_field:
+        imas: "magnetics.b_field_tor_probe[:].field.data"
+        description: "Centre column toroidal mirnov array"
+        units: "T"
+        scale: 2e-6
+        source:
+          - name: "XMC/CC/MT"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/CC/MT/201"
+              # - "xmc/CC/MT/202"
+              # - "xmc/CC/MT/203"
+              # - "xmc/CC/MT/204"
+              # - "xmc/CC/MT/205"
+              - "xmc/CC/MT/206"
+              # - "xmc/CC/MT/207"
+              # - "xmc/CC/MT/208"
+              # - "xmc/CC/MT/209"
+              # - "xmc/CC/MT/210"
+              # - "xmc/CC/MT/211"
+              - "xmc/CC/MT/212"
+          
+          - name: "XMC/CC/MT"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_CC/MT/201"
+              # - "XMC_CC/MT/202"
+              # - "XMC_CC/MT/203"
+              # - "XMC_CC/MT/204"
+              # - "XMC_CC/MT/205"
+              - "XMC_CC/MT/206"
+              # - "XMC_CC/MT/207"
+              # - "XMC_CC/MT/208"
+              # - "XMC_CC/MT/209"
+              # - "XMC_CC/MT/210"
+              # - "XMC_CC/MT/211"
+              - "XMC_CC/MT/212"
+
+        dimensions:
+          b_field_tor_probe_cc_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_tor_probe[:].field.time"
+
+      b_field_pol_probe_cc_field:
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Centre column poloidal mirnov array"
+        units: "T"
+        scale: 2e-6
+        source:
+          - name: "XMC/CC/MV"
+            shot_range:
+              shot_min: 25736
+              shot_max: 30471 
+            channels:
+              - "xmc/CC/MV/201"
+              # - "xmc/CC/MV/202"
+              # - "xmc/CC/MV/203"
+              # - "xmc/CC/MV/204"
+              # - "xmc/CC/MV/205"
+              # - "xmc/CC/MV/206"
+              # - "xmc/CC/MV/207"
+              # - "xmc/CC/MV/208"
+              # - "xmc/CC/MV/209"
+              - "xmc/CC/MV/210"
+              # - "xmc/CC/MV/211"
+              # - "xmc/CC/MV/212"
+              # - "xmc/CC/MV/213"
+              # - "xmc/CC/MV/214"
+              # - "xmc/CC/MV/215"
+              # - "xmc/CC/MV/216"
+              # - "xmc/CC/MV/217"
+              # - "xmc/CC/MV/218"
+              # - "xmc/CC/MV/219"
+              - "xmc/CC/MV/220"
+              # - "xmc/CC/MV/221"
+              # - "xmc/CC/MV/222"
+              # - "xmc/CC/MV/223"
+              # - "xmc/CC/MV/224"
+              # - "xmc/CC/MV/226"
+              # - "xmc/CC/MV/227"
+              # - "xmc/CC/MV/228"
+              # - "xmc/CC/MV/229"
+              - "xmc/CC/MV/230"
+              # - "xmc/CC/MV/231"
+              # - "xmc/CC/MV/232"
+              # - "xmc/CC/MV/233"
+              # - "xmc/CC/MV/234"
+              # - "xmc/CC/MV/235"
+              # - "xmc/CC/MV/236"
+              # - "xmc/CC/MV/237"
+              # - "xmc/CC/MV/238"
+              # - "xmc/CC/MV/239"
+              - "xmc/CC/MV/240"
+
+          - name: "XMC/CC/MV"
+            shot_range:
+              shot_min: 1
+              shot_max: 25736
+            channels:
+              - "XMC_CC/MV/201"
+              # - "XMC_CC/MV/202"
+              # - "XMC_CC/MV/203"
+              # - "XMC_CC/MV/204"
+              # - "XMC_CC/MV/205"
+              # - "XMC_CC/MV/206"
+              # - "XMC_CC/MV/207"
+              # - "XMC_CC/MV/208"
+              # - "XMC_CC/MV/209"
+              - "XMC_CC/MV/210"
+              # - "XMC_CC/MV/211"
+              # - "XMC_CC/MV/212"
+              # - "XMC_CC/MV/213"
+              # - "XMC_CC/MV/214"
+              # - "XMC_CC/MV/215"
+              # - "XMC_CC/MV/216"
+              # - "XMC_CC/MV/217"
+              # - "XMC_CC/MV/218"
+              # - "XMC_CC/MV/219"
+              - "XMC_CC/MV/220"
+              # - "XMC_CC/MV/221"
+              # - "XMC_CC/MV/222"
+              # - "XMC_CC/MV/223"
+              # - "XMC_CC/MV/224"
+              # - "XMC_CC/MV/226"
+              # - "XMC_CC/MV/227"
+              # - "XMC_CC/MV/228"
+              # - "XMC_CC/MV/229"
+              - "XMC_CC/MV/230"
+              # - "XMC_CC/MV/231"
+              # - "XMC_CC/MV/232"
+              # - "XMC_CC/MV/233"
+              # - "XMC_CC/MV/234"
+              # - "XMC_CC/MV/235"
+              # - "XMC_CC/MV/236"
+              # - "XMC_CC/MV/237"
+              # - "XMC_CC/MV/238"
+              # - "XMC_CC/MV/239"
+              - "XMC_CC/MV/240"
+
+        dimensions:
+          b_field_pol_probe_cc_channel:
+          time_mirnov:
+            imas: "magnetics.b_field_pol_probe[:].field.time"
+
+      b_field_tor_probe_omaha_voltage:
+        imas: "magnetics.b_field_tor_probe[:].voltage.data"
+        description: "High frequency OMAHA toroidal mirnov array"
+        units: "V"
+        source:
+          - name: "XMO/OMAHA"
+            shot_range:
+              shot_min: 26326
+              shot_max: 30473
+            channels:
+              - /xmo/OMAHA/1LZ
+              # - /xmo/OMAHA/2LT
+              # - /xmo/OMAHA/2LZ
+              # - /xmo/OMAHA/3LT
+              - /xmo/OMAHA/3LZ
+              # - /xmo/OMAHA/4LR
+              # - /xmo/OMAHA/4LT
+              # - /xmo/OMAHA/4LZ
+              # - /xmo/OMAHA/5LT
+              - /xmo/OMAHA/5LZ
+              # - /xmo/OMAHA/5UR
+              # - /xmo/OMAHA/5UT
+              # - /xmo/OMAHA/5UZ
+              - /xmo/OMAHA/6LZ
+        dimensions:
+          b_field_tor_probe_omaha_channel:
+          time_omaha:
+            imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+  spectrometer_visible:
+    interpolate:
+      time: 
+        step: 2e-5
+      time_bes:
+        step: 5e-7
+
+    profiles:
+      filter_spectrometer_dalpha_voltage:
+        imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
+        units: "V"
+        source:
+          - name: "XIM_DA"
+            channels:
+              - "XIM_DA/HM10/R"
+              - "XIM_DA/HM10/T"
+              - "XIM_DA/HU10/T"
+        dimensions:
+          dalpha_channel:
+          time:
+            imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
+
+      filter_spectrometer_bes_voltage:
+        imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
+        units: "V"
+        source:
+          - name: "xbt/channel"
+            channels:
+              - "xbt/channel01"
+              - "xbt/channel02"
+              - "xbt/channel03"
+              - "xbt/channel04"
+              - "xbt/channel05"
+              - "xbt/channel06"
+              - "xbt/channel07"
+              - "xbt/channel08"
+              - "xbt/channel09"
+              - "xbt/channel10"
+              - "xbt/channel11"
+              - "xbt/channel12"
+              - "xbt/channel13"
+              - "xbt/channel14"
+              - "xbt/channel15"
+              - "xbt/channel16"
+              - "xbt/channel17"
+              - "xbt/channel18"
+              - "xbt/channel19"
+              - "xbt/channel20"
+              - "xbt/channel21"
+              - "xbt/channel22"
+              - "xbt/channel23"
+              - "xbt/channel24"
+              - "xbt/channel25"
+              - "xbt/channel26"
+              - "xbt/channel27"
+              - "xbt/channel28"
+              - "xbt/channel29"
+              - "xbt/channel30"
+              - "xbt/channel31"
+              - "xbt/channel32"
+        dimensions:
+          bes_channel:
+          time_bes:
+            imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
+
+        
+      density_gradient:
+        source: "ADG_DENSITY_GRADIENT"
+        units: "m^-4"
+        dimensions:
+          time:
+          
+
+  thomson_scattering:
+    imas: thomson_scattering
+    interpolate:
+      time:
+        step: 0.005
+        fill: 'none'
+        dropna: False
+      major_radius:
+        start: 0.3
+        end: 1.5
+        step: 0.01
+        fill: 'none'
+        method: 'linear'
+
+    profiles:
+      t_e_core:
+        source:
+          - name: "AYC_TE_CORE"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "ATM_TE_CORE"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].t_e.time"
+
+      n_e_core:
+        units: "1/m ** 3"
+        source:
+          - name: "AYC_NE_CORE"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "ATM_NE_CORE"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].n_e.time"
+
+      t_e:
+        source:
+          - name: "AYC_TE"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "ATM_TE"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        imas: "thomson_scattering.channel[:].t_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].t_e.time"
+          major_radius:
+            source:
+              - name: "AYC_R"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "ATM_R"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].position.r" 
+      n_e:
+        source:
+          - name: "AYC_NE"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "ATM_NE"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        imas: "thomson_scattering.channel[:].n_e"
+        dimensions:
+          time:
+            imas: "thomson_scattering.channel[:].n_e.time"
+          major_radius:
+            source:
+              - name: "AYC_R"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "ATM_R"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].position.r" 
+      p_e:
+        source:
+          - name: "AYC_PE"
+            shot_range:
+              shot_min: 22831
+              shot_max: 30471
+          - name: "ATM_PE"
+            shot_range:
+              shot_min: 1
+              shot_max: 22831
+        dimensions:
+          time:
+          major_radius:
+            source:
+              - name: "AYC_R"
+                shot_range:
+                  shot_min: 22831
+                  shot_max: 30471
+              - name: "ATM_R"
+                shot_range:
+                  shot_min: 1
+                  shot_max: 22831
+            imas: "thomson_scattering.channel[:].position.r" 
+
+  charge_exchange:
+    imas: charge_exchange
+    interpolate:
+      time:
+        step: 0.005
+        method: 'zero'
+      major_radius:
+        start: 0
+        end: 1.6
+        step: 0.01
+        method: "linear"
+    profiles:
+      t_i:
+        source: "ACT_SS_TEMPERATURE" 
+        imas: "charge_exchange.channel[:].ion[:].t_i"
+        dimensions:
+          time:
+            imas: "charge_exchange.time"
+          
+          major_radius:
+            imas: "charge_exchange.channel[:].position.r" 
+
+      v_i:
+        source: "ACT_SS_VELOCITY" 
+        dimensions:
+          time:
+            imas: "charge_exchange.time"
+          
+          major_radius:
+            imas: "charge_exchange.channel[:].position.r" 
+            
+  soft_x_rays:
+    interpolate:
+      time:
+        step: 2e-6
+
+    profiles:
+      tangential_cam:
+        source: 
+          - name: "XSX/TCAM"
+            shot_range:
+              shot_min: 25814
+              shot_max: 30471
+            channels:
+              - '/xsx/TCAM/1'
+              - '/xsx/TCAM/2'
+              - '/xsx/TCAM/3'
+              - '/xsx/TCAM/4'
+              - '/xsx/TCAM/5'
+              - '/xsx/TCAM/6'
+              - '/xsx/TCAM/7'
+              - '/xsx/TCAM/8'
+              - '/xsx/TCAM/9'
+              - '/xsx/TCAM/10'
+              - '/xsx/TCAM/11'
+              - '/xsx/TCAM/12'
+              - '/xsx/TCAM/13'
+              - '/xsx/TCAM/14'
+              - '/xsx/TCAM/15'
+              - '/xsx/TCAM/16'
+              - '/xsx/TCAM/17'
+              - '/xsx/TCAM/18'
+          - name: "XSX/TCAM"
+            shot_range:
+              shot_min: 1
+              shot_max: 25814
+            channels:
+              - 'XSX_TCAM#1'
+              - 'XSX_TCAM#2'
+              - 'XSX_TCAM#3'
+              - 'XSX_TCAM#4'
+              - 'XSX_TCAM#5'
+              - 'XSX_TCAM#6'
+              - 'XSX_TCAM#7'
+              - 'XSX_TCAM#8'
+              - 'XSX_TCAM#9'
+              - 'XSX_TCAM#10'
+              - 'XSX_TCAM#11'
+              - 'XSX_TCAM#12'
+              - 'XSX_TCAM#13'
+              - 'XSX_TCAM#14'
+              - 'XSX_TCAM#15'
+              - 'XSX_TCAM#16'
+              - 'XSX_TCAM#17'
+              - 'XSX_TCAM#18'
+        units: "V"
+        dimensions:
+          tangential_cam_channel:
+          time: 
+            imas: "soft_x_rays.time"
+
+      horizontal_cam_lower:
+        source:
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 25814
+              shot_max: 30471
+            channels:
+              - '/xsx/HCAM/L/1'
+              - '/xsx/HCAM/L/2'
+              - '/xsx/HCAM/L/3'
+              - '/xsx/HCAM/L/4'
+              - '/xsx/HCAM/L/5'
+              - '/xsx/HCAM/L/6'
+              - '/xsx/HCAM/L/7'
+              - '/xsx/HCAM/L/8'
+              - '/xsx/HCAM/L/9'
+              - '/xsx/HCAM/L/10'
+              - '/xsx/HCAM/L/11'
+              - '/xsx/HCAM/L/12'
+              - '/xsx/HCAM/L/13'
+              - '/xsx/HCAM/L/14'
+              - '/xsx/HCAM/L/15'
+              - '/xsx/HCAM/L/16'
+              - '/xsx/HCAM/L/17'
+              - '/xsx/HCAM/L/18'
+          - name: "XSX/HCAM/L"
+            shot_range:
+              shot_min: 1
+              shot_max: 25814
+            channels:
+              - 'XSX_HCAML#1'
+              - 'XSX_HCAML#2'
+              - 'XSX_HCAML#3'
+              - 'XSX_HCAML#4'
+              - 'XSX_HCAML#5'
+              - 'XSX_HCAML#6'
+              - 'XSX_HCAML#7'
+              - 'XSX_HCAML#8'
+              - 'XSX_HCAML#9'
+              - 'XSX_HCAML#10'
+              - 'XSX_HCAML#11'
+              - 'XSX_HCAML#12'
+              - 'XSX_HCAML#13'
+              - 'XSX_HCAML#14'
+              - 'XSX_HCAML#15'
+              - 'XSX_HCAML#16'
+              - 'XSX_HCAML#17'
+              - 'XSX_HCAML#18'
+        units: "V"
+        dimensions:
+          horizontal_cam_lower_channel:
+          time: 
+            imas: "soft_x_rays.time"
+
+      horizontal_cam_upper:
+        source:
+          - name: "XSX/HCAM/U"
+            shot_range:
+              shot_min: 25814
+              shot_max: 30471
+            channels:
+              - '/xsx/HCAM/U/1'
+              - '/xsx/HCAM/U/2'
+              - '/xsx/HCAM/U/3'
+              - '/xsx/HCAM/U/4'
+              - '/xsx/HCAM/U/5'
+              - '/xsx/HCAM/U/6'
+              - '/xsx/HCAM/U/7'
+              - '/xsx/HCAM/U/8'
+              - '/xsx/HCAM/U/9'
+              - '/xsx/HCAM/U/10'
+              - '/xsx/HCAM/U/11'
+              - '/xsx/HCAM/U/12'
+              - '/xsx/HCAM/U/13'
+              - '/xsx/HCAM/U/14'
+              - '/xsx/HCAM/U/15'
+              - '/xsx/HCAM/U/16'
+              - '/xsx/HCAM/U/17'
+              - '/xsx/HCAM/U/18'
+          - name: "XSX/HCAM/U"
+            shot_range:
+              shot_min: 1
+              shot_max: 25814
+            channels:
+              - 'XSX_HCAMU#1'
+              - 'XSX_HCAMU#2'
+              - 'XSX_HCAMU#3'
+              - 'XSX_HCAMU#4'
+              - 'XSX_HCAMU#5'
+              - 'XSX_HCAMU#6'
+              - 'XSX_HCAMU#7'
+              - 'XSX_HCAMU#8'
+              - 'XSX_HCAMU#9'
+              - 'XSX_HCAMU#10'
+              - 'XSX_HCAMU#11'
+              - 'XSX_HCAMU#12'
+              - 'XSX_HCAMU#13'
+              - 'XSX_HCAMU#14'
+              - 'XSX_HCAMU#15'
+              - 'XSX_HCAMU#16'
+              - 'XSX_HCAMU#17'
+              - 'XSX_HCAMU#18'
+        units: "V"
+        dimensions:
+          horizontal_cam_upper_channel:
+          time: 
+            imas: "soft_x_rays.time"
+
+  camera_visible:
+    interpolate:
+      time:
+        step: 0.002
+    profiles:
+      camera_lower:
+        source: "RBA"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimensions:
+          time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
+          height_a:
+          width_a:
+      camera_center:
+        source: "RBB"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimensions:
+          time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
+          height_b:
+          width_b:
+      camera_color:
+        source: "RGB"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimensions:
+          time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
+          height_c:
+          width_c:

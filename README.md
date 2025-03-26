@@ -23,12 +23,11 @@ Below is a brief overview of the project structure
 
 ## Installation and Setup
 
-Clone the repository and fetch data files (Git LFS must be installed):
+Clone the repository and fetch data files:
 
 ```sh
 git clone git@github.com:ukaea/fair-mast-ingestion.git
 cd fair-mast-ingestion
-git lfs pull
 ```
 
 Create a new python virtual environment:

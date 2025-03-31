@@ -701,7 +701,7 @@ datasets:
             shot_range:
               shot_min: 27620
               shot_max: 30473
-            background_window:
+            background_correction:
               tmin: 0
               tmax: 10
             channels:
@@ -721,7 +721,7 @@ datasets:
             shot_range:
               shot_min: 11708
               shot_max: 27619
-            background_window:
+            background_correction:
               tmin: 0
               tmax: 10
             channels:

@@ -33,7 +33,7 @@ class ShotRange(BaseModel):
     shot_max: int = Field(gt=0)
 
 
-class BackgroundWindow(BaseModel):
+class BackgroundCorrection(BaseModel):
     tmin: int
     tmax: int
 
@@ -42,7 +42,7 @@ class Source(BaseModel):
     name: str
     shot_range: Optional[ShotRange] = None
     channels: Optional[list[str]] = None
-    background_window: Optional[BackgroundWindow] = None
+    background_correction: Optional[BackgroundCorrection] = None
 
 
 SourceType = Union[list[Source], str]
@@ -74,14 +74,14 @@ class DatasetInfo(BaseModel):
     imas: Optional[str] = None
     profiles: dict[str, ProfileInfo]
     transforms: Optional[dict[str, Any]] = None
-    interpolate: Optional[dict[str, InterpolationParams]] = None #start, end, step, method, fill, dropna
+    interpolate: Optional[dict[str, InterpolationParams]] = None
     description: Optional[str] = ""
 
 
 class GlobalInterpolateParams(BaseModel):
     tmin: Optional[float] = None
     tmax: Optional[float] = None
-    params: Optional[dict[str, InterpolationParams]] = {} #start, end, step, method, fill, dropna
+    params: Optional[dict[str, InterpolationParams]] = {}
 
 
 class Mapping(BaseModel):

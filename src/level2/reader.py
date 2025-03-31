@@ -30,7 +30,7 @@ class DatasetReader:
             return dataset
 
         dataset = self.apply_interpolation(dataset, name)
-        dataset = self.apply_transforms(dataset, name) #adding here?
+        dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
         return dataset
 
@@ -57,7 +57,7 @@ class DatasetReader:
 
     def read_profile(
         self, shot: int, dataset_name: str, profile_name: str
-    ) -> xr.DataArray: #eg 30421 magnetics b_field_tor_probe_saddle_voltage
+    ) -> xr.DataArray:
         self.set_shot(shot)
 
         profile = self._mapping.datasets[dataset_name].profiles[profile_name]
@@ -120,11 +120,10 @@ class DatasetReader:
                 f"All values are NaN for shot {self._shot} and profile {profile_name}"
             )
 
-        if source.background_window:
-            start, end = source.background_window.tmin, source.background_window.tmax
+        if source.background_correction:
+            start, end = source.background_correction.tmin, source.background_correction.tmax
             logger.info(f"Applying background subtraction for {profile_name} using window {start}-{end}")
             subtractor = BackgroundSubtractionTransform(start, end)
-            print(subtractor)
             item = subtractor.transform_array(item)
         return item
 

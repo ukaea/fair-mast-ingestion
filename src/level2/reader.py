@@ -122,22 +122,11 @@ class DatasetReader:
             start, end = source.background_window.tmin, source.background_window.tmax
             logger.info(f"Applying background subtraction for {profile_name} using window {start}-{end}")
             subtractor = BackgroundSubtractionTransform(start, end)
+            print(subtractor)
             item = subtractor.transform_array(item)
-
         return item
 
-    #def apply_background(
-    #        self,
-    #        dataset: xr.Dataset
-    #) -> xr.Dataset:
-        
-
-
-    def apply_interpolation(
-        self,
-        dataset: xr.Dataset,
-        dataset_name: str,
-    ) -> xr.Dataset:
+    def apply_interpolation(self, dataset: xr.Dataset, dataset_name: str) -> xr.Dataset:
         dataset_config = self._mapping.datasets[dataset_name]
         global_params = self._mapping.global_interpolate
         interpolator = DatasetInterpolationTransform(dataset_config, global_params)

@@ -11,7 +11,7 @@ def sample_dataset() -> xr.Dataset:
         data_vars=dict(
             data=("time", np.random.random(100)),
             error=("time", np.random.random(100)),
-            time=("time", np.linspace(0, 10, 100)),
+            time=("time", np.linspace(-5, 10, 100)),
         )
     )
     return dataset

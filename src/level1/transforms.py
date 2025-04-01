@@ -446,22 +446,21 @@ class AddGeometryUDA(BaseTransform):
         return dataset
 
 class AddToroidalAngle2(BaseTransform):
-    def __init__(self, var_name: str, phi_2_value: int = 330):
+    def __init__(self, stem: str, var_name: str, phi_2_value: int = 330):
+        self.stem = stem
         self.var_name = var_name
         self.phi_2_value = phi_2_value
     
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        # Ensure the reference dimension exists in the dataset
         if self.var_name not in dataset.dims:
             raise ValueError(f"Dimension '{self.var_name}' not found in dataset.")
         
-        # Rename 'ccbv_phi' to 'ccbv_phi_1' if it exists
-        if "ccbv_phi" in dataset:
-            dataset = dataset.rename({"ccbv_phi": "ccbv_phi_1"})
+        if f"{self.stem}_phi" in dataset:
+            dataset = dataset.rename({f"{self.stem}_phi": f"{self.stem}_phi_1"})
         
         # Add 'ccbv_phi_2' with values of 330
         phi_2 = np.full(dataset.sizes[self.var_name], self.phi_2_value)
-        dataset["ccbv_phi_2"] = xr.DataArray(phi_2, dims=[self.var_name])
+        dataset[f"{self.stem}_phi_2"] = xr.DataArray(phi_2, dims=[self.var_name])
         
         return dataset
 class AlignChannels(BaseTransform):

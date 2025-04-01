@@ -595,17 +595,17 @@ class MASTPipelines(Pipelines):
                     TensoriseChannels("ccbv"),
                     AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("ccbv"),
-                    AddToroidalAngle2("ccbv_channel"),
+                    AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr"),
                     AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("obr"),
-                    AddToroidalAngle2("obr_channel"),
+                    AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv"),
                     AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("obv"),
-                    AddToroidalAngle2("obv_channel"),
+                    AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
                     AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/flux_loop_test.nc"),
@@ -1169,17 +1169,17 @@ class MASTPipelines(Pipelines):
                     TensoriseChannels("ccbv"),
                     AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("ccbv"),
-                    AddToroidalAngle2("ccbv_channel"),
+                    AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr"),
                     AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("obr"),
-                    AddToroidalAngle2("obr_channel"),
+                    AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv"),
                     AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
                     AlignChannels("obv"),
-                    AddToroidalAngle2("obv_channel"),
+                    AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
                     AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/flux_loop_test.nc"),

@@ -4,7 +4,10 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Optional
 
+import base64
 import numpy as np
+import pyuda
+import pandas as pd
 import pyarrow.parquet as pq
 import xarray as xr
 from pint import UnitRegistry
@@ -363,7 +366,104 @@ class AddGeometry(BaseTransform):
         dataset = dataset.compute()
         return dataset
 
+class AddGeometryUDA(BaseTransform):
+    def __init__(self, stem: str, name: str, path: str, shot: int, include_metadata: Optional[bool] = True):
+        self.stem = stem
+        self.name = name
+        self.path = path
+        self.shot = shot
+        self.include_metadata = include_metadata
+        self.client = pyuda.Client()
+        self.geom_xarray = self._fetch_and_process_geometry()
 
+    def _fetch_and_process_geometry(self):
+        # Retrieve geometry data
+        geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
+        geom_data = json.loads(geom_data.data[self.stem].jsonify())
+
+        # Flatten structure
+        all_rows = self._extract_rows(geom_data)
+
+        # Create DataFrame
+        geom_df = pd.DataFrame(all_rows)
+        geom_df = geom_df.dropna(subset=['name'])  # Drop rows where 'name' is NaN
+        geom_df = geom_df.drop(['name_', 'name'], axis=1, errors='ignore')
+        
+        # Rename columns
+        geom_df.columns = [self.name + "_" + c for c in geom_df.columns]
+        index_name = f"{self.name}_geometry_index"
+        geom_df[index_name] = [f"{self.name}{index+1:02}" for index in range(len(geom_df))]
+        geom_df = geom_df.set_index(index_name)
+        geom_xarray = geom_df.to_xarray()
+
+        # Add metadata if enabled
+        if self.include_metadata:
+            uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+            cleaned_metadata = self._decode_metadata(uda_metadata)
+            geom_xarray.attrs.update(cleaned_metadata)
+
+        return geom_xarray
+    
+    def _extract_rows(self, node, rows=None, current_row=None):
+        if rows is None:
+            rows = []
+        if current_row is None:
+            current_row = {}
+
+        if isinstance(node, dict):
+            if 'name_' in node:
+                if current_row:
+                    rows.append(current_row.copy())
+                current_row = {'name': node['name_']}
+            for key, value in node.items():
+                if key not in ['children', 'signal_type', 'dimensions', 'units']:
+                    current_row[key] = value
+                elif key == 'children':
+                    self._extract_rows(value, rows, current_row)
+            if 'name' in current_row and pd.notna(current_row['name']) and current_row not in rows:
+                rows.append(current_row)
+        elif isinstance(node, list):
+            for item in node:
+                self._extract_rows(item, rows, current_row)
+
+        return rows
+
+    def _decode_metadata(self, uda_metadata):
+        cleaned_metadata = {}
+        for key, value in uda_metadata.items():
+            if isinstance(value, dict) and '_type' in value and value['_type'] == 'numpy.ndarray':
+                base64_value = value['data']['value']
+                decoded_value = base64.b64decode(base64_value)
+                cleaned_metadata[key] = np.frombuffer(decoded_value, dtype=np.int64)[0]
+            else:
+                cleaned_metadata[key] = value
+        return cleaned_metadata
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        geom_data = self.geom_xarray.copy()
+        dataset = xr.merge([dataset, geom_data], combine_attrs="no_conflicts", join="left")
+        dataset = dataset.compute()
+        return dataset
+
+class AddToroidalAngle2(BaseTransform):
+    def __init__(self, var_name: str, phi_2_value: int = 330):
+        self.var_name = var_name
+        self.phi_2_value = phi_2_value
+    
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        # Ensure the reference dimension exists in the dataset
+        if self.var_name not in dataset.dims:
+            raise ValueError(f"Dimension '{self.var_name}' not found in dataset.")
+        
+        # Rename 'ccbv_phi' to 'ccbv_phi_1' if it exists
+        if "ccbv_phi" in dataset:
+            dataset = dataset.rename({"ccbv_phi": "ccbv_phi_1"})
+        
+        # Add 'ccbv_phi_2' with values of 330
+        phi_2 = np.full(dataset.sizes[self.var_name], self.phi_2_value)
+        dataset["ccbv_phi_2"] = xr.DataArray(phi_2, dims=[self.var_name])
+        
+        return dataset
 class AlignChannels(BaseTransform):
     def __init__(self, source: str):
         self.source = source

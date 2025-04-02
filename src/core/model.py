@@ -33,10 +33,16 @@ class ShotRange(BaseModel):
     shot_max: int = Field(gt=0)
 
 
+class BackgroundCorrection(BaseModel):
+    tmin: int
+    tmax: int
+
+
 class Source(BaseModel):
     name: str
     shot_range: Optional[ShotRange] = None
     channels: Optional[list[str]] = None
+    background_correction: Optional[BackgroundCorrection] = None
 
 
 SourceType = Union[list[Source], str]

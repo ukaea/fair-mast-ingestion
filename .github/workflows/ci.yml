@@ -1,5 +1,5 @@
 name: CI
-on: [ pull_request ]
+on: [ push, pull_request ]
 
 jobs:
   run-tests:
@@ -10,7 +10,6 @@ jobs:
 
     - name: Set up environment
       run: |
-        git lfs fetch && git lfs pull
         sudo apt update && sudo apt install -y libopenmpi-dev
         pip install uv
         uv venv venv

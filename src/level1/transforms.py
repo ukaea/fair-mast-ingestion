@@ -367,12 +367,11 @@ class AddGeometry(BaseTransform):
         return dataset
 
 class AddGeometryUDA(BaseTransform):
-    def __init__(self, stem: str, name: str, path: str, shot: int, include_metadata: Optional[bool] = True):
+    def __init__(self, stem: str, name: str, path: str, shot: int):
         self.stem = stem
         self.name = name
         self.path = path
         self.shot = shot
-        self.include_metadata = include_metadata
         self.client = pyuda.Client()
         self.geom_xarray = self._fetch_and_process_geometry()
 
@@ -396,11 +395,11 @@ class AddGeometryUDA(BaseTransform):
         geom_df = geom_df.set_index(index_name)
         geom_xarray = geom_df.to_xarray()
 
-        # Add metadata if enabled
-        if self.include_metadata:
-            uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
-            cleaned_metadata = self._decode_metadata(uda_metadata)
-            geom_xarray.attrs.update(cleaned_metadata)
+        # Add metadata
+        uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+        cleaned_metadata = self._decode_metadata(uda_metadata)
+        for var_name in geom_xarray.data_vars:
+            geom_xarray[var_name].attrs.update(cleaned_metadata)
 
         return geom_xarray
     

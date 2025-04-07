@@ -74,6 +74,7 @@ datasets:
 
       total_pressure:
         source: "epm/output/radialProfiles/totalPressure"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "epm/time"

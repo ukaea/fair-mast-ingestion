@@ -593,17 +593,17 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
-                    AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("ccbv"),
                     AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr"),
-                    AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("obr"),
                     AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv"),
-                    AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("obv"),
                     AddToroidalAngle2("obv", "obv_channel"),
 
@@ -1167,17 +1167,17 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
-                    AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("ccbv"),
                     AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr"),
-                    AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("obr"),
                     AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv"),
-                    AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc", include_metadata=False),
+                    AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
                     AlignChannels("obv"),
                     AddToroidalAngle2("obv", "obv_channel"),
 
@@ -1230,15 +1230,15 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
-                    #TensoriseChannels("sad_out_l"),
-                    #AddGeometry("sad_out_l", "geometry/data/xmb/xmb_sad_l.parquet"),
-                    #AlignChannels("sad_out_l"),
-                    #TensoriseChannels("sad_out_u"),
-                    #AddGeometry("sad_out_u", "geometry/data/xmb/xmb_sad_u.parquet"),
-                    #AlignChannels("sad_out_u"),
-                    #TensoriseChannels("sad_out_m"),
-                    #AddGeometry("sad_out_m", "geometry/data/xmb/xmb_sad_m.parquet"),
-                    #AlignChannels("sad_out_m"),
+                    TensoriseChannels("sad_out_l"),
+                    AddGeometryUDA('lower', "sad_out_l", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
+                    AlignChannels("sad_out_l"),
+                    TensoriseChannels("sad_out_m"),
+                    AddGeometryUDA('middle', "sad_out_m", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
+                    AlignChannels("sad_out_m"),
+                    TensoriseChannels("sad_out_u"),
+                    AddGeometryUDA('upper', "sad_out_u", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
+                    AlignChannels("sad_out_u"),
                 ]
             ),
             "xmc": Pipeline(
@@ -1249,6 +1249,9 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
+
+                    ### CCMT only has 201-212 in the data, whereas geom has 101-112, 301-312. do we need all if we only have 201-212?
+
                     #TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
                     #AddGeometry("cc_mt", "geometry/data/xmc/ccmt.parquet"),
                     #AlignChannels("cc_mt"),

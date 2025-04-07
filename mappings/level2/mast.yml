@@ -39,6 +39,7 @@ datasets:
         source: "EFM_Q(R)" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.q"
+        dimension_order: ['profile_r', 'time']
         dimensions:
           time:
             units: 's'
@@ -49,6 +50,7 @@ datasets:
       j_tor:
         source: "EFM_PLASMA_CURR(R,Z)" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
+        dimension_order: ['z', 'major_radius', 'time']
         dimensions:
           time:
             units: 's'
@@ -65,6 +67,7 @@ datasets:
       psi:
         source: "EFM_PSI(R,Z)" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
+        dimension_order: ['z', 'major_radius', 'time']
         dimensions:
           time:
             units: 's'
@@ -223,6 +226,7 @@ datasets:
         source: "EFM_LCFS(R)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
         fill_value: 9.98876992e+08
+        dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -232,6 +236,7 @@ datasets:
         source: "EFM_LCFS(Z)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
         fill_value: 9.98876992e+08
+        dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -1169,6 +1174,7 @@ datasets:
               shot_min: 1
               shot_max: 22831
         imas: "thomson_scattering.channel[:].t_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].t_e.time"
@@ -1194,6 +1200,7 @@ datasets:
               shot_min: 1
               shot_max: 22831
         imas: "thomson_scattering.channel[:].n_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].n_e.time"
@@ -1218,6 +1225,7 @@ datasets:
             shot_range:
               shot_min: 1
               shot_max: 22831
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
           major_radius:
@@ -1247,6 +1255,7 @@ datasets:
       t_i:
         source: "ACT_SS_TEMPERATURE" 
         imas: "charge_exchange.channel[:].ion[:].t_i"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "charge_exchange.time"
@@ -1254,14 +1263,17 @@ datasets:
           major_radius:
             imas: "charge_exchange.channel[:].position.r" 
 
+
       v_i:
         source: "ACT_SS_VELOCITY" 
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "charge_exchange.time"
           
           major_radius:
             imas: "charge_exchange.channel[:].position.r" 
+
             
   soft_x_rays:
     interpolate:
@@ -1439,6 +1451,7 @@ datasets:
       camera_lower:
         source: "RBA"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimension_order: ['height_a', 'width_a', 'time']
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
@@ -1447,6 +1460,7 @@ datasets:
       camera_center:
         source: "RBB"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimension_order: ['height_b', 'width_b', 'time']
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
@@ -1455,6 +1469,7 @@ datasets:
       camera_color:
         source: "RGB"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimension_order: ['height_c', 'width_c', 'time']
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"

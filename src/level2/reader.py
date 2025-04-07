@@ -115,14 +115,22 @@ class DatasetReader:
         item = item.sortby([name for name in dim_names if "channel" not in name])
         item = item.drop_duplicates(dim=...)
 
+        if profile.dimension_order is not None:
+            item = item.transpose(*profile.dimension_order)
+
         if item.isnull().all():
             raise MissingProfileError(
                 f"All values are NaN for shot {self._shot} and profile {profile_name}"
             )
 
         if source.background_correction:
-            start, end = source.background_correction.tmin, source.background_correction.tmax
-            logger.info(f"Applying background subtraction for {profile_name} using window {start}-{end}")
+            start, end = (
+                source.background_correction.tmin,
+                source.background_correction.tmax,
+            )
+            logger.info(
+                f"Applying background subtraction for {profile_name} using window {start}-{end}"
+            )
             subtractor = BackgroundSubtractionTransform(start, end)
             item = subtractor.transform_array(item)
         return item

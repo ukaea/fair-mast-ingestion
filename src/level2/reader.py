@@ -154,6 +154,8 @@ class DatasetReader:
         dataset.attrs["name"] = name
         dataset.attrs["description"] = self._mapping.datasets[name].description
         dataset.attrs["imas"] = self._mapping.datasets[name].imas
+        dataset.attrs["license"] = {"name": "Creative Commons 4.0 BY-SA", "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"}
+
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

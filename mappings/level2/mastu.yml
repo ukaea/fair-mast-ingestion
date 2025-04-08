@@ -28,6 +28,7 @@ datasets:
         source: "epm/output/fluxFunctionProfiles/q" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.q"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -40,6 +41,7 @@ datasets:
       j_tor:
         source: "epm/output/profiles2D/jphi" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
+        dimension_order: ['major_radius', 'z', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -56,6 +58,7 @@ datasets:
       psi:
         source: "epm/output/profiles2D/poloidalFlux" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
+        dimension_order: ['major_radius', 'z', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -71,6 +74,7 @@ datasets:
 
       total_pressure:
         source: "epm/output/radialProfiles/totalPressure"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -229,6 +233,7 @@ datasets:
       lcfs_r:
         source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/RBOUNDARY" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
+        dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -237,6 +242,7 @@ datasets:
       lcfs_z:
         source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/ZBOUNDARY" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
+        dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -968,6 +974,7 @@ datasets:
       t_e:
         imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayc/t_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].t_e.time"
@@ -979,6 +986,7 @@ datasets:
       n_e:
         imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayc/n_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].n_e.time"
@@ -989,6 +997,7 @@ datasets:
 
       p_e:
         source: "ayc/p_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "ayc/time"
@@ -1025,6 +1034,7 @@ datasets:
       t_e:
         imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayd/t_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].t_e.time"
@@ -1036,6 +1046,7 @@ datasets:
       n_e:
         imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayd/n_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             imas: "thomson_scattering.channel[:].n_e.time"
@@ -1046,6 +1057,7 @@ datasets:
 
       p_e:
         source: "ayd/p_e"
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "ayd/time"
@@ -1081,6 +1093,7 @@ datasets:
       t_i:
         imas: "charge_exchange.channel[:].t_i_average.data"
         source: "act/cel3/ss/pvb/c5291/temperature" 
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "act/cel3/ss/time"
@@ -1090,6 +1103,7 @@ datasets:
 
       v_i:
         source: "act/cel3/ss/pvb/c5291/velocity" 
+        dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "act/cel3/ss/time"
@@ -1281,6 +1295,7 @@ datasets:
       camera_center:
         source: "RBA"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        dimension_order: ['height_a', 'width_a', 'time']
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"

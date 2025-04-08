@@ -65,6 +65,7 @@ class ProfileInfo(BaseModel):
     fill_value: Optional[float] = None
     target_units: Optional[str] = None
     description: Optional[str] = ""
+    dimension_order: Optional[list[str]] = None
 
     class Config:
         arbitrary_types_allowed = True

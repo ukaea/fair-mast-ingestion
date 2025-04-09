@@ -13,9 +13,7 @@ def try_uda():
         client = pyuda.Client()
         client.get("ip", 30421)
         return False
-    except ImportError:
-        return True
-    except pyuda.ClientException:
+    except Exception:
         return True
 
 

@@ -52,10 +52,10 @@ class DatasetWriter(ABC):
 
 class ZarrDatasetWriter(DatasetWriter):
     def __init__(
-        self, output_path: str, mode: str = "single", zarr_format: int = 2, **kwargs
+        self, output_path: str, mode: str = "single", zarr_version: int = 2, **kwargs
     ):
         super().__init__(output_path)
-        self.version = zarr_format
+        self.version = zarr_version
         self.mode = mode
 
     @property
@@ -73,7 +73,11 @@ class ZarrDatasetWriter(DatasetWriter):
     def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
         file_name = self.output_path / file_name
         dataset.to_zarr(
-            file_name, group=name, mode="w", zarr_format=self.version, consolidated=True
+            file_name,
+            group=name,
+            mode="w",
+            zarr_version=self.version,
+            consolidated=True,
         )
         zarr.consolidate_metadata(file_name)
 
@@ -81,7 +85,7 @@ class ZarrDatasetWriter(DatasetWriter):
         file_name = Path(file_name)
         path = self.output_path / f"{file_name.stem}/{name}.zarr"
         path.parent.mkdir(exist_ok=True, parents=True)
-        dataset.to_zarr(path, mode="a", zarr_format=self.version, consolidated=True)
+        dataset.to_zarr(path, mode="a", zarr_version=self.version, consolidated=True)
         zarr.consolidate_metadata(path)
 
 

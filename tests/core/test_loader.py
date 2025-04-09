@@ -15,6 +15,8 @@ def try_uda():
         return False
     except ImportError:
         return True
+    except pyuda.ClientException:
+        return True
 
 
 @pytest.mark.skipif(try_uda(), reason="Pyuda client unavailable")

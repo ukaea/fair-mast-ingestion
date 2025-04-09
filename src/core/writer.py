@@ -44,10 +44,14 @@ class DatasetWriter(ABC):
             for attr_name, item in var.attrs.items():
                 if isinstance(item, dict) or isinstance(item, list):
                     var.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
+                if item is None:
+                    var.attrs[attr_name] = ""
 
         for attr_name, item in dataset.attrs.items():
             if isinstance(item, dict) or isinstance(item, list):
-                var.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
+                dataset.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
+            if item is None:
+                dataset.attrs[attr_name] = ""
 
 
 class ZarrDatasetWriter(DatasetWriter):

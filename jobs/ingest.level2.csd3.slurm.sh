@@ -14,5 +14,5 @@ source .venv/bin/activate
 source /rds/project/rds-mOlK9qn0PlQ/fairmast/uda-ssl.sh
 
 mpirun -n $num_workers \
-    python3 -m src.level2.main mappings/level2/mast.yml --shot-min 11695 --shot-max 30474 -e camera_visible --force
+    python3 -m src.level2.main mappings/level2/mast.yml -c ./configs/level2.csd3.yml --shot-min 11695 --shot-max 30474 -e camera_visible
 

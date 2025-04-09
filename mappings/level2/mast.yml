@@ -380,6 +380,16 @@ datasets:
           time:
             imas: "summary.time"
 
+  interferometer:
+    imas: "interferometer"
+    profiles:
+      n_e_line:
+        source: "ANE_DENSITY"
+        imas: "interferometer.channel[:].n_e_line.data"
+        dimensions:
+          time:
+            imas: "interferometer.channel[:].n_e_line.time"
+
   gas_injection:
     imas: "gas_injection"
     profiles:

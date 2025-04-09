@@ -25,6 +25,7 @@ dependencies = {file = ["requirements.txt"]}
 dev = [
     "pytest",
     "pytest-mock",
+    "pytest-env",
     "ruff"
 ]
 

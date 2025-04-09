@@ -6,7 +6,18 @@ import xarray as xr
 from src.core.load import SALLoader, UDALoader, ZarrLoader
 
 
-@pytest.mark.skip(reason="Pyuda client unavailable")
+def try_uda():
+    try:
+        import pyuda
+
+        client = pyuda.Client()
+        client.get("ip", 30421)
+        return False
+    except ImportError:
+        return True
+
+
+@pytest.mark.skipif(try_uda(), reason="Pyuda client unavailable")
 def test_load_uda():
     loader = UDALoader()
     signal = loader.load(30420, "ip")

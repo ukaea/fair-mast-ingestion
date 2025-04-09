@@ -1,4 +1,3 @@
-metadatabase_file: /common/tmp/sjackson/level1.ukaea.db
 readers:
   uda:
     type: 'uda'
@@ -16,10 +15,4 @@ writer:
   type: "zarr"
   options:
     zarr_format: 2
-    output_path: "/tmp/fair-mast-ingestion/level1"
-
-# upload:
-#   base_path: "s3://fairmast/mastu/level1/shots"
-#   mode: 's5cmd'
-#   credentials_file: "../fair-mast-ingestion/.s5cfg.ukaea"
-#   endpoint_url: "http://mon3.cepheus.hpc.l:8000"
+    output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level1"

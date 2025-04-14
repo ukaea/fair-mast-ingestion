@@ -15,4 +15,4 @@ writer:
   type: "zarr"
   options:
     zarr_format: 2
-    output_path: "/tmp/fair-mast/level1"
+    output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2"

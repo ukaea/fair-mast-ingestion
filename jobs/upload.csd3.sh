@@ -19,3 +19,4 @@ local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/
 remote_path=s3://mast/level2/shots/
 
 s5cmd --credentials-file $credential --endpoint-url $endpoint cp --acl public-read $local_path $remote_path
+s5cmd --credentials-file $credential --endpoint-url $endpoint sync --delete --acl public-read $local_path $remote_path

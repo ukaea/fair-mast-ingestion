@@ -56,7 +56,10 @@ class DatasetBuilder:
             dataset.attrs["name"] = group_name
             dataset.attrs["description"] = dataset_info.description
             dataset.attrs["quality"] = dataset_info.quality
-            dataset.attrs["license"] = {"name": "Creative Commons 4.0 BY-SA", "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"}
+            dataset.attrs["license"] = {
+                "name": "Creative Commons 4.0 BY-SA",
+                "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+            }
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"
@@ -161,7 +164,10 @@ class DatasetBuilder:
                 dataset.attrs["name"] = name
                 dataset.attrs["source"] = group_name
                 dataset.attrs["quality"] = signal_info.quality
-                dataset.attrs["license"] = {"name": "Creative Commons 4.0 BY-SA", "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"}
+                dataset.attrs["license"] = {
+                    "name": "Creative Commons 4.0 BY-SA",
+                    "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+                }
                 datasets[name] = dataset
             except MissingProfileError as e:
                 if "StructuredData" not in str(e):

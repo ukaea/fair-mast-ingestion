@@ -1153,18 +1153,15 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
-
-                    ### CCMT only has 201-212 in the data, whereas geom has 101-112, 301-312. I assume the data is averaged over the 3 z heights?
-
-                    #TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
-                    #AddGeometryUDA('centrecolumn', "XMC_CC_MT", "/magnetics/mirnovs", "/common/uda-scratch/jg3176/mirnovs.nc"),
-                    #AlignChannels("cc_mt"),
-                    #TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
-                    #AddGeometry("cc_mv", "geometry/data/xmc/ccmv.parquet"),
-                    #AlignChannels("cc_mv"),
-                    #TensoriseChannels("omv", regex=r"omv_(\d+)"),
-                    #AddGeometryUDA('outervessel', "XMC_OMV", "/magnetics/mirnovs", "/common/uda-scratch/jg3176/mirnovs.nc"),
-                    #AlignChannels("omv"),
+                    TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
+                    AddGeometryUDA('centrecolumn/toroidal', "cc_mt", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
+                    AlignChannels("cc_mt"),
+                    TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
+                    AddGeometryUDA('centrecolumn/vertical', "cc_mv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
+                    AlignChannels("cc_mv"),
+                    TensoriseChannels("omv", regex=r"omv_(\d+)"),
+                    AddGeometryUDA('outervessel', "omv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
+                    AlignChannels("omv"),
                 ]
             ),
             "xmp": Pipeline(

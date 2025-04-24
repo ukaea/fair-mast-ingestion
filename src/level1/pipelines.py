@@ -657,121 +657,25 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     DropZeroDataset(),
                     TransformUnits(),
-                    #AddGeometry(
-                    #    "p2il_coil_current",
-                    #    "geometry/data/amc/amc_p2il_coil_current.parquet",
-                    #),
-                    #AlignChannels("p2il_coil_current"),
-                    #AddGeometry(
-                    #    "p2iu_coil_current",
-                    #    "geometry/data/amc/amc_p2iu_coil_current.parquet",
-                    #),
-                    #AlignChannels("p2iu_coil_current"),
-                    #AddGeometry(
-                    #    "p2l_case_current",
-                    #    "geometry/data/amc/amc_p2l_case_current.parquet",
-                    #),
-                    #AlignChannels("p2l_case_current"),
-                    #AddGeometry(
-                    #    "p2ol_coil_current",
-                    #    "geometry/data/amc/amc_p2ol_coil_current.parquet",
-                    #),
-                    #AlignChannels("p2ol_coil_current"),
-                    #AddGeometry(
-                    #    "p2ou_coil_current",
-                    #    "geometry/data/amc/amc_p2ou_coil_current.parquet",
-                    #),
-                    #AlignChannels("p2ou_coil_current"),
-                    #AddGeometry(
-                    #    "p2u_case_current",
-                    #    "geometry/data/amc/amc_p2u_case_current.parquet",
-                    #),
-                    #AlignChannels("p2u_case_current"),
-                    #AddGeometry(
-                    #    "p3l_case_current",
-                    #    "geometry/data/amc/amc_p3l_case_current.parquet",
-                    #),
-                    #AlignChannels("p3l_case_current"),
-                    #AddGeometry(
-                    #    "p3l_coil_current",
-                    #    "geometry/data/amc/amc_p3l_coil_current.parquet",
-                    #),
-                    #AlignChannels("p3l_coil_current"),
-                    #AddGeometry(
-                    #    "p3u_case_current",
-                    #    "geometry/data/amc/amc_p3u_case_current.parquet",
-                    #),
-                    #AlignChannels("p3u_case_current"),
-                    #AddGeometry(
-                    #    "p3u_coil_current",
-                    #    "geometry/data/amc/amc_p3u_coil_current.parquet",
-                    #),
-                    #AlignChannels("p3u_coil_current"),
-                    #AddGeometry(
-                    #    "p4l_case_current",
-                    #    "geometry/data/amc/amc_p4l_case_current.parquet",
-                    #),
-                    #AlignChannels("p4l_case_current"),
-                    #AddGeometry(
-                    #    "p4l_coil_current",
-                    #    "geometry/data/amc/amc_p4l_coil_current.parquet",
-                    #),
-                    #AlignChannels("p4l_coil_current"),
-                    #AddGeometry(
-                    #    "p4u_case_current",
-                    #    "geometry/data/amc/amc_p4u_case_current.parquet",
-                    #),
-                    #AlignChannels("p4u_case_current"),
-                    #AddGeometry(
-                    #    "p4u_coil_current",
-                    #    "geometry/data/amc/amc_p4u_coil_current.parquet",
-                    #),
-                    #AlignChannels("p4u_coil_current"),
-                    #AddGeometry(
-                    #    "p5l_case_current",
-                    #    "geometry/data/amc/amc_p5l_case_current.parquet",
-                    #),
-                    #AlignChannels("p5l_case_current"),
-                    #AddGeometry(
-                    #    "p5l_coil_current",
-                    #    "geometry/data/amc/amc_p5l_coil_current.parquet",
-                    #),
-                    #AlignChannels("p5l_coil_current"),
-                    #AddGeometry(
-                    #    "p5u_case_current",
-                    #    "geometry/data/amc/amc_p5u_case_current.parquet",
-                    #),
-                    #AlignChannels("p5u_case_current"),
-                    #AddGeometry(
-                    #    "p5u_coil_current",
-                    #    "geometry/data/amc/amc_p5u_coil_current.parquet",
-                    #),
-                    #AlignChannels("p5u_coil_current"),
-                    #AddGeometry(
-                    #    "p6l_case_current",
-                    #    "geometry/data/amc/amc_p6l_case_current.parquet",
-                    #),
-                    #AlignChannels("p6l_case_current"),
-                    #AddGeometry(
-                    #    "p6l_coil_current",
-                    #    "geometry/data/amc/amc_p6l_coil_current.parquet",
-                    #),
-                    #AlignChannels("p6l_coil_current"),
-                    #AddGeometry(
-                    #    "p6u_case_current",
-                    #    "geometry/data/amc/amc_p6u_case_current.parquet",
-                    #),
-                    #AlignChannels("p6u_case_current"),
-                    #AddGeometry(
-                    #    "p6u_coil_current",
-                    #    "geometry/data/amc/amc_p6u_coil_current.parquet",
-                    #),
-                    #AlignChannels("p6u_coil_current"),
-                    #AddGeometry(
-                    #    "sol_current", "geometry/data/amc/amc_sol_current.parquet"
-                    #),
-                    #AlignChannels("sol_current"),
-                ]#
+                    AddGeometryUDA('p2/p2_inner_upper', "p2_inner_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p2/p2_inner_lower', "p2_inner_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p2/p2_outer_upper', "p2_outer_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p2/p2_outer_lower', "p2_outer_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+
+                    AddGeometryUDA('p3/p3_upper', "p3_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p3/p3_lower', "p3_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+
+                    AddGeometryUDA('p4/p4_upper', "p4_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p4/p4_lower', "p4_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+
+                    AddGeometryUDA('p5/p5_upper', "p5_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p5/p5_lower', "p5_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    
+                    AddGeometryUDA('p6/p6_upper', "p6_upper", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                    AddGeometryUDA('p6/p6_lower', "p6_lower", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+
+                    AddGeometryUDA('sol/sol', "sol", "/magnetics/pfcoil", "/common/uda-scratch/jg3176/pfcoils.nc"),
+                ]
             ),
             "amh": Pipeline(
                 [
@@ -1250,16 +1154,16 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
 
-                    ### CCMT only has 201-212 in the data, whereas geom has 101-112, 301-312. do we need all if we only have 201-212?
+                    ### CCMT only has 201-212 in the data, whereas geom has 101-112, 301-312. I assume the data is averaged over the 3 z heights?
 
                     #TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
-                    #AddGeometry("cc_mt", "geometry/data/xmc/ccmt.parquet"),
+                    #AddGeometryUDA('centrecolumn', "XMC_CC_MT", "/magnetics/mirnovs", "/common/uda-scratch/jg3176/mirnovs.nc"),
                     #AlignChannels("cc_mt"),
                     #TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
                     #AddGeometry("cc_mv", "geometry/data/xmc/ccmv.parquet"),
                     #AlignChannels("cc_mv"),
                     #TensoriseChannels("omv", regex=r"omv_(\d+)"),
-                    #AddGeometry("omv", "geometry/data/xmc/xmc_omv.parquet"),
+                    #AddGeometryUDA('outervessel', "XMC_OMV", "/magnetics/mirnovs", "/common/uda-scratch/jg3176/mirnovs.nc"),
                     #AlignChannels("omv"),
                 ]
             ),

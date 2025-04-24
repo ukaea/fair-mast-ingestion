@@ -378,10 +378,17 @@ class AddGeometryUDA(BaseTransform):
     def _fetch_and_process_geometry(self):
         # Retrieve geometry data
         geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
-        geom_data = json.loads(geom_data.data[self.stem].jsonify())
+        geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
 
         # Flatten structure
-        all_rows = self._extract_rows(geom_data)
+        all_rows = self._extract_rows(geom_data_json)
+
+        if self.name in ["sad_out_l", "sad_out_m", "sad_out_u"]:
+            all_rows = self._saddle_array_extraction(all_rows, geom_data)
+
+        if self.name in ['p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
+                        'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower', 'p5_upper', 'p5_lower', 'p6_upper', 'p6_lower', 'sol']:
+            all_rows = self._pf_array_extraction(all_rows, geom_data)
 
         # Create DataFrame
         geom_df = pd.DataFrame(all_rows)
@@ -393,7 +400,45 @@ class AddGeometryUDA(BaseTransform):
         index_name = f"{self.name}_geometry_index"
         geom_df[index_name] = [f"{self.name}{index+1:02}" for index in range(len(geom_df))]
         geom_df = geom_df.set_index(index_name)
-        geom_xarray = geom_df.to_xarray()
+        
+        if self.name in ["sad_out_l", "sad_out_m", "sad_out_u"]:
+            # Stack array-like columns into 2D arrays
+            r_arr = np.stack(geom_df[f"{self.name}_r"].to_numpy())
+            z_arr = np.stack(geom_df[f"{self.name}_z"].to_numpy())
+            phi_arr = np.stack(geom_df[f"{self.name}_phi"].to_numpy())
+            element_dim = np.arange(r_arr.shape[1])
+            geom_xarray = xr.Dataset(
+                {
+                    f"{self.name}_r": ([index_name, "element"], r_arr),
+                    f"{self.name}_z": ([index_name, "element"], z_arr),
+                    f"{self.name}_phi": ([index_name, "element"], phi_arr),
+                },
+                coords={
+                    index_name: geom_df.index.to_numpy(),
+                    "element": element_dim,
+                }
+            )
+        elif self.name in ['p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
+                        'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower', 'p5_upper', 'p5_lower', 'p6_upper', 'p6_lower', 'sol']:
+            # Stack array-like columns into 2D arrays
+            centre_r_arr = np.stack(geom_df[f"{self.name}_centreR"].to_numpy())
+            centre_z_arr = np.stack(geom_df[f"{self.name}_centreZ"].to_numpy())
+            dr_arr = np.stack(geom_df[f"{self.name}_dR"].to_numpy())
+            dz_arr = np.stack(geom_df[f"{self.name}_dZ"].to_numpy())
+            element_dim = np.arange(dr_arr.shape[1])
+            geom_xarray = xr.Dataset(
+                {
+                    f"{self.name}_coil_r": (["element"], centre_r_arr.squeeze()),
+                    f"{self.name}_coil_z": (["element"], centre_z_arr.squeeze()),
+                    f"{self.name}_coil_width": (["element"], dr_arr.squeeze()),
+                    f"{self.name}_coil_height": (["element"], dz_arr.squeeze()),
+                },
+                coords={
+                    "element": element_dim,
+                }
+            )
+        else:
+            geom_xarray = geom_df.to_xarray()
 
         # Add metadata
         uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
@@ -426,6 +471,20 @@ class AddGeometryUDA(BaseTransform):
                 self._extract_rows(item, rows, current_row)
 
         return rows
+    
+    def _saddle_array_extraction(self, all_rows, geom_data):
+        for row in all_rows:
+                for key, item in row.items():
+                    if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                        row[key] = getattr(geom_data.data[f'{self.stem}/{row['name']}/data/coilPath'], key)
+        return all_rows
+    
+    def _pf_array_extraction(self, all_rows, geom_data):
+        for row in all_rows:
+                for key, item in row.items():
+                    if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                        row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
+        return all_rows
 
     def _decode_metadata(self, uda_metadata):
         cleaned_metadata = {}

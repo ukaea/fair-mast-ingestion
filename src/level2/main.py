@@ -138,10 +138,6 @@ def process_shot(shot: int, **kwargs):
     file_name = f"{shot}.{writer.file_extension}"
     local_file = config.writer.options["output_path"] / Path(file_name)
 
-    if local_file.exists() and not kwargs.get("force", True):
-        logger.info(f"Skipping shot {shot} as it already exists")
-        return
-
     loader = get_default_loader(config.readers[mapping.default_loader])
     set_mapping_time_bounds(mapping, shot, tdelta, loader)
 
@@ -192,7 +188,6 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-o", "--output-path", type=str, default=None)
     parser.add_argument("-n", "--n-workers", type=int, default=None)
-    parser.add_argument("-f", "--force", action="store_true")
     args = parser.parse_args()
 
     if args.verbose:

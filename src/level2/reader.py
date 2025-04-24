@@ -5,12 +5,12 @@ import xarray as xr
 
 from src.core.load import BaseLoader, MissingProfileError, MissingSourceError
 from src.core.log import logger
-from src.core.model import (
-    Dimension,
-    Mapping,
-    Source,
+from src.core.model import Dimension, Mapping, Source
+from src.level2.transforms import (
+    BackgroundSubtractionTransform,
+    DatasetInterpolationTransform,
+    transform_registry,
 )
-from src.level2.transforms import DatasetInterpolationTransform, transform_registry
 
 
 class DatasetReader:
@@ -115,18 +115,27 @@ class DatasetReader:
         item = item.sortby([name for name in dim_names if "channel" not in name])
         item = item.drop_duplicates(dim=...)
 
+        if profile.dimension_order is not None:
+            item = item.transpose(*profile.dimension_order)
+
         if item.isnull().all():
             raise MissingProfileError(
                 f"All values are NaN for shot {self._shot} and profile {profile_name}"
             )
 
+        if source.background_correction:
+            start, end = (
+                source.background_correction.tmin,
+                source.background_correction.tmax,
+            )
+            logger.info(
+                f"Applying background subtraction for {profile_name} using window {start}-{end}"
+            )
+            subtractor = BackgroundSubtractionTransform(start, end)
+            item = subtractor.transform_array(item)
         return item
 
-    def apply_interpolation(
-        self,
-        dataset: xr.Dataset,
-        dataset_name: str,
-    ) -> xr.Dataset:
+    def apply_interpolation(self, dataset: xr.Dataset, dataset_name: str) -> xr.Dataset:
         dataset_config = self._mapping.datasets[dataset_name]
         global_params = self._mapping.global_interpolate
         interpolator = DatasetInterpolationTransform(dataset_config, global_params)

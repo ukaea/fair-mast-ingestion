@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--shot-min", type=int)
     parser.add_argument("--shot-max", type=int)
     parser.add_argument("--shot-file", type=str)
-    parser.add_argument("--config-file", type=str, default="./configs/level1.yml")
+    parser.add_argument("-c", "--config-file", type=str, default="./configs/level1.yml")
     parser.add_argument("-i", "--include-sources", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-sources", nargs="+", default=[])
     parser.add_argument("--file_format", choices=["zarr", "nc", "h5"], default="zarr")

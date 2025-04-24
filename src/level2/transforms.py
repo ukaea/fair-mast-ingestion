@@ -6,6 +6,7 @@ import numpy as np
 import scipy.signal
 import xarray as xr
 
+from src.core.log import logger
 from src.core.model import (
     DatasetInfo,
     Dimension,
@@ -158,6 +159,21 @@ class FFTDecomposeTransform(BaseDatasetTransform):
         signal = xr.Dataset({spec_name: spectrum, angle_name: angles})
         return signal
 
+class BackgroundSubtractionTransform(BaseDatasetTransform):
+    def __init__(self, start:int, end: int):
+        self.start = start
+        self.end = end
+
+    def transform_array(self, data: xr.DataArray) -> xr.DataArray:
+        # subtracts background calculated from mean of data points between given start and end
+        time_dim = next((dim for dim in data.dims if dim == "time" or dim.startswith("time_")), None)
+        time_dim_str = str(time_dim)
+        if not time_dim:
+            logger.warning(f"Skipping background subtraction: No time dimension found in dataset {data.name}.")
+            return data
+        isel_kwargs = {time_dim: slice(self.start, self.end)}
+        background = data.isel(**isel_kwargs).mean(dim=time_dim_str)
+        return data - background
 
 transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)

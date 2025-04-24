@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -A UKAEA-AP002-CPU
-#SBATCH -p icelake
+#SBATCH -p ukaea-icl
 #SBATCH --job-name=fair-mast-ingest-level2-upload
 #SBATCH --output=fair-mast-ingest-upload_%A.out
 #SBATCH --time=36:00:00
@@ -19,3 +19,4 @@ local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/
 remote_path=s3://mast/level2/shots/
 
 s5cmd --credentials-file $credential --endpoint-url $endpoint cp --acl public-read $local_path $remote_path
+s5cmd --credentials-file $credential --endpoint-url $endpoint sync --delete --acl public-read $local_path $remote_path

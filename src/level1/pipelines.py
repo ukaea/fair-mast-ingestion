@@ -695,60 +695,60 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
-                    AddGeometryUDA('centralcolumn/botcol', "botcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/botcol', "botcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("botcol"),
 
-                    AddGeometryUDA('centralcolumn/endcrown_l', "endcrown_l", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/endcrown_l', "endcrown_l", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("endcrown_l"),
 
-                    AddGeometryUDA('centralcolumn/endcrown_u', "endcrown_u", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/endcrown_u', "endcrown_u", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("endcrown_u"),
 
                     TensoriseChannels("incon"),
-                    AddGeometryUDA('centralcolumn/incon', "incon", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/incon', "incon", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("incon"),
                     
                     TensoriseChannels("lhorw"),
-                    AddGeometryUDA('walls/lhorw', "lhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('walls/lhorw', "lhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("lhorw"),
 
                     TensoriseChannels("mid"),
-                    AddGeometryUDA('walls/mid', "mid", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('walls/mid', "mid", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("mid"),
 
                     TensoriseChannels("p2larm"),
-                    AddGeometryUDA('p2/p2larm', "p2larm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('p2/p2larm', "p2larm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("p2larm"),
                 
                     TensoriseChannels("p2ldivpl"),
-                    AddGeometryUDA('p2/p2ldivpl', "p2ldivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('p2/p2ldivpl', "p2ldivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("p2ldivpl"),
 
                     TensoriseChannels("p2uarm"),
-                    AddGeometryUDA('p2/p2uarm', "p2uarm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('p2/p2uarm', "p2uarm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("p2uarm"),
                     
                     TensoriseChannels("p2udivpl"),
-                    AddGeometryUDA('p2/p2udivpl', "p2udivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('p2/p2udivpl', "p2udivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("p2udivpl"),
 
                     TensoriseChannels("ring"),
-                    AddGeometryUDA('centralcolumn/ring', "ring", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/ring', "ring", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("ring"),
 
                     TensoriseChannels("rodgr"),
-                    AddGeometryUDA('centralcolumn/rodgr', "rodgr", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/rodgr', "rodgr", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("rodgr"),
 
-                    AddGeometryUDA('centralcolumn/topcol', "topcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('centralcolumn/topcol', "topcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("topcol"),
 
                     TensoriseChannels("uhorw"),
-                    AddGeometryUDA('walls/uhorw', "uhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('walls/uhorw', "uhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("uhorw"),
 
                     TensoriseChannels("vertw"),
-                    AddGeometryUDA('walls/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures_test.nc"),
+                    AddGeometryUDA('walls/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     AlignChannels("vertw"),
                 ]
             ),

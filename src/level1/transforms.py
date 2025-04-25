@@ -447,8 +447,8 @@ class AddGeometryUDA(BaseTransform):
                 {
                     f"{self.name}_coil_r": (["element"], centre_r_arr),
                     f"{self.name}_coil_z": (["element"], centre_z_arr),
-                    f"{self.name}_coil_width": (["element"], dr_arr),
-                    f"{self.name}_coil_height": (["element"], dz_arr),
+                    f"{self.name}_coil_dR": (["element"], dr_arr),
+                    f"{self.name}_coil_dZ": (["element"], dz_arr),
                 },
                 coords={"element": element_dim}
             )

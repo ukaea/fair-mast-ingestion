@@ -1032,34 +1032,26 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
-                    TensoriseChannels("v_ste29", regex=r"v_ste29_(\d+)"),
-                    #AddGeometry(
-                    #    "v_ste29", "geometry/data/xsx/ssx_inner_vertical_cam.parquet"
-                    #),
-                    #AlignChannels("v_ste29"),
-                    #TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
-                    #AddGeometry(
-                    #    "hcam_l", "geometry/data/xsx/ssx_lower_horizontal_cam.parquet"
-                    #),
-                    #AlignChannels("hcam_l"),
-                    #TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
-                    #AddGeometry("tcam", "geometry/data/xsx/ssx_tangential_cam.parquet"),
-                    #AlignChannels("tcam"),
-                    #TensoriseChannels("hpzr", regex=r"hpzr_(\d+)"),
-                    #AddGeometry(
-                    #    "hpzr", "geometry/data/xsx/ssx_third_horizontal_cam.parquet"
-                    #),
-                    #AlignChannels("hpzr"),
-                    #TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
-                    #AddGeometry(
-                    #    "hcam_u", "geometry/data/xsx/ssx_upper_horizontal_cam.parquet"
-                    #),
-                    #AlignChannels("hcam_u"),
-                    #TensoriseChannels("v_ste36", regex=r"v_ste36_(\d+)"),
-                    #AddGeometry(
-                    #    "v_ste36", "geometry/data/xsx/ssx_outer_vertical_cam.parquet"
-                    #),
-                    #AlignChannels("v_ste36"),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
+                    AddGeometryUDA('horizontal/lower_horizontal', "hcam_l", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("hcam_l"),
+
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
+                    AddGeometryUDA('horizontal/upper_horizontal', "hcam_u", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("hcam_u"),
+
+                    AddGeometryUDA('horizontal/third_horizontal', "hcam_third", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("hcam_third"),
+
+                    AddGeometryUDA('vertical/inner_vertical', "vcam_inner", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("vcam_inner"),
+
+                    AddGeometryUDA('vertical/outer_vertical', "vcam_outer", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("vcam_outer"),
+
+                    TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
+                    AddGeometryUDA("tangential/tangential", "tcam", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("tcam"),
                 ]
             ),
             "xma": Pipeline(

@@ -366,25 +366,22 @@ class AddGeometry(BaseTransform):
         dataset = dataset.compute()
         return dataset
 
+import json
+import numpy as np
+import pandas as pd
+import xarray as xr
+import pyuda
+import base64
+
+
 class AddGeometryUDA(BaseTransform):
     """
-    A transformation class that retrieves and processes geometry data from the UDA system.
-    PF and saddle coil geometry are stored as arrays, and are processed slightly differently to other signals.
-
-    Parameters:
-        stem (str): Path prefix for geometry data in the UDA structure.
-        name (str): The signal name.
-        path (str): UDA path to the geometry.
-        shot (int): The shot number to retrieve geometry data for.
-
-    Attributes:
-        client (pyuda.Client): UDA client for data access.
-    """  
-    PF_NAMES = {
-        'p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
-        'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower',
-        'p5_upper', 'p5_lower', 'p6_upper', 'p6_lower', 'sol'
-    }
+    A transformation class to retrieve and process geometry data from the UDA system.
+    PF and saddle coil geometry are stored as arrays and processed differently from other signals.
+    """
+    PF_NAMES = {'p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
+                'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower', 'p5_upper', 'p5_lower',
+                'p6_upper', 'p6_lower', 'sol'}
     SADDLE_NAMES = {"sad_out_l", "sad_out_m", "sad_out_u"}
     XRAY_NAMES = {"hcam_l", "hcam_u", "hcam_third", "vcam_inner", "vcam_outer", "tcam"}
 
@@ -397,98 +394,27 @@ class AddGeometryUDA(BaseTransform):
         self.geom_xarray = self._fetch_and_process_geometry()
 
     def _fetch_and_process_geometry(self):
-        """
-        Fetch geometry data from UDA, convert to flat rows,
-        apply geometry-specific extraction, and format as xarray.Dataset.
-        """
-
+        """Fetch and process geometry data from UDA."""
         geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
         geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
-
         all_rows = self._extract_rows(geom_data_json)
 
+        # Process geometry data based on signal type
         if self.name in self.SADDLE_NAMES:
-            all_rows = self._saddle_array_extraction(all_rows, geom_data)
+            all_rows = self._process_saddle(all_rows, geom_data)
         elif self.name in self.PF_NAMES:
-            all_rows = self._pf_array_extraction(all_rows, geom_data)
+            all_rows = self._process_pf(all_rows, geom_data)
         elif self.name in self.XRAY_NAMES:
-            all_rows = self._xray_array_extraction(all_rows, geom_data)
+            all_rows = self._process_xray(all_rows, geom_data)
 
-        geom_df = pd.DataFrame(all_rows).dropna(subset=['name'])
-        geom_df = geom_df.drop(['name_', 'name'], axis=1, errors='ignore')
+        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'name', 'version'], axis=1, errors='ignore')
         geom_df.columns = [f"{self.name}_{col}" for col in geom_df.columns]
+        geom_df = self._set_geometry_index(geom_df)
 
-        index_name = f"{self.name}_geometry_index"
-        geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
-        geom_df = geom_df.set_index(index_name)
-
-        if self.name in self.SADDLE_NAMES:
-            r_arr = np.stack(geom_df[f"{self.name}_r"].to_numpy())
-            z_arr = np.stack(geom_df[f"{self.name}_z"].to_numpy())
-            phi_arr = np.stack(geom_df[f"{self.name}_phi"].to_numpy())
-            element_dim = np.arange(r_arr.shape[1])
-
-            geom_xarray = xr.Dataset(
-                {
-                    f"{self.name}_r": ([index_name, "element"], r_arr),
-                    f"{self.name}_z": ([index_name, "element"], z_arr),
-                    f"{self.name}_phi": ([index_name, "element"], phi_arr),
-                },
-                coords={index_name: geom_df.index.to_numpy(), "element": element_dim}
-            )
-
-        elif self.name in self.PF_NAMES:
-            centre_r_arr = np.stack(geom_df[f"{self.name}_centreR"].to_numpy()).squeeze()
-            centre_z_arr = np.stack(geom_df[f"{self.name}_centreZ"].to_numpy()).squeeze()
-            dr_arr = np.stack(geom_df[f"{self.name}_dR"].to_numpy()).squeeze()
-            dz_arr = np.stack(geom_df[f"{self.name}_dZ"].to_numpy()).squeeze()
-            element_dim = np.arange(dr_arr.shape[0])
-
-            geom_xarray = xr.Dataset(
-                {
-                    f"{self.name}_coil_r": (["element"], centre_r_arr),
-                    f"{self.name}_coil_z": (["element"], centre_z_arr),
-                    f"{self.name}_coil_dR": (["element"], dr_arr),
-                    f"{self.name}_coil_dZ": (["element"], dz_arr),
-                },
-                coords={"element": element_dim}
-            )
-        elif self.name in self.XRAY_NAMES:
-            geometry_index = geom_df.index.astype(str)
-            coords = {f"{self.name}_geometry_index": geometry_index}
-            ds_vars = {}
-
-            # Columns with this prefix will always have a coordinate
-            force_coordinate_prefix = (f"{self.name}_endpoint_", f"{self.name}_origin_")
-
-            for col in geom_df.columns:
-                values = geom_df[col]
-                if col.startswith(force_coordinate_prefix) or values.nunique(dropna=False) > 1:
-                    ds_vars[col] = (f"{self.name}_geometry_index", values.to_numpy())
-                else:
-                    ds_vars[col] = values.iloc[0]
-            geom_xarray = xr.Dataset(ds_vars, coords=coords)
-
-        else:
-            geom_xarray = geom_df.to_xarray()
-
-        metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
-        for var_name in geom_xarray.data_vars:
-            geom_xarray[var_name].attrs.update(self._decode_metadata(metadata))
-
-        return geom_xarray
+        return self._create_xarray(geom_df, geom_data)
 
     def _extract_rows(self, node, rows=None, current_row=None):
-        """
-        Recursively extracts data rows from a nested dictionary UDA structure.
-
-        Parameters:
-            node (dict or list): Node of the geometry tree.
-
-        Returns:
-            list[dict]: A list of flattened geometry entries.
-        """
-
+        """Recursively extract data rows from UDA structure."""
         if rows is None:
             rows = []
         if current_row is None:
@@ -512,67 +438,97 @@ class AddGeometryUDA(BaseTransform):
 
         return rows
 
-    def _saddle_array_extraction(self, all_rows, geom_data):
-        """
-        Processes saddle coil geometry rows by retrieving numpy arrays from the UDA response.
+    def _set_geometry_index(self, geom_df):
+        """Set the geometry index for the dataframe."""
+        index_name = f"{self.name}_geometry_index"
+        geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
+        return geom_df.set_index(index_name)
 
-        Parameters:
-            all_rows (list[dict]): Flattened geometry entries.
-            geom_data: Raw UDA geometry data.
-
-        Returns:
-            list[dict]: Updated geometry entries with resolved numpy arrays.
-        """
-
+    def _process_saddle(self, all_rows, geom_data):
+        """Process saddle coil geometry data."""
         for row in all_rows:
             for key, item in row.items():
                 if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
                     row[key] = getattr(geom_data.data[f'{self.stem}/{row["name"]}/data/coilPath'], key)
         return all_rows
 
-    def _pf_array_extraction(self, all_rows, geom_data):
-        """
-        Processes poloidal field coil geometry rows by extracting array data from the geom_elements group.
-
-        Parameters:
-            all_rows (list[dict]): Flattened geometry entries.
-            geom_data: Raw UDA geometry data.
-
-        Returns:
-            list[dict]: Updated geometry entries with resolved numpy arrays.
-        """
-
+    def _process_pf(self, all_rows, geom_data):
+        """Process poloidal field coil geometry data."""
         for row in all_rows:
             for key, item in row.items():
                 if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
                     row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
         return all_rows
-    
-    def _xray_array_extraction(self, all_rows, geom_data):
+
+    def _process_xray(self, all_rows, geom_data):
+        """Process x-ray geometry data."""
         new_rows = {}
+
         for row in all_rows:
             for key, item in row.items():
-                    if key == "impact_parameter":
-                        new_rows[key] = getattr(geom_data.data[f'{self.stem}/data/'], key)
-                    elif isinstance(item, dict) and item.get('_type') == 'numpy.ndarray' and key != "impact_parameter":
-                        new_rows[f"origin_{key}"] = getattr(geom_data.data[f'{self.stem}/data/origin'], key)
-                        new_rows[f"endpoint_{key}"] = getattr(geom_data.data[f'{self.stem}/data/endpoint'], key)
-                    else:
-                        new_rows[key] = item
+                if key == "impact_parameter":
+                    new_rows[key] = getattr(geom_data.data[f'{self.stem}/data/'], key)
+                elif isinstance(item, dict) and item.get('_type') == 'numpy.ndarray' and key != "impact_parameter":
+                    new_rows[f"origin_{key}"] = getattr(geom_data.data[f'{self.stem}/data/origin'], key)
+                    new_rows[f"endpoint_{key}"] = getattr(geom_data.data[f'{self.stem}/data/endpoint'], key)
+                else:
+                    new_rows[key] = item
         return new_rows
+
+    def _create_xarray(self, geom_df, geom_data):
+        """Create an xarray dataset from processed geometry data."""
+        if self.name in self.SADDLE_NAMES:
+            r_arr = np.stack(geom_df[f"{self.name}_r"].to_numpy())
+            z_arr = np.stack(geom_df[f"{self.name}_z"].to_numpy())
+            phi_arr = np.stack(geom_df[f"{self.name}_phi"].to_numpy())
+            element_dim = np.arange(r_arr.shape[1])
+            return xr.Dataset(
+                {
+                    f"{self.name}_r": ([f"{self.name}_geometry_index", "element"], r_arr),
+                    f"{self.name}_z": ([f"{self.name}_geometry_index", "element"], z_arr),
+                    f"{self.name}_phi": ([f"{self.name}_geometry_index", "element"], phi_arr),
+                },
+                coords={f"{self.name}_geometry_index": geom_df.index.to_numpy(), "element": element_dim}
+            )
+        elif self.name in self.PF_NAMES:
+            centre_r_arr = np.stack(geom_df[f"{self.name}_centreR"].to_numpy()).squeeze()
+            centre_z_arr = np.stack(geom_df[f"{self.name}_centreZ"].to_numpy()).squeeze()
+            dr_arr = np.stack(geom_df[f"{self.name}_dR"].to_numpy()).squeeze()
+            dz_arr = np.stack(geom_df[f"{self.name}_dZ"].to_numpy()).squeeze()
+            element_dim = np.arange(dr_arr.shape[0])
+            return xr.Dataset(
+                {
+                    f"{self.name}_coil_r": (["element"], centre_r_arr),
+                    f"{self.name}_coil_z": (["element"], centre_z_arr),
+                    f"{self.name}_coil_dR": (["element"], dr_arr),
+                    f"{self.name}_coil_dZ": (["element"], dz_arr),
+                },
+                coords={"element": element_dim}
+            )
         
+        # can comment this out if dont mind repeating the scalar values for each channel?
+        elif self.name in self.XRAY_NAMES:
+            geometry_index = geom_df.index.astype(str)
+            coords = {f"{self.name}_geometry_index": geometry_index}
+            ds_vars = {
+                col: (f"{self.name}_geometry_index", geom_df[col].to_numpy()) 
+                for col in geom_df.columns if geom_df[col].nunique(dropna=False) > 1
+            }
+            ds_vars.update({
+                col: geom_df[col].iloc[0] 
+                for col in geom_df.columns if geom_df[col].nunique(dropna=False) == 1
+            })
+
+            for col in geom_df.columns:
+                if col.startswith(f"{self.name}_endpoint_") or col.startswith(f"{self.name}_origin_"):
+                    ds_vars[col] = (f"{self.name}_geometry_index", geom_df[col].to_numpy())
+
+            return xr.Dataset(ds_vars, coords=coords)
+
+        return geom_df.to_xarray()
 
     def _decode_metadata(self, uda_metadata):
-        """
-        Decodes UDA metadata, including conversion from base64-encoded binary arrays.
-
-        Parameters:
-            uda_metadata (dict): Metadata dictionary from UDA.
-
-        Returns:
-            dict: Cleaned metadata with decoded values.
-        """
-
+        """Decode UDA metadata, converting base64 to numpy arrays."""
         cleaned_metadata = {}
         for key, value in uda_metadata.items():
             if isinstance(value, dict) and value.get('_type') == 'numpy.ndarray':
@@ -583,16 +539,7 @@ class AddGeometryUDA(BaseTransform):
         return cleaned_metadata
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        """
-        Merges the processed geometry xarray into an existing xarray Dataset.
-
-        Parameters:
-            dataset (xr.Dataset): The input dataset to augment.
-
-        Returns:
-            xr.Dataset: The combined dataset with geometry data.
-        """
-
+        """Merge processed geometry data with the existing dataset."""
         return xr.merge([dataset, self.geom_xarray], combine_attrs="no_conflicts", join="left").compute()
 
 

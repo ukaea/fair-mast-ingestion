@@ -379,15 +379,14 @@ class AddGeometryUDA(BaseTransform):
 
     Attributes:
         client (pyuda.Client): UDA client for data access.
-    """
-    
+    """  
     PF_NAMES = {
         'p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
         'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower',
         'p5_upper', 'p5_lower', 'p6_upper', 'p6_lower', 'sol'
     }
-
     SADDLE_NAMES = {"sad_out_l", "sad_out_m", "sad_out_u"}
+    XRAY_NAMES = {"hcam_l", "hcam_u", "hcam_third", "vcam_inner", "vcam_outer", "tcam"}
 
     def __init__(self, stem: str, name: str, path: str, shot: int):
         self.stem = stem
@@ -412,6 +411,8 @@ class AddGeometryUDA(BaseTransform):
             all_rows = self._saddle_array_extraction(all_rows, geom_data)
         elif self.name in self.PF_NAMES:
             all_rows = self._pf_array_extraction(all_rows, geom_data)
+        elif self.name in self.XRAY_NAMES:
+            all_rows = self._xray_array_extraction(all_rows, geom_data)
 
         geom_df = pd.DataFrame(all_rows).dropna(subset=['name'])
         geom_df = geom_df.drop(['name_', 'name'], axis=1, errors='ignore')
@@ -452,6 +453,21 @@ class AddGeometryUDA(BaseTransform):
                 },
                 coords={"element": element_dim}
             )
+        elif self.name in self.XRAY_NAMES:
+            geometry_index = geom_df.index.astype(str)
+            coords = {f"{self.name}_geometry_index": geometry_index}
+            ds_vars = {}
+
+            # Columns with this prefix will always have a coordinate
+            force_coordinate_prefix = (f"{self.name}_endpoint_", f"{self.name}_origin_")
+
+            for col in geom_df.columns:
+                values = geom_df[col]
+                if col.startswith(force_coordinate_prefix) or values.nunique(dropna=False) > 1:
+                    ds_vars[col] = (f"{self.name}_geometry_index", values.to_numpy())
+                else:
+                    ds_vars[col] = values.iloc[0]
+            geom_xarray = xr.Dataset(ds_vars, coords=coords)
 
         else:
             geom_xarray = geom_df.to_xarray()
@@ -531,6 +547,20 @@ class AddGeometryUDA(BaseTransform):
                 if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
                     row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
         return all_rows
+    
+    def _xray_array_extraction(self, all_rows, geom_data):
+        new_rows = {}
+        for row in all_rows:
+            for key, item in row.items():
+                    if key == "impact_parameter":
+                        new_rows[key] = getattr(geom_data.data[f'{self.stem}/data/'], key)
+                    elif isinstance(item, dict) and item.get('_type') == 'numpy.ndarray' and key != "impact_parameter":
+                        new_rows[f"origin_{key}"] = getattr(geom_data.data[f'{self.stem}/data/origin'], key)
+                        new_rows[f"endpoint_{key}"] = getattr(geom_data.data[f'{self.stem}/data/endpoint'], key)
+                    else:
+                        new_rows[key] = item
+        return new_rows
+        
 
     def _decode_metadata(self, uda_metadata):
         """

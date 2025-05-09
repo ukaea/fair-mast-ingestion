@@ -102,11 +102,11 @@ class DatasetReader:
         if profile.imas is not None:
             item.attrs["imas"] = profile.imas
 
-        if source.groupings is not None:
-            item.attrs["groupings"] = source.groupings
-
         item.attrs["description"] = profile.description
         item.attrs["name"] = profile_name
+
+        if source.groupings is not None:
+            item.attrs["groupings"] = source.groupings
 
         item = item.where(np.isfinite(item.values), np.nan)
         if profile.fill_value is not None:

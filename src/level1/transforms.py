@@ -365,15 +365,6 @@ class AddGeometry(BaseTransform):
         )
         dataset = dataset.compute()
         return dataset
-
-import json
-import numpy as np
-import pandas as pd
-import xarray as xr
-import pyuda
-import base64
-
-
 class AddGeometryUDA(BaseTransform):
     """
     A transformation class to retrieve and process geometry data from the UDA system.

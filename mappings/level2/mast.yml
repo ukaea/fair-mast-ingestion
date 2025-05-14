@@ -425,7 +425,7 @@ datasets:
             shot_range:
               shot_min: 28356
               shot_max: 30471
-            groupings: {
+            attributes: {
                     "fuelling_groups": {
                         "/xdc/gas/t/g1": ["/xdc/gas/f/tc5a", "/xdc/gas/f/tc5b", "/xdc/gas/f/tc11"],
                         "/xdc/gas/t/g2": ["/xdc/gas/f/bc5"],
@@ -470,7 +470,7 @@ datasets:
             shot_range: #this range has HM12 split up into A and B, also when HM12A/B are present HEOA/B aren't
               shot_min: 26756
               shot_max: 28355
-            groupings: {
+            attributes: {
                     "fuelling_groups": {
                         "XDC_GAS_T_G1": ["XDC_GAS_F_TC5A", "XDC_GAS_F_TC5B", "XDC_GAS_F_TC11"],
                         "XDC_GAS_T_G2": ["XDC_GAS_F_BC5"],
@@ -514,7 +514,7 @@ datasets:
             shot_range: #this range has HM12 not split up and HEOA/B are present
               shot_min: 25912 #25912 - 25926 don't have xdc as a source 
               shot_max: 26755
-            groupings: {
+            attributes: {
                     "fuelling_groups": {
                         "XDC_GAS_T_G1": ["XDC_GAS_F_TC5A", "XDC_GAS_F_TC5B", "XDC_GAS_F_TC11"],
                         "XDC_GAS_T_G2": ["XDC_GAS_F_BC5"],

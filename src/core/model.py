@@ -43,7 +43,7 @@ class Source(BaseModel):
     shot_range: Optional[ShotRange] = None
     channels: Optional[list[str]] = None
     background_correction: Optional[BackgroundCorrection] = None
-    groupings: Optional[dict] = None
+    attributes: Optional[dict] = None
 
 
 SourceType = Union[list[Source], str]

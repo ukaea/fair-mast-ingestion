@@ -423,7 +423,7 @@ datasets:
         source: 
           - name: "XDC/GAS/"
             shot_range:
-              shot_min: 28356
+              shot_min: 28356 #28356-28451 don't have xdc as source
               shot_max: 30471
             attributes: {
                     "fuelling_groups": {
@@ -512,7 +512,7 @@ datasets:
             #- "XDC_GAS_F_HFS" this comes and goes -  XDC_HFS_PUFF maybe an equivalent? 
           - name: "XDC/GAS/F"
             shot_range: #this range has HM12 not split up and HEOA/B are present
-              shot_min: 25912 #25912 - 25926 don't have xdc as a source 
+              shot_min: 25912 #25912 - 25936 don't have xdc as a source 
               shot_max: 26755
             attributes: {
                     "fuelling_groups": {
@@ -618,7 +618,7 @@ datasets:
               - "XDC_GAS_T_G12"
               #- "XDC_GAS_T_ECELMOD"
         dimensions:
-          valve_channel:
+          target_valve_channel:
           time:
             imas: "gas_injection.valve[:].target_voltage.time"
 

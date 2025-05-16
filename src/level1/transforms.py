@@ -374,7 +374,7 @@ class AddGeometryUDA(BaseTransform):
                 'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower', 'p5_upper', 'p5_lower',
                 'p6_upper', 'p6_lower', 'sol'}
     SADDLE_NAMES = {"sad_out_l", "sad_out_m", "sad_out_u"}
-    XRAY_NAMES = {"hcam_l", "hcam_u", "hcam_third", "vcam_inner", "vcam_outer", "tcam"}
+    XRAY_NAMES = {"hcam_l", "hcam_u", "hcam_third", "vcam_i", "vcam_o", "tcam"}
 
     def __init__(self, stem: str, name: str, path: str, shot: int):
         self.stem = stem

@@ -1033,24 +1033,24 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
-                    AddGeometryUDA('horizontal/lower_horizontal', "hcam_l", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AddGeometryUDA('lower_horizontal', "hcam_l", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
                     AlignChannels("hcam_l"),
 
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
-                    AddGeometryUDA('horizontal/upper_horizontal', "hcam_u", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AddGeometryUDA('upper_horizontal', "hcam_u", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
                     AlignChannels("hcam_u"),
 
-                    AddGeometryUDA('horizontal/third_horizontal', "hcam_third", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AddGeometryUDA('third_horizontal', "hcam_third", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
                     AlignChannels("hcam_third"),
 
-                    AddGeometryUDA('vertical/inner_vertical', "vcam_inner", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("vcam_inner"),
+                    AddGeometryUDA('inner_vertical', "vcam_i", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("vcam_i"),
 
-                    AddGeometryUDA('vertical/outer_vertical', "vcam_outer", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("vcam_outer"),
+                    AddGeometryUDA('outer_vertical', "vcam_o", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AlignChannels("vcam_o"),
 
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
-                    AddGeometryUDA("tangential/tangential", "tcam", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
+                    AddGeometryUDA("tangential", "tcam", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
                     AlignChannels("tcam"),
                 ]
             ),

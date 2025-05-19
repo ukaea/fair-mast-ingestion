@@ -105,6 +105,9 @@ class DatasetReader:
         item.attrs["description"] = profile.description
         item.attrs["name"] = profile_name
 
+        if source.attributes is not None and isinstance(source.attributes, dict):
+            item.attrs.update(source.attributes)
+
         item = item.where(np.isfinite(item.values), np.nan)
         if profile.fill_value is not None:
             item = item.where(item != profile.fill_value, np.nan)

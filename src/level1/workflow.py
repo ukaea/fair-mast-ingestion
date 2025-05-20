@@ -6,6 +6,7 @@ from src.core.config import IngestionConfig
 from src.core.load import loader_registry
 from src.core.log import logger
 from src.core.upload import UploadS3
+from src.core.icechunk import IcechunkUploader
 from src.core.writer import dataset_writer_registry
 from src.level1.builder import DatasetBuilder
 from src.level1.pipelines import pipelines_registry
@@ -31,6 +32,14 @@ class IngestionWorkflow:
             logger.setLevel("DEBUG")
 
         writer_config = self.config.writer
+
+        if writer_config.options["zarr_format"] != 3 and self.config.icechunk:
+            logger.warning(
+                "Icechunk is only supported for Zarr format version 3. "
+                "Please set 'zarr_format' to 3 in the config file."
+            )
+            return
+
         self.writer = dataset_writer_registry.create(
             writer_config.type, **writer_config.options
         )
@@ -39,6 +48,7 @@ class IngestionWorkflow:
 
         try:
             self.create_dataset(shot)
+            self.local_icechunk_dataset(shot)
             self.upload_dataset(shot)
             logger.info(f"Done shot #{shot}")
         except Exception as e:
@@ -67,8 +77,22 @@ class IngestionWorkflow:
         remote_file = f"{self.config.upload.base_path}/"
 
         if not local_file.exists():
-            logger.warning(f"File {local_file} does not exist")
+            logger.error(f"File {local_file} does not exist")
             return
 
         uploader = UploadS3(self.config.upload)
         uploader.upload(local_file, remote_file)
+
+    def local_icechunk_dataset(self, shot: int):
+        if self.config.icechunk is None:
+            return
+        
+        file_name = f"{shot}.{self.writer.file_extension}"
+        local_file = self.config.writer.options["output_path"] / Path(file_name)
+
+        if not local_file.exists():
+            logger.warning(f"File {local_file} does not exist")
+            return
+
+        icechunk = IcechunkUploader(self.config.icechunk)
+        icechunk.upload(local_file, shot)

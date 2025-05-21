@@ -20,9 +20,14 @@ class ReaderConfig(BaseModel):
     type: str
     options: Optional[dict[str, Any]] = {}
 
+class IcechunkConfig(BaseModel):
+    icechunk_repo_path: str
+    icechunk_branch: str = "main"
+    commit_message: str
 
 class IngestionConfig(BaseModel):
     upload: Optional[UploadConfig] = None
+    icechunk: Optional[IcechunkConfig] = None
     readers: dict[str, ReaderConfig]
     writer: WriterConfig
 

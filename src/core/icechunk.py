@@ -1,0 +1,30 @@
+import icechunk
+import xarray as xr
+import warnings
+
+from src.core.log import logger
+from src.core.config import IcechunkConfig
+
+warnings.filterwarnings("ignore")
+
+class IcechunkUploader:
+    def __init__(self, config: IcechunkConfig,):
+        self.config = config
+
+    def upload(self, local_file: str, shot):
+        logger.info(f"Uploading with Icechunk to repo at '{self.config.icechunk_repo_path}'")
+
+        storage = icechunk.local_filesystem_storage(f"{self.config.icechunk_repo_path}/{shot}")
+        repo = icechunk.Repository.open_or_create(storage=storage)
+
+        session = repo.writable_session(self.config.icechunk_branch)
+        logger.info(f"Writing Zarr data from '{local_file}' to Icechunk local store...")
+
+        data_tree = xr.open_datatree(local_file)
+        data_tree.to_zarr(session.store, mode="w")
+
+        if self.config.commit_message is None:
+            snapshot = self.config.commit_message = f"Upload {local_file} to Icechunk"
+
+        snapshot = session.commit(self.config.commit_message)
+        logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")

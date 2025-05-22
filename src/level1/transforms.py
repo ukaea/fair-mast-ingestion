@@ -319,52 +319,6 @@ class LCFSTransform(BaseTransform):
         dataset = dataset.compute()
         return dataset
 
-
-class AddGeometry(BaseTransform):
-    def __init__(self, stem: str, path: str):
-        table = pq.read_table(path)
-        geom_data = table.to_pandas()
-        geom_data.drop("uda_name", inplace=True, axis=1)
-        geom_data.columns = [stem + "_" + c for c in geom_data.columns]
-        self.stem = stem
-        index_name = f"{self.stem}_geometry_index"
-        geom_data[index_name] = [
-            f"{stem}{index+1:02}" for index in range(len(geom_data))
-        ]
-        geom_data = geom_data.set_index(index_name)
-        self.geom_data = geom_data.to_xarray()
-
-        if table.schema.metadata:
-            arrow_metadata = {
-                key.decode(): value.decode()
-                for key, value in table.schema.metadata.items()
-            }
-            renamed_metadata = {"source": "geometry_source_file"}
-            arrow_metadata = {
-                renamed_metadata.get(key, key): value
-                for key, value in arrow_metadata.items()
-            }
-
-        for field in table.schema:
-            if field.metadata:
-                field_metadata = {
-                    key.decode(): value.decode()
-                    for key, value in field.metadata.items()
-                }
-                name = f"{stem}_{field.name}"
-                self.geom_data[name].attrs.update(field_metadata)
-                self.geom_data[name].attrs.update(arrow_metadata)
-
-        for key in self.geom_data.keys():
-            self.geom_data[key].attrs["name"] = key
-
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        geom_data = self.geom_data.copy()
-        dataset = xr.merge(
-            [dataset, geom_data], combine_attrs="no_conflicts", join="left"
-        )
-        dataset = dataset.compute()
-        return dataset
 class AddGeometryUDA(BaseTransform):
     """
     A transformation class to retrieve and process geometry data from the UDA system.
@@ -516,7 +470,16 @@ class AddGeometryUDA(BaseTransform):
 
             return xr.Dataset(ds_vars, coords=coords)
 
-        return geom_df.to_xarray()
+        geom_xarray = geom_df.to_xarray()
+        
+        # Add metadata
+        uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+        cleaned_metadata = self._decode_metadata(uda_metadata)
+        for var_name in geom_xarray.data_vars:
+            geom_xarray[var_name].attrs.update(cleaned_metadata)
+
+        return geom_xarray
+
 
     def _decode_metadata(self, uda_metadata):
         """Decode UDA metadata, converting base64 to numpy arrays."""

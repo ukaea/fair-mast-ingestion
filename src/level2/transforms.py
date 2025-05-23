@@ -183,12 +183,13 @@ transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)
 
 class AddGeometryUDA(BaseDatasetTransform):
-    def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str):
+    def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
         self.stem = stem
         self.name = name
         self.path = path
         self.shot = shot
         self.measurement = measurement
+        self.channel_name = channel_name
         self.client = pyuda.Client()
         self.geom_xarray = self._fetch_and_process_geometry()
 
@@ -243,9 +244,8 @@ class AddGeometryUDA(BaseDatasetTransform):
     def _create_xarray(self, geom_df):
         dr = xr.DataArray(
         name=f"{self.name}",
-        data=geom_df[f"{self.measurement}"],
-        dims=[f"{self.name}_channel"],
-        coords={f"{self.name}_channel": geom_df.index.values}
+        data=geom_df[f"{self.measurement}"].values,
+        dims=[f"{self.channel_name}"],
         )
         return dr
 

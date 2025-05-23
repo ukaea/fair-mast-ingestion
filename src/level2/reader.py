@@ -50,7 +50,8 @@ class DatasetReader:
                                         profile_name, 
                                         profile_info.geometry.path, 
                                         profile_info.geometry.shot, 
-                                        profile_info.geometry.measurement)
+                                        profile_info.geometry.measurement,
+                                        profile_info.geometry.channel_name,)
                 datarr = geom_obj.geom_xarray
 
                 datarr.attrs["imas"] = profile_info.imas

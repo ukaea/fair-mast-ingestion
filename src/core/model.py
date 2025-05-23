@@ -60,6 +60,7 @@ class Geometry(BaseModel):
     path: Optional[str] = None
     shot: Optional[str] = None
     measurement: Optional[str] = None
+    channel_name: Optional[str] = "geometry_channel"
 
 
 class ProfileInfo(BaseModel):

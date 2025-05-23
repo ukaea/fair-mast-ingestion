@@ -10,6 +10,7 @@ from src.level2.transforms import (
     BackgroundSubtractionTransform,
     DatasetInterpolationTransform,
     transform_registry,
+    AddGeometryUDA
 )
 
 
@@ -28,11 +29,12 @@ class DatasetReader:
 
         if len(dataset) == 0:
             return dataset
-
+        
         dataset = self.apply_interpolation(dataset, name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
         return dataset
+        
 
     def read_profiles(self, shot: int, dataset_name: str) -> dict[str, xr.DataArray]:
         self.set_shot(shot)
@@ -41,16 +43,33 @@ class DatasetReader:
 
         profiles = {}
         for profile_name, profile_info in dataset.profiles.items():
-            try:
+            if profile_info.geometry:
                 logger.debug(f"Create profile {profile_name}")
-                profile = self.read_profile(shot, dataset_name, profile_name)
+
+                geom_obj = AddGeometryUDA(profile_info.geometry.stem, 
+                                        profile_name, 
+                                        profile_info.geometry.path, 
+                                        profile_info.geometry.shot, 
+                                        profile_info.geometry.measurement)
+                datarr = geom_obj.geom_xarray
+
+                datarr.attrs["imas"] = profile_info.imas
+                datarr.attrs["description"] = profile_info.description
+                profile = datarr
+
                 logger.debug(f"Loaded profile {profile_name}")
-            except MissingSourceError as e:
-                logger.warning(e)
-                continue
-            except MissingProfileError as e:
-                logger.warning(e)
-                continue
+                
+            else:
+                try:
+                    logger.debug(f"Create profile {profile_name}")
+                    profile = self.read_profile(shot, dataset_name, profile_name)
+                    logger.debug(f"Loaded profile {profile_name}")
+                except MissingSourceError as e:
+                    logger.warning(e)
+                    continue
+                except MissingProfileError as e:
+                    logger.warning(e)
+                    continue
 
             profiles[profile_name] = profile
         return profiles

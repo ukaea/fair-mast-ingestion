@@ -5,6 +5,10 @@ from typing import Union
 import numpy as np
 import scipy.signal
 import xarray as xr
+import pyuda
+import pandas as pd
+import json
+import base64 
 
 from src.core.log import logger
 from src.core.model import (
@@ -177,3 +181,81 @@ class BackgroundSubtractionTransform(BaseDatasetTransform):
 
 transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)
+
+class AddGeometryUDA(BaseDatasetTransform):
+    def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str):
+        self.stem = stem
+        self.name = name
+        self.path = path
+        self.shot = shot
+        self.measurement = measurement
+        self.client = pyuda.Client()
+        self.geom_xarray = self._fetch_and_process_geometry()
+
+    def _fetch_and_process_geometry(self):
+        """Fetch and process geometry data from UDA."""
+        geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
+        geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
+        all_rows = self._extract_rows(geom_data_json)
+
+        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'name', 'version'], axis=1, errors='ignore')
+        geom_df = self._set_geometry_index(geom_df)
+
+        geom_xarray = self._create_xarray(geom_df)
+
+        uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+        cleaned_metadata = self._decode_metadata(uda_metadata)
+        geom_xarray.attrs.update(cleaned_metadata)
+
+        return geom_xarray
+
+    def _extract_rows(self, node, rows=None, current_row=None):
+        """Recursively extract data rows from UDA structure."""
+        if rows is None:
+            rows = []
+        if current_row is None:
+            current_row = {}
+
+        if isinstance(node, dict):
+            if 'name_' in node:
+                if current_row:
+                    rows.append(current_row.copy())
+                current_row = {'name': node['name_']}
+            for key, value in node.items():
+                if key == 'children':
+                    self._extract_rows(value, rows, current_row)
+                elif key not in ['signal_type', 'dimensions', 'units']:
+                    current_row[key] = value
+            if 'name' in current_row and pd.notna(current_row['name']) and current_row not in rows:
+                rows.append(current_row)
+        elif isinstance(node, list):
+            for item in node:
+                self._extract_rows(item, rows, current_row)
+
+        return rows
+
+    def _set_geometry_index(self, geom_df):
+        """Set the geometry index for the dataframe."""
+        index_name = f"{self.name}_channel"
+        geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
+        return geom_df.set_index(index_name)
+
+    def _create_xarray(self, geom_df):
+        dr = xr.DataArray(
+        name=f"{self.name}",
+        data=geom_df[f"{self.measurement}"],
+        dims=[f"{self.name}_channel"],
+        coords={f"{self.name}_channel": geom_df.index.values}
+        )
+        return dr
+
+    def _decode_metadata(self, uda_metadata):
+        """Decode UDA metadata, converting base64 to numpy arrays."""
+        cleaned_metadata = {}
+        for key, value in uda_metadata.items():
+            if isinstance(value, dict) and value.get('_type') == 'numpy.ndarray':
+                decoded_value = base64.b64decode(value['data']['value'])
+                cleaned_metadata[key] = np.frombuffer(decoded_value, dtype=np.int64)[0]
+            else:
+                cleaned_metadata[key] = value
+        return cleaned_metadata

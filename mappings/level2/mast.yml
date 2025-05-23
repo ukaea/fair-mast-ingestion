@@ -709,7 +709,7 @@ datasets:
         dimensions:
           time:
             imas: "magnetics.time"
-
+      
       b_field_pol_probe_ccbv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
         description: "Centre column Bv array"
@@ -761,6 +761,20 @@ datasets:
           b_field_pol_probe_ccbv_channel:
           time:
             imas: "magnetics.time"
+          
+      b_field_pol_probe_ccbv_r:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_ccbv_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
 
       b_field_pol_probe_obv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"

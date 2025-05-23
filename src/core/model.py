@@ -56,11 +56,19 @@ class Dimension(BaseModel):
     scale: float = 1.0
     target_units: Optional[str] = None
 
+class Geometry(BaseModel):
+    stem: Optional[str] = None
+    path: Optional[str] = None
+    shot: Optional[str] = None
+    measurement: Optional[str] = None
+    channel_name: Optional[str] = "geometry_channel"
+
 
 class ProfileInfo(BaseModel):
     source: SourceType
     imas: Optional[str] = None
     dimensions: OrderedDict[str, Optional[Dimension]]
+    geometry: Optional[Geometry] = None
     units: Optional[str] = None
     scale: float = 1.0
     fill_value: Optional[float] = None

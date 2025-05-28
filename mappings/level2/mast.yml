@@ -614,6 +614,62 @@ datasets:
         dimensions:
           b_field_pol_probe_ccbv_channel:
 
+      b_field_pol_probe_ccbv_z:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_ccbv_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Z of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+
+      b_field_pol_probe_ccbv_phi_1:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_ccbv_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the centre column Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+
+      b_field_pol_probe_ccbv_phi_2:
+        geometry:
+          stem: "centrecolumn/t2"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_ccbv_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the centre column Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+
+      b_field_pol_probe_ccbv_length:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_ccbv_channel"
+        imas: "magnetics.b_field_pol_probe[:].length"
+        description: "Length of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_channel:
+
       b_field_pol_probe_obv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
         description: "Outer Bv array"
@@ -698,6 +754,34 @@ datasets:
           flux_loop_channel:
           time:
             imas: "magnetics.time"
+
+      flux_loop_cc_r:
+        geometry:
+          stem: "cc"
+          path: "/magnetics/fluxloops"
+          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
+          measurement: "r"
+          channel_name: "flux_loop_cc_r_index"
+        imas: "magnetics.flux_loop[:].position[:].r"
+        description: "Major radius of the centre column flux loop"
+        units: "m"
+        source: ""
+        dimensions:
+          flux_loop_cc_r_index:
+
+      flux_loop_cc_z:
+        geometry:
+          stem: "cc"
+          path: "/magnetics/fluxloops"
+          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
+          measurement: "z"
+          channel_name: "flux_loop_cc_z_index"
+        imas: "magnetics.flux_loop[:].position[:].z"
+        description: "Height of the centre column flux loop"
+        units: "m"
+        source: ""
+        dimensions:
+          flux_loop_cc_z_index:
       
       b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"

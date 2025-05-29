@@ -48,8 +48,8 @@ class IngestionWorkflow:
 
         try:
             self.create_dataset(shot)
-            self.local_icechunk_dataset(shot)
-            self.upload_dataset(shot)
+            self.icechunk_dataset(shot)
+            #self.upload_dataset(shot)
             logger.info(f"Done shot #{shot}")
         except Exception as e:
             logger.error(
@@ -68,31 +68,39 @@ class IngestionWorkflow:
 
         builder.create(shot)
 
-    def upload_dataset(self, shot: int):
-        if self.config.upload is None:
-            return
+    #def upload_dataset(self, shot: int):
+    #    if self.config.upload is None:
+    #        return
+#
+    #    file_name = f"{shot}.{self.writer.file_extension}"
+    #    local_file = self.config.writer.options["output_path"] / Path(file_name)
+    #    remote_file = f"{self.config.upload.base_path}/"
+#
+    #    if not local_file.exists():
+    #        logger.error(f"File {local_file} does not exist")
+    #        return
+#
+    #    uploader = UploadS3(self.config.upload)
+    #    uploader.upload(local_file, remote_file)
 
-        file_name = f"{shot}.{self.writer.file_extension}"
-        local_file = self.config.writer.options["output_path"] / Path(file_name)
-        remote_file = f"{self.config.upload.base_path}/"
-
-        if not local_file.exists():
-            logger.error(f"File {local_file} does not exist")
-            return
-
-        uploader = UploadS3(self.config.upload)
-        uploader.upload(local_file, remote_file)
-
-    def local_icechunk_dataset(self, shot: int):
+    def icechunk_dataset(self, shot: int):
         if self.config.icechunk is None:
             return
         
         file_name = f"{shot}.{self.writer.file_extension}"
         local_file = self.config.writer.options["output_path"] / Path(file_name)
-
+        
         if not local_file.exists():
             logger.warning(f"File {local_file} does not exist")
             return
-
+    
         icechunk = IcechunkUploader(self.config.icechunk)
-        icechunk.upload(local_file, shot)
+
+        if self.config.icechunk.upload is not None:
+            logger.info("Uploading to Icechunk remote store...")
+            icechunk.remote_upload(local_file, shot)
+        else:
+            logger.info("Uploading to Icechunk local store...")
+            icechunk.local_upload(local_file, shot)
+            
+

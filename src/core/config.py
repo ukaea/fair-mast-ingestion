@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class UploadConfig(BaseModel):
@@ -10,6 +10,20 @@ class UploadConfig(BaseModel):
     credentials_file: str
     endpoint_url: str
 
+class IcechunkUploadConfig(BaseModel):
+    bucket: str
+    prefix: str
+    endpoint_url: str
+    access_key_id: str
+    secret_access_key: str
+
+    @validator("prefix", pre=True)
+    def normalize_prefix(cls, v):
+        if v.startswith("/"):
+            v = v[1:]
+        if not v.endswith("/"):
+            v += "/"
+        return v
 
 class WriterConfig(BaseModel):
     type: str
@@ -21,12 +35,12 @@ class ReaderConfig(BaseModel):
     options: Optional[dict[str, Any]] = {}
 
 class IcechunkConfig(BaseModel):
-    icechunk_repo_path: str
+    upload: Optional[IcechunkUploadConfig] = None
+    local_icechunk_repo_path: Optional[str] = None
     icechunk_branch: str = "main"
-    commit_message: str
+    commit_message: str = None
 
 class IngestionConfig(BaseModel):
-    upload: Optional[UploadConfig] = None
     icechunk: Optional[IcechunkConfig] = None
     readers: dict[str, ReaderConfig]
     writer: WriterConfig

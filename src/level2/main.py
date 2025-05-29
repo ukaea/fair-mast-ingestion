@@ -9,6 +9,7 @@ import pint_xarray  # noqa: F401
 import xarray as xr
 
 from src.core.config import ReaderConfig, load_config
+from src.core.icechunk import IcechunkUploader
 from src.core.load import (
     BaseLoader,
     loader_registry,
@@ -16,7 +17,6 @@ from src.core.load import (
 from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
-from src.core.icechunk import IcechunkUploader
 from src.core.workflow_manager import WorkflowManager
 from src.core.writer import dataset_writer_registry
 from src.level2.reader import DatasetReader

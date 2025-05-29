@@ -1,11 +1,12 @@
+import shutil
+import warnings
+
 import icechunk
 import icechunk.xarray
 import xarray as xr
-import warnings
-import shutil
 
-from src.core.log import logger
 from src.core.config import IcechunkConfig
+from src.core.log import logger
 
 warnings.filterwarnings("ignore")
 

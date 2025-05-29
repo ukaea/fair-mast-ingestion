@@ -3,10 +3,10 @@ from pathlib import Path
 from typing import Optional
 
 from src.core.config import IngestionConfig
+from src.core.icechunk import IcechunkUploader
 from src.core.load import loader_registry
 from src.core.log import logger
 from src.core.upload import UploadS3
-from src.core.icechunk import IcechunkUploader
 from src.core.writer import dataset_writer_registry
 from src.level1.builder import DatasetBuilder
 from src.level1.pipelines import pipelines_registry

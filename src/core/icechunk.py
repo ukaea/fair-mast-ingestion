@@ -31,7 +31,7 @@ class IcechunkUploader:
         snapshot = session.commit(self.config.commit_message)
         logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")
 
-        logger.info(f"Cleanup local file...")
+        logger.info("Cleanup local file...")
         shutil.rmtree(local_file)
 
 
@@ -70,5 +70,5 @@ class IcechunkUploader:
         snapshot = session.commit(self.config.commit_message)
         logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")
 
-        logger.info(f"Cleanup local file...")
+        logger.info("Cleanup local file...")
         shutil.rmtree(local_file)

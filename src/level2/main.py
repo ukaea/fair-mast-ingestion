@@ -16,6 +16,7 @@ from src.core.load import (
 from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
+from src.core.icechunk import IcechunkUploader
 from src.core.workflow_manager import WorkflowManager
 from src.core.writer import dataset_writer_registry
 from src.level2.reader import DatasetReader
@@ -163,6 +164,20 @@ def process_shot(shot: int, **kwargs):
 
         uploader = UploadS3(config.upload)
         uploader.upload(local_file, remote_file)
+
+    if config.icechunk is not None:
+        if not local_file.exists():
+            logger.warning(f"File {local_file} does not exist")
+            return
+    
+        icechunk = IcechunkUploader(config.icechunk)
+
+        if config.icechunk.s3 is not None:
+            logger.info("Uploading to Icechunk remote store...")
+            icechunk.remote_upload(local_file, shot)
+        else:
+            logger.info("Uploading to Icechunk local store...")
+            icechunk.local_upload(local_file, shot)
 
     logger.info(f"Done shot {shot}!")
 

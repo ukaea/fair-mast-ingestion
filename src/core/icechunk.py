@@ -23,7 +23,7 @@ class IcechunkUploader:
         logger.info(f"Writing Zarr data from '{local_file}' to Icechunk local store...")
 
         data_tree = xr.open_datatree(local_file)
-        data_tree.to_zarr(session.store, mode="w")
+        data_tree.to_zarr(session.store, mode="a")
 
         if self.config.commit_message is None:
             snapshot = self.config.commit_message = f"Upload {local_file} to local Icechunk repo"
@@ -36,15 +36,15 @@ class IcechunkUploader:
 
 
     def remote_upload(self, local_file: str, shot):
-        logger.info(f"Writing Zarr data from '{local_file}' to s3://{self.config.upload.bucket}{self.config.upload.prefix}{shot}")
+        logger.info(f"Writing Zarr data from '{local_file}' to s3://{self.config.s3.bucket}/{self.config.s3.prefix}{shot}")
         
         storage = icechunk.s3_storage(
-            bucket=self.config.upload.bucket,
-            prefix=f"{self.config.upload.prefix}{shot}",
-            endpoint_url=self.config.upload.endpoint_url,
+            bucket=self.config.s3.bucket,
+            prefix=f"{self.config.s3.prefix}{shot}",
+            endpoint_url=self.config.s3.endpoint_url,
             force_path_style=True,
-            access_key_id=self.config.upload.access_key_id,
-            secret_access_key=self.config.upload.secret_access_key,
+            access_key_id=self.config.s3.access_key_id,
+            secret_access_key=self.config.s3.secret_access_key,
         )
 
         # needed for CEPH storage
@@ -62,7 +62,7 @@ class IcechunkUploader:
         data = xr.open_datatree(local_file, chunks={})
         
         with session.allow_pickling():
-            data.to_zarr(session.store, mode="w")
+            data.to_zarr(session.store, mode="a")
 
         if self.config.commit_message is None:
             self.config.commit_message = f"Upload {local_file} to S3 Icechunk repo"

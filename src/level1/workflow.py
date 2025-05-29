@@ -31,17 +31,21 @@ class IngestionWorkflow:
         if self.verbose:
             logger.setLevel("DEBUG")
 
-        writer_config = self.config.writer
-
-        if writer_config.options["zarr_format"] != 3 and self.config.icechunk:
+        if self.config.writer.options["zarr_format"] != 3 and self.config.icechunk:
             logger.warning(
                 "Icechunk is only supported for Zarr format version 3. "
                 "Please set 'zarr_format' to 3 in the config file."
             )
             return
+        
+        if self.config.upload and self.config.icechunk:
+            logger.warning(
+                "Unable to upload to S3 and version with Icechunk at the same time. Select one or the other in the config file."
+            )
+            return
 
         self.writer = dataset_writer_registry.create(
-            writer_config.type, **writer_config.options
+            self.config.writer.type, **self.config.writer.options
         )
         self.loader = loader_registry.create("uda", include_error=True)
         self.pipelines = pipelines_registry.create(self.facility)
@@ -49,7 +53,7 @@ class IngestionWorkflow:
         try:
             self.create_dataset(shot)
             self.icechunk_dataset(shot)
-            #self.upload_dataset(shot)
+            self.upload_dataset(shot)
             logger.info(f"Done shot #{shot}")
         except Exception as e:
             logger.error(
@@ -68,20 +72,20 @@ class IngestionWorkflow:
 
         builder.create(shot)
 
-    #def upload_dataset(self, shot: int):
-    #    if self.config.upload is None:
-    #        return
-#
-    #    file_name = f"{shot}.{self.writer.file_extension}"
-    #    local_file = self.config.writer.options["output_path"] / Path(file_name)
-    #    remote_file = f"{self.config.upload.base_path}/"
-#
-    #    if not local_file.exists():
-    #        logger.error(f"File {local_file} does not exist")
-    #        return
-#
-    #    uploader = UploadS3(self.config.upload)
-    #    uploader.upload(local_file, remote_file)
+    def upload_dataset(self, shot: int):
+        if self.config.upload is None:
+            return
+
+        file_name = f"{shot}.{self.writer.file_extension}"
+        local_file = self.config.writer.options["output_path"] / Path(file_name)
+        remote_file = f"{self.config.upload.base_path}/"
+
+        if not local_file.exists():
+            logger.error(f"File {local_file} does not exist")
+            return
+
+        uploader = UploadS3(self.config.upload)
+        uploader.upload(local_file, remote_file)
 
     def icechunk_dataset(self, shot: int):
         if self.config.icechunk is None:
@@ -96,7 +100,7 @@ class IngestionWorkflow:
     
         icechunk = IcechunkUploader(self.config.icechunk)
 
-        if self.config.icechunk.upload is not None:
+        if self.config.icechunk.s3 is not None:
             logger.info("Uploading to Icechunk remote store...")
             icechunk.remote_upload(local_file, shot)
         else:

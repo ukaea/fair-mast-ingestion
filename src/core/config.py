@@ -10,7 +10,7 @@ class UploadConfig(BaseModel):
     credentials_file: str
     endpoint_url: str
 
-class IcechunkUploadConfig(BaseModel):
+class IcechunkS3Config(BaseModel):
     bucket: str
     prefix: str
     endpoint_url: str
@@ -35,13 +35,14 @@ class ReaderConfig(BaseModel):
     options: Optional[dict[str, Any]] = {}
 
 class IcechunkConfig(BaseModel):
-    upload: Optional[IcechunkUploadConfig] = None
+    s3: Optional[IcechunkS3Config] = None
     local_icechunk_repo_path: Optional[str] = None
     icechunk_branch: str = "main"
     commit_message: str = None
 
 class IngestionConfig(BaseModel):
     icechunk: Optional[IcechunkConfig] = None
+    upload: Optional[UploadConfig] = None
     readers: dict[str, ReaderConfig]
     writer: WriterConfig
 

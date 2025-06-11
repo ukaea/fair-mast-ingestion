@@ -351,7 +351,7 @@ class AddGeometryUDA(BaseTransform):
         elif self.name in self.XRAY_NAMES:
             all_rows = self._process_xray(all_rows, geom_data)
 
-        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'name', 'version'], axis=1, errors='ignore')
+        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
         geom_df.columns = [f"{self.name}_{col}" for col in geom_df.columns]
         geom_df = self._set_geometry_index(geom_df)
 
@@ -384,7 +384,7 @@ class AddGeometryUDA(BaseTransform):
 
     def _set_geometry_index(self, geom_df):
         """Set the geometry index for the dataframe."""
-        index_name = f"{self.name}_geometry_index"
+        index_name = f"{self.name}_geometry_channel"
         geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
         return geom_df.set_index(index_name)
 
@@ -428,11 +428,12 @@ class AddGeometryUDA(BaseTransform):
             element_dim = np.arange(r_arr.shape[1])
             return xr.Dataset(
                 {
-                    f"{self.name}_r": ([f"{self.name}_geometry_index", "element"], r_arr),
-                    f"{self.name}_z": ([f"{self.name}_geometry_index", "element"], z_arr),
-                    f"{self.name}_phi": ([f"{self.name}_geometry_index", "element"], phi_arr),
+                    f"{self.name}_r": ([f"{self.name}_geometry_channel", f"{self.name}_coordinate_element"], r_arr),
+                    f"{self.name}_z": ([f"{self.name}_geometry_channel", f"{self.name}_coordinate_element"], z_arr),
+                    f"{self.name}_phi": ([f"{self.name}_geometry_channel", f"{self.name}_coordinate_element"], phi_arr),
                 },
-                coords={f"{self.name}_geometry_index": geom_df.index.to_numpy(), "element": element_dim}
+                #dims=[f"{self.name}_geometry_channel", f"{self.name}_coordinate_element"],
+                coords={f"{self.name}_geometry_channel": geom_df[f'{self.name}_name'].values, f"{self.name}_coordinate_element": element_dim},
             )
         elif self.name in self.PF_NAMES:
             centre_r_arr = np.stack(geom_df[f"{self.name}_centreR"].to_numpy()).squeeze()
@@ -442,20 +443,21 @@ class AddGeometryUDA(BaseTransform):
             element_dim = np.arange(dr_arr.shape[0])
             return xr.Dataset(
                 {
-                    f"{self.name}_coil_r": (["element"], centre_r_arr),
-                    f"{self.name}_coil_z": (["element"], centre_z_arr),
-                    f"{self.name}_coil_dR": (["element"], dr_arr),
-                    f"{self.name}_coil_dZ": (["element"], dz_arr),
+                    f"{self.name}_coil_r": ([f"{self.name}_coordinate_element"], centre_r_arr),
+                    f"{self.name}_coil_z": ([f"{self.name}_coordinate_element"], centre_z_arr),
+                    f"{self.name}_coil_dR": ([f"{self.name}_coordinate_element"], dr_arr),
+                    f"{self.name}_coil_dZ": ([f"{self.name}_coordinate_element"], dz_arr),
                 },
-                coords={"element": element_dim}
+                #dims=[f"{self.name}_coordinate_element"],
+                coords={f"{self.name}_coordinate_element": element_dim}
             )
         
         # can comment this out if dont mind repeating the scalar values for each channel?
         elif self.name in self.XRAY_NAMES:
             geometry_index = geom_df.index.astype(str)
-            coords = {f"{self.name}_geometry_index": geometry_index}
+            coords = {f"{self.name}_geometry_channel": geometry_index}
             ds_vars = {
-                col: (f"{self.name}_geometry_index", geom_df[col].to_numpy()) 
+                col: (f"{self.name}_geometry_channel", geom_df[col].to_numpy()) 
                 for col in geom_df.columns if geom_df[col].nunique(dropna=False) > 1
             }
             ds_vars.update({
@@ -465,7 +467,7 @@ class AddGeometryUDA(BaseTransform):
 
             for col in geom_df.columns:
                 if col.startswith(f"{self.name}_endpoint_") or col.startswith(f"{self.name}_origin_"):
-                    ds_vars[col] = (f"{self.name}_geometry_index", geom_df[col].to_numpy())
+                    ds_vars[col] = (f"{self.name}_geometry_channel", geom_df[col].to_numpy())
 
             return xr.Dataset(ds_vars, coords=coords)
 
@@ -518,14 +520,14 @@ class AlignChannels(BaseTransform):
     def __init__(self, source: str):
         self.source = source
         self.channel_dim = f"{source}_channel"
-        self.geometry_dim = f"{source}_geometry_index"
+        self.geometry_dim = f"{source}_geometry_channel"
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         geometry_index = dataset.coords[self.geometry_dim].values
         dataset = dataset.reindex({f"{self.source}_channel": geometry_index})
         dataset = dataset.drop_vars(self.geometry_dim)
         dataset = dataset.rename(
-            {f"{self.source}_geometry_index": f"{self.source}_channel"}
+            {f"{self.source}_geometry_channel": f"{self.source}_channel"}
         )
 
         return dataset

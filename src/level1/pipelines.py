@@ -4,7 +4,6 @@ from src.core.registry import Registry
 from src.level1.transforms import (
     AddGeometryUDA,
     AddToroidalAngle2,
-    AlignChannels,
     DropCoordinates,
     DropDatasets,
     DropErrors,
@@ -594,58 +593,45 @@ class MASTPipelines(Pipelines):
                     TransformUnits(),
                     TensoriseChannels("ccbv"),
                     AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("ccbv"),
                     AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr"),
                     AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("obr"),
                     AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv"),
                     AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("obv"),
                     AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
                     AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_cc"),
                     
                     TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
                     AddGeometryUDA('p2/lower', "fl_p2l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p2l"),
 
                     TensoriseChannels("fl_p3l", regex=r"fl_p3l_(\d+)"),
                     AddGeometryUDA('p3/lower', "fl_p3l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p3l"),
 
                     TensoriseChannels("fl_p4l", regex=r"fl_p4l_(\d+)"),
                     AddGeometryUDA('p4/lower', "fl_p4l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p4l"),
 
                     TensoriseChannels("fl_p5l", regex=r"fl_p5l_(\d+)"),
                     AddGeometryUDA('p5/lower', "fl_p5l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p5l"),
 
                     TensoriseChannels("fl_p6l", regex=r"fl_p6l_(\d+)"),
                     AddGeometryUDA('p6/lower', "fl_p6l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p6l"),
 
                     TensoriseChannels("fl_p2u", regex=r"fl_p2u_(\d+)"),
                     AddGeometryUDA('p2/upper', "fl_p2u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p2u"),
 
                     TensoriseChannels("fl_p3u", regex=r"fl_p3u_(\d+)"),
                     AddGeometryUDA('p3/upper', "fl_p3u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p3u"),
 
                     TensoriseChannels("fl_p4u", regex=r"fl_p4u_(\d+)"),
                     AddGeometryUDA('p4/upper', "fl_p4u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p4u"),
 
                     TensoriseChannels("fl_p5u", regex=r"fl_p5u_(\d+)"),
                     AddGeometryUDA('p5/upper', "fl_p5u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p5u"),
                 ]
             ),
             "amc": Pipeline(
@@ -696,60 +682,45 @@ class MASTPipelines(Pipelines):
                     MergeDatasets(),
                     TransformUnits(),
                     AddGeometryUDA('centralcolumn/botcol', "botcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("botcol"),
 
                     AddGeometryUDA('centralcolumn/endcrown_l', "endcrown_l", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("endcrown_l"),
 
                     AddGeometryUDA('centralcolumn/endcrown_u', "endcrown_u", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("endcrown_u"),
 
                     TensoriseChannels("incon"),
                     AddGeometryUDA('centralcolumn/incon', "incon", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("incon"),
                     
                     TensoriseChannels("lhorw"),
                     AddGeometryUDA('walls/lhorw', "lhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("lhorw"),
 
                     TensoriseChannels("mid"),
                     AddGeometryUDA('walls/mid', "mid", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("mid"),
 
                     TensoriseChannels("p2larm"),
                     AddGeometryUDA('p2/p2larm', "p2larm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("p2larm"),
                 
                     TensoriseChannels("p2ldivpl"),
                     AddGeometryUDA('p2/p2ldivpl', "p2ldivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("p2ldivpl"),
 
                     TensoriseChannels("p2uarm"),
                     AddGeometryUDA('p2/p2uarm', "p2uarm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("p2uarm"),
                     
                     TensoriseChannels("p2udivpl"),
                     AddGeometryUDA('p2/p2udivpl', "p2udivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("p2udivpl"),
 
                     TensoriseChannels("ring"),
                     AddGeometryUDA('centralcolumn/ring', "ring", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("ring"),
 
                     TensoriseChannels("rodgr"),
                     AddGeometryUDA('centralcolumn/rodgr', "rodgr", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("rodgr"),
 
                     AddGeometryUDA('centralcolumn/topcol', "topcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("topcol"),
 
                     TensoriseChannels("uhorw"),
                     AddGeometryUDA('walls/uhorw', "uhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("uhorw"),
 
                     TensoriseChannels("vertw"),
                     AddGeometryUDA('walls/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
-                    AlignChannels("vertw"),
                 ]
             ),
             "ams": Pipeline(
@@ -1034,24 +1005,18 @@ class MASTPipelines(Pipelines):
                     TransformUnits(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
                     AddGeometryUDA('lower_horizontal', "hcam_l", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("hcam_l"),
 
                     TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
                     AddGeometryUDA('upper_horizontal', "hcam_u", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("hcam_u"),
 
                     AddGeometryUDA('third_horizontal', "hcam_third", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("hcam_third"),
 
                     AddGeometryUDA('inner_vertical', "vcam_i", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("vcam_i"),
 
                     AddGeometryUDA('outer_vertical', "vcam_o", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("vcam_o"),
 
                     TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
                     AddGeometryUDA("tangential", "tcam", "/xraycams/core", "/common/uda-scratch/jg3176/xraycams.nc"),
-                    AlignChannels("tcam"),
                 ]
             ),
             "xma": Pipeline(
@@ -1064,58 +1029,45 @@ class MASTPipelines(Pipelines):
                     TransformUnits(),
                     TensoriseChannels("ccbv", regex=r"ccbv_(\d+)"),
                     AddGeometryUDA('centrecolumn/t1', "ccbv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("ccbv"),
                     AddToroidalAngle2("ccbv", "ccbv_channel"),
 
                     TensoriseChannels("obr", regex=r"obr_(\d+)"),
                     AddGeometryUDA('outervessel/t1/obr', "obr", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("obr"),
                     AddToroidalAngle2("obr", "obr_channel"),
 
                     TensoriseChannels("obv", regex=r"obv_(\d+)"),
                     AddGeometryUDA('outervessel/t1/obv', "obv", "/magnetics/pickup", "/common/uda-scratch/jg3176/pickup_coils.nc"),
-                    AlignChannels("obv"),
                     AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
                     AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_cc"),
                     
                     TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
                     AddGeometryUDA('p2/lower', "fl_p2l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p2l"),
 
                     TensoriseChannels("fl_p3l", regex=r"fl_p3l(\d+)"),
                     AddGeometryUDA('p3/lower', "fl_p3l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p3l"),
 
                     TensoriseChannels("fl_p4l", regex=r"fl_p4l(\d+)"),
                     AddGeometryUDA('p4/lower', "fl_p4l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p4l"),
 
                     TensoriseChannels("fl_p5l", regex=r"fl_p5l(\d+)"),
                     AddGeometryUDA('p5/lower', "fl_p5l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p5l"),
 
                     TensoriseChannels("fl_p6l", regex=r"fl_p6l(\d+)"),
                     AddGeometryUDA('p6/lower', "fl_p6l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p6l"),
 
                     TensoriseChannels("fl_p2u", regex=r"fl_p2u(\d+)"),
                     AddGeometryUDA('p2/upper', "fl_p2u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p2u"),
 
                     TensoriseChannels("fl_p3u", regex=r"fl_p3u(\d+)"),
                     AddGeometryUDA('p3/upper', "fl_p3u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p3u"),
 
                     TensoriseChannels("fl_p4u", regex=r"fl_p4u(\d+)"),
                     AddGeometryUDA('p4/upper', "fl_p4u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p4u"),
 
                     TensoriseChannels("fl_p5u", regex=r"fl_p5u(\d+)"),
                     AddGeometryUDA('p5/upper', "fl_p5u", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
-                    AlignChannels("fl_p5u"),
                 ]
             ),
             "xmb": Pipeline(
@@ -1128,13 +1080,10 @@ class MASTPipelines(Pipelines):
                     TransformUnits(),
                     TensoriseChannels("sad_out_l"),
                     AddGeometryUDA('lower', "sad_out_l", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
-                    AlignChannels("sad_out_l"),
                     TensoriseChannels("sad_out_m"),
                     AddGeometryUDA('middle', "sad_out_m", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
-                    AlignChannels("sad_out_m"),
                     TensoriseChannels("sad_out_u"),
                     AddGeometryUDA('upper', "sad_out_u", "/magnetics/saddlecoils", "/common/uda-scratch/jg3176/saddle.nc"),
-                    AlignChannels("sad_out_u"),
                 ]
             ),
             "xmc": Pipeline(
@@ -1147,13 +1096,10 @@ class MASTPipelines(Pipelines):
                     TransformUnits(),
                     TensoriseChannels("cc_mt", regex=r"cc_mt_(\d+)"),
                     AddGeometryUDA('centrecolumn/toroidal', "cc_mt", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
-                    AlignChannels("cc_mt"),
                     TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
                     AddGeometryUDA('centrecolumn/vertical', "cc_mv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
-                    AlignChannels("cc_mv"),
                     TensoriseChannels("omv", regex=r"omv_(\d+)"),
                     AddGeometryUDA('outervessel', "omv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
-                    AlignChannels("omv"),
                 ]
             ),
             "xmp": Pipeline(

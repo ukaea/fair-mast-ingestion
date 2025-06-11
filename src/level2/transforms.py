@@ -187,6 +187,10 @@ class AddGeometryUDA(BaseDatasetTransform):
     SADDLE_NAMES = {"b_field_tor_probe_saddle_l_r", "b_field_tor_probe_saddle_m_r", "b_field_tor_probe_saddle_u_r",
                     "b_field_tor_probe_saddle_l_z", "b_field_tor_probe_saddle_m_z", "b_field_tor_probe_saddle_u_z",
                     "b_field_tor_probe_saddle_l_phi", "b_field_tor_probe_saddle_m_phi", "b_field_tor_probe_saddle_u_phi"}
+    XRAY_NAMES = {"tangential_cam_origin_r", "tangential_cam_origin_z", "tangential_cam_endpoint_r", "tangential_cam_endpoint_z", "tangential_cam_phi",
+                "horizontal_cam_lower_origin_r", "horizontal_cam_lower_origin_z", "horizontal_cam_lower_endpoint_r", "horizontal_cam_lower_endpoint_z", "horizontal_cam_lower_phi",
+                "horizontal_cam_upper_origin_r", "horizontal_cam_upper_origin_z", "horizontal_cam_upper_endpoint_r", "horizontal_cam_upper_endpoint_z", "horizontal_cam_upper_phi"}
+
 
     def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
         self.stem = stem
@@ -206,6 +210,8 @@ class AddGeometryUDA(BaseDatasetTransform):
 
         if self.name in self.SADDLE_NAMES:
             all_rows = self._process_saddle(all_rows, geom_data)
+        elif self.name in self.XRAY_NAMES:
+            all_rows = self._process_xray(all_rows, geom_data)
 
         geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
         geom_df = self._set_geometry_index(geom_df)
@@ -256,26 +262,43 @@ class AddGeometryUDA(BaseDatasetTransform):
                 if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
                     row[key] = getattr(geom_data.data[f'{self.stem}/{row["name"]}/data/coilPath'], key)
         return all_rows
+    
+    def _process_xray(self, all_rows, geom_data):
+        """Process x-ray geometry data."""
+        new_rows = {}
+        for row in all_rows:
+            for key, item in row.items():
+                if key == "impact_parameter":
+                    new_rows[key] = getattr(geom_data.data[f'{self.stem}/data/'], key)
+                elif isinstance(item, dict) and item.get('_type') == 'numpy.ndarray' and key != "impact_parameter":
+                    new_rows[f"origin_{key}"] = getattr(geom_data.data[f'{self.stem}/data/origin'], key)
+                    new_rows[f"endpoint_{key}"] = getattr(geom_data.data[f'{self.stem}/data/endpoint'], key)
+                else:
+                    new_rows[key] = item
+        return new_rows
 
     def _create_xarray(self, geom_df):
+        data = geom_df[f"{self.measurement}"].to_numpy()
+
         if self.name in self.SADDLE_NAMES:
-            measurement_arr = np.stack(geom_df[f"{self.measurement}"].to_numpy())
-            element_dim = np.arange(measurement_arr.shape[1])
-            dr = xr.DataArray(
-            name=f"{self.name}",
-            data=np.stack(geom_df[f"{self.measurement}"].to_numpy()),
-            dims=[f"{self.channel_name}", "coordinate"],
-            coords={f"{self.channel_name}": geom_df['name'].values, "coordinate": element_dim},
-            )
-            return dr
+            data = np.stack(data)
+            dims = [self.channel_name, "coordinate"]
+            coords = {self.channel_name: geom_df["name"].values, "coordinate": np.arange(data.shape[1])}
+
+        elif self.name in self.XRAY_NAMES:
+            dims = [self.channel_name]
+            coords = None 
+
         else:
-            dr = xr.DataArray(
-            name=f"{self.name}",
-            data=geom_df[f"{self.measurement}"].values,
-            dims=[f"{self.channel_name}"],
-            coords={f"{self.channel_name}": geom_df['name'].values},
-            )
-            return dr
+            dims = [self.channel_name]
+            coords = {self.channel_name: geom_df["name"].values}
+
+        return xr.DataArray(
+            name=self.name,
+            data=data,
+            dims=dims,
+            coords=coords
+        )
 
     def _decode_metadata(self, uda_metadata):
         """Decode UDA metadata, converting base64 to numpy arrays."""

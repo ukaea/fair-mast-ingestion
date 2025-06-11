@@ -183,6 +183,11 @@ transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)
 
 class AddGeometryUDA(BaseDatasetTransform):
+
+    SADDLE_NAMES = {"b_field_tor_probe_saddle_l_r", "b_field_tor_probe_saddle_m_r", "b_field_tor_probe_saddle_u_r",
+                    "b_field_tor_probe_saddle_l_z", "b_field_tor_probe_saddle_m_z", "b_field_tor_probe_saddle_u_z",
+                    "b_field_tor_probe_saddle_l_phi", "b_field_tor_probe_saddle_m_phi", "b_field_tor_probe_saddle_u_phi"}
+
     def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
         self.stem = stem
         self.name = name
@@ -199,7 +204,10 @@ class AddGeometryUDA(BaseDatasetTransform):
         geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
         all_rows = self._extract_rows(geom_data_json)
 
-        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'name', 'version'], axis=1, errors='ignore')
+        if self.name in self.SADDLE_NAMES:
+            all_rows = self._process_saddle(all_rows, geom_data)
+
+        geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
         geom_df = self._set_geometry_index(geom_df)
 
         geom_xarray = self._create_xarray(geom_df)
@@ -240,14 +248,34 @@ class AddGeometryUDA(BaseDatasetTransform):
         index_name = f"{self.name}_channel"
         geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
         return geom_df.set_index(index_name)
+    
+    def _process_saddle(self, all_rows, geom_data):
+        """Process saddle coil geometry data."""
+        for row in all_rows:
+            for key, item in row.items():
+                if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                    row[key] = getattr(geom_data.data[f'{self.stem}/{row["name"]}/data/coilPath'], key)
+        return all_rows
 
     def _create_xarray(self, geom_df):
-        dr = xr.DataArray(
-        name=f"{self.name}",
-        data=geom_df[f"{self.measurement}"].values,
-        dims=[f"{self.channel_name}"],
-        )
-        return dr
+        if self.name in self.SADDLE_NAMES:
+            measurement_arr = np.stack(geom_df[f"{self.measurement}"].to_numpy())
+            element_dim = np.arange(measurement_arr.shape[1])
+            dr = xr.DataArray(
+            name=f"{self.name}",
+            data=np.stack(geom_df[f"{self.measurement}"].to_numpy()),
+            dims=[f"{self.channel_name}", "coordinate"],
+            coords={f"{self.channel_name}": geom_df['name'].values, "coordinate": element_dim},
+            )
+            return dr
+        else:
+            dr = xr.DataArray(
+            name=f"{self.name}",
+            data=geom_df[f"{self.measurement}"].values,
+            dims=[f"{self.channel_name}"],
+            coords={f"{self.channel_name}": geom_df['name'].values},
+            )
+            return dr
 
     def _decode_metadata(self, uda_metadata):
         """Decode UDA metadata, converting base64 to numpy arrays."""

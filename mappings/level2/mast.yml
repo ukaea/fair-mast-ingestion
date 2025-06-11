@@ -606,13 +606,13 @@ datasets:
           path: "/magnetics/pickup"
           shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
           measurement: "r"
-          channel_name: "b_field_pol_probe_ccbv_channel"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
         imas: "magnetics.b_field_pol_probe[:].position.r"
         description: "Major radius of the centre column Bv array"
         units: "m"
         source: ""
         dimensions:
-          b_field_pol_probe_ccbv_channel:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_ccbv_z:
         geometry:
@@ -620,13 +620,13 @@ datasets:
           path: "/magnetics/pickup"
           shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
           measurement: "z"
-          channel_name: "b_field_pol_probe_ccbv_channel"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
         imas: "magnetics.b_field_pol_probe[:].position.z"
-        description: "Z of the centre column Bv array"
+        description: "Vertical position of the centre column Bv array"
         units: "m"
         source: ""
         dimensions:
-          b_field_pol_probe_ccbv_channel:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_ccbv_phi_1:
         geometry:
@@ -634,13 +634,13 @@ datasets:
           path: "/magnetics/pickup"
           shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
           measurement: "phi"
-          channel_name: "b_field_pol_probe_ccbv_channel"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
         imas: "magnetics.b_field_pol_probe[:].position.phi"
         description: "Phi 1 of the centre column Bv array"
         units: "degrees"
         source: ""
         dimensions:
-          b_field_pol_probe_ccbv_channel:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_ccbv_phi_2:
         geometry:
@@ -648,13 +648,13 @@ datasets:
           path: "/magnetics/pickup"
           shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
           measurement: "phi"
-          channel_name: "b_field_pol_probe_ccbv_channel"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
         imas: "magnetics.b_field_pol_probe[:].position.phi"
         description: "Phi 2 of the centre column Bv array"
         units: "degrees"
         source: ""
         dimensions:
-          b_field_pol_probe_ccbv_channel:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_ccbv_length:
         geometry:
@@ -662,13 +662,13 @@ datasets:
           path: "/magnetics/pickup"
           shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
           measurement: "length"
-          channel_name: "b_field_pol_probe_ccbv_channel"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
         imas: "magnetics.b_field_pol_probe[:].length"
         description: "Length of the centre column Bv array"
         units: "m"
         source: ""
         dimensions:
-          b_field_pol_probe_ccbv_channel:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_obv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -695,10 +695,81 @@ datasets:
             - "AMB_OBV16"
             - "AMB_OBV17"
             - "AMB_OBV18"
+            - "AMB_OBV19"
         dimensions:
           b_field_pol_probe_obv_channel:
           time:
             imas: "magnetics.time"
+      
+      b_field_pol_probe_obv_r:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_z:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_phi_1:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the outer vessel Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_phi_2:
+        geometry:
+          stem: "outervessel/t2/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the outer vessel Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_length:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.length"
+        description: "Length of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
 
       b_field_pol_probe_obr_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -725,10 +796,81 @@ datasets:
             - "AMB_OBR16"
             - "AMB_OBR17"
             - "AMB_OBR18"
+            - "AMB_OBR19"
         dimensions:
           b_field_pol_probe_obr_channel:
           time:
             imas: "magnetics.time"
+      
+      b_field_pol_probe_obr_r:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_z:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_phi_1:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the outer vessel Br array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_phi_2:
+        geometry:
+          stem: "outervessel/t2/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the outer vessel Br array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_length:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.length"
+        description: "Length of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
 
       flux_loop_flux:
         imas: "magnetics.flux_loop[:].flux.data"
@@ -761,13 +903,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_cc_r_index"
+          channel_name: "flux_loop_cc_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the centre column flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_cc_r_index:
+          flux_loop_cc_geometry_channel:
 
       flux_loop_cc_z:
         geometry:
@@ -775,13 +917,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_cc_z_index"
+          channel_name: "flux_loop_cc_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the centre column flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_cc_z_index:
+          flux_loop_cc_geometry_channel:
 
       flux_loop_p2l_r:
         geometry:
@@ -789,13 +931,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p2l_r_index"
+          channel_name: "flux_loop_p2l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p2 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p2l_r_index:
+          flux_loop_p2l_geometry_channel:
 
       flux_loop_p2l_z:
         geometry:
@@ -803,13 +945,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p2l_z_index"
+          channel_name: "flux_loop_p2l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p2 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p2l_z_index:
+          flux_loop_p2l_geometry_channel:
 
       flux_loop_p2u_r:
         geometry:
@@ -817,13 +959,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p2u_r_index"
+          channel_name: "flux_loop_p2u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p2 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p2u_r_index:
+          flux_loop_p2u_geometry_channel:
 
       flux_loop_p2u_z:
         geometry:
@@ -831,13 +973,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p2u_z_index"
+          channel_name: "flux_loop_p2u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p2 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p2u_z_index:
+          flux_loop_p2u_geometry_channel:
 
       flux_loop_p3l_r:
         geometry:
@@ -845,13 +987,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p3l_r_index"
+          channel_name: "flux_loop_p3l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p3 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p3l_r_index:
+          flux_loop_p3l_geometry_channel:
 
       flux_loop_p3l_z:
         geometry:
@@ -859,13 +1001,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p3l_z_index"
+          channel_name: "flux_loop_p3l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p3 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p3l_z_index:
+          flux_loop_p3l_geometry_channel:
 
       flux_loop_p3u_r:
         geometry:
@@ -873,13 +1015,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p3u_r_index"
+          channel_name: "flux_loop_p3u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p3 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p3u_r_index:
+          flux_loop_p3u_geometry_channel:
 
       flux_loop_p3u_z:
         geometry:
@@ -887,13 +1029,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p3u_z_index"
+          channel_name: "flux_loop_p3u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p3 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p3u_z_index:
+          flux_loop_p3u_geometry_channel:
 
       flux_loop_p4l_r:
         geometry:
@@ -901,13 +1043,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p4l_r_index"
+          channel_name: "flux_loop_p4l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p4 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p4l_r_index:
+          flux_loop_p4l_geometry_channel:
 
       flux_loop_p4l_z:
         geometry:
@@ -915,13 +1057,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p4l_z_index"
+          channel_name: "flux_loop_p4l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p4 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p4l_z_index:
+          flux_loop_p4l_geometry_channel:
 
       flux_loop_p4u_r:
         geometry:
@@ -929,13 +1071,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p4u_r_index"
+          channel_name: "flux_loop_p4u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p4 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p4u_r_index:
+          flux_loop_p4u_geometry_channel:
 
       flux_loop_p4u_z:
         geometry:
@@ -943,13 +1085,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p4u_z_index"
+          channel_name: "flux_loop_p4u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p4 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p4u_z_index:
+          flux_loop_p4u_geometry_channel:
 
       flux_loop_p5l_r:
         geometry:
@@ -957,13 +1099,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p5l_r_index"
+          channel_name: "flux_loop_p5l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p5 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p5l_r_index:
+          flux_loop_p5l_geometry_channel:
 
       flux_loop_p5l_z:
         geometry:
@@ -971,13 +1113,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p5l_z_index"
+          channel_name: "flux_loop_p5l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p5 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p5l_z_index:
+          flux_loop_p5l_geometry_channel:
 
       flux_loop_p5u_r:
         geometry:
@@ -985,13 +1127,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p5u_r_index"
+          channel_name: "flux_loop_p5u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p5 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p5u_r_index:
+          flux_loop_p5u_geometry_channel:
 
       flux_loop_p5u_z:
         geometry:
@@ -999,13 +1141,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p5u_z_index"
+          channel_name: "flux_loop_p5u_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p5 upper flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p5u_z_index:
+          flux_loop_p5_geometry_channel:
 
       flux_loop_p6l_r:
         geometry:
@@ -1013,13 +1155,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_p6l_r_index"
+          channel_name: "flux_loop_p6l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
         description: "Major radius of the p6 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p6l_r_index:
+          flux_loop_p6l_geometry_channel:
 
       flux_loop_p6l_z:
         geometry:
@@ -1027,13 +1169,13 @@ datasets:
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_p6l_z_index"
+          channel_name: "flux_loop_p6l_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
         description: "Vertical position of the p6 lower flux loop"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_p6l_z_index:
+          flux_loop_p6l_geometry_channel:
       
       b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
@@ -1106,6 +1248,132 @@ datasets:
           b_field_tor_probe_saddle_voltage_channel:
           time_saddle:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+      b_field_tor_probe_saddle_l_r:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the lower saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_l_z:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the lower saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_l_phi:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the lower saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_m_r:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the middle saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_m_z:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the middle saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_m_phi:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the middle saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_u_r:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the upper saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
+
+      b_field_tor_probe_saddle_u_z:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the upper saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
+
+      b_field_tor_probe_saddle_u_phi:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the upper saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
 
       # rogowski_coil_current:
       #   imas: "magnetics.rogowski_coil[:].current.data"
@@ -1229,6 +1497,48 @@ datasets:
           time_mirnov:
             imas: "magnetics.b_field_pol_probe[:].voltage.time"
 
+      b_field_pol_probe_omv_r:
+        geometry:
+          stem: "outervessel"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the Outboard vertical mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
+      b_field_pol_probe_omv_z:
+        geometry:
+          stem: "outervessel"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the Outboard vertical mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
+      b_field_pol_probe_omv_phi:
+        geometry:
+          stem: "outervessel"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Toroidal angle of the Outboard vertical mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
       b_field_tor_probe_cc_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         description: "Centre column toroidal mirnov array"
@@ -1275,6 +1585,48 @@ datasets:
           b_field_tor_probe_cc_channel:
           time_mirnov:
             imas: "magnetics.b_field_tor_probe[:].field.time"
+
+      b_field_tor_probe_cc_r:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Major radius of the centre column toroidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
+
+      b_field_tor_probe_cc_z:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical position of the centre column toroidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
+
+      b_field_tor_probe_cc_phi:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal angle of the centre column toroidal mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
 
       b_field_pol_probe_cc_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -1376,6 +1728,48 @@ datasets:
           b_field_pol_probe_cc_channel:
           time_mirnov:
             imas: "magnetics.b_field_pol_probe[:].field.time"
+
+      b_field_pol_probe_cc_r:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the centre column poloidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
+
+      b_field_pol_probe_cc_z:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the centre column poloidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
+
+      b_field_pol_probe_cc_phi:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Toroidal angle of the centre column poloidal mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
 
       b_field_tor_probe_omaha_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"

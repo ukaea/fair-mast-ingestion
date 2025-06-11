@@ -2089,6 +2089,76 @@ datasets:
           time: 
             imas: "soft_x_rays.time"
 
+      tangential_cam_origin_r:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "tangential_cam_channel"
+        imas: ""
+        description: "Origin line of sight radius of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_channel:
+
+      tangential_cam_origin_z:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "tangential_cam_channel"
+        imas: ""
+        description: "Origin line of sight z of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_channel:
+
+      tangential_cam_endpoint_r:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "tangential_cam_channel"
+        imas: ""
+        description: "Endpoint line of sight radius of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_channel:
+
+      tangential_cam_endpoint_z:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "tangential_cam_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_channel:
+
+      tangential_cam_phi:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "tangential_cam_channel"
+        imas: ""
+        description: "Toroidal angle of the tangential camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          tangential_cam_channel:
+
       horizontal_cam_lower:
         source:
           - name: "XSX/HCAM/L"
@@ -2143,6 +2213,76 @@ datasets:
           time: 
             imas: "soft_x_rays.time"
 
+      horizontal_cam_lower_origin_r:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "horizontal_cam_lower_channel"
+        imas: ""
+        description: "Origin line of sight radius of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_channel:
+
+      horizontal_cam_lower_origin_z:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "horizontal_cam_lower_channel"
+        imas: ""
+        description: "Origin line of sight z of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_channel:
+
+      horizontal_cam_lower_endpoint_r:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "horizontal_cam_lower_channel"
+        imas: ""
+        description: "Endpoint line of sight major radius of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_channel:
+
+      horizontal_cam_lower_endpoint_z:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "horizontal_cam_lower_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_channel:
+
+      horizontal_cam_lower_phi:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "horizontal_cam_lower_channel"
+        imas: ""
+        description: "Toroidal angle of the lower horizontal camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_channel:
+
       horizontal_cam_upper:
         source:
           - name: "XSX/HCAM/U"
@@ -2196,6 +2336,76 @@ datasets:
           horizontal_cam_upper_channel:
           time: 
             imas: "soft_x_rays.time"
+
+      horizontal_cam_upper_origin_r:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "horizontal_cam_upper_channel"
+        imas: ""
+        description: "Origin line of sight radius of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_channel:
+
+      horizontal_cam_upper_origin_z:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "horizontal_cam_upper_channel"
+        imas: ""
+        description: "Origin line of sight z of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_channel:
+
+      horizontal_cam_upper_endpoint_r:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "horizontal_cam_upper_channel"
+        imas: ""
+        description: "Endpoint line of sight major radius of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_channel:
+
+      horizontal_cam_upper_endpoint_z:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "horizontal_cam_upper_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_channel:
+
+      horizontal_cam_upper_phi:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "horizontal_cam_upper_channel"
+        imas: ""
+        description: "Toroidal angle of the upper horizontal camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_channel:
 
   camera_visible:
     interpolate:

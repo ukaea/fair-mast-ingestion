@@ -184,14 +184,6 @@ transform_registry.register("fftdecompose", FFTDecomposeTransform)
 
 class AddGeometryUDA(BaseDatasetTransform):
 
-    SADDLE_NAMES = {"b_field_tor_probe_saddle_l_r", "b_field_tor_probe_saddle_m_r", "b_field_tor_probe_saddle_u_r",
-                    "b_field_tor_probe_saddle_l_z", "b_field_tor_probe_saddle_m_z", "b_field_tor_probe_saddle_u_z",
-                    "b_field_tor_probe_saddle_l_phi", "b_field_tor_probe_saddle_m_phi", "b_field_tor_probe_saddle_u_phi"}
-    XRAY_NAMES = {"tangential_cam_origin_r", "tangential_cam_origin_z", "tangential_cam_endpoint_r", "tangential_cam_endpoint_z", "tangential_cam_phi",
-                "horizontal_cam_lower_origin_r", "horizontal_cam_lower_origin_z", "horizontal_cam_lower_endpoint_r", "horizontal_cam_lower_endpoint_z", "horizontal_cam_lower_phi",
-                "horizontal_cam_upper_origin_r", "horizontal_cam_upper_origin_z", "horizontal_cam_upper_endpoint_r", "horizontal_cam_upper_endpoint_z", "horizontal_cam_upper_phi"}
-
-
     def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
         self.stem = stem
         self.name = name
@@ -208,10 +200,14 @@ class AddGeometryUDA(BaseDatasetTransform):
         geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
         all_rows = self._extract_rows(geom_data_json)
 
-        if self.name in self.SADDLE_NAMES:
+        if "b_field_tor_probe_saddle" in self.name:
             all_rows = self._process_saddle(all_rows, geom_data)
-        elif self.name in self.XRAY_NAMES:
+        elif "cam" in self.name:
             all_rows = self._process_xray(all_rows, geom_data)
+        elif any(substr in self.name for substr in ["p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                                                    "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                                                    "p6_lower", "p6_upper", "sol"]):
+            all_rows = self._process_pf(all_rows, geom_data)
 
         geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
         geom_df = self._set_geometry_index(geom_df)
@@ -276,18 +272,36 @@ class AddGeometryUDA(BaseDatasetTransform):
                 else:
                     new_rows[key] = item
         return new_rows
+    
+    def _process_pf(self, all_rows, geom_data):
+        """Process poloidal field coil geometry data."""
+        for row in all_rows:
+            for key, item in row.items():
+                if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                    row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
+        return all_rows
 
     def _create_xarray(self, geom_df):
         data = geom_df[f"{self.measurement}"].to_numpy()
 
-        if self.name in self.SADDLE_NAMES:
+        if "b_field_tor_probe_saddle" in self.name:
             data = np.stack(data)
             dims = [self.channel_name, "coordinate"]
             coords = {self.channel_name: geom_df["name"].values, "coordinate": np.arange(data.shape[1])}
 
-        elif self.name in self.XRAY_NAMES:
+        elif "cam" in self.name:
             dims = [self.channel_name]
             coords = None 
+
+        elif any(substr in self.name for substr in [
+                "p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                "p6_lower", "p6_upper", "sol"
+                ]):
+            data = np.stack(data).squeeze()
+            dims = [self.channel_name]
+            coord_labels = [f"element_{i}" for i in range(data.shape[0])]
+            coords = {self.channel_name: coord_labels}
 
         else:
             dims = [self.channel_name]

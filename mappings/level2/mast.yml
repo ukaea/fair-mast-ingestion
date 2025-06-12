@@ -492,6 +492,736 @@ datasets:
           current_channel:
           time: 
             imas: "pf_active.coil[:].current.time"
+      
+      p2_inner_upper_r:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_z:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_height:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_width:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_r:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_z:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_height:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_width:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_inner_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_outer_upper_r:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_z:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_height:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_width:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_r:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_z:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_height:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_width:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_outer_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p3_upper_r:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_z:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_height:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_width:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_r:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_z:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_height:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_width:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p3_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p4_upper_r:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_z:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_height:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_width:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_r:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_z:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_height:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_width:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p4_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p5_upper_r:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_z:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_height:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_width:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_r:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_z:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_height:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_width:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p5_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      ######
+
+      p6_upper_r:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_z:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_height:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_width:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_r:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_z:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_height:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_width:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p6_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      sol_r:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_z:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_height:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_width:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
 
       coil_voltage:
         imas: "pf_active.coil[:].voltage.data"

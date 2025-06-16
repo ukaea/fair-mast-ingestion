@@ -323,11 +323,6 @@ class AddGeometryUDA(BaseTransform):
     A transformation class to retrieve and process geometry data from the UDA system.
     PF and saddle coil geometry are stored as arrays and processed differently from other signals.
     """
-    PF_NAMES = {'p2_inner_upper', 'p2_inner_lower', 'p2_outer_lower', 'p2_outer_upper',
-                'p3_upper', 'p3_lower', 'p4_upper', 'p4_lower', 'p5_upper', 'p5_lower',
-                'p6_upper', 'p6_lower', 'sol'}
-    SADDLE_NAMES = {"sad_out_l", "sad_out_m", "sad_out_u"}
-    XRAY_NAMES = {"hcam_l", "hcam_u", "hcam_third", "vcam_i", "vcam_o", "tcam"}
 
     def __init__(self, stem: str, name: str, path: str, shot: int):
         self.stem = stem
@@ -344,11 +339,15 @@ class AddGeometryUDA(BaseTransform):
         all_rows = self._extract_rows(geom_data_json)
 
         # Process geometry data based on signal type
-        if self.name in self.SADDLE_NAMES:
+        if "sad_out" in self.name:
             all_rows = self._process_saddle(all_rows, geom_data)
-        elif self.name in self.PF_NAMES:
+        elif any(substr in self.name for substr in [
+                "p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                "p6_lower", "p6_upper", "sol"
+                ]):
             all_rows = self._process_pf(all_rows, geom_data)
-        elif self.name in self.XRAY_NAMES:
+        elif "cam" in self.name:
             all_rows = self._process_xray(all_rows, geom_data)
 
         geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
@@ -421,7 +420,7 @@ class AddGeometryUDA(BaseTransform):
 
     def _create_xarray(self, geom_df, geom_data):
         """Create an xarray dataset from processed geometry data."""
-        if self.name in self.SADDLE_NAMES:
+        if "sad_out" in self.name:
             r_arr = np.stack(geom_df[f"{self.name}_r"].to_numpy())
             z_arr = np.stack(geom_df[f"{self.name}_z"].to_numpy())
             phi_arr = np.stack(geom_df[f"{self.name}_phi"].to_numpy())
@@ -435,7 +434,11 @@ class AddGeometryUDA(BaseTransform):
                 #dims=[f"{self.name}_geometry_channel", f"{self.name}_coordinate_element"],
                 coords={f"{self.name}_geometry_channel": geom_df[f'{self.name}_name'].values, f"{self.name}_coordinate_element": element_dim},
             )
-        elif self.name in self.PF_NAMES:
+        elif any(substr in self.name for substr in [
+                "p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                "p6_lower", "p6_upper", "sol"
+                ]):
             centre_r_arr = np.stack(geom_df[f"{self.name}_centreR"].to_numpy()).squeeze()
             centre_z_arr = np.stack(geom_df[f"{self.name}_centreZ"].to_numpy()).squeeze()
             dr_arr = np.stack(geom_df[f"{self.name}_dR"].to_numpy()).squeeze()
@@ -453,7 +456,7 @@ class AddGeometryUDA(BaseTransform):
             )
         
         # can comment this out if dont mind repeating the scalar values for each channel?
-        elif self.name in self.XRAY_NAMES:
+        elif "cam" in self.name:
             geometry_index = geom_df.index.astype(str)
             coords = {f"{self.name}_geometry_channel": geometry_index}
             ds_vars = {

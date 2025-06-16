@@ -290,8 +290,10 @@ class AddGeometryUDA(BaseDatasetTransform):
             coords = {self.channel_name: geom_df["name"].values, "coordinate": np.arange(data.shape[1])}
 
         elif "cam" in self.name:
+            data = np.stack(data).squeeze()
             dims = [self.channel_name]
-            coords = None 
+            coord_labels = [f"{self.channel_name}_{i+1}" for i in range(data.shape[0])]
+            coords = {self.channel_name: coord_labels}
 
         elif any(substr in self.name for substr in [
                 "p2_inner", "p2_outer", "p3_lower", "p3_upper", 

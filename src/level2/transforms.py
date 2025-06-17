@@ -292,7 +292,7 @@ class AddGeometryUDA(BaseDatasetTransform):
         elif "cam" in self.name:
             data = np.stack(data).squeeze()
             dims = [self.channel_name]
-            coord_labels = [f"{self.channel_name}_{i+1}" for i in range(data.shape[0])]
+            coord_labels = [f"{self.stem}_cam_{i+1}" for i in range(data.shape[0])]
             coords = {self.channel_name: coord_labels}
 
         elif any(substr in self.name for substr in [
@@ -302,7 +302,7 @@ class AddGeometryUDA(BaseDatasetTransform):
                 ]):
             data = np.stack(data).squeeze()
             dims = [self.channel_name]
-            coord_labels = [f"element_{i}" for i in range(data.shape[0])]
+            coord_labels = [f"coil_element_{i}" for i in range(data.shape[0])]
             coords = {self.channel_name: coord_labels}
 
         else:

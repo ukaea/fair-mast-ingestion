@@ -169,7 +169,7 @@ class DatasetReader:
             "name": "Creative Commons 4.0 BY-SA",
             "url": "https://creativecommons.org/licenses/by-sa/4.0/",
         }
-
+        del dataset.attrs["uda_name"]
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

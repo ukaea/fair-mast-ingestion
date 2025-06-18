@@ -4648,3 +4648,36 @@ datasets:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
           height_c:
           width_c:
+
+  wall:
+    imas: "wall"
+
+    profiles:
+
+      limiter_r:
+        geometry:
+          stem: "efit"
+          path: "/limiter"
+          shot: "/common/uda-scratch/jg3176/limiter.nc"
+          measurement: "R"
+          channel_name: "limiter_geometry_channel"
+        imas: "wall.description_2d[:].limiter.unit[:].outline.r"
+        description: "Major radius values of the limiter"
+        units: "m"
+        source: ""
+        dimensions:
+          limiter_geometry_channel:
+
+      limiter_z:
+        geometry:
+          stem: "efit"
+          path: "/limiter"
+          shot: "/common/uda-scratch/jg3176/limiter.nc"
+          measurement: "Z"
+          channel_name: "limiter_geometry_channel"
+        imas: "wall.description_2d[:].limiter.unit[:].outline.z"
+        description: "Vertical position values of the limiter"
+        units: "m"
+        source: ""
+        dimensions:
+          limiter_geometry_channel:

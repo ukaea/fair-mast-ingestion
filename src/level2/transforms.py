@@ -204,6 +204,8 @@ class AddGeometryUDA(BaseDatasetTransform):
             all_rows = self._process_saddle(all_rows, geom_data)
         elif "cam" in self.name:
             all_rows = self._process_xray(all_rows, geom_data)
+        elif "limiter" in self.name:
+            all_rows = self._process_limiter(all_rows, geom_data)
         elif any(substr in self.name for substr in ["p2_inner", "p2_outer", "p3_lower", "p3_upper", 
                                                     "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
                                                     "p6_lower", "p6_upper", "sol"]):
@@ -280,6 +282,14 @@ class AddGeometryUDA(BaseDatasetTransform):
                 if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
                     row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
         return all_rows
+    
+    def _process_limiter(self, all_rows, geom_data):
+        """Process saddle coil geometry data."""
+        for row in all_rows:
+            for key, item in row.items():
+                if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                    row[key] = getattr(geom_data.data['efit/data'], key)
+        return all_rows
 
     def _create_xarray(self, geom_df):
         data = geom_df[f"{self.measurement}"].to_numpy()
@@ -293,6 +303,12 @@ class AddGeometryUDA(BaseDatasetTransform):
             data = np.stack(data).squeeze()
             dims = [self.channel_name]
             coord_labels = [f"{self.stem}_cam_{i+1}" for i in range(data.shape[0])]
+            coords = {self.channel_name: coord_labels}
+
+        elif "limiter" in self.name:
+            data = np.stack(data).squeeze()
+            dims = [self.channel_name]
+            coord_labels = [f"element_{i+1}" for i in range(data.shape[0])]
             coords = {self.channel_name: coord_labels}
 
         elif any(substr in self.name for substr in [

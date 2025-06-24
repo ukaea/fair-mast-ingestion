@@ -106,7 +106,7 @@ datasets:
         units: "dimensionless"
         fill_value: -999
         dimensions:
-          n_x_points:
+          n_x_points_r:
           time:
             imas: "equilibrium.time_slice[:].time"
 
@@ -120,7 +120,7 @@ datasets:
         units: "dimensionless"
         fill_value: -999
         dimensions:
-          n_x_points:
+          n_x_points_z:
           time:
             imas: "equilibrium.time_slice[:].time"
 

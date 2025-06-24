@@ -40,7 +40,7 @@ class WorkflowManager:
             # Using dask MPI client
             from dask_mpi import initialize  # type: ignore
 
-            initialize()
+            initialize(memory_limit="30GB")
             client = Client()
             if rank == 0:
                 logger.info(f"Running in parallel with mpi and {size} ranks")

@@ -106,13 +106,13 @@ def set_mapping_time_bounds(
 
     plasma_current = trim_ip_range(plasma_current, tdelta)
 
-    if mapping.global_interpolate.tmin is None:
+    if mapping.global_interpolate.params['time'].start is None:
         tmin = float(plasma_current.time.values.min())
-        mapping.global_interpolate.tmin = tmin
+        mapping.global_interpolate.params['time'].start = tmin
 
-    if mapping.global_interpolate.tmax is None:
+    if mapping.global_interpolate.params['time'].end is None:
         tmax = float(plasma_current.time.values.max())
-        mapping.global_interpolate.tmax = tmax
+        mapping.global_interpolate.params['time'].end = tmax
 
 
 def process_shot(shot: int, **kwargs):

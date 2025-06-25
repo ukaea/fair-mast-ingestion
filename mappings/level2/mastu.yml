@@ -4,6 +4,8 @@ plasma_current: "summary/ip"
 global_interpolate:
   params:
     time:
+      start: -2
+      end: 5
       step: 0.00025
       method: 'zero'
       fill: 'ffill'

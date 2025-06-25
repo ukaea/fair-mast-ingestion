@@ -13,10 +13,10 @@ readers:
           endpoint_url: "https://s3.echo.stfc.ac.uk"
 
 writer:
-  type: "zarr"
+  type: "netcdf"
   options:
     zarr_format: 2
-    output_path: "/tmp/fair-mast-ingestion/level2"
+    output_path: "/common/tmp/sjackson/rtdi"
 
 # upload:
 #   base_path: "s3://fairmast/mastu/level2/shots"

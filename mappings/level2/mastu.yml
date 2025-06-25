@@ -320,6 +320,15 @@ datasets:
           time:
             imas: "summary.time"
         
+  interferometer:
+    imas: "interferometer"
+    profiles:
+      n_e_line:
+        source: "ane/density"
+        imas: "interferometer.channel[:].n_e_line.data"
+        dimensions:
+          time:
+            imas: "interferometer.channel[:].n_e_line.time"
 
   pf_active:
     imas: "pf_active"
@@ -330,7 +339,7 @@ datasets:
           time:
             imas: "summary.time"
 
-      coils_current:
+      coil_current:
         imas: "pf_active.coil[:].current.data"
         source:
           - name: "AMC" 
@@ -365,6 +374,27 @@ datasets:
           time: 
             imas: "pf_active.coil[:].voltage.time"
       
+  nbi:
+    imas: "nbi"
+    interpolate:
+      time: 
+        step: 5.e-05
+        method: 'zero'
+    
+    profiles:
+      power_launched:
+        imas: 'nbi.unit[:].power_launched.data'
+        target_units: 'W'
+        source:
+          - name: "ANB"
+            channels:
+              - "/ANB/SS/POWER"
+              - "/ANB/SW/POWER"
+        dimensions:
+          unit:
+          time: 
+            imas: 'nbi.unit[:].power_launched.time'
+
   magnetics:
     imas: "magnetics"
 
@@ -1286,6 +1316,20 @@ datasets:
           hcam_u_channel:
           time: 
             imas: "soft_x_rays.time"
+
+  wall:
+    profiles:
+      limiter_r:
+        source: "/epm/input/limiter/rValues"
+        imas: 'wall.description_2d[:].limiter.unit[:].outline.r'
+        dimensions:
+          n_limiter_r:
+
+      limiter_z:
+        source: "/epm/input/limiter/zValues"
+        imas: 'wall.description_2d[:].limiter.unit[:].outline.z'
+        dimensions:
+          n_limiter_z:
 
   camera_visible:
     interpolate:

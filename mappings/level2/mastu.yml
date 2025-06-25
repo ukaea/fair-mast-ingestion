@@ -85,6 +85,119 @@ datasets:
             units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.r"
 
+      radial_profile_ffprime:
+        source: "epm/output/radialProfiles/ffprime"
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      radial_profile_static_pprime:
+        source: "/epm/output/radialProfiles/staticPPrime"
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      radial_profile_r:
+        source: "/epm/output/radialProfiles/r"
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+
+      radial_profile_nomalized_poloidal_flux:
+        source: "epm/output/radialProfiles/normalizedPoloidalFlux"
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      radial_profile_normalized_toroidal_flux:
+        source: "epm/output/radialProfiles/normalizedToroidalFlux"
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      flux_function_ffprime:
+        source: '/epm/output/fluxFunctionProfiles/ffPrime'
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      flux_function_rbphi:
+        source: '/epm/output/fluxFunctionProfiles/rBphi'
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      flux_function_poloidal_flux:
+        source: '/epm/output/fluxFunctionProfiles/poloidalFlux'
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      poloidal_flux_error:
+        source: '/epm/output/numericalDetails/finalPoloidalFluxError'
+        dimensions:
+          time: 
+            source: "epm/time"
+            units: 's'
+            imas: 'equilibrium.time_slice[:].time'
+
+      psi_n:
+        source: '/epm/output/fluxFunctionProfiles/normalizedPoloidalFlux'
+        dimensions:
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+
       elongation:
         source: "epm/output/separatrixGeometry/elongation" 
         imas: "equilibrium.time_slice[:].boundary.elongation"
@@ -111,7 +224,7 @@ datasets:
               - "epm/output/separatrixGeometry/dndXpoint2R" 
         units: "dimensionless"
         dimensions:
-          n_x_points:
+          n_x_points_r:
           time:
             imas: "equilibrium.time_slice[:].time"
 
@@ -124,7 +237,7 @@ datasets:
               - "epm/output/separatrixGeometry/dndXpoint2Z" 
         units: "dimensionless"
         dimensions:
-          n_x_points:
+          n_x_points_z:
           time:
             imas: "equilibrium.time_slice[:].time"
 
@@ -1323,13 +1436,13 @@ datasets:
         source: "/epm/input/limiter/rValues"
         imas: 'wall.description_2d[:].limiter.unit[:].outline.r'
         dimensions:
-          n_limiter_r:
+          n_limiter:
 
       limiter_z:
         source: "/epm/input/limiter/zValues"
         imas: 'wall.description_2d[:].limiter.unit[:].outline.z'
         dimensions:
-          n_limiter_z:
+          n_limiter:
 
   camera_visible:
     interpolate:

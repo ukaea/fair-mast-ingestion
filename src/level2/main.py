@@ -4,6 +4,7 @@ import uuid
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pint  # noqa: F401
 import pint_xarray  # noqa: F401
 import xarray as xr
@@ -182,6 +183,7 @@ def main():
     parser.add_argument("--shot", type=int, default=None)
     parser.add_argument("--shot-min", type=int, default=None)
     parser.add_argument("--shot-max", type=int, default=None)
+    parser.add_argument("--shot-file", type=str, default=None)
     parser.add_argument("--dt", type=float, default=0.00025)
     parser.add_argument("-i", "--include-datasets", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-datasets", nargs="+", default=[])
@@ -193,15 +195,18 @@ def main():
     if args.verbose:
         logger.setLevel("DEBUG")
 
-    if args.shot is None:
-        if args.shot_min is None or args.shot_max is None:
-            logger.error(
-                "Must provide both a minimum and maximum shot (--shot-min/--shot-max)"
-            )
-            sys.exit(-1)
+    if args.shot is not None:
+        shots = [args.shot]
+    elif args.shot_file is not None:
+        df = pd.read_csv(args.shot_file, index_col=0)
+        shots = df.index.values
+    elif args.shot_min is not None and args.shot_max is not None:
         shots = range(args.shot_min, args.shot_max)
     else:
-        shots = [args.shot]
+        logger.error(
+            "Must provide both a minimum and maximum shot (--shot-min/--shot-max) or --shot or --shot-file"
+        )
+        sys.exit(-1)
 
     kwargs = vars(args)
     kwargs.pop("shot")

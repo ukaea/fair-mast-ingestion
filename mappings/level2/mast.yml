@@ -106,7 +106,7 @@ datasets:
         units: "dimensionless"
         fill_value: -999
         dimensions:
-          n_x_points:
+          n_x_points_r:
           time:
             imas: "equilibrium.time_slice[:].time"
 
@@ -120,7 +120,7 @@ datasets:
         units: "dimensionless"
         fill_value: -999
         dimensions:
-          n_x_points:
+          n_x_points_z:
           time:
             imas: "equilibrium.time_slice[:].time"
 
@@ -192,7 +192,7 @@ datasets:
       li:
         source: "EFM_LI" 
         units: 'dimensionless'
-        imase_name: "equilibrium.time_slice[:].global_quantities.li_3"
+        imas: "equilibrium.time_slice[:].global_quantities.li_3" ####
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -417,49 +417,211 @@ datasets:
           time:
             imas: "gas_injection.time"
 
-      # valve_voltage:
-      #   imas: "gas_injection.valve[:].voltage.data"
-      #   source: 
-      #     - name: "XDC/GAS"
-      #       shot_range:
-      #         shot_min: 28356
-      #         shot_max: 30471
-      #       channels:
-      #         - "XDC/GAS/T/G1"
-      #         - "XDC/GAS/T/G2"
-      #         - "XDC/GAS/T/G3"
-      #         - "XDC/GAS/T/G4"
-      #         - "XDC/GAS/T/G5"
-      #         - "XDC/GAS/T/G6"
-      #         - "XDC/GAS/T/G7"
-      #         - "XDC/GAS/T/G8"
-      #         - "XDC/GAS/T/G9"
-      #         - "XDC/GAS/T/G10"
-      #         - "XDC/GAS/T/G11"
-      #         - "XDC/GAS/T/G12"
+      valve_voltage:
+        imas: "gas_injection.valve[:].voltage.data"
+        units: "V"
+        source: 
+          - name: "XDC/GAS/"
+            shot_range:
+              shot_min: 28356 #28356-28451 don't have xdc as source
+              shot_max: 30471
+            attributes: {
+                    "fuelling_groups": {
+                        "/xdc/gas/t/g1": ["/xdc/gas/f/tc5a", "/xdc/gas/f/tc5b", "/xdc/gas/f/tc11"],
+                        "/xdc/gas/t/g2": ["/xdc/gas/f/bc5"],
+                        "/xdc/gas/t/g3": ["/xdc/gas/f/hl1", "/xdc/gas/f/hu6", "/xdc/gas/f/hu8"],
+                        "/xdc/gas/t/g4": ["/xdc/gas/f/hu11"],
+                        "/xdc/gas/t/g11": ["/xdc/gas/f/ibfua", "/xdc/gas/f/ibfub"],
+                        "/xdc/gas/t/g12": ["/xdc/gas/f/ibfla", "/xdc/gas/f/ibflb"]
+                    },
+                    "impurity_groups": {
+                        "/xdc/gas/t/g5": ["/xdc/gas/f/hl11"],
+                        "/xdc/gas/t/g6": ["/xdc/gas/f/bc11"],
+                        "/xdc/gas/t/g7": ["/xdc/gas/f/hecc"],
+                        "/xdc/gas/t/g8": ["/xdc/gas/f/heoa", "/xdc/gas/f/heob"],
+                        "/xdc/gas/t/g9": ["/xdc/gas/f/hm12a", "/xdc/gas/f/hm12b"],
+                        "/xdc/gas/t/g10": ["/xdc/gas/f/ibil"],
+                        #"/xdc/gas/t/ecelmod": ["/xdc/gas/f/ecel"]
+                    }
+                  }
+            channels:
+              - '/xdc/gas/f/tc5a'
+              - '/xdc/gas/f/tc5b'
+              - '/xdc/gas/f/tc11'
+              - '/xdc/gas/f/bc5' #between 0 and 125V until 0.5s, then -60V
+              - '/xdc/gas/f/hl1'
+              - '/xdc/gas/f/hu6'
+              - '/xdc/gas/f/hu8'
+              - '/xdc/gas/f/hu11'
+              - '/xdc/gas/f/hl11'
+              - '/xdc/gas/f/bc11'
+              - '/xdc/gas/f/hecc'
+              - '/xdc/gas/f/heoa'
+              - '/xdc/gas/f/heob'
+              - '/xdc/gas/f/hm12a'
+              - '/xdc/gas/f/hm12b'
+              - '/xdc/gas/f/ibil'
+              - '/xdc/gas/f/ibfua'
+              - '/xdc/gas/f/ibfub'
+              - '/xdc/gas/f/ibfla'
+              - '/xdc/gas/f/ibflb'
+              #- '/xdc/gas/f/ecel'
+          - name: "XDC/GAS/F"
+            shot_range: #this range has HM12 split up into A and B, also when HM12A/B are present HEOA/B aren't
+              shot_min: 26756
+              shot_max: 28355
+            attributes: {
+                    "fuelling_groups": {
+                        "XDC_GAS_T_G1": ["XDC_GAS_F_TC5A", "XDC_GAS_F_TC5B", "XDC_GAS_F_TC11"],
+                        "XDC_GAS_T_G2": ["XDC_GAS_F_BC5"],
+                        "XDC_GAS_T_G3": ["XDC_GAS_F_HL1", "XDC_GAS_F_HU6", "XDC_GAS_F_HU8"],
+                        "XDC_GAS_T_G4": ["XDC_GAS_F_HU11"],
+                        "XDC_GAS_T_G11": ["XDC_GAS_F_IBFUA", "XDC_GAS_F_IBFUB"],
+                        "XDC_GAS_T_G12": ["XDC_GAS_F_IBFLA", "XDC_GAS_F_IBFLB"]
+                    },
+                    "impurity_groups": {
+                        "XDC_GAS_T_G5": ["XDC_GAS_F_HL11"],
+                        "XDC_GAS_T_G6": ["XDC_GAS_F_BC11"],
+                        "XDC_GAS_T_G7": ["XDC_GAS_F_HECC"],
+                        "XDC_GAS_T_G8": ["XDC_GAS_F_HEOA", "XDC_GAS_F_HEOB"],
+                        "XDC_GAS_T_G9": ["XDC_GAS_F_HM12A", "XDC_GAS_F_HM12B"],
+                        "XDC_GAS_T_G10": ["XDC_GAS_F_IBIL"],
+                        #"XDC_GAS_T_ECELMOD": ["XDC_GAS_F_ECEL"]
+                    },
+                  }
+            channels:
+            - "XDC_GAS_F_TC5A"
+            - "XDC_GAS_F_TC5B"
+            - "XDC_GAS_F_TC11"
+            - "XDC_GAS_F_BC5"
+            - "XDC_GAS_F_HL1"
+            - "XDC_GAS_F_HU6"
+            - "XDC_GAS_F_HU8"
+            - "XDC_GAS_F_HU11"
+            - "XDC_GAS_F_HL11"
+            - "XDC_GAS_F_BC11"
+            - "XDC_GAS_F_HECC"
+            - "XDC_GAS_F_HM12A"
+            - "XDC_GAS_F_HM12B"
+            - "XDC_GAS_F_IBIL"
+            - "XDC_GAS_F_IBFUA"
+            - "XDC_GAS_F_IBFUB"
+            - "XDC_GAS_F_IBFLA"
+            - "XDC_GAS_F_IBFLB"
+            #- "XDC_GAS_F_ECEL" this comes and goes - ecelmod -> group 7 ECEL
+            #- "XDC_GAS_F_HFS" this comes and goes -  XDC_HFS_PUFF maybe an equivalent? 
+          - name: "XDC/GAS/F"
+            shot_range: #this range has HM12 not split up and HEOA/B are present
+              shot_min: 25912 #25912 - 25936 don't have xdc as a source 
+              shot_max: 26755
+            attributes: {
+                    "fuelling_groups": {
+                        "XDC_GAS_T_G1": ["XDC_GAS_F_TC5A", "XDC_GAS_F_TC5B", "XDC_GAS_F_TC11"],
+                        "XDC_GAS_T_G2": ["XDC_GAS_F_BC5"],
+                        "XDC_GAS_T_G3": ["XDC_GAS_F_HL1", "XDC_GAS_F_HU6", "XDC_GAS_F_HU8"],
+                        "XDC_GAS_T_G4": ["XDC_GAS_F_HU11"],
+                        "XDC_GAS_T_G11": ["XDC_GAS_F_IBFUA", "XDC_GAS_F_IBFUB"],
+                        "XDC_GAS_T_G12": ["XDC_GAS_F_IBFLA", "XDC_GAS_F_IBFLB"]
+                    },
+                    "impurity_groups": {
+                        "XDC_GAS_T_G5": ["XDC_GAS_F_HL11"],
+                        "XDC_GAS_T_G6": ["XDC_GAS_F_BC11"],
+                        "XDC_GAS_T_G7": ["XDC_GAS_F_HECC"],
+                        "XDC_GAS_T_G8": ["XDC_GAS_F_HEOA", "XDC_GAS_F_HEOB"],
+                        "XDC_GAS_T_G9": ["XDC_GAS_F_HM12"],
+                        "XDC_GAS_T_G10": ["XDC_GAS_F_IBIL"],
+                        #"XDC_GAS_T_ECELMOD": ["XDC_GAS_F_ECEL"]
+                    },
+                  }
+            channels:
+              - "XDC_GAS_F_TC5A"
+              - "XDC_GAS_F_TC5B"
+              - "XDC_GAS_F_TC11"
+              - "XDC_GAS_F_BC5"
+              - "XDC_GAS_F_HL1"
+              - "XDC_GAS_F_HU6"
+              - "XDC_GAS_F_HU8"
+              - "XDC_GAS_F_HU11"
+              - "XDC_GAS_F_HL11"
+              - "XDC_GAS_F_BC11"
+              - "XDC_GAS_F_HECC"
+              - "XDC_GAS_F_HEOA" #this changes as g8  (which this is) becomes obsolete
+              - "XDC_GAS_F_HEOB" #so maybe can keep in and when they are there it will fill and when they are not ignored?
+              - "XDC_GAS_F_HM12" #this changes based on shot as well
+              - "XDC_GAS_F_IBIL"
+              - "XDC_GAS_F_IBFUA"
+              - "XDC_GAS_F_IBFUB"
+              - "XDC_GAS_F_IBFLA"
+              - "XDC_GAS_F_IBFLB"
+              #- "XDC_GAS_F_ECEL" this comes and goes - ecelmod -> group 7 ECEL
+              #- "XDC_GAS_F_HFS" this comes and goes -  XDC_HFS_PUFF maybe an equivalent? 
+          - name: "XDC/GAS/F"
+            shot_range:
+              shot_min: 1
+              shot_max: 25911
+            channels:
+              - "XDC_GAS_F_G1"
+              - "XDC_GAS_F_G2"
+              - "XDC_GAS_F_G3"
+              - "XDC_GAS_F_G4"
+              - "XDC_GAS_F_G5"
+              - "XDC_GAS_F_G6"
+              - "XDC_GAS_F_G7"
+              - "XDC_GAS_F_G8"
+              - "XDC_GAS_F_G9"
+              - "XDC_GAS_F_G10"
+              - "XDC_GAS_F_G11"
+              - "XDC_GAS_F_G12"
+        dimensions:
+          valve_channel:
+          time:
+            imas: "gas_injection.valve[:].voltage.time"
+    
+      valve_target_voltage:
+        imas: "gas_injection.valve[:].target_voltage.data"
+        units: "V"
+        source:
+          - name: "XDC/GAS/T"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+            channels:
+              - '/xdc/gas/t/g1'
+              - '/xdc/gas/t/g2' #units = 'V'  30421: 6 -> 5 -> 0 then it starts
+              - '/xdc/gas/t/g3' #units = 'V'  30421: 6 -> 5 -> 0 then it starts
+              - '/xdc/gas/t/g4'
+              - '/xdc/gas/t/g5'
+              - '/xdc/gas/t/g6'
+              - '/xdc/gas/t/g7'
+              - '/xdc/gas/t/g8'
+              - '/xdc/gas/t/g9'
+              - '/xdc/gas/t/g10'
+              - '/xdc/gas/t/g11'
+              - '/xdc/gas/t/g12'
+              #-'xdc/gas/t/ecelmod' #there are many e.g. g11sel - not sure what they do
+          - name: "XDC/GAS/T"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+            channels:
+              - "XDC_GAS_T_G1"
+              - "XDC_GAS_T_G2"
+              - "XDC_GAS_T_G3"
+              - "XDC_GAS_T_G4"
+              - "XDC_GAS_T_G5"
+              - "XDC_GAS_T_G6"
+              - "XDC_GAS_T_G7"
+              - "XDC_GAS_T_G8" #this comes and goes
+              - "XDC_GAS_T_G9"
+              - "XDC_GAS_T_G10"
+              - "XDC_GAS_T_G11"
+              - "XDC_GAS_T_G12"
+              #- "XDC_GAS_T_ECELMOD"
+        dimensions:
+          target_valve_channel:
+          time:
+            imas: "gas_injection.valve[:].target_voltage.time"
 
-      #     - name: "XDC/GAS"
-      #       shot_range:
-      #         shot_min: 1
-      #         shot_max: 28355
-      #       channels:
-      #         - "XDC_GAS_T_G1"
-      #         - "XDC_GAS_T_G2"
-      #         - "XDC_GAS_T_G3"
-      #         - "XDC_GAS_T_G4"
-      #         - "XDC_GAS_T_G5"
-      #         - "XDC_GAS_T_G6"
-      #         - "XDC_GAS_T_G7"
-      #         - "XDC_GAS_T_G8"
-      #         - "XDC_GAS_T_G9"
-      #         - "XDC_GAS_T_G10"
-      #         - "XDC_GAS_T_G11"
-      #         - "XDC_GAS_T_G12"
-
-      #   dimensions:
-      #     valve_channel:
-      #     time: 
-      #       imas: "gas_injection.valve[:].voltage.time"
 
   pf_active:
     imas: "pf_active"
@@ -489,7 +651,7 @@ datasets:
              - "AMC_P5L FEED CURRENT"
              - "AMC_P5U FEED CURRENT"
         dimensions:
-          channel:
+          current_channel:
           time: 
             imas: "pf_active.coil[:].current.time"
 
@@ -515,7 +677,7 @@ datasets:
               - 'XDC_PF_F_P4'
               - 'XDC_PF_F_P5'
         dimensions:
-          channel:
+          voltage_channel:
           time: 
             imas: "pf_active.coil[:].voltage.time"
       

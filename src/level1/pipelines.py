@@ -681,20 +681,20 @@ class MASTPipelines(Pipelines):
                     MapDict(DropZeroDataset()),
                     MergeDatasets(),
                     TransformUnits(),
-                    AddGeometryUDA('centralcolumn/botcol', "botcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/botcol', "botcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
-                    AddGeometryUDA('centralcolumn/endcrown_l', "endcrown_l", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/endcrown_l', "endcrown_l", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
-                    AddGeometryUDA('centralcolumn/endcrown_u', "endcrown_u", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/endcrown_u', "endcrown_u", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("incon"),
-                    AddGeometryUDA('centralcolumn/incon', "incon", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/incon', "incon", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                     
                     TensoriseChannels("lhorw"),
-                    AddGeometryUDA('walls/lhorw', "lhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('vessel/lhorw', "lhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("mid"),
-                    AddGeometryUDA('walls/mid', "mid", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('vessel/mid', "mid", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("p2larm"),
                     AddGeometryUDA('p2/p2larm', "p2larm", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
@@ -709,18 +709,18 @@ class MASTPipelines(Pipelines):
                     AddGeometryUDA('p2/p2udivpl', "p2udivpl", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("ring"),
-                    AddGeometryUDA('centralcolumn/ring', "ring", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/ring', "ring", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("rodgr"),
-                    AddGeometryUDA('centralcolumn/rodgr', "rodgr", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/rodgr', "rodgr", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
-                    AddGeometryUDA('centralcolumn/topcol', "topcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('centrecolumn/topcol', "topcol", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("uhorw"),
-                    AddGeometryUDA('walls/uhorw', "uhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('vessel/uhorw', "uhorw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
 
                     TensoriseChannels("vertw"),
-                    AddGeometryUDA('walls/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+                    AddGeometryUDA('vessel/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                 ]
             ),
             "ams": Pipeline(

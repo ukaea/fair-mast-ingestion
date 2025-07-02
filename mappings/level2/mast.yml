@@ -469,7 +469,7 @@ datasets:
 
       botcol_r:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -483,7 +483,7 @@ datasets:
 
       botcol_z:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -497,7 +497,7 @@ datasets:
 
       botcol_width:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -511,7 +511,7 @@ datasets:
 
       botcol_height:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -525,7 +525,7 @@ datasets:
 
       botcol_shapeAngle1:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -539,7 +539,7 @@ datasets:
 
       botcol_shapeAngle2:
         geometry:
-          stem: "centralcolumn/botcol"
+          stem: "centrecolumn/botcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -553,7 +553,7 @@ datasets:
 
       endcrown_l_r:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -567,7 +567,7 @@ datasets:
 
       endcrown_l_z:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -581,7 +581,7 @@ datasets:
 
       endcrown_l_width:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -595,7 +595,7 @@ datasets:
 
       endcrown_l_height:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -609,7 +609,7 @@ datasets:
 
       endcrown_l_shapeAngle1:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -623,7 +623,7 @@ datasets:
 
       endcrown_l_shapeAngle2:
         geometry:
-          stem: "centralcolumn/endcrown_l"
+          stem: "centrecolumn/endcrown_l"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -637,7 +637,7 @@ datasets:
 
       endcrown_u_r:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -651,7 +651,7 @@ datasets:
 
       endcrown_u_z:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -665,7 +665,7 @@ datasets:
 
       endcrown_u_width:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -679,7 +679,7 @@ datasets:
 
       endcrown_u_height:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -693,7 +693,7 @@ datasets:
 
       endcrown_u_shapeAngle1:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -707,7 +707,7 @@ datasets:
 
       endcrown_u_shapeAngle2:
         geometry:
-          stem: "centralcolumn/endcrown_u"
+          stem: "centrecolumn/endcrown_u"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -721,7 +721,7 @@ datasets:
 
       incon_r:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -735,7 +735,7 @@ datasets:
 
       incon_z:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -749,7 +749,7 @@ datasets:
 
       incon_width:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -763,7 +763,7 @@ datasets:
 
       incon_height:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -777,7 +777,7 @@ datasets:
 
       incon_shapeAngle1:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -791,7 +791,7 @@ datasets:
 
       incon_shapeAngle2:
         geometry:
-          stem: "centralcolumn/incon"
+          stem: "centrecolumn/incon"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -805,7 +805,7 @@ datasets:
 
       lhorw_r:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -819,7 +819,7 @@ datasets:
 
       lhorw_z:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -833,7 +833,7 @@ datasets:
 
       lhorw_width:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -847,7 +847,7 @@ datasets:
 
       lhorw_height:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -861,7 +861,7 @@ datasets:
 
       lhorw_shapeAngle1:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -875,7 +875,7 @@ datasets:
 
       lhorw_shapeAngle2:
         geometry:
-          stem: "walls/lhorw"
+          stem: "vessel/lhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -889,7 +889,7 @@ datasets:
 
       mid_r:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -903,7 +903,7 @@ datasets:
 
       mid_z:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -917,7 +917,7 @@ datasets:
 
       mid_width:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -931,7 +931,7 @@ datasets:
 
       mid_height:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -945,7 +945,7 @@ datasets:
 
       mid_shapeAngle1:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -959,7 +959,7 @@ datasets:
 
       mid_shapeAngle2:
         geometry:
-          stem: "walls/mid"
+          stem: "vessel/mid"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -973,7 +973,7 @@ datasets:
 
       uhorw_r:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -987,7 +987,7 @@ datasets:
 
       uhorw_z:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -1001,7 +1001,7 @@ datasets:
 
       uhorw_width:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -1015,7 +1015,7 @@ datasets:
 
       uhorw_height:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -1029,7 +1029,7 @@ datasets:
 
       uhorw_shapeAngle1:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -1043,7 +1043,7 @@ datasets:
 
       uhorw_shapeAngle2:
         geometry:
-          stem: "walls/uhorw"
+          stem: "vessel/uhorw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -1057,7 +1057,7 @@ datasets:
 
       vertw_r:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -1071,7 +1071,7 @@ datasets:
 
       vertw_z:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -1085,7 +1085,7 @@ datasets:
 
       vertw_width:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -1099,7 +1099,7 @@ datasets:
 
       vertw_height:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -1113,7 +1113,7 @@ datasets:
 
       vertw_shapeAngle1:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -1127,7 +1127,7 @@ datasets:
 
       vertw_shapeAngle2:
         geometry:
-          stem: "walls/vertw"
+          stem: "vessel/vertw"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -1141,7 +1141,7 @@ datasets:
 
       ring_r:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -1155,7 +1155,7 @@ datasets:
 
       ring_z:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -1169,7 +1169,7 @@ datasets:
 
       ring_width:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -1183,7 +1183,7 @@ datasets:
 
       ring_height:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -1197,7 +1197,7 @@ datasets:
 
       ring_shapeAngle1:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -1211,7 +1211,7 @@ datasets:
 
       ring_shapeAngle2:
         geometry:
-          stem: "centralcolumn/ring"
+          stem: "centrecolumn/ring"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -1225,7 +1225,7 @@ datasets:
 
       rodgr_r:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -1239,7 +1239,7 @@ datasets:
 
       rodgr_z:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -1253,7 +1253,7 @@ datasets:
 
       rodgr_width:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -1267,7 +1267,7 @@ datasets:
 
       rodgr_height:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -1281,7 +1281,7 @@ datasets:
 
       rodgr_shapeAngle1:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -1295,7 +1295,7 @@ datasets:
 
       rodgr_shapeAngle2:
         geometry:
-          stem: "centralcolumn/rodgr"
+          stem: "centrecolumn/rodgr"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"
@@ -1309,7 +1309,7 @@ datasets:
 
       topcol_r:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreR"
@@ -1323,7 +1323,7 @@ datasets:
 
       topcol_z:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "centreZ"
@@ -1337,7 +1337,7 @@ datasets:
 
       topcol_width:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dR"
@@ -1351,7 +1351,7 @@ datasets:
 
       topcol_height:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "dZ"
@@ -1365,7 +1365,7 @@ datasets:
 
       topcol_shapeAngle1:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle1"
@@ -1379,7 +1379,7 @@ datasets:
 
       topcol_shapeAngle2:
         geometry:
-          stem: "centralcolumn/topcol"
+          stem: "centrecolumn/topcol"
           path: "/passive/efit"
           shot: "/common/uda-scratch/jg3176/passivestructures.nc"
           measurement: "shapeAngle2"

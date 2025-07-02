@@ -2896,7 +2896,7 @@ datasets:
 
       flux_loop_cc_r:
         geometry:
-          stem: "cc"
+          stem: "centrecolumn"
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
@@ -2910,7 +2910,7 @@ datasets:
 
       flux_loop_cc_z:
         geometry:
-          stem: "cc"
+          stem: "centrecolumn"
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
@@ -3496,7 +3496,7 @@ datasets:
 
       b_field_pol_probe_omv_r:
         geometry:
-          stem: "outervessel"
+          stem: "outervessel/vertical"
           path: "/magnetics/mirnov"
           shot: "/common/uda-scratch/jg3176/mirnovs.nc"
           measurement: "r"
@@ -3510,7 +3510,7 @@ datasets:
 
       b_field_pol_probe_omv_z:
         geometry:
-          stem: "outervessel"
+          stem: "outervessel/vertical"
           path: "/magnetics/mirnov"
           shot: "/common/uda-scratch/jg3176/mirnovs.nc"
           measurement: "z"
@@ -3524,7 +3524,7 @@ datasets:
 
       b_field_pol_probe_omv_phi:
         geometry:
-          stem: "outervessel"
+          stem: "outervessel/vertical"
           path: "/magnetics/mirnov"
           shot: "/common/uda-scratch/jg3176/mirnovs.nc"
           measurement: "phi"

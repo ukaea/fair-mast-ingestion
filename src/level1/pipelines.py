@@ -604,7 +604,7 @@ class MASTPipelines(Pipelines):
                     AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
-                    AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
+                    AddGeometryUDA('centrecolumn', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
                     
                     TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
                     AddGeometryUDA('p2/lower', "fl_p2l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
@@ -1040,7 +1040,7 @@ class MASTPipelines(Pipelines):
                     AddToroidalAngle2("obv", "obv_channel"),
 
                     TensoriseChannels("fl_cc"),
-                    AddGeometryUDA('cc', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
+                    AddGeometryUDA('centrecolumn', "fl_cc", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
                     
                     TensoriseChannels("fl_p2l", regex=r"fl_p2l_(\d+)"),
                     AddGeometryUDA('p2/lower', "fl_p2l", "/magnetics/fluxloops", "/common/uda-scratch/jg3176/fluxloops.nc"),
@@ -1099,7 +1099,7 @@ class MASTPipelines(Pipelines):
                     TensoriseChannels("cc_mv", regex=r"cc_mv_(\d+)"),
                     AddGeometryUDA('centrecolumn/vertical', "cc_mv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
                     TensoriseChannels("omv", regex=r"omv_(\d+)"),
-                    AddGeometryUDA('outervessel', "omv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
+                    AddGeometryUDA('outervessel/vertical', "omv", "/magnetics/mirnov", "/common/uda-scratch/jg3176/mirnovs.nc"),
                 ]
             ),
             "xmp": Pipeline(

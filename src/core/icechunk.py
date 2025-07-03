@@ -63,7 +63,7 @@ class IcechunkUploader:
         data = xr.open_datatree(local_file, chunks={})
         
         with session.allow_pickling():
-            data.to_zarr(session.store, mode="a")
+            data.to_zarr(session.store, mode="a", consolidated=False)
 
         if self.config.commit_message is None:
             self.config.commit_message = f"Upload {local_file} to S3 Icechunk repo"

@@ -318,7 +318,7 @@ class LCFSTransform(BaseTransform):
         dataset = dataset.compute()
         return dataset
 
-class AddGeometryUDA(BaseTransform):
+class AddLevel1GeometryUDA(BaseTransform):
     """
     A transformation class to retrieve and process geometry data from the UDA system.
     PF and saddle coil geometry are stored as arrays and processed differently from other signals.

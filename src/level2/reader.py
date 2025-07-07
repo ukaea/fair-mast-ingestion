@@ -3,16 +3,14 @@ from typing import Union
 import numpy as np
 import xarray as xr
 
-from src.core.load import BaseLoader, MissingProfileError, MissingSourceError
+from src.core.load import BaseLoader, MissingProfileError, MissingSourceError, AddLevel2GeometryUDA
 from src.core.log import logger
 from src.core.model import Dimension, Mapping, Source
 from src.level2.transforms import (
-    AddGeometryUDA,
     BackgroundSubtractionTransform,
     DatasetInterpolationTransform,
     transform_registry,
 )
-
 
 class DatasetReader:
     def __init__(self, mapping: Mapping, loader: BaseLoader) -> None:
@@ -46,7 +44,7 @@ class DatasetReader:
             if profile_info.geometry:
                 logger.debug(f"Create profile {profile_name}")
 
-                geom_obj = AddGeometryUDA(profile_info.geometry.stem, 
+                geom_obj = AddLevel2GeometryUDA(profile_info.geometry.stem, 
                                         profile_name, 
                                         profile_info.geometry.path, 
                                         profile_info.geometry.shot, 

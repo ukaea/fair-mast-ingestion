@@ -6,6 +6,9 @@ from typing import Optional
 
 import fsspec
 import numpy as np
+import pandas as pd
+import base64
+import json
 import xarray as xr
 import zarr
 import zarr.storage
@@ -433,6 +436,171 @@ class UDALoader(BaseLoader):
         dim_names = list(map(lambda x: x.lower(), dim_names))
         dim_names = [re.sub("[^a-zA-Z0-9_\n\\.]", "", dim) for dim in dim_names]
         return dim_names
+
+class AddLevel2GeometryUDA():
+
+        def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
+            self.stem = stem
+            self.name = name
+            self.path = path
+            self.shot = shot
+            self.measurement = measurement
+            self.channel_name = channel_name
+
+            self.parent = UDALoader()
+            self.client = self.parent._get_client()
+            
+            self.geom_xarray = self._fetch_and_process_geometry()
+
+        def _fetch_and_process_geometry(self):
+            """Fetch and process geometry data from UDA."""
+            geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
+            geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
+            all_rows = self._extract_rows(geom_data_json)
+
+            if "b_field_tor_probe_saddle" in self.name:
+                all_rows = self._process_saddle(all_rows, geom_data)
+            elif "cam" in self.name:
+                all_rows = self._process_xray(all_rows, geom_data)
+            elif "limiter" in self.name:
+                all_rows = self._process_limiter(all_rows, geom_data)
+            elif any(substr in self.name for substr in ["p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                                                        "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                                                        "p6_lower", "p6_upper", "sol"]):
+                all_rows = self._process_pf(all_rows, geom_data)
+
+            geom_df = pd.DataFrame(all_rows).dropna(subset=['name']).drop(['name_', 'version'], axis=1, errors='ignore')
+            geom_df = self._set_geometry_index(geom_df)
+
+            geom_xarray = self._create_xarray(geom_df)
+
+            uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+            cleaned_metadata = self._decode_metadata(uda_metadata)
+            geom_xarray.attrs.update(cleaned_metadata)
+
+            return geom_xarray
+
+        def _extract_rows(self, node, rows=None, current_row=None):
+            """Recursively extract data rows from UDA structure."""
+            if rows is None:
+                rows = []
+            if current_row is None:
+                current_row = {}
+
+            if isinstance(node, dict):
+                if 'name_' in node:
+                    if current_row:
+                        rows.append(current_row.copy())
+                    current_row = {'name': node['name_']}
+                for key, value in node.items():
+                    if key == 'children':
+                        self._extract_rows(value, rows, current_row)
+                    elif key not in ['signal_type', 'dimensions', 'units']:
+                        current_row[key] = value
+                if 'name' in current_row and pd.notna(current_row['name']) and current_row not in rows:
+                    rows.append(current_row)
+            elif isinstance(node, list):
+                for item in node:
+                    self._extract_rows(item, rows, current_row)
+
+            return rows
+
+        def _set_geometry_index(self, geom_df):
+            """Set the geometry index for the dataframe."""
+            index_name = f"{self.name}_channel"
+            geom_df[index_name] = [f"{self.name}{i+1:02}" for i in range(len(geom_df))]
+            return geom_df.set_index(index_name)
+
+        def _process_saddle(self, all_rows, geom_data):
+            """Process saddle coil geometry data."""
+            for row in all_rows:
+                for key, item in row.items():
+                    if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                        row[key] = getattr(geom_data.data[f'{self.stem}/{row["name"]}/data/coilPath'], key)
+            return all_rows
+
+        def _process_xray(self, all_rows, geom_data):
+            """Process x-ray geometry data."""
+            new_rows = {}
+            for row in all_rows:
+                for key, item in row.items():
+                    if key == "impact_parameter":
+                        new_rows[key] = getattr(geom_data.data[f'{self.stem}/data/'], key)
+                    elif isinstance(item, dict) and item.get('_type') == 'numpy.ndarray' and key != "impact_parameter":
+                        new_rows[f"origin_{key}"] = getattr(geom_data.data[f'{self.stem}/data/origin'], key)
+                        new_rows[f"endpoint_{key}"] = getattr(geom_data.data[f'{self.stem}/data/endpoint'], key)
+                    else:
+                        new_rows[key] = item
+            return new_rows
+
+        def _process_pf(self, all_rows, geom_data):
+            """Process poloidal field coil geometry data."""
+            for row in all_rows:
+                for key, item in row.items():
+                    if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                        row[key] = getattr(geom_data.data[f'{self.stem}/data/geom_elements'], key)
+            return all_rows
+
+        def _process_limiter(self, all_rows, geom_data):
+            """Process saddle coil geometry data."""
+            for row in all_rows:
+                for key, item in row.items():
+                    if isinstance(item, dict) and item.get('_type') == 'numpy.ndarray':
+                        row[key] = getattr(geom_data.data['efit/data'], key)
+            return all_rows
+
+        def _create_xarray(self, geom_df):
+            data = geom_df[f"{self.measurement}"].to_numpy()
+
+            if "b_field_tor_probe_saddle" in self.name:
+                data = np.stack(data)
+                dims = [self.channel_name, "coordinate"]
+                coords = {self.channel_name: geom_df["name"].values, "coordinate": np.arange(data.shape[1])}
+
+            elif "cam" in self.name:
+                data = np.stack(data).squeeze()
+                dims = [self.channel_name]
+                coord_labels = [f"{self.stem}_cam_{i+1}" for i in range(data.shape[0])]
+                coords = {self.channel_name: coord_labels}
+
+            elif "limiter" in self.name:
+                data = np.stack(data).squeeze()
+                dims = [self.channel_name]
+                coord_labels = [f"element_{i+1}" for i in range(data.shape[0])]
+                coords = {self.channel_name: coord_labels}
+
+            elif any(substr in self.name for substr in [
+                    "p2_inner", "p2_outer", "p3_lower", "p3_upper", 
+                    "p4_lower", "p4_upper", "p5_lower", "p5_upper", 
+                    "p6_lower", "p6_upper", "sol"
+                    ]):
+                data = np.stack(data).squeeze()
+                dims = [self.channel_name]
+                coord_labels = [f"coil_element_{i}" for i in range(data.shape[0])]
+                coords = {self.channel_name: coord_labels}
+
+            else:
+                dims = [self.channel_name]
+                coords = {self.channel_name: geom_df["name"].values}
+
+            return xr.DataArray(
+                name=self.name,
+                data=data,
+                dims=dims,
+                coords=coords
+            )
+
+        def _decode_metadata(self, uda_metadata):
+            """Decode UDA metadata, converting base64 to numpy arrays."""
+            cleaned_metadata = {}
+            for key, value in uda_metadata.items():
+                if isinstance(value, dict) and value.get('_type') == 'numpy.ndarray':
+                    decoded_value = base64.b64decode(value['data']['value'])
+                    cleaned_metadata[key] = np.frombuffer(decoded_value, dtype=np.int64)[0]
+                else:
+                    cleaned_metadata[key] = value
+            return cleaned_metadata
+
 
 
 class ZarrLoader(BaseLoader):

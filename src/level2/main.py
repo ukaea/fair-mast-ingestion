@@ -114,6 +114,66 @@ def set_mapping_time_bounds(
         tmax = float(plasma_current.time.values.max())
         mapping.global_interpolate.tmax = tmax
 
+def consolidate_flux_loops(ds: xr.Dataset) -> xr.Dataset:
+    r_data = []
+    z_data = []
+    r_coords = []
+    z_coords = []
+    
+    for var in ds.data_vars:
+        if var.startswith('flux_loop_') and var.endswith('_r'):
+            base = var[:-2]  # remove '_r'
+            geom_var = f"{base}_geometry_channel"
+            
+            if geom_var in ds:
+                r_data.extend(ds[var].values)
+                r_coords.extend(ds[geom_var].values)
+                
+        elif var.startswith('flux_loop_') and var.endswith('_z'):
+            base = var[:-2]  # remove '_z'
+            geom_var = f"{base}_geometry_channel"
+            
+            if geom_var in ds:
+                z_data.extend(ds[var].values)
+                z_coords.extend(ds[geom_var].values)
+    
+    result_arrays = {}
+    if r_data:
+        result_arrays['flux_loop_r'] = xr.DataArray(
+            data=r_data,
+            dims="flux_loop_geometry_channel",
+            coords={"flux_loop_geometry_channel": r_coords},
+            name="flux_loop_r"
+        )
+    
+    if z_data:
+        result_arrays['flux_loop_z'] = xr.DataArray(
+            data=z_data,
+            dims="flux_loop_geometry_channel",
+            coords={"flux_loop_geometry_channel": z_coords},
+            name="flux_loop_z"
+        )
+    
+    result_ds = ds.copy()
+    for name, array in result_arrays.items():
+        result_ds[name] = array
+    
+    vars_to_remove = []
+    coords_to_remove = []
+    
+    for var in ds.data_vars:
+        if var.startswith('flux_loop_') and (var.endswith('_r') or var.endswith('_z')):
+            vars_to_remove.append(var)
+    
+    for coord in ds.coords:
+        if coord.startswith('flux_loop_') and coord.endswith('_geometry_channel'):
+            coords_to_remove.append(coord)
+    
+    result_ds = result_ds.drop_vars(vars_to_remove)
+    result_ds = result_ds.drop_vars(coords_to_remove)
+    
+    return result_ds
+
 
 def process_shot(shot: int, **kwargs):
     args = argparse.Namespace(**kwargs)
@@ -152,6 +212,9 @@ def process_shot(shot: int, **kwargs):
                 dataset = reader.read_dataset(shot, group_name)
                 if len(dataset) == 0:
                     continue
+
+                if group_name == "magnetics":
+                    dataset = consolidate_flux_loops(dataset)
 
                 logger.info(
                     f"Writing {group_name} for shot {shot} from {mapping.facility}"

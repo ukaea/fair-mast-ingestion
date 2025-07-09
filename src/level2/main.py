@@ -119,38 +119,43 @@ def consolidate_flux_loops(ds: xr.Dataset) -> xr.Dataset:
     z_data = []
     r_coords = []
     z_coords = []
+    r_attrs = {}
+    z_attrs = {}
     
     for var in ds.data_vars:
         if var.startswith('flux_loop_') and var.endswith('_r'):
             base = var[:-2]  # remove '_r'
             geom_var = f"{base}_geometry_channel"
-            
             if geom_var in ds:
                 r_data.extend(ds[var].values)
                 r_coords.extend(ds[geom_var].values)
+                r_attrs.update(ds[var].attrs)
                 
         elif var.startswith('flux_loop_') and var.endswith('_z'):
             base = var[:-2]  # remove '_z'
             geom_var = f"{base}_geometry_channel"
-            
             if geom_var in ds:
                 z_data.extend(ds[var].values)
                 z_coords.extend(ds[geom_var].values)
+                z_attrs.update(ds[var].attrs)
     
     result_arrays = {}
     if r_data:
+        r_attrs['description'] = "Major radius of the flux loops"
         result_arrays['flux_loop_r'] = xr.DataArray(
             data=r_data,
             dims="flux_loop_geometry_channel",
             coords={"flux_loop_geometry_channel": r_coords},
+            attrs=r_attrs, 
             name="flux_loop_r"
         )
-    
     if z_data:
+        z_attrs['description'] = "Vertical position of the flux loops"
         result_arrays['flux_loop_z'] = xr.DataArray(
             data=z_data,
             dims="flux_loop_geometry_channel",
             coords={"flux_loop_geometry_channel": z_coords},
+            attrs=z_attrs, 
             name="flux_loop_z"
         )
     
@@ -160,11 +165,9 @@ def consolidate_flux_loops(ds: xr.Dataset) -> xr.Dataset:
     
     vars_to_remove = []
     coords_to_remove = []
-    
     for var in ds.data_vars:
         if var.startswith('flux_loop_') and (var.endswith('_r') or var.endswith('_z')):
             vars_to_remove.append(var)
-    
     for coord in ds.coords:
         if coord.startswith('flux_loop_') and coord.endswith('_geometry_channel'):
             coords_to_remove.append(coord)

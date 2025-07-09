@@ -2892,285 +2892,33 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      flux_loop_cc_r:
+      flux_loop_r:
         geometry:
-          stem: "centrecolumn"
+          stem: ""
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "r"
-          channel_name: "flux_loop_cc_geometry_channel"
+          channel_name: "flux_loop_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the centre column flux loop"
+        description: "Major radius of the flux loops"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_cc_geometry_channel:
+          flux_loop_geometry_channel:
 
-      flux_loop_cc_z:
+      flux_loop_z:
         geometry:
-          stem: "centrecolumn"
+          stem: ""
           path: "/magnetics/fluxloops"
           shot: "/common/uda-scratch/jg3176/fluxloops.nc"
           measurement: "z"
-          channel_name: "flux_loop_cc_geometry_channel"
+          channel_name: "flux_loop_geometry_channel"
         imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the centre column flux loop"
+        description: "Vertical position of the flux loops"
         units: "m"
         source: ""
         dimensions:
-          flux_loop_cc_geometry_channel:
-
-      flux_loop_p2l_r:
-        geometry:
-          stem: "p2/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p2l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p2 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p2l_geometry_channel:
-
-      flux_loop_p2l_z:
-        geometry:
-          stem: "p2/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p2l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p2 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p2l_geometry_channel:
-
-      flux_loop_p2u_r:
-        geometry:
-          stem: "p2/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p2u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p2 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p2u_geometry_channel:
-
-      flux_loop_p2u_z:
-        geometry:
-          stem: "p2/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p2u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p2 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p2u_geometry_channel:
-
-      flux_loop_p3l_r:
-        geometry:
-          stem: "p3/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p3l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p3 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p3l_geometry_channel:
-
-      flux_loop_p3l_z:
-        geometry:
-          stem: "p3/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p3l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p3 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p3l_geometry_channel:
-
-      flux_loop_p3u_r:
-        geometry:
-          stem: "p3/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p3u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p3 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p3u_geometry_channel:
-
-      flux_loop_p3u_z:
-        geometry:
-          stem: "p3/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p3u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p3 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p3u_geometry_channel:
-
-      flux_loop_p4l_r:
-        geometry:
-          stem: "p4/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p4l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p4 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p4l_geometry_channel:
-
-      flux_loop_p4l_z:
-        geometry:
-          stem: "p4/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p4l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p4 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p4l_geometry_channel:
-
-      flux_loop_p4u_r:
-        geometry:
-          stem: "p4/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p4u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p4 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p4u_geometry_channel:
-
-      flux_loop_p4u_z:
-        geometry:
-          stem: "p4/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p4u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p4 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p4u_geometry_channel:
-
-      flux_loop_p5l_r:
-        geometry:
-          stem: "p5/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p5l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p5 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p5l_geometry_channel:
-
-      flux_loop_p5l_z:
-        geometry:
-          stem: "p5/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p5l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p5 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p5l_geometry_channel:
-
-      flux_loop_p5u_r:
-        geometry:
-          stem: "p5/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p5u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p5 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p5u_geometry_channel:
-
-      flux_loop_p5u_z:
-        geometry:
-          stem: "p5/upper"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p5u_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p5 upper flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p5_geometry_channel:
-
-      flux_loop_p6l_r:
-        geometry:
-          stem: "p6/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "r"
-          channel_name: "flux_loop_p6l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].r"
-        description: "Major radius of the p6 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p6l_geometry_channel:
-
-      flux_loop_p6l_z:
-        geometry:
-          stem: "p6/lower"
-          path: "/magnetics/fluxloops"
-          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
-          measurement: "z"
-          channel_name: "flux_loop_p6l_geometry_channel"
-        imas: "magnetics.flux_loop[:].position[:].z"
-        description: "Vertical position of the p6 lower flux loop"
-        units: "m"
-        source: ""
-        dimensions:
-          flux_loop_p6l_geometry_channel:
+          flux_loop_geometry_channel:
       
       b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"

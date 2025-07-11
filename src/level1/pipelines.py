@@ -721,6 +721,8 @@ class MASTPipelines(Pipelines):
 
                     TensoriseChannels("vertw"),
                     AddLevel1GeometryUDA('vessel/vertw', "vertw", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
+
+                    AddLevel1GeometryUDA('cases', "coil_case", "/passive/efit", "/common/uda-scratch/jg3176/passivestructures.nc"),
                 ]
             ),
             "ams": Pipeline(

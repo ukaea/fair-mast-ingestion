@@ -1727,6 +1727,62 @@ datasets:
         dimensions:
           p2udivpl_geometry_channel:
 
+      coil_cases_r:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the PF coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_z:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the PF coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_width:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_height:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
 
   pf_active:
     imas: "pf_active"

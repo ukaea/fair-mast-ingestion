@@ -175,3 +175,5 @@ fair-mast-*.e*
 fair-mast-*.o*
 .s5cfg*
 *.db
+
+uv.lock

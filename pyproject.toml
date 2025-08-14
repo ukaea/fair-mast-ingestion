@@ -25,6 +25,7 @@ dependencies = {file = ["requirements.txt"]}
 dev = [
     "pytest",
     "pytest-mock",
+    "pytest-env",
     "ruff"
 ]
 
@@ -37,3 +38,8 @@ mpi = [
 
 [tool.ruff]
 exclude = [".venv", "notebooks"]
+
+[tool.pytest_env]
+UDA_HOST = "uda2.mast.l"
+UDA_META_PLUGINNAME = "MASTU_DB"
+UDA_METANEW_PLUGINNAME = "MAST_DB"

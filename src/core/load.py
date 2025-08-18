@@ -1,3 +1,5 @@
+import base64
+import json
 import re
 import typing as t
 from abc import ABC
@@ -7,8 +9,6 @@ from typing import Optional
 import fsspec
 import numpy as np
 import pandas as pd
-import base64
-import json
 import xarray as xr
 import zarr
 import zarr.storage

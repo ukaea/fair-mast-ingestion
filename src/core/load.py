@@ -437,7 +437,7 @@ class UDALoader(BaseLoader):
         dim_names = [re.sub("[^a-zA-Z0-9_\n\\.]", "", dim) for dim in dim_names]
         return dim_names
 
-class AddLevel2GeometryUDA():
+class Level2UDAGeometryLoader():
 
         def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
             self.stem = stem

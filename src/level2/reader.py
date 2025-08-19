@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 
 from src.core.load import (
-    AddLevel2GeometryUDA,
+    Level2UDAGeometryLoader,
     BaseLoader,
     MissingProfileError,
     MissingSourceError,
@@ -50,7 +50,7 @@ class DatasetReader:
             if profile_info.geometry:
                 logger.debug(f"Create profile {profile_name}")
 
-                geom_obj = AddLevel2GeometryUDA(profile_info.geometry.stem, 
+                geom_obj = Level2UDAGeometryLoader(profile_info.geometry.stem, 
                                         profile_name, 
                                         profile_info.geometry.path, 
                                         profile_info.geometry.shot, 

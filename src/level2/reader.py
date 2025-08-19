@@ -50,13 +50,13 @@ class DatasetReader:
             if profile_info.geometry:
                 logger.debug(f"Create profile {profile_name}")
 
-                geom_obj = Level2UDAGeometryLoader(profile_info.geometry.stem, 
-                                        profile_name, 
-                                        profile_info.geometry.path, 
-                                        profile_info.geometry.shot, 
-                                        profile_info.geometry.measurement,
-                                        profile_info.geometry.channel_name,)
-                datarr = geom_obj.geom_xarray
+                geom_loader = Level2UDAGeometryLoader()
+                datarr = geom_loader.run(profile_info.geometry.stem, 
+                                    profile_name, 
+                                    profile_info.geometry.path, 
+                                    profile_info.geometry.shot, 
+                                    profile_info.geometry.measurement,
+                                    profile_info.geometry.channel_name)
 
                 datarr.attrs["imas"] = profile_info.imas
                 datarr.attrs["description"] = profile_info.description

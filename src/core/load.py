@@ -439,18 +439,20 @@ class UDALoader(BaseLoader):
 
 class Level2UDAGeometryLoader():
 
-        def __init__(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
+        def __init__(self):
+            self.parent = UDALoader()
+            self.client = self.parent._get_client()
+            
+        def run(self, stem: str, name: str, path: str, shot: int, measurement: str, channel_name: str):
+            """Load geometry data and return xarray structure."""
             self.stem = stem
             self.name = name
             self.path = path
             self.shot = shot
             self.measurement = measurement
             self.channel_name = channel_name
-
-            self.parent = UDALoader()
-            self.client = self.parent._get_client()
             
-            self.geom_xarray = self._fetch_and_process_geometry()
+            return self._fetch_and_process_geometry()
 
         def _fetch_and_process_geometry(self):
             """Fetch and process geometry data from UDA."""

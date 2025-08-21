@@ -623,6 +623,1329 @@ datasets:
             imas: "gas_injection.valve[:].target_voltage.time"
 
 
+  pf_passive:
+    imas: "pf_passive"
+    profiles:
+
+      # - add UDA data here - #
+
+      botcol_r:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "botcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the botcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      botcol_z:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "botcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the botcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      botcol_width:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "botcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the botcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      botcol_height:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "botcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the botcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      botcol_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "botcol_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      botcol_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/botcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "botcol_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          botcol_geometry_channel:
+
+      endcrown_l_r:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the endcrown_l coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_l_z:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the endcrown_l coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_l_width:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the endcrown_l coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_l_height:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the endcrown_l coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_l_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_l_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/endcrown_l"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "endcrown_l_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          endcrown_l_geometry_channel:
+
+      endcrown_u_r:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the endcrown_u coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      endcrown_u_z:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the endcrown_u coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      endcrown_u_width:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the endcrown_u coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      endcrown_u_height:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the endcrown_u coils"
+        units: "m"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      endcrown_u_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      endcrown_u_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/endcrown_u"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "endcrown_u_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          endcrown_u_geometry_channel:
+
+      incon_r:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "incon_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the incon coils"
+        units: "m"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      incon_z:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "incon_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the incon coils"
+        units: "m"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      incon_width:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "incon_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the incon coils"
+        units: "m"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      incon_height:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "incon_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the incon coils"
+        units: "m"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      incon_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "incon_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      incon_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/incon"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "incon_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          incon_geometry_channel:
+
+      lhorw_r:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "lhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the lhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      lhorw_z:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "lhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the lhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      lhorw_width:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "lhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the lhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      lhorw_height:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "lhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the lhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      lhorw_shapeAngle1:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "lhorw_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      lhorw_shapeAngle2:
+        geometry:
+          stem: "vessel/lhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "lhorw_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          lhorw_geometry_channel:
+
+      mid_r:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "mid_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the mid coils"
+        units: "m"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      mid_z:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "mid_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the mid coils"
+        units: "m"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      mid_width:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "mid_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the mid coils"
+        units: "m"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      mid_height:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "mid_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the mid coils"
+        units: "m"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      mid_shapeAngle1:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "mid_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      mid_shapeAngle2:
+        geometry:
+          stem: "vessel/mid"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "mid_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          mid_geometry_channel:
+
+      uhorw_r:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "uhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the uhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      uhorw_z:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "uhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the uhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      uhorw_width:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "uhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the uhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      uhorw_height:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "uhorw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the uhorw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      uhorw_shapeAngle1:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "uhorw_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      uhorw_shapeAngle2:
+        geometry:
+          stem: "vessel/uhorw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "uhorw_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          uhorw_geometry_channel:
+
+      vertw_r:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "vertw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the vertw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      vertw_z:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "vertw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the vertw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      vertw_width:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "vertw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the vertw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      vertw_height:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "vertw_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the vertw coils"
+        units: "m"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      vertw_shapeAngle1:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "vertw_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      vertw_shapeAngle2:
+        geometry:
+          stem: "vessel/vertw"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "vertw_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          vertw_geometry_channel:
+
+      ring_r:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "ring_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the ring coils"
+        units: "m"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      ring_z:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "ring_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the ring coils"
+        units: "m"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      ring_width:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "ring_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the ring coils"
+        units: "m"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      ring_height:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "ring_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the ring coils"
+        units: "m"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      ring_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "ring_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      ring_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/ring"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "ring_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          ring_geometry_channel:
+
+      rodgr_r:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "rodgr_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the rodgr coils"
+        units: "m"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      rodgr_z:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "rodgr_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the rodgr coils"
+        units: "m"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      rodgr_width:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "rodgr_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the rodgr coils"
+        units: "m"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      rodgr_height:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "rodgr_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the rodgr coils"
+        units: "m"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      rodgr_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "rodgr_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      rodgr_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/rodgr"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "rodgr_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          rodgr_geometry_channel:
+
+      topcol_r:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "topcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the topcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      topcol_z:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "topcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the topcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      topcol_width:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "topcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the topcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      topcol_height:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "topcol_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the topcol coils"
+        units: "m"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      topcol_shapeAngle1:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "topcol_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      topcol_shapeAngle2:
+        geometry:
+          stem: "centrecolumn/topcol"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "topcol_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          topcol_geometry_channel:
+
+      p2larm_r:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "p2larm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p2larm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2larm_z:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "p2larm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p2larm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2larm_width:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "p2larm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the p2larm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2larm_height:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "p2larm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the p2larm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2larm_shapeAngle1:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "p2larm_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2larm_shapeAngle2:
+        geometry:
+          stem: "p2/p2larm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "p2larm_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2larm_geometry_channel:
+
+      p2uarm_r:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "p2uarm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p2uarm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2uarm_z:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "p2uarm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p2uarm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2uarm_width:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "p2uarm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the p2uarm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2uarm_height:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "p2uarm_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the p2uarm coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2uarm_shapeAngle1:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "p2uarm_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2uarm_shapeAngle2:
+        geometry:
+          stem: "p2/p2uarm"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "p2uarm_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2uarm_geometry_channel:
+
+      p2ldivpl_r:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p2ldivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2ldivpl_z:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p2ldivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2ldivpl_width:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the p2ldivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2ldivpl_height:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the p2ldivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2ldivpl_shapeAngle1:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2ldivpl_shapeAngle2:
+        geometry:
+          stem: "p2/p2ldivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "p2ldivpl_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2ldivpl_geometry_channel:
+
+      p2udivpl_r:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p2udivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      p2udivpl_z:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p2udivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      p2udivpl_width:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the p2udivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      p2udivpl_height:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the p2udivpl coils"
+        units: "m"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      p2udivpl_shapeAngle1:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle1"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: ""
+        description: "Shape angle 1 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      p2udivpl_shapeAngle2:
+        geometry:
+          stem: "p2/p2udivpl"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "shapeAngle2"
+          channel_name: "p2udivpl_geometry_channel"
+        imas: ""
+        description: "Shape angle 2 for parallelogram geometry"
+        units: "degrees"
+        source: ""
+        dimensions:
+          p2udivpl_geometry_channel:
+
+      coil_cases_r:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreR"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the PF coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_z:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "centreZ"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the PF coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_width:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dR"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.width"
+        description: "Geometric width of the coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+      coil_cases_height:
+        geometry:
+          stem: "cases"
+          path: "/passive/efit"
+          shot: "/common/uda-scratch/jg3176/passivestructures.nc"
+          measurement: "dZ"
+          channel_name: "coil_cases_geometry_channel"
+        imas: "pf_passive.loop[:].element[:].geometry.rectangle.height"
+        description: "Geometric height of the coil cases"
+        units: "m"
+        source: ""
+        dimensions:
+          coil_cases_geometry_channel:
+
+
   pf_active:
     imas: "pf_active"
     profiles:
@@ -654,6 +1977,734 @@ datasets:
           current_channel:
           time: 
             imas: "pf_active.coil[:].current.time"
+      
+      p2_inner_upper_r:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_inner_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_z:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_inner_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_height:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_inner_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_upper_width:
+        geometry:
+          stem: "p2/p2_inner_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_inner_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 inner upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_r:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_inner_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_z:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_inner_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_height:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_inner_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_inner_lower_width:
+        geometry:
+          stem: "p2/p2_inner_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_inner_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 inner lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_inner_coordinate_element:
+
+      p2_outer_upper_r:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_outer_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_z:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_outer_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_height:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_outer_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_upper_width:
+        geometry:
+          stem: "p2/p2_outer_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_outer_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 outer upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_r:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p2_outer_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_z:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p2_outer_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_height:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p2_outer_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p2_outer_lower_width:
+        geometry:
+          stem: "p2/p2_outer_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p2_outer_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P2 outer lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p2_outer_coordinate_element:
+
+      p3_upper_r:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p3_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_z:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p3_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_height:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p3_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_upper_width:
+        geometry:
+          stem: "p3/p3_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p3_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P3 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_r:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p3_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_z:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p3_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_height:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p3_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p3_lower_width:
+        geometry:
+          stem: "p3/p3_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p3_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the P3 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p3_coordinate_element:
+
+      p4_upper_r:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p4_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_z:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p4_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_height:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p4_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_upper_width:
+        geometry:
+          stem: "p4/p4_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p4_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p4 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_r:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p4_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_z:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p4_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_height:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p4_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p4_lower_width:
+        geometry:
+          stem: "p4/p4_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p4_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p4 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p4_coordinate_element:
+
+      p5_upper_r:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p5_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_z:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p5_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_height:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p5_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_upper_width:
+        geometry:
+          stem: "p5/p5_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p5_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p5 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_r:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p5_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_z:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p5_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_height:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p5_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p5_lower_width:
+        geometry:
+          stem: "p5/p5_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p5_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p5 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p5_coordinate_element:
+
+      p6_upper_r:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p6_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_z:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p6_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_height:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p6_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_upper_width:
+        geometry:
+          stem: "p6/p6_upper"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p6_upper_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p6 upper coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_r:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "p6_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_z:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "p6_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_height:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "p6_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      p6_lower_width:
+        geometry:
+          stem: "p6/p6_lower"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "p6_lower_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the p6 lower coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          p6_coordinate_element:
+
+      sol_r:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreR"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.r"
+        description: "Geometric centre R values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_z:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "centreZ"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.z"
+        description: "Geometric centre Z values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_height:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dZ"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.height"
+        description: "Geometric vertical height values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
+
+      sol_width:
+        geometry:
+          stem: "sol/sol"
+          path: "/magnetics/pfcoil"
+          shot: "/common/uda-scratch/jg3176/pfcoils.nc"
+          measurement: "dR"
+          channel_name: "sol_coordinate_element"
+        imas: "pf_active.coil[:].element[:].geometry.rectangle.width"
+        description: "Geometric width values of the solenoid coil elements"
+        units: "m"
+        source: ""
+        dimensions:
+          sol_coordinate_element:
 
       coil_voltage:
         imas: "pf_active.coil[:].voltage.data"
@@ -709,7 +2760,7 @@ datasets:
         dimensions:
           time:
             imas: "magnetics.time"
-
+      
       b_field_pol_probe_ccbv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
         description: "Centre column Bv array"
@@ -761,6 +2812,76 @@ datasets:
           b_field_pol_probe_ccbv_channel:
           time:
             imas: "magnetics.time"
+          
+      b_field_pol_probe_ccbv_r:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_geometry_channel:
+
+      b_field_pol_probe_ccbv_z:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_geometry_channel:
+
+      b_field_pol_probe_ccbv_phi_1:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the centre column Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_geometry_channel:
+
+      b_field_pol_probe_ccbv_phi_2:
+        geometry:
+          stem: "centrecolumn/t2"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the centre column Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_geometry_channel:
+
+      b_field_pol_probe_ccbv_length:
+        geometry:
+          stem: "centrecolumn/t1"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_ccbv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].length"
+        description: "Length of the centre column Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_ccbv_geometry_channel:
 
       b_field_pol_probe_obv_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -787,10 +2908,81 @@ datasets:
             - "AMB_OBV16"
             - "AMB_OBV17"
             - "AMB_OBV18"
+            - "AMB_OBV19"
         dimensions:
           b_field_pol_probe_obv_channel:
           time:
             imas: "magnetics.time"
+      
+      b_field_pol_probe_obv_r:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_z:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_phi_1:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the outer vessel Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_phi_2:
+        geometry:
+          stem: "outervessel/t2/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the outer vessel Bv array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
+
+      b_field_pol_probe_obv_length:
+        geometry:
+          stem: "outervessel/t1/obv"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_obv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.length"
+        description: "Length of the outer vessel Bv array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obv_geometry_channel:
 
       b_field_pol_probe_obr_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -817,10 +3009,81 @@ datasets:
             - "AMB_OBR16"
             - "AMB_OBR17"
             - "AMB_OBR18"
+            - "AMB_OBR19"
         dimensions:
           b_field_pol_probe_obr_channel:
           time:
             imas: "magnetics.time"
+      
+      b_field_pol_probe_obr_r:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_z:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_phi_1:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 1 of the outer vessel Br array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_phi_2:
+        geometry:
+          stem: "outervessel/t2/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Phi 2 of the outer vessel Br array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
+
+      b_field_pol_probe_obr_length:
+        geometry:
+          stem: "outervessel/t1/obr"
+          path: "/magnetics/pickup"
+          shot: "/common/uda-scratch/jg3176/pickup_coils.nc"
+          measurement: "length"
+          channel_name: "b_field_pol_probe_obr_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.length"
+        description: "Length of the outer vessel Br array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_obr_geometry_channel:
 
       flux_loop_flux:
         imas: "magnetics.flux_loop[:].flux.data"
@@ -846,6 +3109,34 @@ datasets:
           flux_loop_channel:
           time:
             imas: "magnetics.time"
+
+      flux_loop_r:
+        geometry:
+          stem: ""
+          path: "/magnetics/fluxloops"
+          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
+          measurement: "r"
+          channel_name: "flux_loop_geometry_channel"
+        imas: "magnetics.flux_loop[:].position[:].r"
+        description: "Major radius of the flux loops"
+        units: "m"
+        source: ""
+        dimensions:
+          flux_loop_geometry_channel:
+
+      flux_loop_z:
+        geometry:
+          stem: ""
+          path: "/magnetics/fluxloops"
+          shot: "/common/uda-scratch/jg3176/fluxloops.nc"
+          measurement: "z"
+          channel_name: "flux_loop_geometry_channel"
+        imas: "magnetics.flux_loop[:].position[:].z"
+        description: "Vertical position of the flux loops"
+        units: "m"
+        source: ""
+        dimensions:
+          flux_loop_geometry_channel:
       
       b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
@@ -918,6 +3209,132 @@ datasets:
           b_field_tor_probe_saddle_voltage_channel:
           time_saddle:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
+
+      b_field_tor_probe_saddle_l_r:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the lower saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_l_z:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the lower saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_l_phi:
+        geometry:
+          stem: "lower"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_l_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the lower saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_l_geometry_channel:
+
+      b_field_tor_probe_saddle_m_r:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the middle saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_m_z:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the middle saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_m_phi:
+        geometry:
+          stem: "middle"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_m_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the middle saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_m_geometry_channel:
+
+      b_field_tor_probe_saddle_u_r:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Radial points of the upper saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
+
+      b_field_tor_probe_saddle_u_z:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical positions of the upper saddle coils"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
+
+      b_field_tor_probe_saddle_u_phi:
+        geometry:
+          stem: "upper"
+          path: "/magnetics/saddlecoils"
+          shot: "/common/uda-scratch/jg3176/saddle.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_saddle_u_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal points of the upper saddle coils"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_saddle_u_geometry_channel:
 
       # rogowski_coil_current:
       #   imas: "magnetics.rogowski_coil[:].current.data"
@@ -1041,6 +3458,48 @@ datasets:
           time_mirnov:
             imas: "magnetics.b_field_pol_probe[:].voltage.time"
 
+      b_field_pol_probe_omv_r:
+        geometry:
+          stem: "outervessel/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the Outboard vertical mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
+      b_field_pol_probe_omv_z:
+        geometry:
+          stem: "outervessel/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the Outboard vertical mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
+      b_field_pol_probe_omv_phi:
+        geometry:
+          stem: "outervessel/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_omv_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Toroidal angle of the Outboard vertical mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_omv_geometry_channel:
+
       b_field_tor_probe_cc_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         description: "Centre column toroidal mirnov array"
@@ -1087,6 +3546,48 @@ datasets:
           b_field_tor_probe_cc_channel:
           time_mirnov:
             imas: "magnetics.b_field_tor_probe[:].field.time"
+
+      b_field_tor_probe_cc_r:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.r"
+        description: "Major radius of the centre column toroidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
+
+      b_field_tor_probe_cc_z:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.z"
+        description: "Vertical position of the centre column toroidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
+
+      b_field_tor_probe_cc_phi:
+        geometry:
+          stem: "centrecolumn/toroidal"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_tor_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_tor_probe[:].position.phi"
+        description: "Toroidal angle of the centre column toroidal mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_tor_probe_cc_geometry_channel:
 
       b_field_pol_probe_cc_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
@@ -1188,6 +3689,48 @@ datasets:
           b_field_pol_probe_cc_channel:
           time_mirnov:
             imas: "magnetics.b_field_pol_probe[:].field.time"
+
+      b_field_pol_probe_cc_r:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "r"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.r"
+        description: "Major radius of the centre column poloidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
+
+      b_field_pol_probe_cc_z:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "z"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.z"
+        description: "Vertical position of the centre column poloidal mirnov array"
+        units: "m"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
+
+      b_field_pol_probe_cc_phi:
+        geometry:
+          stem: "centrecolumn/vertical"
+          path: "/magnetics/mirnov"
+          shot: "/common/uda-scratch/jg3176/mirnovs.nc"
+          measurement: "phi"
+          channel_name: "b_field_pol_probe_cc_geometry_channel"
+        imas: "magnetics.b_field_pol_probe[:].position.phi"
+        description: "Toroidal angle of the centre column poloidal mirnov array"
+        units: "degrees"
+        source: ""
+        dimensions:
+          b_field_pol_probe_cc_geometry_channel:
 
       b_field_tor_probe_omaha_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
@@ -1507,6 +4050,76 @@ datasets:
           time: 
             imas: "soft_x_rays.time"
 
+      tangential_cam_origin_r:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "tangential_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_geometry_channel:
+
+      tangential_cam_origin_z:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "tangential_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight z of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_geometry_channel:
+
+      tangential_cam_endpoint_r:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "tangential_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight radius of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_geometry_channel:
+
+      tangential_cam_endpoint_z:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "tangential_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the tangential camera"
+        units: "m"
+        source: ""
+        dimensions:
+          tangential_cam_geometry_channel:
+
+      tangential_cam_phi:
+        geometry:
+          stem: "tangential"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "tangential_cam_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the tangential camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          tangential_cam_geometry_channel:
+
       horizontal_cam_lower:
         source:
           - name: "XSX/HCAM/L"
@@ -1560,6 +4173,76 @@ datasets:
           horizontal_cam_lower_channel:
           time: 
             imas: "soft_x_rays.time"
+
+      horizontal_cam_lower_origin_r:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "horizontal_cam_lower_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_geometry_channel:
+
+      horizontal_cam_lower_origin_z:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "horizontal_cam_lower_geometry_channel"
+        imas: ""
+        description: "Origin line of sight z of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_geometry_channel:
+
+      horizontal_cam_lower_endpoint_r:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "horizontal_cam_lower_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight major radius of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_geometry_channel:
+
+      horizontal_cam_lower_endpoint_z:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "horizontal_cam_lower_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the lower horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_geometry_channel:
+
+      horizontal_cam_lower_phi:
+        geometry:
+          stem: "lower_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "horizontal_cam_lower_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the lower horizontal camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          horizontal_cam_lower_geometry_channel:
 
       horizontal_cam_upper:
         source:
@@ -1615,6 +4298,288 @@ datasets:
           time: 
             imas: "soft_x_rays.time"
 
+      horizontal_cam_upper_origin_r:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "horizontal_cam_upper_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_geometry_channel:
+
+      horizontal_cam_upper_origin_z:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "horizontal_cam_upper_geometry_channel"
+        imas: ""
+        description: "Origin line of sight z of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_geometry_channel:
+
+      horizontal_cam_upper_endpoint_r:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "horizontal_cam_upper_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight major radius of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_geometry_channel:
+
+      horizontal_cam_upper_endpoint_z:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "horizontal_cam_upper_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight z of the upper horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_geometry_channel:
+
+      horizontal_cam_upper_phi:
+        geometry:
+          stem: "upper_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "horizontal_cam_upper_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the upper horizontal camera"
+        units: "degrees"
+        source: ""
+        dimensions:
+          horizontal_cam_upper_geometry_channel:
+
+      third_horizontal_cam_origin_r:
+        geometry:
+          stem: "third_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "third_horizontal_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the third horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          third_horizontal_cam_geometry_channel:
+
+      third_horizontal_cam_origin_z:
+        geometry:
+          stem: "third_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "third_horizontal_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight Z of the third horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          third_horizontal_cam_geometry_channel:
+
+      third_horizontal_cam_endpoint_r:
+        geometry:
+          stem: "third_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "third_horizontal_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight radius of the third horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          third_horizontal_cam_geometry_channel:
+
+      third_horizontal_cam_endpoint_z:
+        geometry:
+          stem: "third_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "third_horizontal_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight Z of the third horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          third_horizontal_cam_geometry_channel:
+
+      third_horizontal_cam_phi:
+        geometry:
+          stem: "third_horizontal"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "third_horizontal_cam_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the third horizontal camera"
+        units: "m"
+        source: ""
+        dimensions:
+          third_horizontal_cam_geometry_channel:
+
+      inner_vertical_cam_origin_r:
+        geometry:
+          stem: "inner_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "inner_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the inner vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          inner_vertical_cam_geometry_channel:
+
+      inner_vertical_cam_origin_z:
+        geometry:
+          stem: "inner_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "inner_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight Z of the inner vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          inner_vertical_cam_geometry_channel:
+
+      inner_vertical_cam_endpoint_r:
+        geometry:
+          stem: "inner_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "inner_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight radius of the inner vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          inner_vertical_cam_geometry_channel:
+
+      inner_vertical_cam_endpoint_z:
+        geometry:
+          stem: "inner_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "inner_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight Z of the inner vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          inner_vertical_cam_geometry_channel:
+
+      inner_vertical_cam_phi:
+        geometry:
+          stem: "inner_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "inner_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the inner vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          inner_vertical_cam_geometry_channel:
+
+      ###
+
+      outer_vertical_cam_origin_r:
+        geometry:
+          stem: "outer_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_r"
+          channel_name: "outer_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight radius of the outer vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          outer_vertical_cam_geometry_channel:
+
+      outer_vertical_cam_origin_z:
+        geometry:
+          stem: "outer_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "origin_z"
+          channel_name: "outer_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Origin line of sight Z of the outer vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          outer_vertical_cam_geometry_channel:
+
+      outer_vertical_cam_endpoint_r:
+        geometry:
+          stem: "outer_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_r"
+          channel_name: "outer_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight radius of the outer vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          outer_vertical_cam_geometry_channel:
+
+      outer_vertical_cam_endpoint_z:
+        geometry:
+          stem: "outer_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "endpoint_z"
+          channel_name: "outer_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Endpoint line of sight Z of the outer vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          outer_vertical_cam_geometry_channel:
+
+      outer_vertical_cam_phi:
+        geometry:
+          stem: "outer_vertical"
+          path: "/xraycams/core"
+          shot: "/common/uda-scratch/jg3176/xraycams.nc"
+          measurement: "toroidal_angle"
+          channel_name: "outer_vertical_cam_geometry_channel"
+        imas: ""
+        description: "Toroidal angle of the outer vertical camera"
+        units: "m"
+        source: ""
+        dimensions:
+          outer_vertical_cam_geometry_channel:
+
   camera_visible:
     interpolate:
       time:
@@ -1647,3 +4612,36 @@ datasets:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
           height_c:
           width_c:
+
+  wall:
+    imas: "wall"
+
+    profiles:
+
+      limiter_r:
+        geometry:
+          stem: "efit"
+          path: "/limiter"
+          shot: "/common/uda-scratch/jg3176/limiter.nc"
+          measurement: "R"
+          channel_name: "limiter_geometry_channel"
+        imas: "wall.description_2d[:].limiter.unit[:].outline.r"
+        description: "Major radius values of the limiter"
+        units: "m"
+        source: ""
+        dimensions:
+          limiter_geometry_channel:
+
+      limiter_z:
+        geometry:
+          stem: "efit"
+          path: "/limiter"
+          shot: "/common/uda-scratch/jg3176/limiter.nc"
+          measurement: "Z"
+          channel_name: "limiter_geometry_channel"
+        imas: "wall.description_2d[:].limiter.unit[:].outline.z"
+        description: "Vertical position values of the limiter"
+        units: "m"
+        source: ""
+        dimensions:
+          limiter_geometry_channel:

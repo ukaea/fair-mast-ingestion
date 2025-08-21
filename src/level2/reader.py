@@ -3,7 +3,12 @@ from typing import Union
 import numpy as np
 import xarray as xr
 
-from src.core.load import BaseLoader, MissingProfileError, MissingSourceError
+from src.core.load import (
+    BaseLoader,
+    Level2UDAGeometryLoader,
+    MissingProfileError,
+    MissingSourceError,
+)
 from src.core.log import logger
 from src.core.model import Dimension, Mapping, Source
 from src.level2.transforms import (
@@ -28,11 +33,12 @@ class DatasetReader:
 
         if len(dataset) == 0:
             return dataset
-
+        
         dataset = self.apply_interpolation(dataset, name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
         return dataset
+        
 
     def read_profiles(self, shot: int, dataset_name: str) -> dict[str, xr.DataArray]:
         self.set_shot(shot)
@@ -42,17 +48,22 @@ class DatasetReader:
         profiles = {}
         for profile_name, profile_info in dataset.profiles.items():
             try:
-                logger.debug(f"Create profile {profile_name}")
-                profile = self.read_profile(shot, dataset_name, profile_name)
-                logger.debug(f"Loaded profile {profile_name}")
+                if profile_info.geometry:
+                    logger.debug(f"Create profile {profile_name}")
+                    profile = self.read_geometry(profile_info, profile_name)
+                    logger.debug(f"Loaded profile {profile_name}")
+                else:
+                    logger.debug(f"Create profile {profile_name}")
+                    profile = self.read_profile(shot, dataset_name, profile_name)
+                    logger.debug(f"Loaded profile {profile_name}")
+                    
+                profiles[profile_name] = profile
             except MissingSourceError as e:
                 logger.warning(e)
                 continue
             except MissingProfileError as e:
                 logger.warning(e)
                 continue
-
-            profiles[profile_name] = profile
         return profiles
 
     def read_profile(
@@ -137,6 +148,16 @@ class DatasetReader:
             subtractor = BackgroundSubtractionTransform(start, end)
             item = subtractor.transform_array(item)
         return item
+
+    def read_geometry(self, profile_info, profile_name: str) -> xr.DataArray:
+        """Read geometry data using Level2UDAGeometryLoader."""
+        geom_loader = Level2UDAGeometryLoader()
+        datarr = geom_loader.run(profile_info.geometry, profile_name)
+        
+        datarr.attrs["imas"] = profile_info.imas
+        datarr.attrs["description"] = profile_info.description
+        
+        return datarr
 
     def apply_interpolation(self, dataset: xr.Dataset, dataset_name: str) -> xr.Dataset:
         dataset_config = self._mapping.datasets[dataset_name]

@@ -115,6 +115,7 @@ def set_mapping_time_bounds(
         mapping.global_interpolate.tmax = tmax
 
 
+
 def process_shot(shot: int, **kwargs):
     args = argparse.Namespace(**kwargs)
     if args.verbose:

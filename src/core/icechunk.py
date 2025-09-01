@@ -24,7 +24,7 @@ class IcechunkUploader:
         logger.info(f"Writing Zarr data from '{local_file}' to Icechunk local store...")
 
         data_tree = xr.open_datatree(local_file)
-        data_tree.to_zarr(session.store, mode="a")
+        data_tree.to_zarr(session.store, mode="a", consolidated=False)
 
         if self.config.commit_message is None:
             snapshot = self.config.commit_message = f"Upload {local_file} to local Icechunk repo"
@@ -62,8 +62,8 @@ class IcechunkUploader:
 
         data = xr.open_datatree(local_file, chunks={})
         
-        with session.allow_pickling():
-            data.to_zarr(session.store, mode="a", consolidated=False)
+        fork = session.fork()
+        data.to_zarr(fork.store, mode="a", consolidated=False)
 
         if self.config.commit_message is None:
             self.config.commit_message = f"Upload {local_file} to S3 Icechunk repo"

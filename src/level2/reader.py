@@ -154,7 +154,11 @@ class DatasetReader:
         geom_loader = Level2UDAGeometryLoader()
         datarr = geom_loader.run(profile_info.geometry, profile_name)
         
-        datarr.attrs["imas"] = profile_info.imas
+        if profile_info.imas:
+            datarr.attrs["imas"] = profile_info.imas
+        else:
+            datarr.attrs["imas"] = ""
+            
         datarr.attrs["description"] = profile_info.description
         
         return datarr

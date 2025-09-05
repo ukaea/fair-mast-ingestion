@@ -13,6 +13,7 @@ global_interpolate:
 datasets:
   equilibrium:
     imas: "equilibrium"
+    description: "Description of a 2D, axi-symmetric, tokamak equilibrium; result of an equilibrium code."
 
     interpolate:
       time:
@@ -307,6 +308,7 @@ datasets:
 
   pulse_schedule:
     imas: pulse_schedule
+    description: "Description of Pulse Schedule, described by subsystems waveform references and an envelope around them. The controllers, pulse schedule and SDN are defined in separate IDSs."
     profiles:
       i_plasma:
         target_units: "A"
@@ -338,6 +340,10 @@ datasets:
 
   summary:
     imas: "summary"
+    description: "Summary of physics quantities from a simulation or an experiment. 
+      Dynamic quantities are either taken at given time slices (indicated in the “time” vector) or 
+      time-averaged over an interval (in such case the “time_width” of the interval is indicated 
+      and the “time” vector represents the end of each time interval)."
     profiles:
       ip:
         source: "AMC_PLASMA CURRENT"
@@ -382,6 +388,7 @@ datasets:
 
   interferometer:
     imas: "interferometer"
+    description: "Interferometer diagnostic"
     profiles:
       n_e_line:
         source: "ANE_DENSITY"
@@ -392,6 +399,7 @@ datasets:
 
   gas_injection:
     imas: "gas_injection"
+    description: "Gas injection by a system of pipes and valves."
     profiles:
       total_injected:
         source: "AGA_INTEG_GAS"
@@ -625,6 +633,11 @@ datasets:
 
   pf_passive:
     imas: "pf_passive"
+    description: "Description of the axisymmetric passive conductors, currents 
+      flowing in them. Electromagnetic simulations are expected to use only this 
+      IDS to describe passive conductors and their specific discretization, not 
+      the component-related IDS (e.g. wall) which are used to store e.g. the 
+      component machine description"
     profiles:
 
       # - add UDA data here - #
@@ -1948,6 +1961,9 @@ datasets:
 
   pf_active:
     imas: "pf_active"
+    desctription: "Description of the axisymmetric active poloidal field (PF) 
+      coils and supplies; includes the limits of these systems; includes the 
+      forces on them; does not include non-axisymmetric coil systems"
     profiles:
       solenoid_current:
         source: "AMC_SOL CURRENT"
@@ -2752,6 +2768,7 @@ datasets:
         method: 'zero'
 
     imas: "magnetics"
+    description: "Magnetic diagnostics for equilibrium identification and plasma shape control."
     profiles:
       ip: 
         imas: "magnetics.ip[:].data"
@@ -3767,6 +3784,8 @@ datasets:
         step: 2e-5
       time_bes:
         step: 5e-7
+    imas: "spectrometer_visible"
+    description: "Spectrometer in visible light range diagnostic"
 
     profiles:
       filter_spectrometer_dalpha_voltage:
@@ -3836,6 +3855,7 @@ datasets:
 
   thomson_scattering:
     imas: thomson_scattering
+    description: "Thomson scattering diagnostic"
     interpolate:
       time:
         step: 0.005
@@ -3957,6 +3977,7 @@ datasets:
 
   charge_exchange:
     imas: charge_exchange
+    descripton: "Charge exchange spectroscopy diagnostic."
     interpolate:
       time:
         step: 0.005
@@ -3994,7 +4015,8 @@ datasets:
     interpolate:
       time:
         step: 2e-6
-
+    imas: "soft_x_rays"
+    description: "Soft X-rays tomography diagnostic"
     profiles:
       tangential_cam:
         source: 
@@ -4584,6 +4606,9 @@ datasets:
     interpolate:
       time:
         step: 0.002
+
+    imas: "camera_visible"
+    description: "Camera in the visible light range."
     profiles:
       camera_lower:
         source: "RBA"
@@ -4615,6 +4640,7 @@ datasets:
 
   wall:
     imas: "wall"
+    description: "Description of the torus wall and its interaction with the plasma"
 
     profiles:
 

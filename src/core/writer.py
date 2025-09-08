@@ -85,6 +85,43 @@ class ZarrDatasetWriter(DatasetWriter):
         zarr.consolidate_metadata(path)
 
 
+class InMemoryDatasetWriter(DatasetWriter):
+    """A writer that collects datasets in memory for icechunk upload without writing to disk."""
+    
+    def __init__(self, **kwargs):
+        self.datasets = {}
+        
+    @property 
+    def file_extension(self):
+        return "zarr"  # We'll create zarr format in memory
+        
+    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+        """Store dataset in memory under the group name."""
+        self._convert_dict_attrs_to_json(dataset)
+        
+        if file_name not in self.datasets:
+            self.datasets[file_name] = {}
+        self.datasets[file_name][group_name] = dataset
+        
+    def get_datatree(self, file_name: str) -> xr.DataTree:
+        """Get all datasets for a file as an xarray DataTree."""
+        if file_name not in self.datasets:
+            return xr.DataTree()
+            
+        # Create datatree from the grouped datasets
+        tree = xr.DataTree()
+        for group_name, dataset in self.datasets[file_name].items():
+            tree[group_name] = xr.DataTree(dataset)
+        return tree
+        
+    def clear_datasets(self, file_name: str = None):
+        """Clear stored datasets for memory management."""
+        if file_name is None:
+            self.datasets.clear()
+        elif file_name in self.datasets:
+            del self.datasets[file_name]
+
+
 class ParquetDatasetWriter(DatasetWriter):
     def __init__(self, output_path: str, **kwargs):
         super().__init__(output_path)
@@ -132,9 +169,11 @@ class DatasetWriterNames(str, Enum):
     ZARR = "zarr"
     NETCDF = "netcdf"
     PARQUET = "parquet"
+    INMEMORY = "inmemory"
 
 
 dataset_writer_registry = Registry[DatasetWriter]()
 dataset_writer_registry.register(DatasetWriterNames.ZARR, ZarrDatasetWriter)
 dataset_writer_registry.register(DatasetWriterNames.NETCDF, NetCDFDatasetWriter)
 dataset_writer_registry.register(DatasetWriterNames.PARQUET, ParquetDatasetWriter)
+dataset_writer_registry.register(DatasetWriterNames.INMEMORY, InMemoryDatasetWriter)

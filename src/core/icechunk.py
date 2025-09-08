@@ -13,31 +13,28 @@ warnings.filterwarnings("ignore")
 class IcechunkUploader:
     def __init__(self, config: IcechunkConfig,):
         self.config = config
-
-    def local_upload(self, local_file: str, shot):
-        logger.info(f"Uploading with Icechunk to repo at '{self.config.local_icechunk_repo_path}'")
+        
+    def local_upload_from_memory(self, data_tree: xr.DataTree, shot: int):
+        """Upload data directly from memory to local icechunk store without writing to disk first."""
+        logger.info(f"Uploading with Icechunk to repo at '{self.config.local_icechunk_repo_path}' from memory")
 
         storage = icechunk.local_filesystem_storage(f"{self.config.local_icechunk_repo_path}/{shot}")
         repo = icechunk.Repository.open_or_create(storage=storage)
 
         session = repo.writable_session(self.config.icechunk_branch)
-        logger.info(f"Writing Zarr data from '{local_file}' to Icechunk local store...")
+        logger.info("Writing Zarr data from memory to Icechunk local store...")
 
-        data_tree = xr.open_datatree(local_file)
         data_tree.to_zarr(session.store, mode="a", consolidated=False)
 
         if self.config.commit_message is None:
-            snapshot = self.config.commit_message = f"Upload {local_file} to local Icechunk repo"
+            self.config.commit_message = f"Upload shot {shot} to local Icechunk repo"
 
         snapshot = session.commit(self.config.commit_message)
         logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")
-
-        logger.info("Cleanup local file...")
-        shutil.rmtree(local_file)
-
-
-    def remote_upload(self, local_file: str, shot):
-        logger.info(f"Writing Zarr data from '{local_file}' to s3://{self.config.s3.bucket}/{self.config.s3.prefix}{shot}")
+        
+    def remote_upload_from_memory(self, data_tree: xr.DataTree, shot: int):
+        """Upload data directly from memory to remote icechunk store without writing to disk first."""
+        logger.info(f"Writing Zarr data from memory to s3://{self.config.s3.bucket}/{self.config.s3.prefix}{shot}")
         
         storage = icechunk.s3_storage(
             bucket=self.config.s3.bucket,
@@ -59,17 +56,12 @@ class IcechunkUploader:
         repo = icechunk.Repository.open_or_create(storage=storage, config=config)
 
         session = repo.writable_session(self.config.icechunk_branch)
-
-        data = xr.open_datatree(local_file, chunks={})
         
         fork = session.fork()
-        data.to_zarr(fork.store, mode="a", consolidated=False)
+        data_tree.to_zarr(fork.store, mode="a", consolidated=False)
 
         if self.config.commit_message is None:
-            self.config.commit_message = f"Upload {local_file} to S3 Icechunk repo"
+            self.config.commit_message = f"Upload shot {shot} to S3 Icechunk repo"
         
         snapshot = session.commit(self.config.commit_message)
         logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")
-
-        logger.info("Cleanup local file...")
-        shutil.rmtree(local_file)

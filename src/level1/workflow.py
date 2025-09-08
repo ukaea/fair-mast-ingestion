@@ -7,7 +7,7 @@ from src.core.icechunk import IcechunkUploader
 from src.core.load import loader_registry
 from src.core.log import logger
 from src.core.upload import UploadS3
-from src.core.writer import dataset_writer_registry
+from src.core.writer import dataset_writer_registry, InMemoryDatasetWriter
 from src.level1.builder import DatasetBuilder
 from src.level1.pipelines import pipelines_registry
 
@@ -44,9 +44,12 @@ class IngestionWorkflow:
             )
             return
 
-        self.writer = dataset_writer_registry.create(
-            self.config.writer.type, **self.config.writer.options
-        )
+        if self.config.icechunk is not None:
+            self.writer = InMemoryDatasetWriter()
+        else:
+            self.writer = dataset_writer_registry.create(
+                self.config.writer.type, **self.config.writer.options
+            )
         self.loader = loader_registry.create("uda", include_error=True)
         self.pipelines = pipelines_registry.create(self.facility)
 
@@ -91,20 +94,40 @@ class IngestionWorkflow:
         if self.config.icechunk is None:
             return
         
-        file_name = f"{shot}.{self.writer.file_extension}"
-        local_file = self.config.writer.options["output_path"] / Path(file_name)
-        
-        if not local_file.exists():
-            logger.warning(f"File {local_file} does not exist")
-            return
-    
-        icechunk = IcechunkUploader(self.config.icechunk)
-
-        if self.config.icechunk.s3 is not None:
-            logger.info("Uploading to Icechunk remote store...")
-            icechunk.remote_upload(local_file, shot)
+        if isinstance(self.writer, InMemoryDatasetWriter):
+            file_name = f"{shot}.{self.writer.file_extension}"
+            data_tree = self.writer.get_datatree(file_name)
+            
+            if len(data_tree.children) == 0:
+                logger.warning(f"No datasets available in memory for shot {shot}")
+                return
+            
+            icechunk = IcechunkUploader(self.config.icechunk)
+            
+            if self.config.icechunk.s3 is not None:
+                logger.info("Uploading to Icechunk remote store from memory...")
+                icechunk.remote_upload_from_memory(data_tree, shot)
+            else:
+                logger.info("Uploading to Icechunk local store from memory...")
+                icechunk.local_upload_from_memory(data_tree, shot)
+                
+            self.writer.clear_datasets(file_name)
         else:
-            logger.info("Uploading to Icechunk local store...")
-            icechunk.local_upload(local_file, shot)
+            # Original file-based upload
+            file_name = f"{shot}.{self.writer.file_extension}"
+            local_file = self.config.writer.options["output_path"] / Path(file_name)
+            
+            if not local_file.exists():
+                logger.warning(f"File {local_file} does not exist")
+                return
+        
+            icechunk = IcechunkUploader(self.config.icechunk)
+
+            if self.config.icechunk.s3 is not None:
+                logger.info("Uploading to Icechunk remote store...")
+                icechunk.remote_upload(local_file, shot)
+            else:
+                logger.info("Uploading to Icechunk local store...")
+                icechunk.local_upload(local_file, shot)
             
 

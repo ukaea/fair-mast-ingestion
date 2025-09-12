@@ -7,7 +7,6 @@ global_interpolate:
     time:
       step: 0.00025
       method: 'zero'
-      fill: 'ffill'
       dropna: true
 
 datasets:

@@ -14,24 +14,6 @@ class IcechunkUploader:
     def __init__(self, config: IcechunkConfig,):
         self.config = config
         
-    def local_upload_from_memory(self, data_tree: xr.DataTree, shot: int):
-        """Upload data directly from memory to local icechunk store without writing to disk first."""
-        logger.info(f"Uploading with Icechunk to repo at '{self.config.local_icechunk_repo_path}' from memory")
-
-        storage = icechunk.local_filesystem_storage(f"{self.config.local_icechunk_repo_path}/{shot}")
-        repo = icechunk.Repository.open_or_create(storage=storage)
-
-        session = repo.writable_session(self.config.icechunk_branch)
-        logger.info("Writing Zarr data from memory to Icechunk local store...")
-
-        data_tree.to_zarr(session.store, mode="a", consolidated=False)
-
-        if self.config.commit_message is None:
-            self.config.commit_message = f"Upload shot {shot} to local Icechunk repo"
-
-        snapshot = session.commit(self.config.commit_message)
-        logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")
-        
     def remote_upload_from_memory(self, data_tree: xr.DataTree, shot: int):
         """Upload data directly from memory to remote icechunk store without writing to disk first."""
         logger.info(f"Writing Zarr data from memory to s3://{self.config.s3.bucket}/{self.config.s3.prefix}{shot}")
@@ -58,7 +40,7 @@ class IcechunkUploader:
         session = repo.writable_session(self.config.icechunk_branch)
         
         fork = session.fork()
-        data_tree.to_zarr(fork.store, mode="a", consolidated=False)
+        data_tree.to_zarr(fork.store, mode="a", consolidated=False, compute=False)
 
         if self.config.commit_message is None:
             self.config.commit_message = f"Upload shot {shot} to S3 Icechunk repo"

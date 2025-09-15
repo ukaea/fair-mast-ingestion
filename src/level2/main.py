@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 import uuid
 from pathlib import Path
 
@@ -139,11 +140,6 @@ def process_shot(shot: int, **kwargs):
         writer = dataset_writer_registry.create(config.writer.type, **config.writer.options)
 
     file_name = f"{shot}.{writer.file_extension}"
-    
-    if config.icechunk is None:
-        local_file = config.writer.options["output_path"] / Path(file_name)
-    else:
-        local_file = None
 
     loader = get_default_loader(config.readers[mapping.default_loader])
     set_mapping_time_bounds(mapping, shot, tdelta, loader)
@@ -178,9 +174,7 @@ def process_shot(shot: int, **kwargs):
         if config.icechunk.s3 is not None:
             logger.info("Uploading to Icechunk remote store from memory...")
             icechunk.remote_upload_from_memory(data_tree, shot)
-        else:
-            logger.info("Uploading to Icechunk local store from memory...")
-            icechunk.local_upload_from_memory(data_tree, shot)
+        logger.info(f"Icechunk upload completed for shot {shot}")
             
         # Clear datasets from memory after upload
         writer.clear_datasets(file_name)

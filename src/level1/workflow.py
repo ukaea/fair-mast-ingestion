@@ -1,3 +1,4 @@
+import time
 import traceback
 from pathlib import Path
 from typing import Optional
@@ -29,14 +30,6 @@ class IngestionWorkflow:
     def __call__(self, shot: int):
         if self.verbose:
             logger.setLevel("DEBUG")
-
-        if self.config.writer.options["zarr_format"] != 3 and self.config.icechunk:
-            logger.warning(
-                "Icechunk is only supported for Zarr format version 3. "
-                "Please set 'zarr_format' to 3 in the config file."
-            )
-            return
-        
 
         if self.config.icechunk is not None:
             self.writer = InMemoryDatasetWriter()
@@ -85,9 +78,8 @@ class IngestionWorkflow:
         if self.config.icechunk.s3 is not None:
             logger.info("Uploading to Icechunk remote store from memory...")
             icechunk.remote_upload_from_memory(data_tree, shot)
-        else:
-            logger.info("Uploading to Icechunk local store from memory...")
-            icechunk.local_upload_from_memory(data_tree, shot)
+
+        logger.info(f"Icechunk upload completed for shot {shot}")
             
         # Clear datasets from memory after upload
         self.writer.clear_datasets(file_name)

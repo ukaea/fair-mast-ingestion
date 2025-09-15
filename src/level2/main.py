@@ -1,6 +1,5 @@
 import argparse
 import sys
-import time
 import uuid
 from pathlib import Path
 
@@ -18,7 +17,7 @@ from src.core.load import (
 from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.workflow_manager import WorkflowManager
-from src.core.writer import dataset_writer_registry, InMemoryDatasetWriter
+from src.core.writer import InMemoryDatasetWriter, dataset_writer_registry
 from src.level2.reader import DatasetReader
 
 

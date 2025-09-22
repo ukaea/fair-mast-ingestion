@@ -194,8 +194,9 @@ class DatasetReader:
             "name": "Creative Commons 4.0 BY-SA",
             "url": "https://creativecommons.org/licenses/by-sa/4.0/",
         }
-
-        del dataset.attrs["uda_name"] # Bug with level 2 uda_name attribute, deleted here
+        
+        if "uda_name" in dataset.attrs:
+            del dataset.attrs["uda_name"] # Bug with level 2 uda_name attribute, deleted here
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

@@ -15,6 +15,7 @@ class IcechunkUploader:
         
     def remote_upload_from_memory(self, data_tree: xr.DataTree, shot: int):
         """Upload data directly from memory to remote icechunk store without writing to disk first."""
+        
         logger.info(f"Writing Zarr data from memory to s3://{self.config.s3.bucket}/{self.config.s3.prefix}{shot}")
         
         storage = icechunk.s3_storage(
@@ -33,13 +34,12 @@ class IcechunkUploader:
             unsafe_use_conditional_create=False,
         )
         )
-        
+
         repo = icechunk.Repository.open_or_create(storage=storage, config=config)
 
         session = repo.writable_session(self.config.icechunk_branch)
         
-        fork = session.fork()
-        data_tree.to_zarr(fork.store, mode="a", consolidated=False, compute=False)
+        data_tree.to_zarr(session.store, mode="a", consolidated=False, compute=False)
 
         if self.config.commit_message is None:
             self.config.commit_message = f"Upload shot {shot} to S3 Icechunk repo"

@@ -183,6 +183,7 @@ def main():
     parser.add_argument("--shot", type=int, default=None)
     parser.add_argument("--shot-min", type=int, default=None)
     parser.add_argument("--shot-max", type=int, default=None)
+    parser.add_argument("--shots", nargs='+', type=int, default=None)
     parser.add_argument("--dt", type=float, default=0.00025)
     parser.add_argument("-i", "--include-datasets", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-datasets", nargs="+", default=[])
@@ -194,7 +195,9 @@ def main():
     if args.verbose:
         logger.setLevel("DEBUG")
 
-    if args.shot is None:
+    if args.shots is not None:
+       shots = [int(s) for s in args.shots]
+    elif args.shot is None:
         if args.shot_min is None or args.shot_max is None:
             logger.error(
                 "Must provide both a minimum and maximum shot (--shot-min/--shot-max)"

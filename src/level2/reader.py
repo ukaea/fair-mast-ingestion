@@ -190,10 +190,8 @@ class DatasetReader:
         dataset.attrs["name"] = name
         dataset.attrs["description"] = self._mapping.datasets[name].description
         dataset.attrs["imas"] = self._mapping.datasets[name].imas
-        dataset.attrs["license"] = {
-            "name": "Creative Commons 4.0 BY-SA",
-            "url": "https://creativecommons.org/licenses/by-sa/4.0/",
-        }
+        dataset.attrs["license_name"] = "Creative Commons 4.0 BY-SA"
+        dataset.attrs["license_url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
         
         if "uda_name" in dataset.attrs:
             del dataset.attrs["uda_name"] # Bug with level 2 uda_name attribute, deleted here

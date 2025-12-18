@@ -453,7 +453,7 @@ datasets:
         imas: "gas_injection.valve[:].voltage.data"
         units: "V"
         source: 
-          - name: "XDC/GAS/"
+          - name: "XDC/GAS/F"
             shot_range:
               shot_min: 28356 #28356-28451 don't have xdc as source
               shot_max: 30471
@@ -3298,7 +3298,7 @@ datasets:
           - name: "XMC/OMV"
             shot_range:
               shot_min: 1
-              shot_max: 25736
+              shot_max: 25735
             channels:
               - "XMC_OMV/110"
               # - "XMC_OMV/201"
@@ -3393,7 +3393,7 @@ datasets:
           - name: "XMC/CC/MT"
             shot_range:
               shot_min: 1
-              shot_max: 25736
+              shot_max: 25735
             channels:
               - "XMC_CC/MT/201"
               # - "XMC_CC/MT/202"
@@ -3506,7 +3506,7 @@ datasets:
           - name: "XMC/CC/MV"
             shot_range:
               shot_min: 1
-              shot_max: 25736
+              shot_max: 25735
             channels:
               - "XMC_CC/MV/201"
               # - "XMC_CC/MV/202"
@@ -3716,7 +3716,7 @@ datasets:
         source:
           - name: "AYC_TE_CORE"
             shot_range:
-              shot_min: 22831
+              shot_min: 22832
               shot_max: 30471
           - name: "ATM_TE_CORE"
             shot_range:
@@ -3731,7 +3731,7 @@ datasets:
         source:
           - name: "AYC_NE_CORE"
             shot_range:
-              shot_min: 22831
+              shot_min: 22832
               shot_max: 30471
           - name: "ATM_NE_CORE"
             shot_range:
@@ -3745,7 +3745,7 @@ datasets:
         source:
           - name: "AYC_TE"
             shot_range:
-              shot_min: 22831
+              shot_min: 22832
               shot_max: 30471
           - name: "ATM_TE"
             shot_range:
@@ -3760,7 +3760,7 @@ datasets:
             source:
               - name: "AYC_R"
                 shot_range:
-                  shot_min: 22831
+                  shot_min: 22832
                   shot_max: 30471
               - name: "ATM_R"
                 shot_range:
@@ -3771,7 +3771,7 @@ datasets:
         source:
           - name: "AYC_NE"
             shot_range:
-              shot_min: 22831
+              shot_min: 22832
               shot_max: 30471
           - name: "ATM_NE"
             shot_range:
@@ -3787,7 +3787,7 @@ datasets:
             source:
               - name: "AYC_R"
                 shot_range:
-                  shot_min: 22831
+                  shot_min: 22832
                   shot_max: 30471
               - name: "ATM_R"
                 shot_range:
@@ -3798,7 +3798,7 @@ datasets:
         source:
           - name: "AYC_PE"
             shot_range:
-              shot_min: 22831
+              shot_min: 22832
               shot_max: 30471
           - name: "ATM_PE"
             shot_range:
@@ -3811,7 +3811,7 @@ datasets:
             source:
               - name: "AYC_R"
                 shot_range:
-                  shot_min: 22831
+                  shot_min: 22832
                   shot_max: 30471
               - name: "ATM_R"
                 shot_range:
@@ -3891,7 +3891,7 @@ datasets:
           - name: "XSX/TCAM"
             shot_range:
               shot_min: 1
-              shot_max: 25814
+              shot_max: 25813
             channels:
               - 'XSX_TCAM#1'
               - 'XSX_TCAM#2'
@@ -4010,7 +4010,7 @@ datasets:
           - name: "XSX/HCAM/L"
             shot_range:
               shot_min: 1
-              shot_max: 25814
+              shot_max: 25813
             channels:
               - 'XSX_HCAML#1'
               - 'XSX_HCAML#2'
@@ -4129,7 +4129,7 @@ datasets:
           - name: "XSX/HCAM/U"
             shot_range:
               shot_min: 1
-              shot_max: 25814
+              shot_max: 25813
             channels:
               - 'XSX_HCAMU#1'
               - 'XSX_HCAMU#2'

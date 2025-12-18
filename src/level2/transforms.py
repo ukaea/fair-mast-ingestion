@@ -31,16 +31,18 @@ class BaseDatasetTransform(ABC):
         for profile_name, profile in profiles.items():
             profile = self.transform_array(profile_name, profile)
             datasets[profile_name] = profile
-        return xr.merge(datasets.values())
+        ds = xr.merge(datasets.values())
+        ds.attrs = dict() #clear unwanted attributes at dataset level
+        return ds
 
     def transform_dataset(self, dataset: xr.Dataset) -> xr.Dataset:
         transform_datasets = {}
         for name, channel in dataset.data_vars.items():
             dataset = self.transform_array(name, channel)
             transform_datasets[name] = dataset
-
-        dataset = xr.merge(transform_datasets.values())
-        return dataset
+        ds = xr.merge(transform_datasets.values())
+        ds.attrs = dict() #clear unwanted attributes at dataset level
+        return ds
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         raise NotImplementedError(

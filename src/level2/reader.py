@@ -37,8 +37,8 @@ class DatasetReader:
         dataset = self.apply_interpolation(dataset, name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
+        dataset = self.add_shot_dimension(dataset)
         return dataset
-        
 
     def read_profiles(self, shot: int, dataset_name: str) -> dict[str, xr.DataArray]:
         self.set_shot(shot)
@@ -192,6 +192,11 @@ class DatasetReader:
         dataset.attrs["imas"] = self._mapping.datasets[name].imas
         dataset.attrs["license_name"] = "Creative Commons 4.0 BY-SA"
         dataset.attrs["license_url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
+        return dataset
+
+    def add_shot_dimension(self, dataset: xr.Dataset) -> xr.Dataset:
+        if "shot_id" not in dataset.dims:
+            dataset = dataset.expand_dims(shot_id=[str(self._shot)])
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

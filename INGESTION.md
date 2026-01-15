@@ -338,6 +338,80 @@ The `s5cmd` commands include:
 
 ---
 
+
+## 4. Building Metadata Index with s3_metadata_csd3.slurm
+
+After uploading data to S3, build the metadata index to enable efficient querying and discovery of the ingested shots.
+
+### Prerequisites
+- Completed S3 upload with data in `s3://mast/level2/shots/`
+- S3 credentials file: `.s5cfg.stfc`
+- Access to CSD3 cluster
+- Virtual environment configured
+
+### Job Configuration
+
+The metadata indexing job is configured in [jobs/s3_metadata_csd3.slurm](jobs/s3_metadata_csd3.slurm):
+
+- **Partition**: `ukaea-icl`
+- **Time Limit**: 12 hours
+- **Memory**: 128 GB
+- **Tasks**: 1 (single node)
+
+### Submitting the Job
+
+```bash
+sbatch jobs/s3_metadata_csd3.slurm
+```
+
+### What It Does
+
+The script scans the S3 bucket and creates a comprehensive metadata index that includes:
+- Available shots
+- Dataset information
+- Temporal coverage
+- File locations
+- Data dimensions
+
+### Monitoring
+
+**Check job status:**
+```bash
+squeue -u $USER
+```
+
+**View indexing progress:**
+```bash
+tail -f s3-metadata-builder_<job_id>.out
+```
+
+### Output
+
+The metadata index is written to:
+- **S3 Location**: `s3://mast/level2/metadata/`
+- **Local Cache**: May be stored in project directory for verification
+
+### Verifying the Index
+
+After completion, verify the metadata index exists:
+
+```bash
+s5cmd --credentials-file .s5cfg.stfc \
+    --endpoint-url https://s3.echo.stfc.ac.uk \
+    ls s3://mast/level2/metadata/
+```
+
+The final output files will be called:
+
+```sh
+./mast-level2-sources.parquet
+./mast-level2-signals.parquet
+```
+
+In the local directory where the job was run. These files can be used to update the metadata service for FAIR MAST.
+
+---
+
 ## Complete Workflow Example
 
 ### Full Pipeline on CSD3

@@ -3859,7 +3859,7 @@ datasets:
   soft_x_rays:
     interpolate:
       time:
-        step: 2e-6
+        step: 2e-5
     imas: "soft_x_rays"
     description: "Soft X-rays tomography diagnostic"
     profiles:

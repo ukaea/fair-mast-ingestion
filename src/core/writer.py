@@ -76,7 +76,6 @@ class ZarrDatasetWriter(DatasetWriter):
             file_name,
             group=name,
             mode="w",
-            zarr_version=self.version,
             consolidated=True,
         )
         zarr.consolidate_metadata(file_name)
@@ -85,7 +84,7 @@ class ZarrDatasetWriter(DatasetWriter):
         file_name = Path(file_name)
         path = self.output_path / f"{file_name.stem}/{name}.zarr"
         path.parent.mkdir(exist_ok=True, parents=True)
-        dataset.to_zarr(path, mode="a", zarr_version=self.version, consolidated=True)
+        dataset.to_zarr(path, mode="a", consolidated=True)
         zarr.consolidate_metadata(path)
 
 

@@ -1449,7 +1449,7 @@ datasets:
   soft_x_rays:
     interpolate:
       time:
-        step: 2e-6
+        step: 2e-5
 
     profiles:
       tangential_cam:

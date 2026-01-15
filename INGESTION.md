@@ -14,8 +14,10 @@ The CPF (Central Physics Files) metadata job creates metadata files for all shot
 
 ### Prerequisites
 - Access to Freia cluster
+- Access to CSD3 cluster
 - Virtual environment activated with required dependencies
 - Shot range information for MAST and MAST-U
+- `s5cmd` installed and configured on your system
 
 ### Submitting the Job
 

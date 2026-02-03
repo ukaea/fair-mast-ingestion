@@ -262,7 +262,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
           n_boundary_coords:
             units: 'dimensionless'
-      whmd:
+      wmhd:
         source: "EFM_WPLASMD" 
         dimensions:
           time:

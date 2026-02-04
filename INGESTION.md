@@ -6,6 +6,15 @@ This document provides comprehensive instructions for running the Level 2 data i
 
 Level 2 ingestion processes raw data and produces standardized, interpolated datasets stored in Zarr format. The pipeline supports both MAST and MAST-U facilities.
 
+### UDA SSL Configuration
+
+A prerequisite for accessing MAST and MAST-U data is to have a SSL certificate for UDA. <br>
+- First mint a certificate: [pkiuda](https://pkiuda.ukaea.uk/). <br>
+- Then copy it to your home directory on CSD3.
+- Set it up in your CSD3 environment as described [here](https://ukaea.github.io/UDA/authentication/#configuring-an-authenticated-client-connection).
+
+You must be given the permissions to be able to mint a certificate and be on the UKAEA VPN/internal network.
+
 ---
 
 ## 1. Running CPF Metadata Job on Freia
@@ -194,7 +203,7 @@ Edit [jobs/ingest.level2.csd3.slurm.sh](jobs/ingest.level2.csd3.slurm.sh) to mod
 
 3. **Output directory**: Change the `output_dir` variable
    ```bash
-   output_dir="/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/"
+   output_dir="/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp"
    ```
 
 4. **Facility**: Switch between MAST and MAST-U
@@ -206,7 +215,7 @@ Edit [jobs/ingest.level2.csd3.slurm.sh](jobs/ingest.level2.csd3.slurm.sh) to mod
 
 The script automatically:
 1. Activates the Python virtual environment
-2. Sources UDA SSL configuration from `/rds/project/rds-mOlK9qn0PlQ/fairmast/uda-ssl.sh`
+2. Sources UDA SSL configuration from e.g. `~/.uda-ssl.sh`
 3. Uses MPI for parallel processing across nodes
 
 ### Monitoring
@@ -256,7 +265,7 @@ The upload job is configured in [jobs/upload.csd3.sh](jobs/upload.csd3.sh):
 
 - **Credentials**: `.s5cfg.stfc` (must be in project root)
 - **Endpoint**: `https://s3.echo.stfc.ac.uk`
-- **Local Path**: `/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/`
+- **Local Path**: `/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp`
 - **Remote Path**: `s3://mast/level2/shots/`
 
 ### Submitting the Upload Job
@@ -289,7 +298,7 @@ Edit [jobs/upload.csd3.sh](jobs/upload.csd3.sh) to modify:
 
 **Local path** (source):
 ```bash
-local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/
+local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp
 ```
 
 **Remote path** (destination):
@@ -435,17 +444,17 @@ In the local directory where the job was run. These files can be used to update 
 
 ### Local Testing Workflow
 
-1. **Test single shot locally**:
+1. **Test single shot locally:**
    ```bash
    python3 -m src.level2.main mappings/level2/mast.yml \
        --shot 30350 -v
    ```
 
-2. **Verify output**:
+2. **Verify output:**
    ```bash
    ls -lh /tmp/fair-mast/level2/
    ```
 
-3. **Process production data on cluster** (after testing succeeds)
+3. **Process production data on cluster** <br>(after testing succeeds)
 
 ---

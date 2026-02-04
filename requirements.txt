@@ -3,7 +3,7 @@ distributed
 dask
 h5py
 h5netcdf
-numpy
+numpy<2.3
 pandas
 pint
 pint_xarray

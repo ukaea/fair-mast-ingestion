@@ -14,5 +14,5 @@ readers:
 writer:
   type: "zarr"
   options:
-    zarr_format: 2
+    zarr_format: 3
     output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2"

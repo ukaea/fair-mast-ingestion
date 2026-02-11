@@ -6,7 +6,6 @@ Below is a brief overview of the project structure
 ```
 |-- campaign_shots      # CSV lists of shots for each MAST campaign
 |-- configs             # Config files for each level of ingestion
-|-- geometry            # Geometry data files for each diagnostic source 
 |-- jobs                # Job scripts for different HPC machines
 |-- mappings            # Mapping files for transforming units, names, dimensions, etc.
 |-- notebooks           # Notebooks for checking outputs

@@ -1,8 +1,8 @@
 import warnings
 
 import icechunk
-import icechunk.xarray
 import xarray as xr
+from icechunk.xarray import to_icechunk
 
 from src.core.config import IcechunkConfig
 from src.core.log import logger
@@ -28,21 +28,32 @@ class IcechunkUploader:
         )
 
         # needed for CEPH storage
-        config = icechunk.RepositoryConfig(
-        storage = icechunk.StorageSettings(
-            unsafe_use_conditional_update=False,
-            unsafe_use_conditional_create=False,
-        )
+        repo_config = icechunk.RepositoryConfig(
+            storage=icechunk.StorageSettings(
+                unsafe_use_conditional_update=False,
+                unsafe_use_conditional_create=False,
+            )
         )
 
-        repo = icechunk.Repository.open_or_create(storage=storage, config=config)
+        try:
+            repo = icechunk.Repository.open_or_create(storage=storage, config=repo_config)
+        except icechunk.IcechunkError:
+            repo = icechunk.Repository.open(storage=storage, config=repo_config)
 
         session = repo.writable_session(self.config.icechunk_branch)
-        
-        data_tree.to_zarr(session.store, mode="a", consolidated=False, compute=False)
 
-        if self.config.commit_message is None:
-            self.config.commit_message = f"Upload shot {shot} to S3 Icechunk repo"
-        
-        snapshot = session.commit(self.config.commit_message)
+        for group_name, node in data_tree.children.items():
+            try:
+                to_icechunk(node.ds, session, group=group_name)
+            except FileExistsError:
+                logger.info(f"Data already exists for group '{group_name}' in shot {shot}, skipping")
+                continue
+
+        if not session.has_uncommitted_changes:
+            logger.info(f"No new changes for shot {shot}, skipping commit")
+            return
+
+        commit_message = self.config.commit_message or f"Upload shot {shot} to S3 Icechunk repo"
+
+        snapshot = session.commit(commit_message)
         logger.info(f"Icechunk commit completed. Snapshot: {snapshot}")

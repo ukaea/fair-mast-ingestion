@@ -164,19 +164,16 @@ def process_shot(shot: int, **kwargs):
 
     if config.icechunk is not None:
         data_tree = writer.get_datatree(file_name)
-        
+
         if len(data_tree.children) == 0:
             logger.warning(f"No datasets available in memory for shot {shot}")
             return
-        
-        icechunk = IcechunkUploader(config.icechunk)
-        
+
+        uploader = IcechunkUploader(config.icechunk)
+
         if config.icechunk.s3 is not None:
-            logger.info("Uploading to Icechunk remote store from memory...")
-            icechunk.remote_upload_from_memory(data_tree, shot)
-        logger.info(f"Icechunk upload completed for shot {shot}")
-            
-        # Clear datasets from memory after upload
+            uploader.remote_upload_from_memory(data_tree, shot)
+
         writer.clear_datasets(file_name)
 
     logger.info(f"Done shot {shot}!")

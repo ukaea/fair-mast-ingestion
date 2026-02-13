@@ -74,10 +74,7 @@ class IngestionWorkflow:
         icechunk = IcechunkUploader(self.config.icechunk)
         
         if self.config.icechunk.s3 is not None:
-            logger.info("Uploading to Icechunk remote store from memory...")
             icechunk.remote_upload_from_memory(data_tree, shot)
-
-        logger.info(f"Icechunk upload completed for shot {shot}")
             
         # Clear datasets from memory after upload
         self.writer.clear_datasets(file_name)

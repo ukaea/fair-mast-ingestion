@@ -31,6 +31,9 @@ class MissingProfileError(Exception):
 class MissingSourceError(Exception):
     pass
 
+class MissingCoordinateError(Exception):
+    pass
+
 
 class DatasetInfo(BaseModel):
     name: str
@@ -272,17 +275,26 @@ class UDALoader(BaseLoader):
 
     def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
         import pyuda
+        import time
 
-        try:
-            client = self._get_client()
-            signal = client.get(name, shot_num)
-            dataset = self._convert_signal_to_dataset(name, signal)
-            dataset = dataset.squeeze(drop=True)
-            return dataset
-        except pyuda.ServerException as e:
-            raise MissingSourceError(
-                f'Could not load profile {name} for shot "{shot_num}". Encountered exception: {e}'
-            )
+        max_attempts = 2
+        for attempt in range(max_attempts):
+            try:
+                client = self._get_client()
+                signal = client.get(name, shot_num)
+                dataset = self._convert_signal_to_dataset(name, signal)
+                dataset = dataset.squeeze(drop=True)
+                return dataset
+            except pyuda.ServerException as e:
+                # Check for SSL error specifically
+                if "SSL_ERROR_SSL" in str(e) and attempt < max_attempts - 1:
+                    # Wipe the internal client so _get_client() creates a new one
+                    self._client = None 
+                    time.sleep(1)
+                    continue
+                raise MissingSourceError(
+                    f'Could not load profile {name} for shot "{shot_num}". Encountered exception: {e}'
+                )
 
     def _convert_signal_to_dataset(
         self, signal_name, signal

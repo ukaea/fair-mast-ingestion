@@ -8,6 +8,7 @@ from src.core.load import (
     Level2UDAGeometryLoader,
     MissingProfileError,
     MissingSourceError,
+    MissingCoordinateError,
 )
 from src.core.log import logger
 from src.core.model import Dimension, Mapping, Source
@@ -64,6 +65,9 @@ class DatasetReader:
             except MissingProfileError as e:
                 logger.warning(e)
                 continue
+            except MissingCoordinateError as e:
+                logger.warning(e)
+                continue
         return profiles
 
     def read_profile(
@@ -81,7 +85,13 @@ class DatasetReader:
             if dim is not None and dim.source is not None:
                 # Get dimension from seperate source
                 coordinates[dim_name] = self._create_dimension(dim_name, dim)
-            elif dim_index < len(dataset.coords):
+            else:
+                # Check if the UDA data has a coordinate for this mapping index
+                if dim_index >= len(dataset.coords):
+                    raise MissingCoordinateError(
+                        f"Shot {shot}: Data for signal '{source.name}' has only {len(dataset.coords)} "
+                        f"dimension(s), but mapping requires dimension at index {dim_index} ('{dim_name}')."
+                    )    
                 # Get dimension from data array object
                 names = list(dataset.sizes.keys())
                 coord: xr.DataArray = dataset.coords[names[dim_index]]
@@ -99,6 +109,11 @@ class DatasetReader:
                     coordinates.pop(dim_name)
 
         dataset = dataset.squeeze()
+        if len(dataset.shape) != len(dim_names):
+                    raise MissingCoordinateError(
+                        f"Structural mismatch for {profile_name}: "
+                        f"Data has {len(dataset.shape)} dims, but mapping expects {len(dim_names)}."
+                    )
         item = xr.DataArray(
             name=profile_name,
             data=dataset.values,
@@ -277,7 +292,7 @@ class DatasetReader:
 
             for source in sources:
                 shot_range = source.shot_range
-                if shot_range.shot_min <= self._shot < shot_range.shot_max:
+                if shot_range.shot_min <= self._shot <= shot_range.shot_max:
                     return source
 
             raise MissingProfileError(

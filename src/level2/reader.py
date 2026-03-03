@@ -6,9 +6,9 @@ import xarray as xr
 from src.core.load import (
     BaseLoader,
     Level2UDAGeometryLoader,
+    MissingCoordinateError,
     MissingProfileError,
     MissingSourceError,
-    MissingCoordinateError,
 )
 from src.core.log import logger
 from src.core.model import Dimension, Mapping, Source

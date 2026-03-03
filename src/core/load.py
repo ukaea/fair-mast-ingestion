@@ -1,6 +1,7 @@
 import base64
 import json
 import re
+import time
 import typing as t
 from abc import ABC
 from enum import Enum
@@ -275,7 +276,6 @@ class UDALoader(BaseLoader):
 
     def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
         import pyuda
-        import time
 
         max_attempts = 2
         for attempt in range(max_attempts):
@@ -627,7 +627,7 @@ class ZarrLoader(BaseLoader):
         url = f"{self.base_path}/{shot_num}.zarr/{source}"
 
         try:
-            store = zarr.storage.FSStore(url, fs=self.fs)
+            store = zarr.storage.FsspecStore(path=url, fs=self.fs)
             dataset = xr.open_zarr(store)
         except FileNotFoundError:
             raise MissingSourceError(

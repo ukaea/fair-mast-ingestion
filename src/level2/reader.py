@@ -86,10 +86,10 @@ class DatasetReader:
                 # Get dimension from seperate source
                 coordinates[dim_name] = self._create_dimension(dim_name, dim)
             else:
-                # Check if the UDA data has a coordinate for this mapping index
-                if dim_index >= len(dataset.coords):
+                # Check if the UDA data has a dimension for this mapping index
+                if dim_index >= len(dataset.dims):
                     raise MissingCoordinateError(
-                        f"Shot {shot}: Data for signal '{source.name}' has only {len(dataset.coords)} "
+                        f"Shot {shot}: Data for signal '{source.name}' has only {len(dataset.dims)} "
                         f"dimension(s), but mapping requires dimension at index {dim_index} ('{dim_name}')."
                     )    
                 # Get dimension from data array object

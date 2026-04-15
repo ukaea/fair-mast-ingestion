@@ -32,6 +32,8 @@ datasets:
         dropna: true
       profile_r:
         method: "none"
+      psi_norm:
+        method: "none"
 
     profiles:
       q:
@@ -79,6 +81,30 @@ datasets:
             source: "EFM_GRID(R)"
             units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.r"
+
+      f_df_dpsi:
+        source: "EFM_FFPRIME"
+        units: 'T*rad'
+        imas: "equilibrium.time_slice[:].profiles_1d.f_df_dpsi"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      dpressure_dpsi:
+        source: "EFM_PPRIME"
+        units: 'Pa*rad/Wb'
+        imas: "equilibrium.time_slice[:].profiles_1d.dpressure_dpsi"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
 
       elongation:
         source: "EFM_ELONGATION" 

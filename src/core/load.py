@@ -447,6 +447,7 @@ class UDALoader(BaseLoader):
         if len(channels) < 2:
             return channels, None
 
+        seps = "/_-# "
         # Longest common prefix
         prefix = ""
         for chars in zip(*channels):
@@ -456,17 +457,37 @@ class UDALoader(BaseLoader):
 
         # Trim back to the last structural separator to avoid chopping
         # mid-word (e.g. 'xmc/CC/MT/2' -> 'xmc/CC/MT/')
-        cut = max(prefix.rfind(s) for s in "/_-")
+        cut = max(prefix.rfind(s) for s in seps)
         prefix = prefix[: cut + 1]
 
-        if not prefix:
-            return channels, None
+        stripped = [ch[len(prefix) :] for ch in channels]
+        suffix = ""
+        for chars in zip(*(s[::-1] for s in stripped)):
+            if len(set(chars)) > 1:
+                break
+            suffix = chars[0] + suffix
+
+        cuts = [suffix.find(s) for s in seps if suffix.find(s) >= 0]
+        suffix = suffix[min(cuts) :] if cuts else ""
 
         suffixes = [ch[len(prefix):] for ch in channels]
         if any(not s for s in suffixes):
             return channels, None
 
-        return suffixes, f"{prefix}{{channel}}"
+        end = -len(suffix) if suffix else None
+        values = [s[:end] for s in stripped]
+
+        # Debug — remove after testing
+        print(f"DEBUG _extract_channel_template:")
+        print(f"  seps={seps!r}")
+        print(f"  prefix={prefix!r}")
+        print(f"  suffix={suffix!r}")
+        print(f"  values={values[:3]}")
+
+        if any(not v for v in values):
+            return channels, None
+
+        return values, f"{prefix}{{channel}}{suffix}"
 
 class Level2UDAGeometryLoader():
 

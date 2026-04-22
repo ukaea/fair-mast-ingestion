@@ -433,6 +433,92 @@ datasets:
           time:
             imas: "summary.time"
 
+  bolometer:
+    imas: "bolometer"
+    description: "Bolometer diagnostic: per-chord radiated signal and line-of-sight geometry from the MAST ABM array."
+    profiles:
+
+      power:
+        imas: "bolometer.channel[:].power.data"
+        source: "ABM_I-BOL"
+        units: "W/m^2"
+        description: "Incident irradiance at each bolometer detector" # IMAS slot is typed W; MAST calibration produces W/m^2
+        dimension_order: ['bolometer_channel', 'time']
+        dimensions:
+          time:
+            imas: "bolometer.channel[:].power.time"
+          bolometer_channel:
+
+      power_radiated_total:
+        imas: "bolometer.power_radiated_total"
+        source: "ABM_PRAD_POL"
+        target_units: "W"
+        description: "Total radiated power integrated across the poloidal array"
+        dimensions:
+          time:
+            imas: "bolometer.time"
+
+      first_point_r:
+        imas: "bolometer.channel[:].line_of_sight.first_point.r"
+        source: "ABM_R-SLITS"
+        units: "m"
+        description: "Major radius (R) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      first_point_z:
+        imas: "bolometer.channel[:].line_of_sight.first_point.z"
+        source: "ABM_Z-SLITS"
+        units: "m"
+        description: "Vertical (Z) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      first_point_phi:
+        imas: "bolometer.channel[:].line_of_sight.first_point.phi"
+        source: "ABM_PHI-SLITS"
+        target_units: "rad"
+        description: "Toroidal angle (phi) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_r:
+        imas: "bolometer.channel[:].line_of_sight.second_point.r"
+        source: "ABM_R-CHORDS"
+        units: "m"
+        description: "Major radius (R) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_z:
+        imas: "bolometer.channel[:].line_of_sight.second_point.z"
+        source: "ABM_Z-CHORDS"
+        units: "m"
+        description: "Vertical (Z) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_phi:
+        imas: "bolometer.channel[:].line_of_sight.second_point.phi"
+        source: "ABM_PHI-CHORDS"
+        target_units: "rad"
+        description: "Toroidal angle (phi) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      validity:
+        imas: "bolometer.channel[:].validity"
+        source: "ABM_CHANNEL_STATUS"
+        description: "Per-channel status flag (0 = failed, 1 = OK in ABM convention)"
+        dimensions:
+          bolometer_channel:
+
+      channel_type:
+        source: "ABM_CHANNEL_TYPE"
+        description: "Per-channel array classification (0 = poloidal, 1 = co-tangential, -1 = counter-tangential)"
+        dimensions:
+          bolometer_channel:
+
   interferometer:
     imas: "interferometer"
     description: "Interferometer diagnostic"

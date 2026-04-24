@@ -540,11 +540,10 @@ datasets:
             shot_range:
               shot_min: 28356
               shot_max: 30471
-          - name: "XDC_Z_F_ZIPREF"
+          - name: "XDC_Z_S_ZIP"
             shot_range:
               shot_min: 1
               shot_max: 28355
-        target_units: "A.m"
         imas: "controllers.linear_controller[:].inputs.data"
         description: "Z-position × Ip proxy" # used as input to the vertical stability controller. Derived in PCS from a linear combination of CCBV signals, approximately 1.9e5 * (sum CCBV14–17 − sum CCBV23–26). The linear_controller[:] index into which this lands refers to the Z stability controller."
         dimensions:

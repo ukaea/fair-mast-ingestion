@@ -4,7 +4,7 @@ readers:
   fairmast:
     type: 'zarr'
     options:
-      base_path: 's3://mast/level1/shots'
+      base_path: 's3://mast/level2/shots'
       protocol: 'simplecache'
       target_protocol: "s3"
       target_options:
@@ -15,4 +15,4 @@ writer:
   type: "zarr"
   options:
     zarr_format: 3
-    output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2"
+    output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp"

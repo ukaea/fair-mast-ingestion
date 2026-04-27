@@ -14,9 +14,9 @@ import zarr
 import zarr.storage
 from pydantic import BaseModel
 
+from src.core.model import Channel
 from src.core.registry import Registry
 from src.core.utils import harmonise_name
-from src.core.model import Channel
 
 LAST_MAST_SHOT = 30471
 

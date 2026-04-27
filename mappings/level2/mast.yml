@@ -358,6 +358,21 @@ datasets:
         description: "Line integrated electron density over a line of sight in the whole vacuum chamber"
         dimensions:
           time:
+      z_ref:
+        target_units: "m"
+        source:
+          - name: "/xdc/z/t/zref"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+          - name: "XDC_Z_T_ZREF"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+        imas: "pulse_schedule.position_control.magnetic_axis.z.reference.data"
+        description: "Z position reference waveform" # (target edited by session leader). On MAST this drives a hybrid PCS/analogue Z-control loop; on MAST-U the equivalent signal is uploaded to the Z-controller FPGA at shot start
+        dimensions:
+          time:
 
   summary:
     imas: "summary"
@@ -388,6 +403,14 @@ datasets:
         dimensions:
           time:
             imas: "summary.time"
+      power_ohm:
+        source: "ESM_PPHIX"
+        target_units: "W"
+        imas: "summary.global_quantities.power_ohm.value"
+        description: "Ohmic heating power (Pf − stored magnetic energy): ESM_PPHIX = ESM_P_PHI − ESM_X" # where ESM_X is the stored magnetic power per Helander (MAST ops note 00.28). Using ESM_PPHIX rather than ESM_P_PHI avoids double-counting dW_B/dt."
+        dimensions:
+          time:
+            imas: "summary.time"
       neutron_rates_total:
         source: "ANU_NEUTRONS"
         imas: "summary.fusion.neutron_rates.total"
@@ -410,6 +433,92 @@ datasets:
           time:
             imas: "summary.time"
 
+  bolometer:
+    imas: "bolometer"
+    description: "Bolometer diagnostic: per-chord radiated signal and line-of-sight geometry from the MAST ABM array."
+    profiles:
+
+      power:
+        imas: "bolometer.channel[:].power.data"
+        source: "ABM_I-BOL"
+        units: "W/m^2"
+        description: "Incident irradiance at each bolometer detector" # IMAS slot is typed W; MAST calibration produces W/m^2
+        dimension_order: ['bolometer_channel', 'time']
+        dimensions:
+          time:
+            imas: "bolometer.channel[:].power.time"
+          bolometer_channel:
+
+      power_radiated_total:
+        imas: "bolometer.power_radiated_total"
+        source: "ABM_PRAD_POL"
+        target_units: "W"
+        description: "Total radiated power integrated across the poloidal array"
+        dimensions:
+          time:
+            imas: "bolometer.time"
+
+      first_point_r:
+        imas: "bolometer.channel[:].line_of_sight.first_point.r"
+        source: "ABM_R-SLITS"
+        units: "m"
+        description: "Major radius (R) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      first_point_z:
+        imas: "bolometer.channel[:].line_of_sight.first_point.z"
+        source: "ABM_Z-SLITS"
+        units: "m"
+        description: "Vertical (Z) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      first_point_phi:
+        imas: "bolometer.channel[:].line_of_sight.first_point.phi"
+        source: "ABM_PHI-SLITS"
+        target_units: "rad"
+        description: "Toroidal angle (phi) coordinate of first point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_r:
+        imas: "bolometer.channel[:].line_of_sight.second_point.r"
+        source: "ABM_R-CHORDS"
+        units: "m"
+        description: "Major radius (R) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_z:
+        imas: "bolometer.channel[:].line_of_sight.second_point.z"
+        source: "ABM_Z-CHORDS"
+        units: "m"
+        description: "Vertical (Z) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      second_point_phi:
+        imas: "bolometer.channel[:].line_of_sight.second_point.phi"
+        source: "ABM_PHI-CHORDS"
+        target_units: "rad"
+        description: "Toroidal angle (phi) coordinate of second point"
+        dimensions:
+          bolometer_channel:
+
+      validity:
+        imas: "bolometer.channel[:].validity"
+        source: "ABM_CHANNEL_STATUS"
+        description: "Per-channel status flag (0 = failed, 1 = OK in ABM convention)"
+        dimensions:
+          bolometer_channel:
+
+      channel_type:
+        source: "ABM_CHANNEL_TYPE"
+        description: "Per-channel array classification (0 = poloidal, 1 = co-tangential, -1 = counter-tangential)"
+        dimensions:
+          bolometer_channel:
+
   interferometer:
     imas: "interferometer"
     description: "Interferometer diagnostic"
@@ -420,6 +529,26 @@ datasets:
         dimensions:
           time:
             imas: "interferometer.channel[:].n_e_line.time"
+
+  controllers:
+    imas: "controllers"
+    description: "Plasma control system states, proxies, and feedback signals."
+    profiles:
+      zip_proxy:
+        source:
+          - name: "/xdc/z/s/zip"
+            shot_range:
+              shot_min: 28356
+              shot_max: 30471
+          - name: "XDC_Z_S_ZIP"
+            shot_range:
+              shot_min: 1
+              shot_max: 28355
+        imas: "controllers.linear_controller[:].inputs.data"
+        description: "Z-position × Ip proxy" # used as input to the vertical stability controller. Derived in PCS from a linear combination of CCBV signals, approximately 1.9e5 * (sum CCBV14–17 − sum CCBV23–26). The linear_controller[:] index into which this lands refers to the Z stability controller."
+        dimensions:
+          time:
+            imas: "controllers.time"
 
   gas_injection:
     imas: "gas_injection"

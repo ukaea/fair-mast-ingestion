@@ -16,6 +16,7 @@ from pydantic import BaseModel
 
 from src.core.registry import Registry
 from src.core.utils import harmonise_name
+from src.core.model import Channel
 
 LAST_MAST_SHOT = 30471
 
@@ -69,7 +70,7 @@ class SALLoader(BaseLoader):
 
         self.sal = sal
 
-    def load(self, shot_num: int, name: str, channels: Optional[list[str]] = None):
+    def load(self, shot_num: int, name: str, channels: Optional[list[Channel]] = None):
         try:
             return self.load_signal(shot_num, name)
         except Exception as e:
@@ -216,7 +217,10 @@ class UDALoader(BaseLoader):
 
         return dataset
 
-    def load_channels(self, shot_num: int, name: str, channels: list[str]):
+    def load_channels(self, shot_num: int, name: str, channels: list[Channel]):
+        scales = {c.name: c.scale for c in channels}
+        channels = [c.name for c in channels]
+        
         signals = {}
 
         # Load channels, skipping an missing channels
@@ -266,7 +270,7 @@ class UDALoader(BaseLoader):
             signal = signal.interp_like(first_signal, method="zero")
             signals[name] = signal
 
-        signals = [signals[channel] for channel in channels]
+        signals = [signals[channel] * scales[channel] for channel in channels]
         signals = xr.concat(signals, dim=channels_dim)
         return signals
 

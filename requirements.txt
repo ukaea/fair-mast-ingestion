@@ -3,7 +3,7 @@ distributed
 dask
 h5py
 h5netcdf
-numpy
+numpy<2.3
 pandas
 pint
 pint_xarray
@@ -16,5 +16,5 @@ scipy
 sqlalchemy
 uda
 xarray
-zarr>2
+zarr>3
 # git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python

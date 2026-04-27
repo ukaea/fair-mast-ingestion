@@ -8,5 +8,5 @@ def test_load_mappings():
 
 
 def test_load_model():
-    config = load_model("mappings/level2/mast_s3.yml")
+    config = load_model("mappings/level2/mast.yml")
     assert isinstance(config, Mapping)

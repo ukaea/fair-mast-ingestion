@@ -482,19 +482,15 @@ class UDALoader(BaseLoader):
         cuts = [suffix.find(s) for s in seps if suffix.find(s) >= 0]
         suffix = suffix[min(cuts) :] if cuts else ""
 
+        if not prefix and not suffix:
+            return channels, None
+
         suffixes = [ch[len(prefix):] for ch in channels]
         if any(not s for s in suffixes):
             return channels, None
 
         end = -len(suffix) if suffix else None
         values = [s[:end] for s in stripped]
-
-        # Debug — remove after testing
-        print(f"DEBUG _extract_channel_template:")
-        print(f"  seps={seps!r}")
-        print(f"  prefix={prefix!r}")
-        print(f"  suffix={suffix!r}")
-        print(f"  values={values[:3]}")
 
         if any(not v for v in values):
             return channels, None

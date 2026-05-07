@@ -1,6 +1,7 @@
 import warnings
 from abc import ABC
 from typing import Union
+import math
 
 import numpy as np
 import scipy.signal
@@ -11,7 +12,7 @@ from src.core.model import (
     DatasetInfo,
     Dimension,
     FillOptions,
-    GlobalInterpolateParams,
+    Mapping,
     InterpolationParams,
 )
 from src.core.registry import Registry
@@ -52,9 +53,9 @@ class BaseDatasetTransform(ABC):
 
 class DatasetInterpolationTransform(BaseDatasetTransform):
     def __init__(
-        self, dataset_params: DatasetInfo, global_params: GlobalInterpolateParams
+        self, dataset_params: DatasetInfo, mapping: Mapping
     ):
-        self.global_params = global_params
+        self.mapping = mapping
         self.dataset_params = dataset_params
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
@@ -68,22 +69,13 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         self, dataset: xr.Dataset, dim_name: str, params: InterpolationParams
     ) -> xr.Dataset:
         params = params.model_copy()
+        end_was_explicit = params.end is not None
 
-        if params.start is None and self.global_params.tmin is None:
-            params.start = float(dataset.coords[dim_name].values.min())
-        elif params.start is None and self.global_params.tmin is not None:
-            params.start = float(self.global_params.tmin)
-
-        if params.end is None and self.global_params.tmax is None:
-            params.end = dataset.coords[dim_name].values.max()
-        elif params.end is None and self.global_params.tmax is not None:
-            params.end = self.global_params.tmax
-
-        if dim_name in self.global_params.params:
-            global_param_dict = self.global_params.params[dim_name].model_dump()
-            for name, value in global_param_dict.items():
-                if getattr(params, name) is None:
-                    setattr(params, name, value)
+        if not end_was_explicit:
+            if self.mapping.tmax is not None:
+                params.end = float(self.mapping.tmax)
+            else:
+                params.end = float(dataset.coords[dim_name].values.max())
 
         if params.fill == FillOptions.FFILL:
             dataset = dataset.ffill(dim=dim_name)
@@ -97,11 +89,47 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         if params.method == "none":
             return dataset
 
+        if params.start is None:
+            if self.mapping.default_start is None:
+                raise ValueError(
+                    f"Dimension '{dim_name}' has no `start` set, and "
+                    f"`default_start` is not configured in the mapping. "
+                    f"Set one in the dataset's `interpolate` block or "
+                    f"add `default_start` to the top of the mapping YAML."
+                )
+            params.start = self.mapping.default_start
+
+        if params.step is None:
+            raise ValueError(
+                f"Dimension '{dim_name}' has no `step` in the dataset's "
+                f"`interpolate` block — cannot infer a default."
+            )
+
+        coords = self._build_aligned_grid(
+            params.start, params.end, params.step, end_was_explicit
+        )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            dataset = dataset.interp({dim_name: params.coords}, method=params.method)
-
+            dataset = dataset.interp({dim_name: coords}, method=params.method)
         return dataset
+
+    @staticmethod
+    def _build_aligned_grid(
+        start: float, end: float, step: float, end_was_explicit: bool
+    ) -> np.ndarray:
+        if step <= 0:
+            raise ValueError(f"Interpolation step must be positive, got {step}")
+        if end < start:
+            raise ValueError(f"end ({end}) must be >= start ({start})")
+
+        bin_float_tol = 1e-9
+        extent_in_bins = (end - start) / step
+        if end_was_explicit:
+            n = math.floor(extent_in_bins + bin_float_tol)
+        else:
+            n = math.ceil(extent_in_bins - bin_float_tol)
+        n = max(n, 0)
+        return start + np.arange(n + 1) * step
 
     def interpolate_dimensions(
         self,
@@ -109,17 +137,12 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         dimensions: dict[str, Dimension],
         interpolate_params: dict[str, InterpolationParams] = None,
     ) -> xr.Dataset:
+        if interpolate_params is None:
+            return dataset
         for dim_name in dimensions.keys():
-            if interpolate_params is not None and dim_name in interpolate_params:
+            if dim_name in interpolate_params:
                 dataset = self.interpolate_dimension(
                     dataset, dim_name, interpolate_params[dim_name]
-                )
-            elif self.global_params is None:
-                pass
-            elif dim_name in self.global_params.params:
-                interpolate_params = self.global_params.params[dim_name]
-                dataset = self.interpolate_dimension(
-                    dataset, dim_name, interpolate_params
                 )
         return dataset
 
@@ -162,7 +185,7 @@ class FFTDecomposeTransform(BaseDatasetTransform):
         return signal
 
 class BackgroundSubtractionTransform(BaseDatasetTransform):
-    def __init__(self, start:int, end: int):
+    def __init__(self, start: int, end: int):
         self.start = start
         self.end = end
 

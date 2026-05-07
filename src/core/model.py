@@ -23,10 +23,6 @@ class InterpolationParams(BaseModel):
     fill: Optional[FillOptions] = None
     dropna: Optional[bool] = None
 
-    @property
-    def coords(self) -> np.ndarray:
-        return np.arange(self.start, self.end, self.step)
-
 
 class ShotRange(BaseModel):
     shot_min: int = Field(gt=0)
@@ -98,19 +94,14 @@ class DatasetInfo(BaseModel):
     description: Optional[str] = ""
 
 
-class GlobalInterpolateParams(BaseModel):
-    tmin: Optional[float] = None
-    tmax: Optional[float] = None
-    params: Optional[dict[str, InterpolationParams]] = {}
-
-
 class Mapping(BaseModel):
     facility: str
     default_loader: str
     plasma_current: str
     dataset_defaults: Optional[dict[str, str]] = None
     datasets: dict[str, DatasetInfo]
-    global_interpolate: Optional[GlobalInterpolateParams] = None
+    default_start: Optional[float] = None
+    tmax: Optional[float] = None
 
 
 def load_yaml(config_file: str) -> dict[str, Any]:

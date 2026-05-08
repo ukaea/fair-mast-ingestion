@@ -4,7 +4,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Union
 
-import numpy as np
 import yaml
 from pydantic import BaseModel, Field, field_validator
 

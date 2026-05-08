@@ -1,7 +1,7 @@
+import math
 import warnings
 from abc import ABC
 from typing import Union
-import math
 
 import numpy as np
 import scipy.signal
@@ -12,8 +12,8 @@ from src.core.model import (
     DatasetInfo,
     Dimension,
     FillOptions,
-    Mapping,
     InterpolationParams,
+    Mapping,
 )
 from src.core.registry import Registry
 

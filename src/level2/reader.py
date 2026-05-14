@@ -11,6 +11,7 @@ from src.core.load import (
     MissingSourceError,
 )
 from src.core.log import logger
+from src.core.utils import get_ingestion_provenance
 from src.core.model import Dimension, Mapping, Source
 from src.level2.transforms import (
     BackgroundSubtractionTransform,
@@ -207,6 +208,7 @@ class DatasetReader:
         dataset.attrs["imas"] = self._mapping.datasets[name].imas
         dataset.attrs["license_name"] = "Creative Commons 4.0 BY-SA"
         dataset.attrs["license_url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
+        dataset.attrs.update(get_ingestion_provenance())
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

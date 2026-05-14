@@ -1,13 +1,17 @@
 import json
+import subprocess
 import sys
 import uuid
 from contextlib import contextmanager
+from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 
 from distributed import get_client
 
 from src.core.log import logger
 
+_GIT_CWD = Path(__file__).resolve().parent
 
 @contextmanager
 def nullcontext(enter_result=None):
@@ -68,3 +72,41 @@ def read_shot_file(shot_file: str) -> list[int]:
 def read_json_file(file_name: str):
     with Path(file_name).open("r") as handle:
         return json.load(handle)
+
+
+def _run_git(args: list[str]) -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=_GIT_CWD,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=5,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        logger.debug(f"git {' '.join(args)} failed: {e}")
+        return None
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip()
+
+
+@lru_cache(maxsize=1)
+def get_git_ref() -> str | None:
+    return _run_git(["describe", "--tags", "--always", "--dirty"])
+
+
+def get_ingestion_provenance() -> dict:
+    info = {
+        "ingested_at": datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    }
+
+    git_ref = get_git_ref()
+    if git_ref:
+        info["git_ref"] = git_ref
+
+    return info

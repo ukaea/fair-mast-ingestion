@@ -4,7 +4,7 @@ import xarray as xr
 
 from src.core.load import BaseLoader, MissingMetadataError, MissingProfileError
 from src.core.log import logger
-from src.core.utils import harmonise_name, read_json_file
+from src.core.utils import harmonise_name, read_json_file, get_ingestion_provenance
 from src.core.writer import DatasetWriter
 from src.level1.pipelines import Pipelines
 
@@ -56,10 +56,9 @@ class DatasetBuilder:
             dataset.attrs["name"] = group_name
             dataset.attrs["description"] = dataset_info.description
             dataset.attrs["quality"] = dataset_info.quality
-            dataset.attrs["license"] = {
-                "name": "Creative Commons 4.0 BY-SA",
-                "url": "https://creativecommons.org/licenses/by-sa/4.0/",
-            }
+            dataset.attrs["license_name"] = "Creative Commons 4.0 BY-SA"
+            dataset.attrs["license_url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
+            dataset.attrs.update(get_ingestion_provenance())
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"

@@ -11,8 +11,8 @@ from src.core.load import (
     MissingSourceError,
 )
 from src.core.log import logger
-from src.core.utils import get_ingestion_provenance
 from src.core.model import Dimension, Mapping, Source
+from src.core.utils import get_ingestion_provenance
 from src.level2.transforms import (
     BackgroundSubtractionTransform,
     DatasetInterpolationTransform,

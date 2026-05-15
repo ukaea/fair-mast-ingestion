@@ -461,6 +461,10 @@ class MASTPipelines(Pipelines):
     def variable_mapping_file(self):
         return "mappings/level1/mast/variables.json"
 
+    @property
+    def license_file(self):
+        return "mappings/level1/mast/license.json"
+
     def __init__(self) -> None:
         self.pipelines = {
             "abm": Pipeline(

@@ -4,7 +4,7 @@ import xarray as xr
 
 from src.core.load import BaseLoader, MissingMetadataError, MissingProfileError
 from src.core.log import logger
-from src.core.utils import harmonise_name, read_json_file
+from src.core.utils import get_ingestion_provenance, harmonise_name, read_json_file
 from src.core.writer import DatasetWriter
 from src.level1.pipelines import Pipelines
 
@@ -29,6 +29,9 @@ class DatasetBuilder:
         self.include_datasets = include_datasets
         self.exclude_datasets = exclude_datasets
         self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
+        license_data = read_json_file(self.pipelines.license_file)
+        self.license_name = license_data.get("name")
+        self.license_url = license_data.get("url")
 
     def create(self, shot: int):
         try:
@@ -56,10 +59,11 @@ class DatasetBuilder:
             dataset.attrs["name"] = group_name
             dataset.attrs["description"] = dataset_info.description
             dataset.attrs["quality"] = dataset_info.quality
-            dataset.attrs["license"] = {
-                "name": "Creative Commons 4.0 BY-SA",
-                "url": "https://creativecommons.org/licenses/by-sa/4.0/",
-            }
+            if self.license_name is not None:
+                dataset.attrs["license_name"] = self.license_name
+            if self.license_url is not None:
+                dataset.attrs["license_url"] = self.license_url
+            dataset.attrs.update(get_ingestion_provenance())
 
             logger.info(f"Writing {group_name} for shot #{shot}")
             file_name = f"{shot}.{self.writer.file_extension}"
@@ -164,10 +168,11 @@ class DatasetBuilder:
                 dataset.attrs["name"] = name
                 dataset.attrs["source"] = group_name
                 dataset.attrs["quality"] = signal_info.quality
-                dataset.attrs["license"] = {
-                    "name": "Creative Commons 4.0 BY-SA",
-                    "url": "https://creativecommons.org/licenses/by-sa/4.0/",
-                }
+                if self.license_name is not None:
+                    dataset.attrs["license_name"] = self.license_name
+                if self.license_url is not None:
+                    dataset.attrs["license_url"] = self.license_url
+                dataset.attrs.update(get_ingestion_provenance())
                 datasets[name] = dataset
             except MissingProfileError as e:
                 if "StructuredData" not in str(e):

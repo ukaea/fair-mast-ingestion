@@ -103,6 +103,9 @@ class GlobalInterpolateParams(BaseModel):
     tmax: Optional[float] = None
     params: Optional[dict[str, InterpolationParams]] = {}
 
+class License(BaseModel):
+    name: str
+    url: str
 
 class Mapping(BaseModel):
     facility: str
@@ -111,6 +114,7 @@ class Mapping(BaseModel):
     dataset_defaults: Optional[dict[str, str]] = None
     datasets: dict[str, DatasetInfo]
     global_interpolate: Optional[GlobalInterpolateParams] = None
+    license: Optional[License] = None
 
 
 def load_yaml(config_file: str) -> dict[str, Any]:

@@ -206,8 +206,9 @@ class DatasetReader:
         dataset.attrs["name"] = name
         dataset.attrs["description"] = self._mapping.datasets[name].description
         dataset.attrs["imas"] = self._mapping.datasets[name].imas
-        dataset.attrs["license_name"] = "Creative Commons 4.0 BY-SA"
-        dataset.attrs["license_url"] = "https://creativecommons.org/licenses/by-sa/4.0/"
+        if self._mapping.license is not None:
+            dataset.attrs["license_name"] = self._mapping.license.name
+            dataset.attrs["license_url"] = self._mapping.license.url
         dataset.attrs.update(get_ingestion_provenance())
         return dataset
 

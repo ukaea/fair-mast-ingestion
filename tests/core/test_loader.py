@@ -46,3 +46,17 @@ def test_load_zarr_remote():
     loader = ZarrLoader(**config)
     signal = loader.load(30420, "amc/plasma_current")
     assert isinstance(signal, xr.DataArray)
+
+@pytest.mark.parametrize(
+    "channels, expected_values, expected_template",
+    [
+        (["xmc/CC/MT/201", "xmc/CC/MT/206"], ["201", "206"], "xmc/CC/MT/{channel}"),
+        (["AMB_FL/CC03", "AMB_FL/P3L/4"], ["CC03", "P3L/4"], "AMB_FL/{channel}"),
+        (["AMC_P2IL FEED CURRENT", "AMC_P3L FEED CURRENT"], ["P2IL", "P3L"], "AMC_{channel} FEED CURRENT"),
+        (["ALPHA/1", "BETA/2"], ["ALPHA/1", "BETA/2"], None),
+    ],
+)
+def test_extract_channel_template(channels, expected_values, expected_template):
+    values, template = UDALoader._extract_channel_template(channels)
+    assert values == expected_values
+    assert template == expected_template

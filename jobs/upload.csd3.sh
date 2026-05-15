@@ -11,11 +11,11 @@
 
 num_workers=$SLURM_NTASKS
 source .venv/bin/activate
-source /rds/project/rds-mOlK9qn0PlQ/fairmast/uda-ssl.sh
+source ~/.uda-ssl.sh
 
 credential=.s5cfg.stfc
 endpoint=https://s3.echo.stfc.ac.uk
-local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/upload-tmp/level2/
+local_path=/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp/
 remote_path=s3://mast/level2/shots/
 
 s5cmd --credentials-file $credential --endpoint-url $endpoint cp --acl public-read $local_path $remote_path

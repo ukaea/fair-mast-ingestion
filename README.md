@@ -47,9 +47,20 @@ uv pip install -e ".[mpi]"
 
 If running on CSD3, we must also source the SSL certificate information by running the following command. Without this UDA cannot connect to the UKAEA network.
 
+### UDA SSL Configuration
+
+A prerequisite for accessing MAST and MAST-U data is to have a SSL certificate for UDA. <br>
+- First mint a certificate: [pkiuda](https://pkiuda.ukaea.uk/). <br>
+- Then copy it to your home directory on CSD3.
+- Set it up in your CSD3 environment as described [here](https://ukaea.github.io/UDA/authentication/#configuring-an-authenticated-client-connection).
+
+You must be given the permissions to be able to mint a certificate and be on the UKAEA VPN/internal network.
+
 ```sh
-source ~/rds/rds-ukaea-ap002-mOlK9qn0PlQ/fairmast/uda-ssl.sh
+source ~/.uda-ssl.sh
 ```
+
+### Uploading to S3 Config
 
 Finally, for uploading to S3 we need to create a local config file with the bucket keys. Create a file called `.s5cfg.stfc` with the following information:
 
@@ -62,55 +73,4 @@ aws_secret_access_key=<secret-key>
 
 ## Running Ingestion
 
-The following section details how to ingest data into a local folder with UDA. 
-
-First you must edit both the config files in `./configs/` to point the writer `output_path` at a sensible location:
-
-```yaml
-...
-writer:
-  type: "zarr"
-  options:
-    zarr_format: 2
-    output_path: "/common/tmp/sjackson/upload-tmp/zarr/level1"
-...
-```
-
-### Level 1 Ingestion
-
-Below gives an example of running a level 1 ingestion which will write `ayc` data for shot `30421` from MAST.
-
-```sh
-mpirun -n 4 python3 -m src.level1.main -v --facility MAST --shot 30421 -i ayc
-```
-
-### Level 2 Ingestion
-
-Below gives an example of running a level 2 ingestion which will write `thomson_scattering` data for shot `30421` from MAST.
-```sh
-mpirun -n 4 python3 -m src.level2.main mappings/level2/mast.yml -v --shot 30421 -i thomson_scattering
-```
-
-### Ingestion to S3
-
-To ingest to S3 you must edit the config files in `./configs` to include the upload entry. You must specify the endpoint url and location to upload data to.
-For example the following config sets the base path and endpoint url for object storage at CSD3:
-
-```yaml
-upload:
-  base_path: "s3://mast/test/level1/shots"
-  mode: 's5cmd'
-  credentials_file: ".s5cfg.csd3"
-  endpoint_url: "https://object.arcus.openstack.hpc.cam.ac.uk"
-```
-
-Then simple rerun the commands as above.
-
-## CPF Metadata
-
-To parse CPF metadata we can use the following script (only on Friea):
-
-```sh
-qsub ./jobs/freia_write_cpf.qsub campaign_shots/tiny_campaign.csv
-```
-
+See `INGESTION.md`.

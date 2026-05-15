@@ -6,7 +6,7 @@ from typing import Any, Optional, Union
 
 import numpy as np
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class FillOptions(str, Enum):
@@ -38,13 +38,23 @@ class BackgroundCorrection(BaseModel):
     tmax: int
 
 
+class Channel(BaseModel):
+    name: str
+    scale: float = 1.0
+
+
 class Source(BaseModel):
     name: str
     shot_range: Optional[ShotRange] = None
-    channels: Optional[list[str]] = None
+    channels: Optional[list[Channel]] = None
     background_correction: Optional[BackgroundCorrection] = None
     attributes: Optional[dict] = None
 
+    @field_validator("channels", mode="before")
+    @classmethod
+    def _coerce_channels(cls, v):
+        # allow channels to be dicts to specify scale factors
+        return [_coerce_channel(e) for e in v] if v is not None else v
 
 SourceType = Union[list[Source], str]
 
@@ -93,6 +103,9 @@ class GlobalInterpolateParams(BaseModel):
     tmax: Optional[float] = None
     params: Optional[dict[str, InterpolationParams]] = {}
 
+class License(BaseModel):
+    name: str
+    url: str
 
 class Mapping(BaseModel):
     facility: str
@@ -101,6 +114,7 @@ class Mapping(BaseModel):
     dataset_defaults: Optional[dict[str, str]] = None
     datasets: dict[str, DatasetInfo]
     global_interpolate: Optional[GlobalInterpolateParams] = None
+    license: Optional[License] = None
 
 
 def load_yaml(config_file: str) -> dict[str, Any]:
@@ -118,3 +132,11 @@ def load_json(file_name: str):
 def load_model(config_file: str) -> Mapping:
     config = load_yaml(config_file)
     return Mapping.model_validate(config)
+
+def _coerce_channel(entry):
+    if isinstance(entry, str):
+        return Channel(name=entry)
+    if isinstance(entry, dict) and len(entry) == 1:
+        name, config = next(iter(entry.items()))
+        return Channel(name=name, **(config or {}))
+    raise ValueError(f"Invalid channel entry: {entry!r}")

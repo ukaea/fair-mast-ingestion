@@ -92,6 +92,9 @@ class DatasetInfo(BaseModel):
     interpolate: Optional[dict[str, InterpolationParams]] = None
     description: Optional[str] = ""
 
+class License(BaseModel):
+    name: str
+    url: str
 
 class Mapping(BaseModel):
     facility: str
@@ -101,6 +104,7 @@ class Mapping(BaseModel):
     datasets: dict[str, DatasetInfo]
     default_start: Optional[float] = None
     tmax: Optional[float] = None
+    license: Optional[License] = None
 
 
 def load_yaml(config_file: str) -> dict[str, Any]:

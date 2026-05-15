@@ -257,8 +257,11 @@ class UDALoader(BaseLoader):
             len(signals) == len(channels)
         ), "Number of channels must match number of signals loaded. Check mapping names for duplicates."
 
-        channels_dim = xr.DataArray(data=channels, dims=["channels"])
+        channel_values, channel_template = self._extract_channel_template(channels)
+        channels_dim = xr.DataArray(data=channel_values, dims=["channels"])
         channels_dim.name = "channels"
+        if channel_template is not None:
+            channels_dim.attrs["name"] = channel_template
 
         # Sometimes channels have inconsistent binning, harmonise them here.
         first_signal = None
@@ -452,6 +455,51 @@ class UDALoader(BaseLoader):
         dim_names = list(map(lambda x: x.lower(), dim_names))
         dim_names = [re.sub("[^a-zA-Z0-9_\n\\.]", "", dim) for dim in dim_names]
         return dim_names
+
+    @staticmethod
+    def _extract_channel_template(
+        channels: list[str],
+    ) -> tuple[list[str], Optional[str]]:
+        if len(channels) < 2:
+            return channels, None
+
+        seps = "/_-# "
+        # Longest common prefix
+        prefix = ""
+        for chars in zip(*channels):
+            if len(set(chars)) > 1:
+                break
+            prefix += chars[0]
+
+        # Trim back to the last structural separator to avoid chopping
+        # mid-word (e.g. 'xmc/CC/MT/2' -> 'xmc/CC/MT/')
+        cut = max(prefix.rfind(s) for s in seps)
+        prefix = prefix[: cut + 1]
+
+        stripped = [ch[len(prefix) :] for ch in channels]
+        suffix = ""
+        for chars in zip(*(s[::-1] for s in stripped)):
+            if len(set(chars)) > 1:
+                break
+            suffix = chars[0] + suffix
+
+        cuts = [suffix.find(s) for s in seps if suffix.find(s) >= 0]
+        suffix = suffix[min(cuts) :] if cuts else ""
+
+        if not prefix and not suffix:
+            return channels, None
+
+        suffixes = [ch[len(prefix):] for ch in channels]
+        if any(not s for s in suffixes):
+            return channels, None
+
+        end = -len(suffix) if suffix else None
+        values = [s[:end] for s in stripped]
+
+        if any(not v for v in values):
+            return channels, None
+
+        return values, f"{prefix}{{channel}}{suffix}"
 
 class Level2UDAGeometryLoader():
 

@@ -105,14 +105,7 @@ def set_mapping_time_bounds(
         raise RuntimeError(f"No Plasma Current for shot {shot}")
 
     plasma_current = trim_ip_range(plasma_current, tdelta)
-
-    if mapping.global_interpolate.tmin is None:
-        tmin = float(plasma_current.time.values.min())
-        mapping.global_interpolate.tmin = tmin
-
-    if mapping.global_interpolate.tmax is None:
-        tmax = float(plasma_current.time.values.max())
-        mapping.global_interpolate.tmax = tmax
+    mapping.tmax = float(plasma_current.time.values.max())
 
 
 

@@ -181,8 +181,7 @@ class DatasetReader:
 
     def apply_interpolation(self, dataset: xr.Dataset, dataset_name: str) -> xr.Dataset:
         dataset_config = self._mapping.datasets[dataset_name]
-        global_params = self._mapping.global_interpolate
-        interpolator = DatasetInterpolationTransform(dataset_config, global_params)
+        interpolator = DatasetInterpolationTransform(dataset_config, self._mapping)
         dataset = interpolator.transform(dataset)
         return dataset
 

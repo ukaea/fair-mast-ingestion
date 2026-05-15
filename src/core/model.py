@@ -4,7 +4,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Union
 
-import numpy as np
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
@@ -22,10 +21,6 @@ class InterpolationParams(BaseModel):
     method: Optional[str] = "zero"
     fill: Optional[FillOptions] = None
     dropna: Optional[bool] = None
-
-    @property
-    def coords(self) -> np.ndarray:
-        return np.arange(self.start, self.end, self.step)
 
 
 class ShotRange(BaseModel):
@@ -97,12 +92,6 @@ class DatasetInfo(BaseModel):
     interpolate: Optional[dict[str, InterpolationParams]] = None
     description: Optional[str] = ""
 
-
-class GlobalInterpolateParams(BaseModel):
-    tmin: Optional[float] = None
-    tmax: Optional[float] = None
-    params: Optional[dict[str, InterpolationParams]] = {}
-
 class License(BaseModel):
     name: str
     url: str
@@ -113,7 +102,8 @@ class Mapping(BaseModel):
     plasma_current: str
     dataset_defaults: Optional[dict[str, str]] = None
     datasets: dict[str, DatasetInfo]
-    global_interpolate: Optional[GlobalInterpolateParams] = None
+    default_start: Optional[float] = None
+    tmax: Optional[float] = None
     license: Optional[License] = None
 
 

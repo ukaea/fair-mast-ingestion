@@ -1,27 +1,22 @@
 facility: "MAST"
 default_loader: "uda"
 plasma_current: "summary/ip"
+default_start: -0.1
 
 license:
   name: "Creative Commons 4.0 BY-SA"
   url: "https://creativecommons.org/licenses/by-sa/4.0/"
 
-global_interpolate:
-  params:
-    time:
-      step: 0.00025
-      method: 'zero'
-      dropna: true
-
 datasets:
   equilibrium:
     imas: "equilibrium"
     description: "Description of a 2D, axi-symmetric, tokamak equilibrium; result of an equilibrium code."
-
     interpolate:
       time:
-        step: 5.0e-3
-        dropna: True
+        start: -0.1
+        step: 5e-3
+        method: 'zero'
+        dropna: true
       z:
         method: "none"
       major_radius:
@@ -332,6 +327,12 @@ datasets:
   pulse_schedule:
     imas: pulse_schedule
     description: "Description of Pulse Schedule, described by subsystems waveform references and an envelope around them. The controllers, pulse schedule and SDN are defined in separate IDSs."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
       i_plasma:
         target_units: "A"
@@ -384,6 +385,12 @@ datasets:
       Dynamic quantities are either taken at given time slices (indicated in the “time” vector) or 
       time-averaged over an interval (in such case the “time_width” of the interval is indicated 
       and the “time” vector represents the end of each time interval)."
+    interpolate:
+      time:
+        start: -0.1
+        step: 1e-3
+        method: 'zero'
+        dropna: true
     profiles:
       ip:
         source: "AMC_PLASMA CURRENT"
@@ -440,8 +447,13 @@ datasets:
   bolometer:
     imas: "bolometer"
     description: "Bolometer diagnostic: per-chord radiated signal and line-of-sight geometry from the MAST ABM array."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-4
+        method: 'zero'
+        dropna: true
     profiles:
-
       power:
         imas: "bolometer.channel[:].power.data"
         source: "ABM_I-BOL"
@@ -526,6 +538,12 @@ datasets:
   interferometer:
     imas: "interferometer"
     description: "Interferometer diagnostic"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-5
+        method: 'zero'
+        dropna: true
     profiles:
       n_e_line:
         source: "ANE_DENSITY"
@@ -537,6 +555,12 @@ datasets:
   controllers:
     imas: "controllers"
     description: "Plasma control system states, proxies, and feedback signals."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
       zip_proxy:
         source:
@@ -557,6 +581,12 @@ datasets:
   gas_injection:
     imas: "gas_injection"
     description: "Gas injection by a system of pipes and valves."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
       total_injected:
         source: "AGA_INTEG_GAS"
@@ -787,7 +817,6 @@ datasets:
           time:
             imas: "gas_injection.valve[:].target_voltage.time"
 
-
   pf_passive:
     imas: "pf_passive"
     description: "Description of the axisymmetric passive conductors, currents 
@@ -796,9 +825,6 @@ datasets:
       the component-related IDS (e.g. wall) which are used to store e.g. the 
       component machine description"
     profiles:
-
-      # - add UDA data here - #
-
       botcol_r:
         geometry:
           stem: "centrecolumn/botcol"
@@ -2021,12 +2047,17 @@ datasets:
         dimensions:
           coil_cases_geometry_channel:
 
-
   pf_active:
     imas: "pf_active"
     desctription: "Description of the axisymmetric active poloidal field (PF) 
       coils and supplies; includes the limits of these systems; includes the 
       forces on them; does not include non-axisymmetric coil systems"
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
       coil_current:
         imas: "pf_active.coil[:].current.data"
@@ -2034,7 +2065,7 @@ datasets:
         source:
           - name: "AMC" 
             channels:
-             - "AMC_SOL CURRENT": {scale: 0.5} # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
+             - "AMC_SOL CURRENT" : {scale: 0.5} # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
              - "AMC_P2IL FEED CURRENT"
              - "AMC_P2IU FEED CURRENT"
              - "AMC_P2OL FEED CURRENT"
@@ -2762,27 +2793,30 @@ datasets:
         dimensions:
           sol_coordinate_element:
 
-
   magnetics:
-    interpolate:
-      time:
-        step: 0.0002
-        method: 'zero'
-
-      time_saddle:
-        step: 2e-5
-        method: 'zero'
-
-      time_mirnov:
-        step: 2e-6
-        method: 'zero'
-
-      time_omaha:
-        step: 1e-7
-        method: 'zero'
-
     imas: "magnetics"
     description: "Magnetic diagnostics for equilibrium identification and plasma shape control."
+    interpolate:
+      time:
+        start: -0.1 
+        step: 2e-4
+        method: 'zero'
+        dropna: true
+      time_saddle:
+        start: -0.1
+        step: 2e-5
+        method: 'zero'
+        dropna: true
+      time_mirnov:
+        start: -0.1
+        step: 2e-6
+        method: 'zero'
+        dropna: true
+      time_omaha:
+        start: -0.1
+        step: 5e-7
+        method: 'zero'
+        dropna: true
     profiles:
       ip: 
         imas: "magnetics.ip[:].data"
@@ -3758,13 +3792,19 @@ datasets:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
   spectrometer_visible:
-    interpolate:
-      time: 
-        step: 2e-5
-      time_bes:
-        step: 5e-7
     imas: "spectrometer_visible"
     description: "Spectrometer in visible light range diagnostic"
+    interpolate:
+      time: 
+        start: -0.01
+        step: 2e-5
+        method: 'zero'
+        dropna: true
+      time_bes:
+        start: -0.01
+        step: 5e-7
+        method: 'zero'
+        dropna: true
 
     profiles:
       filter_spectrometer_dalpha_voltage:
@@ -3831,15 +3871,15 @@ datasets:
         dimensions:
           time:
           
-
   thomson_scattering:
     imas: thomson_scattering
     description: "Thomson scattering diagnostic"
     interpolate:
       time:
-        step: 0.005
+        start: 0 # diagnostic doesn't pre-trigger
+        step: 5e-35
         fill: 'none'
-        dropna: False
+        dropna: false
       major_radius:
         start: 0.3
         end: 1.5
@@ -3960,8 +4000,10 @@ datasets:
     descripton: "Charge exchange spectroscopy diagnostic."
     interpolate:
       time:
-        step: 0.005
+        start: -0.1
+        step: 5e-3
         method: 'zero'
+        dropna: true
       major_radius:
         start: 0
         end: 1.6
@@ -3990,14 +4032,16 @@ datasets:
           
           major_radius:
             imas: "charge_exchange.channel[:].position.r" 
-
-            
+     
   soft_x_rays:
-    interpolate:
-      time:
-        step: 2e-5
     imas: "soft_x_rays"
     description: "Soft X-rays tomography diagnostic"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-6
+        method: 'zero'
+        dropna: true
     profiles:
       tangential_cam:
         source: 
@@ -4554,12 +4598,11 @@ datasets:
           outer_vertical_cam_geometry_channel:
 
   camera_visible:
-    interpolate:
-      time:
-        step: 0.002
-
     imas: "camera_visible"
     description: "Camera in the visible light range."
+    interpolate:
+      time:
+        method: 'none'
     profiles:
       camera_lower:
         source: "RBA"
@@ -4595,9 +4638,7 @@ datasets:
   wall:
     imas: "wall"
     description: "Description of the torus wall and its interaction with the plasma"
-
     profiles:
-
       limiter_r:
         geometry:
           stem: "efit"
@@ -4610,7 +4651,6 @@ datasets:
         source: ""
         dimensions:
           limiter_geometry_channel:
-
       limiter_z:
         geometry:
           stem: "efit"

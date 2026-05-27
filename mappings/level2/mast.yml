@@ -239,6 +239,15 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
+      volume:
+        source: "EFM_PLASMA_VOLUME" 
+        imas: "equilibrium.time_slice[:].global_quantities.volume"
+        description: "Plasma volume"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
       q_axis:
         source: "EFM_Q_AXIS" 
         units: 'dimensionless'
@@ -287,6 +296,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
           n_boundary_coords:
             units: 'dimensionless'
+
       wmhd:
         source: "EFM_WPLASMD" 
         dimensions:

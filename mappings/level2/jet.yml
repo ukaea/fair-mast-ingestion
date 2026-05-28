@@ -31,6 +31,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       poloidal_beta:
+        imas_standard_name: "poloidal_plasma_beta"
         source: "efit/btpd" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
@@ -38,6 +39,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       toroidal_beta:
+        imas_standard_name: "toroidal_beta"
         source: "efit/bttd" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
@@ -49,6 +51,7 @@ datasets:
     imas: core_profiles
     profiles:
       plasma_current:
+        imas_standard_name: "toroidal_plasma_current"
         source: "magn/ipla"
         imas: core_profiles.global_quantities.ip
         units: "A"

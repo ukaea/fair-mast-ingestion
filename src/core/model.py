@@ -72,6 +72,7 @@ class Geometry(BaseModel):
 class ProfileInfo(BaseModel):
     source: SourceType
     imas: Optional[str] = None
+    imas_standard_name: Optional[str] = None
     dimensions: OrderedDict[str, Optional[Dimension]]
     geometry: Optional[Geometry] = None
     units: Optional[str] = None

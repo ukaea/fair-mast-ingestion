@@ -101,6 +101,7 @@ python3 -m src.level2.main <mapping_file> [OPTIONS]
 | `-v, --verbose` | Enable debug logging | False |
 | `-o, --output-path` | Override output directory | From config |
 | `-n, --n-workers` | Number of parallel workers | System default |
+| `--skip-geometry` | Omit geometry data from ingestion | False
 
 ### Example Commands
 

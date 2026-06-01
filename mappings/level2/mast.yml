@@ -3913,7 +3913,7 @@ datasets:
     interpolate:
       time:
         start: 0 # diagnostic doesn't pre-trigger
-        step: 5e-35
+        step: 5e-3
         fill: 'none'
         dropna: false
       major_radius:

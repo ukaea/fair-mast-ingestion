@@ -860,40 +860,34 @@ datasets:
       IDS to describe passive conductors and their specific discretization, not 
       the component-related IDS (e.g. wall) which are used to store e.g. the 
       component machine description"
-    interpolation:
+    interpolate:
       time:
         start: -0.1
-        step: 2e-4 
+        step: 2e-4
         method: 'zero'
         dropna: true
- 
     profiles:
       endcrown_l_current:
         imas: "pf_passive.loop[:].current"
+        description: "Lower centre column end crown passive loop."
         target_units: "A"
-        source:
-          - name: "AMM_ENDCROWN_L"
-            channels:
-              - "AMM_ENDCROWN_L"
+        source: "AMM_ENDCROWN_L"
         dimensions:
-          endcrown_l_current_channel:
           time:
             imas: "pf_passive.time"
-
+ 
       endcrown_u_current:
         imas: "pf_passive.loop[:].current"
+        description: "Upper centre column end crown passive loop."
         target_units: "A"
-        source:
-          - name: "AMM_ENDCROWN_U"
-            channels:
-              - "AMM_ENDCROWN_U"
+        source: "AMM_ENDCROWN_U"
         dimensions:
-          endcrown_u_current_channel:
           time:
             imas: "pf_passive.time"
 
       incon_current:
         imas: "pf_passive.loop[:].current"
+        description: "Centre column Inconel passive filaments."
         target_units: "A"
         source:
           - name: "AMM_INCON"
@@ -915,6 +909,7 @@ datasets:
 
       ring_current:
         imas: "pf_passive.loop[:].current"
+        description: "Centre column ring passive filaments."
         target_units: "A"
         source:
           - name: "AMM_RING"
@@ -965,6 +960,8 @@ datasets:
             shot_range:
               shot_min: 13361
               shot_max: 30471
+            channels:
+              - "AMM_BOTCOL"
           - name: "AMM_BOTCOL"
             shot_range:
               shot_min: 1
@@ -989,6 +986,8 @@ datasets:
             shot_range:
               shot_min: 13361
               shot_max: 30471
+            channels:
+              - "AMM_TOPCOL" 
           - name: "AMM_TOPCOL"
             shot_range:
               shot_min: 1
@@ -1000,7 +999,6 @@ datasets:
               - "AMM_TOPCOL4"
               - "AMM_TOPCOL5"
               - "AMM_TOPCOL6"
-          
         dimensions:
           topcol_current_channel:
           time:
@@ -1135,7 +1133,7 @@ datasets:
           mid_current_channel:
           time:
             imas: "pf_passive.time"
-            
+
       botcol_r:
         geometry:
           stem: "centrecolumn/botcol"

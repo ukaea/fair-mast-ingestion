@@ -5,8 +5,8 @@ import time
 import typing as t
 from abc import ABC
 from enum import Enum
-from typing import Optional
 from functools import lru_cache
+from typing import Optional
 
 import fsspec
 import numpy as np

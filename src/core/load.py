@@ -6,6 +6,7 @@ import typing as t
 from abc import ABC
 from enum import Enum
 from typing import Optional
+from functools import lru_cache
 
 import fsspec
 import numpy as np
@@ -501,6 +502,34 @@ class UDALoader(BaseLoader):
 
         return values, f"{prefix}{{channel}}{suffix}"
 
+
+_GEOMETRY_CACHE_SIZE = 64
+
+
+@lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
+def _fetch_uda_geometry_tree(path: str, shot):
+    """Fetch a UDA geometry tree for a (path, shot) pair. `shot` may be a
+    file path (current convention) or an int shot number (future)."""
+    import pyuda
+    client = pyuda.Client()
+    return client.geometry(path, shot, no_cal=True)
+
+
+@lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
+def _fetch_uda_geom_metadata(shot) -> dict:
+    """Fetch and JSON-decode UDA geometry metadata for a shot."""
+    import pyuda
+    client = pyuda.Client()
+    raw = client.get(f"GEOM::getMetaData(file={shot})").jsonify()
+    return json.loads(raw)
+
+
+def clear_geometry_cache() -> None:
+    """Clear the geometry caches (mainly for tests)."""
+    _fetch_uda_geometry_tree.cache_clear()
+    _fetch_uda_geom_metadata.cache_clear()
+
+
 class Level2UDAGeometryLoader():
 
         def __init__(self):
@@ -520,7 +549,7 @@ class Level2UDAGeometryLoader():
 
         def _fetch_and_process_geometry(self):
             """Fetch and process geometry data from UDA."""
-            geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
+            geom_data = _fetch_uda_geometry_tree(self.path, self.shot)
             geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
             all_rows = self._extract_rows(geom_data_json)
 
@@ -540,7 +569,7 @@ class Level2UDAGeometryLoader():
 
             geom_xarray = self._create_xarray(geom_df)
 
-            uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+            uda_metadata = _fetch_uda_geom_metadata(self.shot)
             cleaned_metadata = self._decode_metadata(uda_metadata)
             geom_xarray.attrs.update(cleaned_metadata)
 

@@ -14,6 +14,7 @@ from pint.errors import UndefinedUnitError
 
 from src.core.log import logger
 from src.core.utils import read_json_file
+from src.core.load import _fetch_uda_geometry_tree, _fetch_uda_geom_metadata
 
 UNITS_MAPPING_FILE = "mappings/level1/units.json"
 
@@ -334,7 +335,7 @@ class Level1UDAGeometryLoader(BaseTransform):
 
     def _fetch_and_process_geometry(self):
         """Fetch and process geometry data from UDA."""
-        geom_data = self.client.geometry(self.path, self.shot, no_cal=True)
+        geom_data = _fetch_uda_geometry_tree(self.path, self.shot)
         geom_data_json = json.loads(geom_data.data[self.stem].jsonify())
         all_rows = self._extract_rows(geom_data_json)
 
@@ -477,7 +478,7 @@ class Level1UDAGeometryLoader(BaseTransform):
         geom_xarray = geom_df.to_xarray()
         
         # Add metadata
-        uda_metadata = json.loads(self.client.get(f"GEOM::getMetaData(file={self.shot})").jsonify())
+        uda_metadata = _fetch_uda_geom_metadata(self.shot)
         cleaned_metadata = self._decode_metadata(uda_metadata)
         for var_name in geom_xarray.data_vars:
             geom_xarray[var_name].attrs.update(cleaned_metadata)

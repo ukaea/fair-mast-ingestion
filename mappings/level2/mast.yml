@@ -4,8 +4,8 @@ plasma_current: "summary/ip"
 default_start: -0.1
 
 license:
-  name: "Creative Commons 4.0 BY-SA"
-  url: "https://creativecommons.org/licenses/by-sa/4.0/"
+  name: "Creative Commons 4.0 BY"
+  url: "https://creativecommons.org/licenses/by/4.0/"
 
 datasets:
   equilibrium:

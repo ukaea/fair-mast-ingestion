@@ -503,38 +503,27 @@ class UDALoader(BaseLoader):
         return values, f"{prefix}{{channel}}{suffix}"
 
 
-_GEOMETRY_CACHE_SIZE = 64
-
+_GEOMETRY_CACHE_SIZE = 32 # adjust as needed
+# cache up to 32 geometry trees, which should be sufficient for typical use cases without consuming too much memory 
+_uda_loader = UDALoader()
 
 @lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
 def _fetch_uda_geometry_tree(path: str, shot):
     """Fetch a UDA geometry tree for a (path, shot) pair. `shot` may be a
     file path (current convention) or an int shot number (future)."""
-    import pyuda
-    client = pyuda.Client()
+    client = _uda_loader._get_client()
     return client.geometry(path, shot, no_cal=True)
 
 
 @lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
 def _fetch_uda_geom_metadata(shot) -> dict:
     """Fetch and JSON-decode UDA geometry metadata for a shot."""
-    import pyuda
-    client = pyuda.Client()
+    client = _uda_loader._get_client()
     raw = client.get(f"GEOM::getMetaData(file={shot})").jsonify()
     return json.loads(raw)
 
 
-def clear_geometry_cache() -> None:
-    """Clear the geometry caches (mainly for tests)."""
-    _fetch_uda_geometry_tree.cache_clear()
-    _fetch_uda_geom_metadata.cache_clear()
-
-
 class Level2UDAGeometryLoader():
-
-        def __init__(self):
-            self.parent = UDALoader()
-            self.client = self.parent._get_client()
             
         def run(self, profile_geometry, profile_name):
             """Load geometry data and return xarray structure."""

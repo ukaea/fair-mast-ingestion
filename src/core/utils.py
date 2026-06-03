@@ -98,7 +98,7 @@ def get_commit_url() -> str | None:
     sha = _run_git(["rev-parse", "HEAD"])
     if not sha:
         return None
-    suffix = " (dirty)" if _run_git(["status", "--porcelain"]) else ""
+    suffix = " (dirty)" if _run_git(["status", "--porcelain", "--untracked-files=no"]) else ""
     return f"{_REPO_URL}/tree/{sha}{suffix}"
 
 

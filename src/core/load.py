@@ -503,19 +503,16 @@ class UDALoader(BaseLoader):
         return values, f"{prefix}{{channel}}{suffix}"
 
 
-_GEOMETRY_CACHE_SIZE = 32 # adjust as needed
-# cache up to 32 geometry trees, which should be sufficient for typical use cases without consuming too much memory 
 _uda_loader = UDALoader()
 
-@lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
+@lru_cache()
 def _fetch_uda_geometry_tree(path: str, shot):
     """Fetch a UDA geometry tree for a (path, shot) pair. `shot` may be a
     file path (current convention) or an int shot number (future)."""
     client = _uda_loader._get_client()
     return client.geometry(path, shot, no_cal=True)
 
-
-@lru_cache(maxsize=_GEOMETRY_CACHE_SIZE)
+@lru_cache()
 def _fetch_uda_geom_metadata(shot) -> dict:
     """Fetch and JSON-decode UDA geometry metadata for a shot."""
     client = _uda_loader._get_client()

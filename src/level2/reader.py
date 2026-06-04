@@ -108,8 +108,8 @@ class DatasetReader:
                 all_zero = (coordinates[dim_name] == 0).all()
                 if all_nan or all_zero:
                     coordinates.pop(dim_name)
-
-        dataset = dataset.squeeze()
+        squeeze_dims = [d for d in dataset.dims if dataset.sizes[d] == 1 and "channel" not in d]
+        dataset = dataset.squeeze(squeeze_dims)
         if len(dataset.shape) != len(dim_names):
                     raise MissingCoordinateError(
                         f"Structural mismatch for {profile_name}: "

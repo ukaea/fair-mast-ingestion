@@ -860,7 +860,280 @@ datasets:
       IDS to describe passive conductors and their specific discretization, not 
       the component-related IDS (e.g. wall) which are used to store e.g. the 
       component machine description"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-4
+        method: 'zero'
+        dropna: true
     profiles:
+      endcrown_l_current:
+        imas: "pf_passive.loop[:].current"
+        description: "Lower centre column end crown passive loop."
+        target_units: "A"
+        source: "AMM_ENDCROWN_L"
+        dimensions:
+          time:
+            imas: "pf_passive.time"
+ 
+      endcrown_u_current:
+        imas: "pf_passive.loop[:].current"
+        description: "Upper centre column end crown passive loop."
+        target_units: "A"
+        source: "AMM_ENDCROWN_U"
+        dimensions:
+          time:
+            imas: "pf_passive.time"
+
+      incon_current:
+        imas: "pf_passive.loop[:].current"
+        description: "Centre column Inconel passive filaments."
+        target_units: "A"
+        source:
+          - name: "AMM_INCON"
+            channels:
+              - "AMM_INCON1"
+              - "AMM_INCON2"
+              - "AMM_INCON3"
+              - "AMM_INCON4"
+              - "AMM_INCON5"
+              - "AMM_INCON6"
+              - "AMM_INCON7"
+              - "AMM_INCON8"
+              - "AMM_INCON9"
+              - "AMM_INCON10"
+        dimensions:
+          incon_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      ring_current:
+        imas: "pf_passive.loop[:].current"
+        description: "Centre column ring passive filaments."
+        target_units: "A"
+        source:
+          - name: "AMM_RING"
+            channels:
+              - "AMM_RING1"
+              - "AMM_RING2"
+              - "AMM_RING3"
+              - "AMM_RING4"
+              - "AMM_RING5"
+              - "AMM_RING6"
+              - "AMM_RING7"
+              - "AMM_RING8"
+              - "AMM_RING9"
+              - "AMM_RING10"
+        dimensions:
+          ring_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      rodgr_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_RODGR"
+            channels:
+              - "AMM_RODGR1"
+              - "AMM_RODGR2"
+              - "AMM_RODGR3"
+              - "AMM_RODGR4"
+              - "AMM_RODGR5"
+              - "AMM_RODGR6"
+              - "AMM_RODGR7"
+              - "AMM_RODGR8"
+              - "AMM_RODGR9"
+              - "AMM_RODGR10"
+              - "AMM_RODGR11"
+              - "AMM_RODGR12"
+        dimensions:
+          rodgr_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      botcol_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_BOTCOL"
+            shot_range:
+              shot_min: 13361
+              shot_max: 30471
+            channels:
+              - "AMM_BOTCOL"
+          - name: "AMM_BOTCOL"
+            shot_range:
+              shot_min: 1
+              shot_max: 13360
+            channels:
+              - "AMM_BOTCOL1"
+              - "AMM_BOTCOL2"
+              - "AMM_BOTCOL3"
+              - "AMM_BOTCOL4"
+              - "AMM_BOTCOL5"
+              - "AMM_BOTCOL6"
+        dimensions:
+          botcol_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      topcol_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_TOPCOL"
+            shot_range:
+              shot_min: 13361
+              shot_max: 30471
+            channels:
+              - "AMM_TOPCOL" 
+          - name: "AMM_TOPCOL"
+            shot_range:
+              shot_min: 1
+              shot_max: 13360
+            channels:
+              - "AMM_TOPCOL1"
+              - "AMM_TOPCOL2"
+              - "AMM_TOPCOL3"
+              - "AMM_TOPCOL4"
+              - "AMM_TOPCOL5"
+              - "AMM_TOPCOL6"
+        dimensions:
+          topcol_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      p2larm_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_P2LARM"
+            channels:
+              - "AMM_P2LARM1"
+              - "AMM_P2LARM2"
+              - "AMM_P2LARM3"
+        dimensions:
+          p2larm_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      p2uarm_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_P2UARM"
+            channels:
+              - "AMM_P2UARM1"
+              - "AMM_P2UARM2"
+              - "AMM_P2UARM3"
+        dimensions:
+          p2uarm_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      p2ldivpl_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_P2LDIVPL"
+            channels:
+              - "AMM_P2LDIVPL1"
+              - "AMM_P2LDIVPL2"
+        dimensions:
+          p2ldivpl_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      p2udivpl_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_P2UDIVPL"
+            channels:
+              - "AMM_P2UDIVPL1"
+              - "AMM_P2UDIVPL2"
+        dimensions:
+          p2udivpl_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      lhorw_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_LHORW"
+            channels:
+              - "AMM_LHORW1"
+              - "AMM_LHORW2"
+              - "AMM_LHORW3"
+              - "AMM_LHORW4"
+              - "AMM_LHORW5"
+              - "AMM_LHORW6"
+        dimensions:
+          lhorw_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      uhorw_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_UHORW"
+            channels:
+              - "AMM_UHORW1"
+              - "AMM_UHORW2"
+              - "AMM_UHORW3"
+              - "AMM_UHORW4"
+              - "AMM_UHORW5"
+              - "AMM_UHORW6"
+        dimensions:
+          uhorw_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      vertw_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_VERTW"
+            channels:
+              - "AMM_VERTW1"
+              - "AMM_VERTW2"
+              - "AMM_VERTW3"
+              - "AMM_VERTW4"
+              - "AMM_VERTW5"
+              - "AMM_VERTW6"
+              - "AMM_VERTW7"
+              - "AMM_VERTW8"
+        dimensions:
+          vertw_current_channel:
+          time:
+            imas: "pf_passive.time"
+
+      mid_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        source:
+          - name: "AMM_MID"
+            channels:
+              - "AMM_MID1"
+              - "AMM_MID2"
+              - "AMM_MID3"
+              - "AMM_MID4"
+              - "AMM_MID5"
+              - "AMM_MID6"
+              - "AMM_MID7"
+              - "AMM_MID8"
+              - "AMM_MID9"
+              - "AMM_MID10"
+              - "AMM_MID11"
+              - "AMM_MID12"
+        dimensions:
+          mid_current_channel:
+          time:
+            imas: "pf_passive.time"
+
       botcol_r:
         geometry:
           stem: "centrecolumn/botcol"

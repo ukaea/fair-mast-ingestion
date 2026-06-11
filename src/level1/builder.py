@@ -41,33 +41,38 @@ class DatasetBuilder:
             return
 
         for dataset_info in dataset_infos:
-            group_name = dataset_info.name
+            group_name = getattr(dataset_info, "name", str(dataset_info))
+            try:
+                logger.info(f"Loading dataset {group_name} for shot #{shot}")
+                datasets = self.load_datasets(shot, group_name)
 
-            logger.info(f"Loading dataset {group_name} for shot #{shot}")
-            datasets = self.load_datasets(shot, group_name)
+                if len(datasets) == 0:
+                    logger.warning(f"No datasets found for {group_name} in shot #{shot}")
+                    continue
 
-            if len(datasets) == 0:
-                logger.warning(f"No datasets found for {group_name} in shot #{shot}")
-                continue
+                logger.info(f"Processing {group_name} for shot #{shot}")
+                pipeline = self.pipelines.get(group_name)
 
-            logger.info(f"Processing {group_name} for shot #{shot}")
-            pipeline = self.pipelines.get(group_name)
+                dataset: xr.Dataset = pipeline(datasets)
+                dataset, group_name = self._rename_group(dataset, group_name)
 
-            dataset: xr.Dataset = pipeline(datasets)
-            dataset, group_name = self._rename_group(dataset, group_name)
+                dataset.attrs["name"] = group_name
+                dataset.attrs["description"] = dataset_info.description
+                dataset.attrs["quality"] = dataset_info.quality
+                if self.license_name is not None:
+                    dataset.attrs["license_name"] = self.license_name
+                if self.license_url is not None:
+                    dataset.attrs["license_url"] = self.license_url
+                dataset.attrs.update(get_ingestion_provenance())
 
-            dataset.attrs["name"] = group_name
-            dataset.attrs["description"] = dataset_info.description
-            dataset.attrs["quality"] = dataset_info.quality
-            if self.license_name is not None:
-                dataset.attrs["license_name"] = self.license_name
-            if self.license_url is not None:
-                dataset.attrs["license_url"] = self.license_url
-            dataset.attrs.update(get_ingestion_provenance())
+                logger.info(f"Writing {group_name} for shot #{shot}")
+                file_name = f"{shot}.{self.writer.file_extension}"
+                self.writer.write(file_name, group_name, dataset)
 
-            logger.info(f"Writing {group_name} for shot #{shot}")
-            file_name = f"{shot}.{self.writer.file_extension}"
-            self.writer.write(file_name, group_name, dataset)
+            except Exception:
+                logger.exception(
+                    f"Failed to ingest {group_name} for shot #{shot}; continuing with next source"
+                )
 
     def load_datasets(self, shot, group_name: str) -> dict[str, xr.Dataset]:
         signal_infos = self.loader.list_signals(shot)

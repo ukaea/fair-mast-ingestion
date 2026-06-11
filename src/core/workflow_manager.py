@@ -26,7 +26,7 @@ class WorkflowManager:
     def initialize_client(self, n_workers: Optional[int] = None) -> Client:
         config.set({
             "distributed.scheduler.locks.lease-timeout": "inf",
-            "distributed.scheduler.worker-ttl": "30min",
+            "distributed.scheduler.worker-ttl": "30minutes",
         })
 
         try:

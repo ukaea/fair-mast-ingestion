@@ -505,10 +505,7 @@ class UDALoader(BaseLoader):
 
 _uda_loader = UDALoader()
 
-@lru_cache()
 def _fetch_uda_geometry_tree(path: str, shot):
-    """Fetch a UDA geometry tree for a (path, shot) pair. `shot` may be a
-    file path (current convention) or an int shot number (future)."""
     client = _uda_loader._get_client()
     return client.geometry(path, shot, no_cal=True)
 

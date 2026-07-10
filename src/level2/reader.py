@@ -212,8 +212,8 @@ class DatasetReader:
         return dataset
 
     def add_shot_dimension(self, dataset: xr.Dataset) -> xr.Dataset:
-        if "shot_id" not in dataset.dims:
-            dataset = dataset.expand_dims(shot_id=[str(self._shot)])
+        if "shot_id" not in dataset.coords:
+            dataset = dataset.assign_coords(shot_id=self._shot)
         return dataset
 
     def _parse_units(self, item: xr.DataArray):

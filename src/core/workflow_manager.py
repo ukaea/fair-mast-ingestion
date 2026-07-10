@@ -24,7 +24,10 @@ class WorkflowManager:
             logger.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
 
     def initialize_client(self, n_workers: Optional[int] = None) -> Client:
-        config.set({"distributed.scheduler.locks.lease-timeout": "inf"})
+        config.set({
+            "distributed.scheduler.locks.lease-timeout": "inf",
+            "distributed.scheduler.worker-ttl": "30minutes",
+        })
 
         try:
             # Try and get MPI, if not use dask

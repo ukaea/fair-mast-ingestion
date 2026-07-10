@@ -142,7 +142,7 @@ def process_shot(shot: int, **kwargs):
                     f"Processing {group_name} for shot {shot} from {mapping.facility}"
                 )
 
-                reader = DatasetReader(mapping, loader)
+                reader = DatasetReader(mapping, loader, skip_geometry=args.skip_geometry)
                 dataset = reader.read_dataset(shot, group_name)
                 if len(dataset) == 0:
                     continue
@@ -183,6 +183,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-o", "--output-path", type=str, default=None)
     parser.add_argument("-n", "--n-workers", type=int, default=None)
+    parser.add_argument("--skip-geometry", action="store_true")
     args = parser.parse_args()
 
     if args.verbose:

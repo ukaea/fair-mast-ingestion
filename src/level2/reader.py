@@ -21,9 +21,10 @@ from src.level2.transforms import (
 
 
 class DatasetReader:
-    def __init__(self, mapping: Mapping, loader: BaseLoader) -> None:
+    def __init__(self, mapping: Mapping, loader: BaseLoader, skip_geometry: bool = False) -> None:
         self._loader = loader
         self._mapping = mapping
+        self._skip_geometry = skip_geometry
 
     def set_shot(self, shot: int):
         self._shot = shot
@@ -50,6 +51,9 @@ class DatasetReader:
         profiles = {}
         for profile_name, profile_info in dataset.profiles.items():
             try:
+                if profile_info.geometry and self._skip_geometry: 
+                    logger.debug(f"Skipping geometry profile {profile_name}")
+                    continue
                 if profile_info.geometry:
                     logger.debug(f"Create profile {profile_name}")
                     profile = self.read_geometry(profile_info, profile_name)

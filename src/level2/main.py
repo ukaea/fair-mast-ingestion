@@ -89,7 +89,7 @@ def get_default_loader(config: ReaderConfig) -> BaseLoader:
 
 
 def set_mapping_time_bounds(
-    mapping: Mapping, shot: int, tdelta: float, loader: BaseLoader
+    mapping: Mapping, shot: int, tdelta: float, loader: BaseLoader, force: bool = False
 ):
     if mapping.plasma_current is None:
         return
@@ -102,7 +102,12 @@ def set_mapping_time_bounds(
         raise RuntimeError("Cannot load Plasma Current")
 
     if not check_plasma_current(plasma_current, tdelta):
-        raise RuntimeError(f"No Plasma Current for shot {shot}")
+        if force:
+            logger.warning(
+                f"Ip check failed for shot {shot}, continuing anyway due to --force-ip-check"
+            )
+        else:
+            raise RuntimeError(f"No Plasma Current for shot {shot}")
 
     plasma_current = trim_ip_range(plasma_current, tdelta)
     mapping.tmax = float(plasma_current.time.values.max())
@@ -133,7 +138,7 @@ def process_shot(shot: int, **kwargs):
     local_file = config.writer.options["output_path"] / Path(file_name)
 
     loader = get_default_loader(config.readers[mapping.default_loader])
-    set_mapping_time_bounds(mapping, shot, tdelta, loader)
+    set_mapping_time_bounds(mapping, shot, tdelta, loader, force=args.force_ip_check)
 
     for group_name in mapping.datasets.keys():
         if len(dataset_names) == 0 or group_name in dataset_names:
@@ -181,6 +186,7 @@ def main():
     parser.add_argument("-i", "--include-datasets", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-datasets", nargs="+", default=[])
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--force-ip-check", action="store_true")
     parser.add_argument("-o", "--output-path", type=str, default=None)
     parser.add_argument("-n", "--n-workers", type=int, default=None)
     parser.add_argument("--skip-geometry", action="store_true")

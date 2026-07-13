@@ -2385,6 +2385,8 @@ datasets:
              - "AMC_P4U FEED CURRENT"
              - "AMC_P5L FEED CURRENT"
              - "AMC_P5U FEED CURRENT"
+             - "AMC_P6L CURRENT" : {scale: 0.25}
+             - "AMC_P6U CURRENT" : {scale: 0.25}
         dimensions:
           current_channel:
           time: 

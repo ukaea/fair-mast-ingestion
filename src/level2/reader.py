@@ -54,9 +54,9 @@ class DatasetReader:
                 if profile_info.geometry and self._skip_geometry: 
                     logger.debug(f"Skipping geometry profile {profile_name}")
                     continue
+
                 if profile_info.geometry:
                     logger.debug(f"Create profile {profile_name}")
-                    continue
                     profile = self.read_geometry(profile_info, profile_name)
                     logger.debug(f"Loaded profile {profile_name}")
                 else:

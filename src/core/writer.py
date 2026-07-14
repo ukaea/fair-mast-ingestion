@@ -1,4 +1,5 @@
 import json
+import warnings
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
@@ -9,6 +10,10 @@ import zarr
 
 from src.core.registry import Registry
 
+warnings.filterwarnings(
+    "ignore",
+    message="Consolidated metadata is currently not part in the Zarr format 3 specification.*",
+)
 
 class NumpyEncoder(json.JSONEncoder):
     """Special json encoder for numpy types"""
@@ -49,6 +54,12 @@ class DatasetWriter(ABC):
             if isinstance(item, dict) or isinstance(item, list):
                 var.attrs[attr_name] = json.dumps(item, cls=NumpyEncoder)
 
+    def _convert_fixed_strings_to_vlen(self, dataset: xr.Dataset):
+        """Store strings as variable-length UTF-8, which has a Zarr V3 spec."""
+        for name, var in dataset.variables.items():
+            if var.dtype.kind == "U":
+                dataset[name] = var.astype(object)
+
 
 class ZarrDatasetWriter(DatasetWriter):
     def __init__(
@@ -64,7 +75,7 @@ class ZarrDatasetWriter(DatasetWriter):
 
     def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
         self._convert_dict_attrs_to_json(dataset)
-
+        self._convert_fixed_strings_to_vlen(dataset)
         if self.mode == "single":
             self._write_single_zarr(file_name, group_name, dataset)
         else:
@@ -114,6 +125,7 @@ class NetCDFDatasetWriter(DatasetWriter):
 
     def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
         self._convert_dict_attrs_to_json(dataset)
+        self._convert_fixed_strings_to_vlen(dataset)
 
         if self.mode == "single":
             self._write_single_netcdf(file_name, group_name, dataset)

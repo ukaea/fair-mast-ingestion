@@ -34,6 +34,8 @@ datasets:
         method: "none"
       psi_norm:
         method: "none"
+      n_pf_current:
+        method: "none"
 
     profiles:
       q:
@@ -359,6 +361,15 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
+      pf_current:
+        source: "EFM_FCOIL_(X)"
+        imas: "equilibrium.time_slice[:].constraints.pf_current"
+        units: "A"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
 
   pulse_schedule:
     imas: pulse_schedule
@@ -2374,19 +2385,19 @@ datasets:
         source:
           - name: "AMC" 
             channels:
-             - "AMC_SOL CURRENT" : {scale: 0.5} # Exception to P1 / solenoid where you only have AMC_SOL CURRENT which is the feed current (but you have to multiply by 0.5 because of it being wired in parallel)
-             - "AMC_P2IL FEED CURRENT"
-             - "AMC_P2IU FEED CURRENT"
-             - "AMC_P2OL FEED CURRENT"
-             - "AMC_P2OU FEED CURRENT"
-             - "AMC_P3L FEED CURRENT"
-             - "AMC_P3U FEED CURRENT"
-             - "AMC_P4L FEED CURRENT"
-             - "AMC_P4U FEED CURRENT"
-             - "AMC_P5L FEED CURRENT"
-             - "AMC_P5U FEED CURRENT"
-             - "AMC_P6L CURRENT" : {scale: 0.25}
-             - "AMC_P6U CURRENT" : {scale: 0.25}
+             - "AMC_SOL CURRENT" 
+             - "AMC_P2IL FEED CURRENT" : { scale: 12} # Feed current is in kA/turn. Each channel needs to be scaled by the number of turns in the coil to get the actual current in A.
+             - "AMC_P2IU FEED CURRENT" : { scale: 12}
+             - "AMC_P2OL FEED CURRENT": { scale: 8}
+             - "AMC_P2OU FEED CURRENT": { scale: 8}
+             - "AMC_P3L FEED CURRENT": { scale: 8}
+             - "AMC_P3U FEED CURRENT" : { scale: 8}
+             - "AMC_P4L FEED CURRENT": { scale: 23}
+             - "AMC_P4U FEED CURRENT": { scale: 23}
+             - "AMC_P5L FEED CURRENT": { scale: 23}
+             - "AMC_P5U FEED CURRENT": { scale: 23}
+             - "AMC_P6L CURRENT" 
+             - "AMC_P6U CURRENT"
         dimensions:
           current_channel:
           time: 

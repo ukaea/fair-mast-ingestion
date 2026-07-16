@@ -3115,6 +3115,25 @@ datasets:
         dimensions:
           sol_coordinate_element:
 
+  tf:
+    imas: "tf"
+    description: "Toroidal field coils"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-4
+        method: 'zero'
+        dropna: true
+    profiles:
+      coil_current:
+        source: "AMC_TF CURRENT"
+        imas: "tf.coil[:].current.data"
+        target_units: "A"
+        description: "TF feed current measured in north duct"
+        dimensions:
+          time:
+            imas: "tf.coil[:].current.time"
+
   magnetics:
     imas: "magnetics"
     description: "Magnetic diagnostics for equilibrium identification and plasma shape control."

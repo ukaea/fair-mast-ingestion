@@ -39,6 +39,7 @@ datasets:
 
     profiles:
       q:
+        imas_standard_name: "safety_factor"
         source: "EFM_Q(R)" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.q"
@@ -52,6 +53,7 @@ datasets:
             units: 'dimensionless'
 
       j_phi:
+        imas_standard_name: "toroidal_plasma_current_density"
         source: "EFM_PLASMA_CURR(R,Z)" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].j_phi"
         description: "Toroidal plasma current density"
@@ -70,6 +72,7 @@ datasets:
             imas: "equilibrium.time_slice[:].coordinate_system.r"
 
       psi:
+        imas_standard_name: "poloidal_magnetic_flux"
         source: "EFM_PSI(R,Z)" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
         description: "Values of the poloidal flux at the grid in the 
@@ -117,6 +120,7 @@ datasets:
             units: 'dimensionless'
 
       elongation:
+        imas_standard_name: "elongation"
         source: "EFM_ELONGATION" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].boundary.elongation"
@@ -133,6 +137,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_r:
+        imas_standard_name: "major_radius_of_x_point"
         source:
           - name: "EFM_XPOINT_R"
             channels:
@@ -147,6 +152,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_z:
+        imas_standard_name: "vertical_coordinate_of_x_point"
         source:
           - name: "EFM_XPOINT_Z"
             channels:
@@ -161,6 +167,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       minor_radius:
+        imas_standard_name: "minor_radius_of_plasma_boundary"
         source: "EFM_MINOR_RADIUS" 
         imas: "equilibrium.time_slice[:].boundary.minor_radius" 
         description: "Minor radius of the plasma boundary (defined as (Rmax-Rmin) / 2 of the boundary)"
@@ -169,6 +176,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_lower:
+        imas_standard_name: "lower_triangularity"
         source: "EFM_TRIANG_LOWER" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
@@ -178,6 +186,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_upper:
+        imas_standard_name: "upper_triangularity"
         source: "EFM_TRIANG_UPPER" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
@@ -187,6 +196,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       magnetic_axis_r:
+        imas_standard_name: "major_radius_of_magnetic_axis"
         source: "EFM_MAGNETIC_AXIS_R" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
         description: "Major radius of the magnetic axis"
@@ -194,6 +204,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       magnetic_axis_z:
+        imas_standard_name: "vertical_coordinate_of_magnetic_axis"
         source: "EFM_MAGNETIC_AXIS_Z" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
         description: "Height of the magnetic axis"
@@ -208,6 +219,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       beta_pol:
+        imas_standard_name: "poloidal_plasma_beta"
         source: "EFM_BETAP" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
@@ -216,6 +228,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       beta_tor:
+        imas_standard_name: "toroidal_beta"
         source: "EFM_BETAT" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
@@ -224,6 +237,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       bphi_rmag:
+        imas_standard_name: "toroidal_magnetic_field_at_magnetic_axis"
         source: "EFM_BPHI_RMAG" 
         dimensions:
           time:
@@ -234,6 +248,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       li:
+        imas_standard_name: "internal_inductance"
         source: "EFM_LI" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].global_quantities.li_3" ####
@@ -251,6 +266,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       q_axis:
+        imas_standard_name: "safety_factor_at_magnetic_axis"
         source: "EFM_Q_AXIS" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].global_quantities.q_axis"
@@ -265,6 +281,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       q95:
+        imas_standard_name: "safety_factor_at_normalized_poloidal_magnetic_flux_equal_to_0_95"
         source: "EFM_Q_95" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].global_quantities.q_95"
@@ -279,6 +296,7 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       lcfs_r:
+        imas_standard_name: "major_radius_of_plasma_boundary"
         source: "EFM_LCFS(R)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
         fill_value: 9.98876992e+08
@@ -289,6 +307,7 @@ datasets:
           n_boundary_coords:
             units: 'dimensionless'
       lcfs_z:
+        imas_standard_name: "vertical_coordinate_of_plasma_boundary"
         source: "EFM_LCFS(Z)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
         fill_value: 9.98876992e+08
@@ -300,6 +319,7 @@ datasets:
             units: 'dimensionless'
 
       wmhd:
+        imas_standard_name: "plasma_stored_energy"
         source: "EFM_WPLASMD" 
         dimensions:
           time:
@@ -440,6 +460,7 @@ datasets:
         dropna: true
     profiles:
       ip:
+        imas_standard_name: "toroidal_plasma_current"
         source: "AMC_PLASMA CURRENT"
         imas: "summary.global_quantities.ip"
         description: "Total plasma current (toroidal component). Positive sign means anti-clockwise when viewed from above."
@@ -3160,6 +3181,7 @@ datasets:
         dropna: true
     profiles:
       ip: 
+        imas_standard_name: "toroidal_plasma_current"
         imas: "magnetics.ip[:].data"
         source: "AMC_PLASMA CURRENT"
         target_units: "A"
@@ -3168,6 +3190,7 @@ datasets:
             imas: "magnetics.time"
       
       b_field_pol_probe_ccbv_field:
+        imas_standard_name: "poloidal_magnetic_field_at_measurement_position"
         imas: "magnetics.b_field_pol_probe[:].field.data"
         description: "Centre column Bv array"
         units: "T"
@@ -4230,6 +4253,7 @@ datasets:
 
     profiles:
       t_e_core:
+        imas_standard_name: "electron_temperature"
         source:
           - name: "AYC_TE_CORE"
             shot_range:
@@ -4244,6 +4268,7 @@ datasets:
             imas: "thomson_scattering.channel[:].t_e.time"
 
       n_e_core:
+        imas_standard_name: "electron_density"
         units: "1/m ** 3"
         source:
           - name: "AYC_NE_CORE"
@@ -4259,6 +4284,7 @@ datasets:
             imas: "thomson_scattering.channel[:].n_e.time"
 
       t_e:
+        imas_standard_name: "electron_temperature"
         source:
           - name: "AYC_TE"
             shot_range:
@@ -4285,6 +4311,7 @@ datasets:
                   shot_max: 22831
             imas: "thomson_scattering.channel[:].position.r" 
       n_e:
+        imas_standard_name: "electron_density"
         source:
           - name: "AYC_NE"
             shot_range:
@@ -4312,6 +4339,7 @@ datasets:
                   shot_max: 22831
             imas: "thomson_scattering.channel[:].position.r" 
       p_e:
+        imas_standard_name: "electron_pressure"
         source:
           - name: "AYC_PE"
             shot_range:
@@ -4352,6 +4380,7 @@ datasets:
         method: "linear"
     profiles:
       t_i:
+        imas_standard_name: "ion_temperature"
         source: "ACT_SS_TEMPERATURE" 
         imas: "charge_exchange.channel[:].ion[:].t_i"
         description: "Ion temperature at the channel measurement point"
@@ -4365,6 +4394,7 @@ datasets:
 
 
       v_i:
+        imas_standard_name: "ion_velocity"
         source: "ACT_SS_VELOCITY" 
         dimension_order: ['major_radius', 'time']
         dimensions:

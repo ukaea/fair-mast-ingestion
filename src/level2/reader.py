@@ -36,7 +36,7 @@ class DatasetReader:
 
         if len(dataset) == 0:
             return dataset
-        
+
         dataset = self.apply_interpolation(dataset, name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
@@ -56,6 +56,7 @@ class DatasetReader:
                     continue
 
                 if profile_info.geometry:
+                    continue
                     logger.debug(f"Create profile {profile_name}")
                     profile = self.read_geometry(profile_info, profile_name)
                     logger.debug(f"Loaded profile {profile_name}")
@@ -63,7 +64,7 @@ class DatasetReader:
                     logger.debug(f"Create profile {profile_name}")
                     profile = self.read_profile(shot, dataset_name, profile_name)
                     logger.debug(f"Loaded profile {profile_name}")
-                    
+
                 profiles[profile_name] = profile
             except MissingSourceError as e:
                 logger.warning(e)
@@ -97,7 +98,7 @@ class DatasetReader:
                     raise MissingCoordinateError(
                         f"Shot {shot}: Data for signal '{source.name}' has only {len(dataset.dims)} "
                         f"dimension(s), but mapping requires dimension at index {dim_index} ('{dim_name}')."
-                    )    
+                    )
                 # Get dimension from data array object
                 names = list(dataset.sizes.keys())
                 coord: xr.DataArray = dataset.coords[names[dim_index]]
@@ -116,10 +117,10 @@ class DatasetReader:
         squeeze_dims = [d for d in dataset.dims if dataset.sizes[d] == 1 and "channel" not in d]
         dataset = dataset.squeeze(squeeze_dims)
         if len(dataset.shape) != len(dim_names):
-                    raise MissingCoordinateError(
-                        f"Structural mismatch for {profile_name}: "
-                        f"Data has {len(dataset.shape)} dims, but mapping expects {len(dim_names)}."
-                    )
+            raise MissingCoordinateError(
+                f"Structural mismatch for {profile_name}: "
+                f"Data has {len(dataset.shape)} dims, but mapping expects {len(dim_names)}."
+            )
         item = xr.DataArray(
             name=profile_name,
             data=dataset.values,
@@ -133,6 +134,9 @@ class DatasetReader:
 
         if profile.imas is not None:
             item.attrs["imas"] = profile.imas
+
+        if profile.imas_standard_name is not None:
+            item.attrs["imas_standard_name"] = profile.imas_standard_name
 
         item.attrs["description"] = profile.description
         item.attrs["name"] = profile_name
@@ -174,14 +178,14 @@ class DatasetReader:
         """Read geometry data using Level2UDAGeometryLoader."""
         geom_loader = Level2UDAGeometryLoader()
         datarr = geom_loader.run(profile_info.geometry, profile_name)
-        
+
         if profile_info.imas:
             datarr.attrs["imas"] = profile_info.imas
         else:
             datarr.attrs["imas"] = ""
-            
+
         datarr.attrs["description"] = profile_info.description
-        
+
         return datarr
 
     def apply_interpolation(self, dataset: xr.Dataset, dataset_name: str) -> xr.Dataset:

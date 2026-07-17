@@ -25,6 +25,7 @@ datasets:
 
     profiles:
       q:
+        imas_standard_name: "safety_factor"
         source: "epm/output/fluxFunctionProfiles/q" 
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.q"
@@ -39,6 +40,7 @@ datasets:
             units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.r"
       j_tor:
+        imas_standard_name: "toroidal_plasma_current_density"
         source: "epm/output/profiles2D/jphi" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
         dimension_order: ['major_radius', 'z', 'time']
@@ -56,6 +58,7 @@ datasets:
             imas: "equilibrium.time_slice[:].coordinate_system.z"
 
       psi:
+        imas_standard_name: "poloidal_magnetic_flux"
         source: "epm/output/profiles2D/poloidalFlux" 
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
         dimension_order: ['major_radius', 'z', 'time']
@@ -86,6 +89,7 @@ datasets:
             imas: "equilibrium.time_slice[:].coordinate_system.r"
 
       elongation:
+        imas_standard_name: "elongation"
         source: "epm/output/separatrixGeometry/elongation" 
         imas: "equilibrium.time_slice[:].boundary.elongation"
         units: 'dimensionless'
@@ -103,6 +107,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_r:
+        imas_standard_name: "major_radius_of_x_point"
         imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
         source:
           - name: "EFM_XPOINT_R"
@@ -116,6 +121,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_z:
+        imas_standard_name: "vertical_coordinate_of_x_point"
         imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
         source:
           - name: "EFM_XPOINT_Z"
@@ -129,6 +135,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       minor_radius:
+        imas_standard_name: "minor_radius_of_plasma_boundary"
         source: "epm/output/separatrixGeometry/minorRadius" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].boundary.minor_radius" 
@@ -138,6 +145,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_lower:
+        imas_standard_name: "lower_triangularity"
         source: "epm/output/separatrixGeometry/lowerTriangularity" 
         imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
         dimensions:
@@ -146,6 +154,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_upper:
+        imas_standard_name: "upper_triangularity"
         source: "epm/output/separatrixGeometry/upperTriangularity" 
         imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
         dimensions:
@@ -154,6 +163,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       magnetic_axis_r:
+        imas_standard_name: "major_radius_of_magnetic_axis"
         source: "epm/output/globalParameters/magneticAxis/R" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
         dimensions:
@@ -162,6 +172,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       magnetic_axis_z:
+        imas_standard_name: "vertical_coordinate_of_magnetic_axis"
         source: "epm/output/globalParameters/magneticAxis/Z" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
         dimensions:
@@ -178,6 +189,7 @@ datasets:
             source: "epm/time"
 
       beta_pol:
+        imas_standard_name: "poloidal_plasma_beta"
         source: "epm/output/globalParameters/betap" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
@@ -187,6 +199,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       beta_tor:
+        imas_standard_name: "toroidal_beta"
         source: "epm/output/globalParameters/betat" 
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
@@ -196,6 +209,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       bphi_rmag:
+        imas_standard_name: "toroidal_magnetic_field_at_magnetic_axis"
         source: "epm/output/globalParameters/bphiRmag" 
         dimensions:
           time:
@@ -208,6 +222,7 @@ datasets:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
       li:
+        imas_standard_name: "internal_inductance"
         source: "epm/output/globalParameters/li1" 
         imase_name: "equilibrium.time_slice[:].global_quantities.li_3"
         dimensions:
@@ -215,6 +230,7 @@ datasets:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
       q0:
+        imas_standard_name: "safety_factor_at_magnetic_axis"
         source: "epm/output/globalParameters/q0" 
         units: 'dimensionless'
         dimensions:
@@ -222,6 +238,7 @@ datasets:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
       q95:
+        imas_standard_name: "safety_factor_at_normalized_poloidal_magnetic_flux_equal_to_0_95"
         source: "epm/output/globalParameters/q95" 
         imas: "equilibrium.time_slice[:].global_quantities.q_95"
         units: 'dimensionless'
@@ -231,6 +248,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       lcfs_r:
+        imas_standard_name: "major_radius_of_plasma_boundary"
         source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/RBOUNDARY" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
         dimension_order: ['n_boundary_coords', 'time']
@@ -240,6 +258,7 @@ datasets:
           n_boundary_coords:
 
       lcfs_z:
+        imas_standard_name: "vertical_coordinate_of_plasma_boundary"
         source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/ZBOUNDARY" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
         dimension_order: ['n_boundary_coords', 'time']
@@ -278,6 +297,7 @@ datasets:
     imas: "summary"
     profiles:
       ip:
+        imas_standard_name: "toroidal_plasma_current"
         source: "AMC/PLASMA_CURRENT"
         imas: "summary.global_quantities.ip"
         target_units: "A"
@@ -379,6 +399,7 @@ datasets:
 
     profiles:
       ip: 
+        imas_standard_name: "toroidal_plasma_current"
         imas: "magnetics.ip[:].data"
         source: "/AMC/PLASMA_CURRENT"
         target_units: "A"
@@ -387,6 +408,7 @@ datasets:
             imas: "magnetics.time"
 
       b_field_pol_probe_field:
+        imas_standard_name: "poloidal_magnetic_field_at_measurement_position"
         imas: "magnetics.b_field_pol_probe[:].field.data"
         units: "T"
         source:
@@ -665,6 +687,7 @@ datasets:
 
 
       flux_loop_flux:
+        imas_standard_name: "poloidal_magnetic_flux"
         imas: "magnetics.flux_loop[:].flux.data"
         source: 
           - name: "AMB_FL"
@@ -960,18 +983,21 @@ datasets:
 
     profiles:
       t_e_core:
+        imas_standard_name: "electron_temperature"
         source: "ayc/t_e_core"
         dimensions:
           time:
             source: "ayc/time"
 
       n_e_core:
+        imas_standard_name: "electron_density"
         source: "ayc/n_e_core"
         dimensions:
           time:
             source: "ayc/time"
 
       t_e:
+        imas_standard_name: "electron_temperature"
         imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayc/t_e"
         dimension_order: ['major_radius', 'time']
@@ -984,6 +1010,7 @@ datasets:
             source: "ayc/r"
 
       n_e:
+        imas_standard_name: "electron_density"
         imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayc/n_e"
         dimension_order: ['major_radius', 'time']
@@ -996,6 +1023,7 @@ datasets:
             source: "ayc/r"
 
       p_e:
+        imas_standard_name: "electron_pressure"
         source: "ayc/p_e"
         dimension_order: ['major_radius', 'time']
         dimensions:
@@ -1020,18 +1048,21 @@ datasets:
 
     profiles:
       t_e_core:
+        imas_standard_name: "electron_temperature"
         source: "ayd/t_e_core"
         dimensions:
           time:
             source: "ayd/time"
 
       n_e_core:
+        imas_standard_name: "electron_density"
         source: "ayd/n_e_core"
         dimensions:
           time:
             source: "ayd/time"
 
       t_e:
+        imas_standard_name: "electron_temperature"
         imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayd/t_e"
         dimension_order: ['major_radius', 'time']
@@ -1044,6 +1075,7 @@ datasets:
             source: "ayd/r"
 
       n_e:
+        imas_standard_name: "electron_density"
         imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayd/n_e"
         dimension_order: ['major_radius', 'time']
@@ -1056,6 +1088,7 @@ datasets:
             source: "ayd/r"
 
       p_e:
+        imas_standard_name: "electron_pressure"
         source: "ayd/p_e"
         dimension_order: ['major_radius', 'time']
         dimensions:
@@ -1080,17 +1113,20 @@ datasets:
 
     profiles:
       t_i_core:
+        imas_standard_name: "ion_temperature"
         source: "act/cel3/ss/t_i_core" 
         dimensions:
           time:
             source: "act/cel3/ss/time"
       v_i_core:
+        imas_standard_name: "ion_velocity"
         source: "act/cel3/ss/v_i_core" 
         dimensions:
           time:
             source: "act/cel3/ss/time"
           
       t_i:
+        imas_standard_name: "ion_temperature"
         imas: "charge_exchange.channel[:].t_i_average.data"
         source: "act/cel3/ss/pvb/c5291/temperature" 
         dimension_order: ['major_radius', 'time']
@@ -1102,6 +1138,7 @@ datasets:
             source: "/act/cel3/ss/major_radius"
 
       v_i:
+        imas_standard_name: "ion_velocity"
         source: "act/cel3/ss/pvb/c5291/velocity" 
         dimension_order: ['major_radius', 'time']
         dimensions:

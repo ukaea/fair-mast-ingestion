@@ -36,6 +36,10 @@ datasets:
         method: "none"
       n_pf_current:
         method: "none"
+      n_b_field_pol_probe:
+        method: "none"
+      n_flux_loop:
+        method: "none"
 
     profiles:
       q:
@@ -116,8 +120,99 @@ datasets:
           psi_norm:
             units: 'dimensionless'
 
+      f:
+        source: "EFM_F(PSI)_(C)"
+        units: 'T*m'
+        imas: "equilibrium.time_slice[:].profiles_1d.f"
+        description: "Diamagnetic function (F=R B_Phi)"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      pressure:
+        source: "EFM_P(PSI)_(C)"
+        units: 'Pa'
+        imas: "equilibrium.time_slice[:].profiles_1d.pressure"
+        description: "Pressure"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      area_psi:
+        source: "EFM_AREAP_(C)"
+        units: 'm^2'
+        imas: "equilibrium.time_slice[:].profiles_1d.area"
+        description: "Cross-sectional area of the flux surface"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      volume_psi:
+        source: "EFM_VOLP_(C)"
+        units: 'm^3'
+        imas: "equilibrium.time_slice[:].profiles_1d.volume"
+        description: "Volume enclosed inside the magnetic surface"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      elongation_psi:
+        source: "EFM_ELONG(PSI)_(C)"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.elongation"
+        description: "Elongation of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      triangularity_lower_psi:
+        source: "EFM_TRIANG_L(PSI)_(C)"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        description: "Lower triangularity of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
+      triangularity_upper_psi:
+        source: "EFM_TRIANG_U(PSI)_(C)"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        description: "Upper triangularity of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            units: 'dimensionless'
+
       elongation:
-        source: "EFM_ELONGATION" 
+        source: "EFM_ELONGATION"
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].boundary.elongation"
         description: "Elongation of the plasma boundary"
@@ -169,18 +264,18 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_lower:
-        source: "EFM_TRIANG_LOWER" 
+        source: "EFM_TRIANG_LOWER"
         units: 'dimensionless'
-        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        imas: "equilibrium.time_slice[:].boundary.triangularity_lower"
         description: "Lower triangularity w.r.t. magnetic axis"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_upper:
-        source: "EFM_TRIANG_UPPER" 
+        source: "EFM_TRIANG_UPPER"
         units: 'dimensionless'
-        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        imas: "equilibrium.time_slice[:].boundary.triangularity_upper"
         description: "Upper triangularity w.r.t. magnetic axis"
         dimensions:
           time:
@@ -197,6 +292,30 @@ datasets:
         source: "EFM_MAGNETIC_AXIS_Z" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
         description: "Height of the magnetic axis"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      geometric_axis_r:
+        source: "EFM_GEOM_AXIS_R(C)"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].boundary.geometric_axis.r"
+        description: "Major radius of the geometric axis of the plasma boundary"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      geometric_axis_z:
+        source: "EFM_GEOM_AXIS_Z(C)"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].boundary.geometric_axis.z"
+        description: "Height of the geometric axis of the plasma boundary"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      boundary_psi_norm:
+        source: "EFM_CM_BDRY"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.psi_norm"
+        description: "Value of the normalised poloidal flux at which the boundary is taken"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -224,12 +343,31 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
       bphi_rmag:
-        source: "EFM_BPHI_RMAG" 
+        source: "EFM_BPHI_RMAG"
+        units: 'T'
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.b_field_tor"
+        description: "Total toroidal magnetic field at the magnetic axis"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       bvac_rmag:
-        source: "EFM_BVAC_RMAG" 
+        source: "EFM_BVAC_RMAG"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      bvac_r:
+        source: "EFM_BVAC_R"
+        units: 'm'
+        imas: "equilibrium.vacuum_toroidal_field.r0"
+        description: "Reference major radius where the vacuum toroidal magnetic field is given"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+      bvac_val:
+        source: "EFM_BVAC_VAL"
+        units: 'T'
+        imas: "equilibrium.vacuum_toroidal_field.b0"
+        description: "Vacuum toroidal magnetic field at the reference major radius"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -243,9 +381,63 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       volume:
-        source: "EFM_PLASMA_VOLUME" 
+        source: "EFM_PLASMA_VOLUME"
         imas: "equilibrium.time_slice[:].global_quantities.volume"
         description: "Plasma volume"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      area:
+        source: "EFM_PLASMA_AREA"
+        units: 'm^2'
+        imas: "equilibrium.time_slice[:].global_quantities.area"
+        description: "Area of the poloidal cross section"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      length_pol:
+        source: "EFM_LCFS_LENGTH"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].global_quantities.length_pol"
+        description: "Poloidal length of the magnetic surface"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      ip:
+        source: "EFM_PLASMA_CURR(C)"
+        units: 'A'
+        imas: "equilibrium.time_slice[:].global_quantities.ip"
+        description: "Plasma current (toroidal component). Positive sign means anti-clockwise when viewed from above."
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      plasma_energy:
+        source: "EFM_PLASMA_ENERGY"
+        units: 'J'
+        imas: "equilibrium.time_slice[:].global_quantities.energy_mhd"
+        description: "Plasma energy content = 3/2 * integral over plasma volume of the total perpendicular pressure"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      psi_axis:
+        source: "EFM_PSI_AXIS"
+        units: 'Wb'
+        imas: "equilibrium.time_slice[:].global_quantities.psi_axis"
+        description: "Poloidal flux at the magnetic axis"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      psi_boundary:
+        source: "EFM_PSI_BOUNDARY"
+        units: 'Wb'
+        imas: "equilibrium.time_slice[:].global_quantities.psi_boundary"
+        description: "Poloidal flux at the selected plasma boundary"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -306,32 +498,50 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
 
       rpsi90_in:
-        source: "EFM_R(PSI90)_IN" 
+        source: "EFM_R(PSI90)_IN"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_inboard"
+        description: "Radial coordinate on the inboard side, at 90% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       rpsi90_out:
-        source: "EFM_R(PSI90)_OUT" 
+        source: "EFM_R(PSI90)_OUT"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_outboard"
+        description: "Radial coordinate on the outboard side, at 90% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       rpsi95_in:
-        source: "EFM_R(PSI95)_IN" 
+        source: "EFM_R(PSI95)_IN"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_inboard"
+        description: "Radial coordinate on the inboard side, at 95% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       rpsi95_out:
-        source: "EFM_R(PSI95)_OUT" 
+        source: "EFM_R(PSI95)_OUT"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_outboard"
+        description: "Radial coordinate on the outboard side, at 95% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       rpsi100_in:
-        source: "EFM_R(PSI100)_IN" 
+        source: "EFM_R(PSI100)_IN"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_inboard"
+        description: "Radial coordinate on the inboard side, at 100% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
       rpsi100_out:
-        source: "EFM_R(PSI100)_OUT" 
+        source: "EFM_R(PSI100)_OUT"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_outboard"
+        description: "Radial coordinate on the outboard side, at 100% normalised poloidal flux"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
@@ -364,12 +574,144 @@ datasets:
 
       pf_current:
         source: "EFM_FCOIL_(X)"
-        imas: "equilibrium.time_slice[:].constraints.pf_current"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].measured"
         units: "A"
+        description: "Measured PF coil current used as a constraint in the reconstruction"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
           n_pf_current:
+
+      pf_current_reconstructed:
+        source: "EFM_FCOIL_(C)"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].reconstructed"
+        units: "A"
+        description: "PF coil current reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      pf_current_chi_squared:
+        source: "EFM_FCOIL_CHISQ"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].chi_squared"
+        units: "dimensionless"
+        description: "Squared error normalized by the standard deviation of the PF coil current constraint"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      pf_current_weight:
+        source: "EFM_FWTFC"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the PF coil current constraint in the reconstruction"
+        dimensions:
+          n_pf_current:
+
+      b_field_pol_probe_measured:
+        source: "EFM_MAGPR_(X)"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].measured"
+        units: "T"
+        description: "Measured poloidal magnetic field probe value used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_reconstructed:
+        source: "EFM_MAGPR_(C)"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].reconstructed"
+        units: "T"
+        description: "Poloidal magnetic field probe value reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_chi_squared:
+        source: "EFM_MAGPRI_CHISQ"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].chi_squared"
+        units: "dimensionless"
+        description: "Squared error normalized by the standard deviation of the poloidal magnetic field probe constraint"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_weight:
+        source: "EFM_FWTMP"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the poloidal magnetic field probe constraint in the reconstruction"
+        dimensions:
+          n_b_field_pol_probe:
+
+      flux_loop_measured:
+        source: "EFM_SILOP_(X)"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].measured"
+        units: "Wb"
+        description: "Measured flux loop value used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_reconstructed:
+        source: "EFM_SILOP_(C)"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].reconstructed"
+        units: "Wb"
+        description: "Flux loop value reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_chi_squared:
+        source: "EFM_SILOP_CHISQ"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].chi_squared"
+        units: "dimensionless"
+        description: "Squared error normalized by the standard deviation of the flux loop constraint"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_weight:
+        source: "EFM_FWTSI"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the flux loop constraint in the reconstruction"
+        dimensions:
+          n_flux_loop:
+
+      ip_measured:
+        source: "EFM_PLASMA_CURR(X)"
+        imas: "equilibrium.time_slice[:].constraints.ip.measured"
+        units: "A"
+        description: "Measured plasma current used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      diamagnetic_flux_measured:
+        source: "EFM_DIAMAG_FLUX(X)"
+        imas: "equilibrium.time_slice[:].constraints.diamagnetic_flux.measured"
+        units: "Wb"
+        description: "Measured diamagnetic flux used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      diamagnetic_flux_reconstructed:
+        source: "EFM_DIAMAG_FLUX(C)"
+        imas: "equilibrium.time_slice[:].constraints.diamagnetic_flux.reconstructed"
+        units: "Wb"
+        description: "Diamagnetic flux reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
 
   pulse_schedule:
     imas: pulse_schedule

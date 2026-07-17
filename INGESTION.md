@@ -142,15 +142,60 @@ python3 -m src.level2.main mappings/level2/mast.yml \
 
 ### Configuration Files
 
+All Zarr output is written as **Zarr v3**.
+
 **Local Config** ([configs/level2.yml](configs/level2.yml)):
-- Uses Zarr format 2
-- Outputs to `/tmp/fair-mast/level2`
+- Single local Zarr writer, outputs to `/tmp/fair-mast/level2`
 - Reads from UDA and S3-hosted Level 1 data
 
 **CSD3 Config** ([configs/level2.csd3.yml](configs/level2.csd3.yml)):
-- Uses Zarr format 3
-- Outputs to CSD3 project directory
+- Multiple writers (see [Output writers](#output-writers)): a local NetCDF writer for
+  the HPC plus a Zarr writer that publishes straight to S3
 - Optimized for cluster environment
+
+---
+
+## Output writers
+
+The `writers:` block in a config selects one **or more** output targets that run for
+every shot in a single ingestion pass. (A legacy singular `writer:` key is still
+accepted and treated as a one-element list.) Each writer has a `type` and an `options`
+dict.
+
+```yaml
+writers:
+  - type: netcdf            # one .nc file per shot, kept on the HPC (1 inode/shot)
+    options:
+      output_path: "/rds/.../level2/nc"
+
+  - type: zarr              # Zarr written straight to S3 (no local staging)
+    options:
+      output_path: "s3://mast/level2/shots"
+      storage_options:
+        client_kwargs: { endpoint_url: "https://s3.echo.stfc.ac.uk" }
+        config_kwargs: { s3: { addressing_style: "path" } }
+```
+
+The two writers run in the same pass, so one ingestion gives you a local NetCDF copy on
+the HPC **and** a Zarr copy on S3 without staging the Zarr on disk first.
+
+### Getting Zarr to S3
+
+Two independent ways to publish Zarr to S3:
+
+1. **Direct-to-S3** (recommended): set the zarr writer's `output_path` to an `s3://…` URI.
+   The store is written straight to the bucket via `s3fs` — no local materialisation, no
+   `s5cmd cp`, no `rmtree`. This is what keeps RDS inode usage flat during ingestion.
+   Credentials come from `s3fs` (e.g. `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` in the
+   environment, or `key`/`secret` under `storage_options`); ECHO/CEPH needs path-style
+   addressing (`config_kwargs.s3.addressing_style: path`).
+2. **Local + `s5cmd` upload** (the existing flow, preserved): keep `output_path` local and
+   add an `upload:` block. The store is staged locally then uploaded by `s5cmd` (Section 3).
+   This fires only for *local Zarr* writers — NetCDF files are never uploaded.
+
+### NetCDF
+
+`netcdf` writes one HDF5/NetCDF file per shot (all source groups inside the one file). These files stay local and the zarr files go straight to S3.
 
 ---
 

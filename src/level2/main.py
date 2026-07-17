@@ -17,7 +17,11 @@ from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
 from src.core.workflow_manager import WorkflowManager
-from src.core.writer import dataset_writer_registry
+from src.core.writer import (
+    MultiWriter,
+    ZarrDatasetWriter,
+    dataset_writer_registry,
+)
 from src.level2.reader import DatasetReader
 
 
@@ -130,12 +134,15 @@ def process_shot(shot: int, **kwargs):
 
     config = load_config_file(args.config_file)
     if args.output_path is not None:
-        config.writer.options["output_path"] = args.output_path
+        for writer_config in config.writers:
+            writer_config.options["output_path"] = args.output_path
 
-    writer = dataset_writer_registry.create(config.writer.type, **config.writer.options)
+    writers = [
+        dataset_writer_registry.create(w.type, **w.options) for w in config.writers
+    ]
+    writer = MultiWriter(writers) if len(writers) > 1 else writers[0]
 
     file_name = f"{shot}.{writer.file_extension}"
-    local_file = config.writer.options["output_path"] / Path(file_name)
 
     loader = get_default_loader(config.readers[mapping.default_loader])
     set_mapping_time_bounds(mapping, shot, tdelta, loader, force=args.force_ip_check)
@@ -157,11 +164,21 @@ def process_shot(shot: int, **kwargs):
                 )
                 writer.write(file_name, group_name, dataset)
 
+    writer.finalize(file_name)
+
+    # Push any *local* zarr stores to S3 via s5cmd (legacy path). Writers that publish
+    # directly to S3 skip this; NetCDF/HDF5 stays on the HPC.
     if config.upload is not None:
         remote_file = f"{config.upload.base_path}/"
-
         uploader = UploadS3(config.upload)
-        uploader.upload(local_file, remote_file)
+        for w in writers:
+            if not isinstance(w, ZarrDatasetWriter) or w.is_s3:
+                continue
+            local_file = w.output_path / Path(f"{shot}.{w.file_extension}")
+            if not local_file.exists():
+                logger.warning(f"File {local_file} does not exist")
+                continue
+            uploader.upload(local_file, remote_file)
 
     logger.info(f"Done shot {shot}!")
 

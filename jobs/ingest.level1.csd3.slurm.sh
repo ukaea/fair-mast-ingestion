@@ -12,10 +12,12 @@
 num_workers=$SLURM_NTASKS
 source .venv/bin/activate
 source ~/.uda-ssl.sh
+export AWS_SHARED_CREDENTIALS_FILE="$PWD/.s5cfg.stfc"
 
-output_dir="/rds/project/rds-mOlK9qn0PlQ/fairmast/level1/tmp/"
-
+# Output locations (local NetCDF on RDS + zarr on S3) come from the writers list in
+# the config file; no separate upload job is needed for the zarr.
 mpirun -n $num_workers \
-    python3 -m src.level1.main -c -c ./configs/level1.csd3.yml --facility MAST --shot-min 11695 --shot-max 30474 -i abm act aga ahx ait alp amb amc ams anb ane anu arp asm atm ayc aye efm esm xbt xdc xim xmo xsx
-
-
+    python3 -m src.level1.main -c ./configs/level1.csd3.yml --facility MAST \
+    --uda-group-names \
+    --shot-min 11695 --shot-max 30474 \
+    -i abm act aga ahx ait alp amb amc ams anb ane anu arp asm atm ayc aye efm esm xbt xdc xim xmo xsx

@@ -17,11 +17,7 @@ from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
 from src.core.workflow_manager import WorkflowManager
-from src.core.writer import (
-    MultiWriter,
-    ZarrDatasetWriter,
-    dataset_writer_registry,
-)
+from src.core.writer import MultiWriter, dataset_writer_registry
 from src.level2.reader import DatasetReader
 
 
@@ -166,19 +162,12 @@ def process_shot(shot: int, **kwargs):
 
     writer.finalize(file_name)
 
-    # Push any *local* zarr stores to S3 via s5cmd (legacy path). Writers that publish
-    # directly to S3 skip this; NetCDF/HDF5 stays on the HPC.
     if config.upload is not None:
+        local_file = config.writers[0].options["output_path"] / Path(file_name)
         remote_file = f"{config.upload.base_path}/"
+
         uploader = UploadS3(config.upload)
-        for w in writers:
-            if not isinstance(w, ZarrDatasetWriter) or w.is_s3:
-                continue
-            local_file = w.output_path / Path(f"{shot}.{w.file_extension}")
-            if not local_file.exists():
-                logger.warning(f"File {local_file} does not exist")
-                continue
-            uploader.upload(local_file, remote_file)
+        uploader.upload(local_file, remote_file)
 
     logger.info(f"Done shot {shot}!")
 

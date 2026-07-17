@@ -6,11 +6,7 @@ from src.core.config import IngestionConfig
 from src.core.load import loader_registry
 from src.core.log import logger
 from src.core.upload import UploadS3
-from src.core.writer import (
-    MultiWriter,
-    ZarrDatasetWriter,
-    dataset_writer_registry,
-)
+from src.core.writer import MultiWriter, dataset_writer_registry
 from src.level1.builder import DatasetBuilder
 from src.level1.pipelines import pipelines_registry
 
@@ -70,25 +66,16 @@ class IngestionWorkflow:
         builder.create(shot)
 
     def upload_dataset(self, shot: int):
-        """Push any *local* zarr stores to S3 via s5cmd (legacy path).
-
-        Writers that publish directly to S3 skip this, and NetCDF/HDF5 files are
-        kept on the HPC and never uploaded.
-        """
         if self.config.upload is None:
             return
 
+        file_name = f"{shot}.{self.writer.file_extension}"
+        local_file = self.config.writer.options["output_path"] / Path(file_name)
         remote_file = f"{self.config.upload.base_path}/"
+
+        if not local_file.exists():
+            logger.warning(f"File {local_file} does not exist")
+            return
+
         uploader = UploadS3(self.config.upload)
-
-        for writer in self.writers:
-            if not isinstance(writer, ZarrDatasetWriter) or writer.is_s3:
-                continue
-
-            file_name = f"{shot}.{writer.file_extension}"
-            local_file = writer.output_path / Path(file_name)
-            if not local_file.exists():
-                logger.warning(f"File {local_file} does not exist")
-                continue
-
-            uploader.upload(local_file, remote_file)
+        uploader.upload(local_file, remote_file)

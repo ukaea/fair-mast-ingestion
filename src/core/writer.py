@@ -8,9 +8,8 @@ from typing import Optional
 import numpy as np
 import xarray as xr
 import zarr
+from zarr.storage import FsspecStore
 
-# h5netcdf's own list of HDF5-reserved attribute names (CLASS, NAME, ...) -- the same
-# set it raises on in Attributes.__setitem__, so it always matches the installed version.
 from h5netcdf.attrs import _HIDDEN_ATTRS as _NETCDF_RESERVED_ATTRS
 
 from src.core.registry import Registry
@@ -50,11 +49,7 @@ class DatasetWriter(ABC):
         )
 
     def finalize(self, file_name: str):
-        """Hook called once after every group of a shot has been written.
-
-        Default is a no-op. The zarr writer overrides this to consolidate metadata a
-        single time per shot rather than re-walking the whole store on every group.
-        """
+        #Hook called once after every group of a shot has been written.
         return
 
     def _convert_dict_attrs_to_json(self, dataset: xr.Dataset):
@@ -98,15 +93,8 @@ class ZarrDatasetWriter(DatasetWriter):
         return "zarr"
 
     def _get_store(self, file_name: str):
-        """Resolve a write target: an fsspec-backed zarr store for S3, else a Path.
-
-        Writing to S3 needs a store object carrying credentials/endpoint (unlike the
-        anonymous read path in the reader configs), and both write and finalize
-        (metadata consolidation) must address the same store.
-        """
+        """Resolve a write target: an fsspec-backed zarr store for S3, else a Path. """
         if self.is_s3:
-            from zarr.storage import FsspecStore
-
             url = f"{self.output_path}/{file_name}"
             return FsspecStore.from_url(url, storage_options=self.storage_options)
         return self.output_path / file_name
@@ -121,15 +109,10 @@ class ZarrDatasetWriter(DatasetWriter):
 
     def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
         store = self._get_store(file_name)
-        # Write each group without consolidating; consolidating here would re-walk the
-        # whole (growing) store on every group -- O(n^2) reads, which is slow on S3 and
-        # amplifies transient errors. We consolidate once in finalize() instead.
         dataset.to_zarr(store, group=name, mode="w", consolidated=False)
         self._pending_consolidation.add(file_name)
 
     def _write_multi_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
-        # Multi mode writes one independent store per group, so consolidating each at
-        # write time is O(1) per store -- no finalize needed.
         if self.is_s3:
             store = self._get_store(f"{Path(file_name).stem}/{name}.zarr")
         else:

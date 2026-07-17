@@ -22,8 +22,4 @@ writers:
     options:
       output_path: "s3://mast/level2/shots"
       storage_options:
-        client_kwargs:
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-        config_kwargs:
-          s3:
-            addressing_style: "path"
+        endpoint_url: "https://s3.echo.stfc.ac.uk"

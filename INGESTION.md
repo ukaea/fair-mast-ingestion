@@ -172,23 +172,26 @@ writers:
     options:
       output_path: "s3://mast/level2/shots"
       storage_options:
-        client_kwargs: { endpoint_url: "https://s3.echo.stfc.ac.uk" }
-        config_kwargs: { s3: { addressing_style: "path" } }
+        endpoint_url: "https://s3.echo.stfc.ac.uk"
 ```
 
 The two writers run in the same pass, so one ingestion gives you a local NetCDF copy on
 the HPC **and** a Zarr copy on S3 without staging the Zarr on disk first.
+`storage_options` takes the same keys as the reader configs (anything `s3fs` accepts).
 
 ### Getting Zarr to S3
 
 Two independent ways to publish Zarr to S3:
 
-1. **Direct-to-S3** (recommended): set the zarr writer's `output_path` to an `s3://…` URI.
-   The store is written straight to the bucket via `s3fs` — no local materialisation, no
-   `s5cmd cp`, no `rmtree`. This is what keeps RDS inode usage flat during ingestion.
-   Credentials come from `s3fs` (e.g. `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` in the
-   environment, or `key`/`secret` under `storage_options`); ECHO/CEPH needs path-style
-   addressing (`config_kwargs.s3.addressing_style: path`).
+1. **Direct-to-S3** (recommended): set the zarr writer's `output_path` to an `s3://…` URI
+   and the endpoint in `storage_options`, as above. The store is written straight to the
+   bucket via `s3fs` — no local materialisation, no `s5cmd cp`, no `rmtree`. This is what
+   keeps RDS inode usage flat during ingestion. For credentials, point botocore at the
+   existing s5cmd credentials file — no secrets in configs:
+
+   ```sh
+   export AWS_SHARED_CREDENTIALS_FILE="$PWD/.s5cfg.stfc"
+   ```
 2. **Local + `s5cmd` upload** (the existing flow, preserved): keep `output_path` local and
    add an `upload:` block. The store is staged locally then uploaded by `s5cmd` (Section 3).
    This fires only for *local Zarr* writers — NetCDF files are never uploaded.

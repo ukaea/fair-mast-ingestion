@@ -24,7 +24,7 @@ def main():
     parser.add_argument("-c", "--config-file", type=str, default="./configs/level1.yml")
     parser.add_argument("-i", "--include-sources", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-sources", nargs="+", default=[])
-    parser.add_argument("--file_format", choices=["zarr", "nc", "h5"], default="zarr")
+    parser.add_argument("--file_format", choices=["zarr", "nc", "h5"], default="None")
     parser.add_argument("--facility", choices=["MAST", "MASTU"], default="MAST")
     parser.add_argument("--uda-group-names", action="store_true",
     )

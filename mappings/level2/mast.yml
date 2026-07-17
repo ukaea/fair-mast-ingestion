@@ -288,6 +288,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       magnetic_axis_z:
         source: "EFM_MAGNETIC_AXIS_Z" 
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
@@ -295,6 +296,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       geometric_axis_r:
         source: "EFM_GEOM_AXIS_R(C)"
         units: 'm'
@@ -303,6 +305,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       geometric_axis_z:
         source: "EFM_GEOM_AXIS_Z(C)"
         units: 'm'
@@ -311,6 +314,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       boundary_psi_norm:
         source: "EFM_CM_BDRY"
         units: 'dimensionless'
@@ -319,6 +323,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       beta_tor_normal:
         source: "EFM_BETAN" 
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor_normal"
@@ -326,6 +331,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       beta_pol:
         source: "EFM_BETAP" 
         units: "dimensionless"
@@ -334,6 +340,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       beta_tor:
         source: "EFM_BETAT" 
         units: "dimensionless"
@@ -342,6 +349,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       bphi_rmag:
         source: "EFM_BPHI_RMAG"
         units: 'T'
@@ -350,11 +358,13 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       bvac_rmag:
         source: "EFM_BVAC_RMAG"
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       bvac_r:
         source: "EFM_BVAC_R"
         units: 'm'
@@ -363,6 +373,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       bvac_val:
         source: "EFM_BVAC_VAL"
         units: 'T'
@@ -371,6 +382,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       li:
         source: "EFM_LI" 
         units: 'dimensionless'
@@ -470,6 +482,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       lcfs_r:
         source: "EFM_LCFS(R)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
@@ -480,6 +493,7 @@ datasets:
             imas: "equilibrium.time_slice[:].time"
           n_boundary_coords:
             units: 'dimensionless'
+
       lcfs_z:
         source: "EFM_LCFS(Z)_(C)" 
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
@@ -505,6 +519,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       rpsi90_out:
         source: "EFM_R(PSI90)_OUT"
         units: 'm'
@@ -513,6 +528,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       rpsi95_in:
         source: "EFM_R(PSI95)_IN"
         units: 'm'
@@ -521,6 +537,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       rpsi95_out:
         source: "EFM_R(PSI95)_OUT"
         units: 'm'
@@ -529,6 +546,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       rpsi100_in:
         source: "EFM_R(PSI100)_IN"
         units: 'm'
@@ -537,6 +555,7 @@ datasets:
         dimensions:
           time:
             imas: "equilibrium.time_slice[:].time"
+
       rpsi100_out:
         source: "EFM_R(PSI100)_OUT"
         units: 'm'
@@ -608,6 +627,8 @@ datasets:
         units: "dimensionless"
         description: "Weight given to the PF coil current constraint in the reconstruction"
         dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
           n_pf_current:
 
       b_field_pol_probe_measured:
@@ -646,6 +667,8 @@ datasets:
         units: "dimensionless"
         description: "Weight given to the poloidal magnetic field probe constraint in the reconstruction"
         dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
           n_b_field_pol_probe:
 
       flux_loop_measured:
@@ -684,6 +707,8 @@ datasets:
         units: "dimensionless"
         description: "Weight given to the flux loop constraint in the reconstruction"
         dimensions:
+          time:
+            imas: "equilibrium.time_slice[:].time"
           n_flux_loop:
 
       ip_measured:

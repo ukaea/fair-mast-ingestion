@@ -8,9 +8,8 @@ from typing import Optional
 import numpy as np
 import xarray as xr
 import zarr
-from zarr.storage import FsspecStore
-
 from h5netcdf.attrs import _HIDDEN_ATTRS as _NETCDF_RESERVED_ATTRS
+from zarr.storage import FsspecStore
 
 from src.core.registry import Registry
 

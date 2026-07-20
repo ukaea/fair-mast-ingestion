@@ -8,18 +8,11 @@ readers:
       protocol: 'simplecache'
       target_protocol: "s3"
       target_options:
-          anon: True
+          anon: True 
           endpoint_url: "https://s3.echo.stfc.ac.uk"
 
-# One or more writers run per shot. NetCDF stays on the HPC (1 file/inode per shot);
-# the zarr writer publishes straight to S3 (no local staging, no s5cmd).
-writers:
-  - type: netcdf
-    options:
-      output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/nc"
-
-  - type: zarr
-    options:
-      output_path: "s3://mast/level2/shots"
-      storage_options:
-        endpoint_url: "https://s3.echo.stfc.ac.uk"
+writer:
+  type: "zarr"
+  options:
+    zarr_format: 3
+    output_path: "/rds/project/rds-mOlK9qn0PlQ/fairmast/level2/tmp"

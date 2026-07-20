@@ -148,10 +148,18 @@ All Zarr output is written as **Zarr v3**.
 - Single local Zarr writer, outputs to `/tmp/fair-mast/level2`
 - Reads from UDA and S3-hosted Level 1 data
 
-**CSD3 Config** ([configs/level2.csd3.yml](configs/level2.csd3.yml)):
+**CSD3 Config** ([configs/level2.csd3.yml](configs/level2.csd3.yml)) — **default, production**:
+- Single local Zarr writer, outputs to the RDS project directory
+- Upload to S3 is a separate step: [jobs/upload.csd3.sh](jobs/upload.csd3.sh) (Section 3)
+- This is the long-standing production flow; direct-to-S3 (below) is opt-in until it has
+  been benchmarked and confirmed to meet the required output format/location
+
+**CSD3 S3 Config** ([configs/level2.csd3.s3.yml](configs/level2.csd3.s3.yml)) — **opt-in**:
 - Multiple writers (see [Output writers](#output-writers)): a local NetCDF writer for
-  the HPC plus a Zarr writer that publishes straight to S3
-- Optimized for cluster environment
+  the HPC plus a Zarr writer that publishes straight to S3, in the same ingestion pass
+- Currently points at a throwaway test S3 prefix (`s3://mast/test/level2`), not the
+  production bucket path — swap `output_path` once validated
+- Paired job: [jobs/ingest.level2.csd3.s3.slurm.sh](jobs/ingest.level2.csd3.s3.slurm.sh)
 
 ---
 
@@ -159,8 +167,8 @@ All Zarr output is written as **Zarr v3**.
 
 The `writers:` block in a config selects one **or more** output targets that run for
 every shot in a single ingestion pass. (A legacy singular `writer:` key is still
-accepted and treated as a one-element list.) Each writer has a `type` and an `options`
-dict.
+accepted and treated as a one-element list — this is what the default CSD3 configs use.)
+Each writer has a `type` and an `options` dict.
 
 ```yaml
 writers:
@@ -170,35 +178,39 @@ writers:
 
   - type: zarr              # Zarr written straight to S3 (no local staging)
     options:
-      output_path: "s3://mast/level2/shots"
+      output_path: "s3://mast/test/level2"
       storage_options:
         endpoint_url: "https://s3.echo.stfc.ac.uk"
 ```
 
-The two writers run in the same pass, so one ingestion gives you a local NetCDF copy on
-the HPC **and** a Zarr copy on S3 without staging the Zarr on disk first.
+The two writers run in the same pass, so one ingestion gives a local NetCDF copy on the
+HPC **and** a Zarr copy on S3, without staging the Zarr on disk first.
 `storage_options` takes the same keys as the reader configs (anything `s3fs` accepts).
 
-### Getting Zarr to S3
+### Getting Zarr to S3 — two independent options
 
-Two independent ways to publish Zarr to S3:
-
-1. **Direct-to-S3** (recommended): set the zarr writer's `output_path` to an `s3://…` URI
-   and the endpoint in `storage_options`, as above. The store is written straight to the
-   bucket via `s3fs` — no local materialisation, no `s5cmd cp`, no `rmtree`. This is what
-   keeps RDS inode usage flat during ingestion. For credentials, point botocore at the
-   existing s5cmd credentials file — no secrets in configs:
+1. **Local + `s5cmd` upload** (default production flow): keep the zarr writer's
+   `output_path` local; upload afterwards via a separate job
+   ([jobs/upload.csd3.sh](jobs/upload.csd3.sh), Section 3). This is the pre-existing
+   flow and is what the plain `configs/level{1,2}.csd3.yml` configs use.
+2. **Direct-to-S3** (opt-in, `configs/level{1,2}.csd3.s3.yml`): set the zarr writer's
+   `output_path` to an `s3://…` URI and the endpoint in `storage_options`. The store is
+   written straight to the bucket via `s3fs` — no local staging. For credentials, point
+   botocore at the existing s5cmd credentials file:
 
    ```sh
    export AWS_SHARED_CREDENTIALS_FILE="$PWD/.s5cfg.stfc"
    ```
-2. **Local + `s5cmd` upload** (the existing flow, preserved): keep `output_path` local and
-   add an `upload:` block. The store is staged locally then uploaded by `s5cmd` (Section 3).
-   This fires only for *local Zarr* writers — NetCDF files are never uploaded.
+
+   **Known open questions before this can become the default** (see project notes):
+   whether write throughput direct-to-S3 is fast enough at scale (needs benchmarking
+   against the local+upload flow), and whether downstream consumers need the same
+   local-on-RDS Zarr copy this bypasses.
 
 ### NetCDF
 
-`netcdf` writes one HDF5/NetCDF file per shot (all source groups inside the one file). These files stay local and the zarr files go straight to S3.
+`netcdf` writes one HDF5/NetCDF file per shot (all source groups inside the one file),
+costing ~1 inode per shot. These files stay local and are never uploaded to S3.
 
 ---
 

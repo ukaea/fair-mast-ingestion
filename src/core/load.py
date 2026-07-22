@@ -70,10 +70,8 @@ class BaseLoader(ABC):
 
 
 class SALLoader(BaseLoader):
-    def __init__(self) -> None:
-        from jet.data import sal
-
-        self.sal = sal
+    def __init__(self, host: str = "https://sal.jetdata.eu") -> None:
+        self.host = host
 
     def load(self, shot_num: int, name: str, channels: Optional[list[Channel]] = None):
         try:
@@ -82,22 +80,11 @@ class SALLoader(BaseLoader):
             raise MissingProfileError(f"{e}, {type(e)}")
 
     def load_signal(self, shot_num: int, name: str) -> xr.DataArray:
-        signal = self.sal.get(f"/pulse/{shot_num}/ppf/signal/jetppf/{name}")
+        uri = f"sal://pulse/{shot_num}/ppf/signal/jetppf/{name}"
+        dataset = xr.open_dataset(uri, engine="sal", host=self.host)
 
-        attrs = {}
-        attrs["units"] = signal.units
-        attrs["description"] = signal.description
-
-        coords = []
-        for dim in signal.dimensions:
-            coord = xr.DataArray(
-                data=dim.data, attrs=dict(units=dim.units, description=dim.description)
-            )
-            coords.append(coord)
-
-        data = xr.DataArray(data=signal.data, coords=coords, attrs=attrs)
+        data = dataset["data"]
         data.name = name
-        data.to_dataset()
         return data
 
 
@@ -213,8 +200,6 @@ class UDALoader(BaseLoader):
         try:
             if channels is not None:
                 dataset = self.load_channels(shot_num, name, channels)
-            elif name.strip("/").lower().startswith("r"):
-                dataset = self.load_image(shot_num, name)
             else:
                 dataset = self.load_signal(shot_num, name)
         except Exception as e:
@@ -283,179 +268,80 @@ class UDALoader(BaseLoader):
         return signals
 
     def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
-        import pyuda
+        dataset = self._open_dataset(shot_num, name)
 
+        # The uda backend returns an error variable for signals but not for images.
+        if "error" in dataset:
+            return self._prepare_signal(name, dataset)
+        return self._prepare_image(name, dataset)
+
+    def _open_dataset(self, shot_num: int, name: str) -> xr.Dataset:
         max_attempts = 2
         for attempt in range(max_attempts):
             try:
-                client = self._get_client()
-                signal = client.get(name, shot_num)
-                dataset = self._convert_signal_to_dataset(name, signal)
-                dataset = dataset.squeeze(drop=True)
-                return dataset
-            except pyuda.ServerException as e:
+                return xr.open_dataset(f"uda://{name}:{shot_num}", engine="uda")
+            except RuntimeError as e:
                 # Check for SSL error specifically
                 if "SSL_ERROR_SSL" in str(e) and attempt < max_attempts - 1:
-                    # Wipe the internal client so _get_client() creates a new one
-                    self._client = None 
                     time.sleep(1)
                     continue
                 raise MissingSourceError(
                     f'Could not load profile {name} for shot "{shot_num}". Encountered exception: {e}'
                 )
 
-    def _convert_signal_to_dataset(
-        self, signal_name, signal
+    def _prepare_signal(
+        self, uda_name: str, dataset: xr.Dataset
     ) -> xr.Dataset | xr.DataArray:
-        dim_names = self._normalize_dimension_names(signal)
-        coords = {}
-        for name, dim in zip(dim_names, signal.dims):
-            data = dim.data
+        dataset = dataset.rename(self._normalize_dimension_names(dataset))
 
-            coord = xr.DataArray(
-                np.atleast_1d(data), dims=[name], attrs=dict(units=dim.units)
-            )
-            coords[name] = coord
-
-        data = np.atleast_1d(signal.data)
-        error = np.atleast_1d(signal.errors)
-        attrs = self._get_dataset_attributes(signal_name, signal)
-        uda_name = signal_name
-        signal_name = harmonise_name(signal_name)
-
-        data = xr.DataArray(data, dims=dim_names, coords=coords, attrs=attrs)
+        signal_name = harmonise_name(uda_name)
         if signal_name == "time":
             signal_name = "time_"
 
+        data = dataset["data"]
         data.name = signal_name
         data.attrs["name"] = data.name
         data.attrs["uda_name"] = uda_name
 
-        error = xr.DataArray(error, dims=dim_names, coords=coords, attrs=attrs)
+        if not self._include_error:
+            return data.squeeze(drop=True)
+
+        error = dataset["error"]
         error.name = f"{signal_name}_error"
-        error.attrs["name"] = error.name
+        error.attrs = {**data.attrs, "name": error.name}
 
-        dataset = xr.merge([data, error])
+        return xr.merge([data, error]).squeeze(drop=True)
+
+    def _prepare_image(
+        self, uda_name: str, dataset: xr.Dataset
+    ) -> xr.Dataset | xr.DataArray:
+        data = dataset["data"]
+        data.name = uda_name
+        data.attrs["name"] = uda_name
+        data.attrs["uda_name"] = uda_name
 
         if self._include_error:
-            return dataset
-        else:
-            return data
+            return data.to_dataset()
+        return data
 
-    def load_image(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
-        client = self._get_client()
-        image = client.get_images(name, shot_num)
-        dataset = self._convert_image_to_dataset(image)
-        dataset.name = name
-        dataset.attrs["name"] = name
-        dataset.attrs["uda_name"] = name
-        if self._include_error:
-            dataset = dataset.to_dataset()
-        return dataset
-
-    def _convert_image_to_dataset(self, image) -> xr.DataArray:
-        attrs = {
-            name: getattr(image, name)
-            for name in dir(image)
-            if not name.startswith("_") and not callable(getattr(image, name))
-        }
-
-        attrs.pop("frame_times")
-        attrs.pop("frames")
-
-        attrs["CLASS"] = "IMAGE"
-        attrs["IMAGE_VERSION"] = "1.2"
-
-        time = np.atleast_1d(image.frame_times)
-        coords = {"time": xr.DataArray(time, dims=["time"], attrs=dict(units="s"))}
-
-        if image.is_color:
-            frames = [np.dstack((frame.r, frame.g, frame.b)) for frame in image.frames]
-            frames = np.stack(frames)
-            if frames.shape[1] != image.height:
-                frames = np.swapaxes(frames, 1, 2)
-            dim_names = ["time", "height", "width", "channel"]
-
-            attrs["IMAGE_SUBCLASS"] = "IMAGE_TRUECOLOR"
-            attrs["INTERLACE_MODE"] = "INTERLACE_PIXEL"
-        else:
-            frames = [frame.k for frame in image.frames]
-            frames = np.stack(frames)
-            frames = np.atleast_3d(frames)
-            if frames.shape[1] != image.height:
-                frames = np.swapaxes(frames, 1, 2)
-            dim_names = ["time", "height", "width"]
-
-            attrs["IMAGE_SUBCLASS"] = "IMAGE_INDEXED"
-
-        dataset = xr.DataArray(frames, dims=dim_names, coords=coords, attrs=attrs)
-        return dataset
-
-    def _remove_exceptions(self, signal_name, signal):
-        """Handles when signal attributes contain exception objects"""
-        signal_attributes = dir(signal)
-        for attribute in signal_attributes:
-            try:
-                getattr(signal, attribute)
-            except UnicodeDecodeError as exception:
-                print(f"{signal_name} {attribute}: {exception}")
-                signal_attributes.remove(attribute)
-        return signal_attributes
-
-    def _get_signal_metadata_fields(self, signal, signal_name):
-        """Retrieves the appropriate metadata field for a given signal"""
-        return [
-            attribute
-            for attribute in self._remove_exceptions(signal_name, signal)
-            if not attribute.startswith("_")
-            and attribute not in ["data", "errors", "time", "meta", "dims"]
-            and not callable(getattr(signal, attribute))
-        ]
-
-    def _get_dataset_attributes(self, signal_name: str, signal) -> dict:
-        metadata = self._get_signal_metadata_fields(signal, signal_name)
-
-        attrs = {}
-        for field in metadata:
-            try:
-                attrs[field] = getattr(signal, field)
-            except TypeError:
-                pass
-
-        for key, attr in attrs.items():
-            if isinstance(attr, np.generic):
-                attrs[key] = attr.item()
-            elif isinstance(attr, np.ndarray):
-                attrs[key] = attr.tolist()
-            elif isinstance(attr, tuple):
-                attrs[key] = list(attr)
-            elif attr is None:
-                attrs[key] = "null"
-
-        attrs.pop("rank", "")
-        attrs.pop("shape", "")
-        attrs.pop("time_index", "")
-        return attrs
-
-    def _normalize_dimension_names(self, signal):
+    def _normalize_dimension_names(self, dataset: xr.Dataset) -> dict[t.Hashable, str]:
         """Make the dimension names sensible"""
-        dims = [dim.label for dim in signal.dims]
         count = 0
-        dim_names = []
+        names = {}
         empty_names = ["", " ", "-"]
 
-        for name in dims:
+        for dim in dataset.sizes:
+            name = str(dim)
+
             # Create names for unlabelled dims
             if name in empty_names:
                 name = f"dim_{count}"
                 count += 1
 
             # Normalize weird names to standard names
-            dim_names.append(name)
+            names[dim] = re.sub("[^a-zA-Z0-9_\n\\.]", "", name.lower())
 
-        dim_names = list(map(lambda x: x.lower(), dim_names))
-        dim_names = [re.sub("[^a-zA-Z0-9_\n\\.]", "", dim) for dim in dim_names]
-        return dim_names
+        return names
 
     @staticmethod
     def _extract_channel_template(

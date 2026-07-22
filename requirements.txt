@@ -12,10 +12,12 @@ pydantic
 rich
 s3fs
 s5cmd
+sal-xarray
 scipy
 sqlalchemy
 uda
 uda-mast
+uda-xarray
 xarray
 zarr>=3
 # git+ssh://git@git.ccfe.ac.uk/MAST-U/mastcodes.git@release/1.3.10#subdirectory=uda/python

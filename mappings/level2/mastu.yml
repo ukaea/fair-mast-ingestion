@@ -1,47 +1,70 @@
 facility: "MASTU"
 default_loader: "uda"
 plasma_current: "summary/ip"
-global_interpolate:
-  params:
-    time:
-      step: 0.00025
-      method: 'zero'
-      fill: 'ffill'
-      dropna: true
+default_start: -0.1
+
+license:
+  name: "Creative Commons 4.0 BY-SA"
+  url: "https://creativecommons.org/licenses/by-sa/4.0/"
 
 datasets:
   equilibrium:
     imas: "equilibrium"
-
+    description: "Description of a 2D, axi-symmetric, tokamak equilibrium; result of an equilibrium code."
     interpolate:
       time:
-        method: "none"
-      major_radius:
-        method: "none"
+        start: -0.1
+        step: 5e-3
+        method: 'zero'
         dropna: true
       z:
         method: "none"
+      major_radius:
+        start: 0.06
+        step: 0.03
+        end: 2.0
+        method: "linear"
+      n_boundary_coords:
+        method: "none"
         dropna: true
+      n_x_points_r:
+        method: "none"
+        dropna: true
+      n_x_points_z:
+        method: "none"
+        dropna: true
+      profile_r:
+        method: "none"
+      psi_norm:
+        method: "none"
+      n_pf_current:
+        method: "none"
+      n_b_field_pol_probe:
+        method: "none"
+      n_flux_loop:
+        method: "none"
 
     profiles:
       q:
-        source: "epm/output/fluxFunctionProfiles/q" 
+        source: "epm/output/radialProfiles/q"
         units: 'dimensionless'
         imas: "equilibrium.time_slice[:].profiles_1d.q"
-        dimension_order: ['major_radius', 'time']
+        description: "Safety factor (only positive when toroidal current and magnetic field are in same direction)"
+        dimension_order: ['profile_r', 'time']
         dimensions:
           time:
             source: "epm/time"
             units: 's'
             imas: "equilibrium.time_slice[:].time"
-          major_radius:
-            source: "epm/output/profiles2D/r"
-            units: 'm'
-            imas: "equilibrium.time_slice[:].coordinate_system.r"
-      j_tor:
-        source: "epm/output/profiles2D/jphi" 
-        imas: "equilibrium.time_slice[:].profiles_2d[:].j_tor"
-        dimension_order: ['major_radius', 'z', 'time']
+          profile_r:
+            units: 'dimensionless'
+
+      j_phi:
+        source: "epm/output/profiles2D/jphi"
+        units: 'A/m^2'
+        imas: "equilibrium.time_slice[:].profiles_2d[:].j_phi"
+        description: "Toroidal plasma current density"
+        dimension_order: ['z', 'major_radius', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -53,12 +76,20 @@ datasets:
             imas: "equilibrium.time_slice[:].coordinate_system.r"
           z:
             source: "epm/output/profiles2D/z"
+            units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.z"
 
       psi:
-        source: "epm/output/profiles2D/poloidalFlux" 
+        source: "epm/output/profiles2D/poloidalFlux"
+        units: 'Wb/rad'
         imas: "equilibrium.time_slice[:].profiles_2d[:].psi"
-        dimension_order: ['major_radius', 'z', 'time']
+        description: "Values of the poloidal flux at the grid in the
+          poloidal plane. The poloidal flux is integral of magnetic field
+          passing through a contour defined by the intersection of a flux
+          surface passing through the point of interest and a Z=constant plane.
+          If the integration surface is flat, the surface normal vector is in
+          the increasing vertical coordinate direction, Z, namely upwards."
+        dimension_order: ['z', 'major_radius', 'time']
         dimensions:
           time:
             source: "epm/time"
@@ -70,288 +101,962 @@ datasets:
             imas: "equilibrium.time_slice[:].coordinate_system.r"
           z:
             source: "epm/output/profiles2D/z"
+            units: 'm'
             imas: "equilibrium.time_slice[:].coordinate_system.z"
 
-      total_pressure:
-        source: "epm/output/radialProfiles/totalPressure"
-        dimension_order: ['major_radius', 'time']
+      f_df_dpsi:
+        source: "epm/output/fluxFunctionProfiles/ffPrime"
+        units: 'T*rad'
+        imas: "equilibrium.time_slice[:].profiles_1d.f_df_dpsi"
+        dimension_order: ['psi_norm', 'time']
         dimensions:
           time:
             source: "epm/time"
             units: 's'
             imas: "equilibrium.time_slice[:].time"
-          major_radius:
-            source: "epm/output/profiles2D/r"
-            units: 'm'
-            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
 
-      elongation:
-        source: "epm/output/separatrixGeometry/elongation" 
-        imas: "equilibrium.time_slice[:].boundary.elongation"
-        units: 'dimensionless'
+      dpressure_dpsi:
+        source: "epm/output/fluxFunctionProfiles/staticPPrime"
+        units: 'Pa*rad/Wb'
+        imas: "equilibrium.time_slice[:].profiles_1d.dpressure_dpsi"
+        dimension_order: ['psi_norm', 'time']
         dimensions:
           time:
             source: "epm/time"
+            units: 's'
             imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
 
-      elongation_axis:
-        source: "epm/output/separatrixGeometry/elongation" 
+      f:
+        source: "epm/output/fluxFunctionProfiles/rBphi"
+        units: 'T*m'
+        imas: "equilibrium.time_slice[:].profiles_1d.f"
+        description: "Diamagnetic function (F=R B_Phi)"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      pressure:
+        source: "epm/output/fluxFunctionProfiles/staticPressure"
+        units: 'Pa'
+        imas: "equilibrium.time_slice[:].profiles_1d.pressure"
+        description: "Pressure"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      total_pressure:
+        source: "epm/output/radialProfiles/totalPressure"
+        units: 'Pa'
+        description: "Total (static plus rotational) pressure on the radial grid" # MAST-U only; EFIT on MAST does not separate the rotational term
+        dimension_order: ['profile_r', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          profile_r:
+            units: 'dimensionless'
+
+      area_psi:
+        source: "epm/output/fluxFunctionProfiles/poloidalFluxArea"
+        units: 'm^2'
+        imas: "equilibrium.time_slice[:].profiles_1d.area"
+        description: "Cross-sectional area of the flux surface"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      volume_psi:
+        source: "epm/output/fluxFunctionProfiles/plasmaFluxVolume"
+        units: 'm^3'
+        imas: "equilibrium.time_slice[:].profiles_1d.volume"
+        description: "Volume enclosed inside the magnetic surface"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      elongation_psi:
+        source: "epm/output/fluxFunctionProfiles/elongation"
         units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.elongation"
+        description: "Elongation of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      triangularity_lower_psi:
+        source: "epm/output/fluxFunctionProfiles/lowerTriangularity"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        description: "Lower triangularity of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      triangularity_upper_psi:
+        source: "epm/output/fluxFunctionProfiles/upperTriangularity"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        description: "Upper triangularity of the flux surfaces"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      elongation:
+        source: "epm/output/separatrixGeometry/elongation"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.elongation"
+        description: "Elongation of the plasma boundary"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       x_point_r:
-        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
         source:
-          - name: "EFM_XPOINT_R"
+          - name: "EPM_XPOINT_R"
             channels:
-              - "epm/output/separatrixGeometry/dndXpoint1R" 
-              - "epm/output/separatrixGeometry/dndXpoint2R" 
-        units: "dimensionless"
+              - "epm/output/separatrixGeometry/dndXpoint1R"
+              - "epm/output/separatrixGeometry/dndXpoint2R"
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
+        units: "m"
+        description: "Major radius of the plasma boundary X-points"
         dimensions:
-          n_x_points:
+          n_x_points_r:
           time:
             imas: "equilibrium.time_slice[:].time"
 
       x_point_z:
-        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
         source:
-          - name: "EFM_XPOINT_Z"
+          - name: "EPM_XPOINT_Z"
             channels:
-              - "epm/output/separatrixGeometry/dndXpoint1Z" 
-              - "epm/output/separatrixGeometry/dndXpoint2Z" 
-        units: "dimensionless"
+              - "epm/output/separatrixGeometry/dndXpoint1Z"
+              - "epm/output/separatrixGeometry/dndXpoint2Z"
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
+        units: "m"
+        description: "Height of the plasma boundary X-points"
         dimensions:
-          n_x_points:
+          n_x_points_z:
           time:
             imas: "equilibrium.time_slice[:].time"
 
       minor_radius:
-        source: "epm/output/separatrixGeometry/minorRadius" 
-        units: "dimensionless"
-        imas: "equilibrium.time_slice[:].boundary.minor_radius" 
+        source: "epm/output/separatrixGeometry/minorRadius"
+        units: "m"
+        imas: "equilibrium.time_slice[:].boundary.minor_radius"
+        description: "Minor radius of the plasma boundary (defined as (Rmax-Rmin) / 2 of the boundary)"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_lower:
-        source: "epm/output/separatrixGeometry/lowerTriangularity" 
-        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_lower"
+        source: "epm/output/separatrixGeometry/lowerTriangularity"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.triangularity_lower"
+        description: "Lower triangularity w.r.t. magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       triangularity_upper:
-        source: "epm/output/separatrixGeometry/upperTriangularity" 
-        imas: "equilibrium.time_slice[:].profiles_1d.triangularity_upper"
+        source: "epm/output/separatrixGeometry/upperTriangularity"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].boundary.triangularity_upper"
+        description: "Upper triangularity w.r.t. magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       magnetic_axis_r:
-        source: "epm/output/globalParameters/magneticAxis/R" 
+        source: "epm/output/globalParameters/magneticAxis/R"
+        units: 'm'
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
+        description: "Major radius of the magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       magnetic_axis_z:
-        source: "epm/output/globalParameters/magneticAxis/Z" 
+        source: "epm/output/globalParameters/magneticAxis/Z"
+        units: 'm'
         imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
+        description: "Height of the magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
-      beta_normal:
-        source: "epm/output/globalParameters/betan" 
-        units: "dimensionless"
-        imas: "equilibrium.time_slice[:].global_quantities.beta_normal"
+      geometric_axis_z:
+        source: "epm/output/separatrixGeometry/zGeom"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].boundary.geometric_axis.z"
+        description: "Height of the geometric axis of the plasma boundary" # EPM publishes no matching rGeom, so there is no geometric_axis_r on MAST-U
         dimensions:
           time:
             source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      beta_tor_normal:
+        source: "epm/output/globalParameters/betan"
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.beta_tor_normal"
+        description: "Normalized toroidal beta, defined as 100 * beta_tor * a[m] * B0 [T] / ip [MA]"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
 
       beta_pol:
-        source: "epm/output/globalParameters/betap" 
+        source: "epm/output/globalParameters/betap"
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
+        description: "Poloidal beta. Defined as betap = 4 int(p dV) / [R_0 * mu_0 * Ip^2]"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       beta_tor:
-        source: "epm/output/globalParameters/betat" 
+        source: "epm/output/globalParameters/betat"
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
+        description: "Toroidal beta, defined as the volume-averaged total perpendicular pressure divided by (B0^2/(2*mu0)), i.e. beta_toroidal = 2 mu0 int(p dV) / V / B0^2"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       bphi_rmag:
-        source: "epm/output/globalParameters/bphiRmag" 
+        source: "epm/output/globalParameters/bphiRmag"
+        units: 'T'
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.b_field_tor"
+        description: "Total toroidal magnetic field at the magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
+
       bvac_rmag:
-        source: "epm/output/globalParameters/bvacRmag" 
+        source: "epm/output/globalParameters/bvacRmag"
+        units: 'T'
+        description: "Vacuum toroidal magnetic field at the magnetic axis"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
+
+      bvac_val:
+        source: "epm/output/globalParameters/bvacRgeom"
+        units: 'T'
+        imas: "equilibrium.vacuum_toroidal_field.b0"
+        description: "Vacuum toroidal magnetic field at the geometric axis" # MAST reports this at a separately-stored reference radius (bvac_r); EPM has no equivalent radius signal
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
       li:
-        source: "epm/output/globalParameters/li1" 
-        imase_name: "equilibrium.time_slice[:].global_quantities.li_3"
-        dimensions:
-          time:
-            source: "epm/time"
-            imas: "equilibrium.time_slice[:].time"
-      q0:
-        source: "epm/output/globalParameters/q0" 
+        source: "epm/output/globalParameters/li3"
         units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.li_3"
+        description: "Internal inductance"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
+
+      area:
+        source: "epm/output/globalParameters/poloidalArea"
+        units: 'm^2'
+        imas: "equilibrium.time_slice[:].global_quantities.area"
+        description: "Area of the poloidal cross section"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      ip:
+        source: "epm/output/globalParameters/plasmaCurrent"
+        units: 'A'
+        imas: "equilibrium.time_slice[:].global_quantities.ip"
+        description: "Plasma current (toroidal component). Positive sign means anti-clockwise when viewed from above."
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      psi_axis:
+        source: "epm/output/globalParameters/psiAxis"
+        units: 'Wb/rad'
+        imas: "equilibrium.time_slice[:].global_quantities.psi_axis"
+        description: "Poloidal flux at the magnetic axis"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      psi_boundary:
+        source: "epm/output/globalParameters/psiBoundary"
+        units: 'Wb/rad'
+        imas: "equilibrium.time_slice[:].global_quantities.psi_boundary"
+        description: "Poloidal flux at the selected plasma boundary"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      q_axis:
+        source: "epm/output/globalParameters/q0"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.q_axis"
+        description: "q at the magnetic axis"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
       q95:
-        source: "epm/output/globalParameters/q95" 
-        imas: "equilibrium.time_slice[:].global_quantities.q_95"
+        source: "epm/output/globalParameters/q95"
         units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.q_95"
+        description: "q at the 95% poloidal flux surface (only positive when toroidal current and magnetic field are in same direction)"
         dimensions:
           time:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
       lcfs_r:
-        source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/RBOUNDARY" 
+        source: "epm/output/separatrixGeometry/rBoundary"
+        units: 'm'
         imas: "equilibrium.time_slice[:].boundary.lcfs.r"
         dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
           n_boundary_coords:
+            units: 'dimensionless'
 
       lcfs_z:
-        source: "EPM/OUTPUT/SEPARATRIXGEOMETRY/ZBOUNDARY" 
+        source: "epm/output/separatrixGeometry/zBoundary"
+        units: 'm'
         imas: "equilibrium.time_slice[:].boundary.lcfs.z"
         dimension_order: ['n_boundary_coords', 'time']
         dimensions:
           time:
             source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
           n_boundary_coords:
+            units: 'dimensionless'
+
+      rpsi100_in:
+        source: "epm/output/separatrixGeometry/rmidplaneIn"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_inboard"
+        description: "Radial coordinate on the inboard side, at 100% normalised poloidal flux"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      rpsi100_out:
+        source: "epm/output/separatrixGeometry/rmidplaneOut"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_outboard"
+        description: "Radial coordinate on the outboard side, at 100% normalised poloidal flux"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
 
       vloop_static:
-        source: "/esm/vloop_static" 
+        source: "esm/vloop/static"
+        units: 'V'
+        description: "Static LCFS loop voltage"
         dimensions:
           time:
+            imas: "equilibrium.time_slice[:].time"
+
       vloop_dynamic:
-        source: "/esm/vloop_dynamic" 
+        source: "esm/vloop/dynamic"
+        units: 'V'
+        description: "Dynamic LCFS loop voltage"
         dimensions:
           time:
+            imas: "equilibrium.time_slice[:].time"
+
+      pf_current:
+        source: "epm/input/constraints/pfCircuits/target"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].measured"
+        units: "A"
+        description: "Measured PF coil current used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      pf_current_reconstructed:
+        source: "epm/input/constraints/pfCircuits/computed"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].reconstructed"
+        units: "A"
+        description: "PF coil current reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      pf_current_sigma:
+        source: "epm/input/constraints/pfCircuits/sigmas"
+        units: "A"
+        description: "Standard deviation assigned to the PF coil current constraint" # EPM stores sigma directly; MAST instead publishes pf_current_chi_squared
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      pf_current_weight:
+        source: "epm/input/constraints/pfCircuits/weights"
+        imas: "equilibrium.time_slice[:].constraints.pf_current[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the PF coil current constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_pf_current:
+
+      b_field_pol_probe_measured:
+        source: "epm/input/constraints/magneticProbes/target"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].measured"
+        units: "T"
+        description: "Measured poloidal magnetic field probe value used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_reconstructed:
+        source: "epm/input/constraints/magneticProbes/computed"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].reconstructed"
+        units: "T"
+        description: "Poloidal magnetic field probe value reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_sigma:
+        source: "epm/input/constraints/magneticProbes/sigmas"
+        units: "T"
+        description: "Standard deviation assigned to the poloidal magnetic field probe constraint" # EPM stores sigma directly; MAST instead publishes b_field_pol_probe_chi_squared
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      b_field_pol_probe_weight:
+        source: "epm/input/constraints/magneticProbes/weights"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the poloidal magnetic field probe constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_b_field_pol_probe:
+
+      flux_loop_measured:
+        source: "epm/input/constraints/fluxLoops/target"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].measured"
+        units: "Wb"
+        description: "Measured flux loop value used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_reconstructed:
+        source: "epm/input/constraints/fluxLoops/computed"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].reconstructed"
+        units: "Wb"
+        description: "Flux loop value reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_sigma:
+        source: "epm/input/constraints/fluxLoops/sigmas"
+        units: "Wb"
+        description: "Standard deviation assigned to the flux loop constraint" # EPM stores sigma directly; MAST instead publishes flux_loop_chi_squared
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      flux_loop_weight:
+        source: "epm/input/constraints/fluxLoops/weights"
+        imas: "equilibrium.time_slice[:].constraints.flux_loop[:].weight"
+        units: "dimensionless"
+        description: "Weight given to the flux loop constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+          n_flux_loop:
+
+      ip_measured:
+        source: "epm/input/constraints/plasmaCurrent/target"
+        imas: "equilibrium.time_slice[:].constraints.ip.measured"
+        units: "A"
+        description: "Measured plasma current used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      diamagnetic_flux_measured:
+        source: "epm/input/constraints/diamagneticFlux/target"
+        imas: "equilibrium.time_slice[:].constraints.diamagnetic_flux.measured"
+        units: "Wb"
+        description: "Measured diamagnetic flux used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      diamagnetic_flux_reconstructed:
+        source: "epm/input/constraints/diamagneticFlux/computed"
+        imas: "equilibrium.time_slice[:].constraints.diamagnetic_flux.reconstructed"
+        units: "Wb"
+        description: "Diamagnetic flux reconstructed from the equilibrium fit"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
 
   pulse_schedule:
     imas: pulse_schedule
+    description: "Description of Pulse Schedule, described by subsystems waveform references and an envelope around them. The controllers, pulse schedule and SDN are defined in separate IDSs."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
       i_plasma:
         source: "XDC/PLASMA/T/IP_REF"
-        imas: "pulse_schedule.flux_control.i_plasma" 
         target_units: "A"
+        imas: "pulse_schedule.flux_control.ip"
+        description: "Plasma current"
         dimensions:
           time:
+
       n_e_line:
-        source: "xdc/fuelling/t/density_ref_target"
+        source: "xdc/fuelling/t/density_ref_target" # not recorded for every shot; the reader skips the profile when absent
         imas: "pulse_schedule.density_control.n_e_line"
-        dimensions:
-          time:
+        description: "Line integrated electron density over a line of sight in the whole vacuum chamber"
         units: "m^-2"
         scale: 1e21
+        dimensions:
+          time:
+
+      z_ref:
+        source: "xdc/zmanage/t/zref"
+        target_units: "m"
+        imas: "pulse_schedule.position_control.magnetic_axis.z.reference.data"
+        description: "Z position reference waveform" # on MAST-U this waveform is uploaded to the Z-controller FPGA at shot start
+        dimensions:
+          time:
 
   summary:
     imas: "summary"
+    description: "Summary of physics quantities from a simulation or an experiment.
+      Dynamic quantities are either taken at given time slices (indicated in the “time” vector) or
+      time-averaged over an interval (in such case the “time_width” of the interval is indicated
+      and the “time” vector represents the end of each time interval)."
+    interpolate:
+      time:
+        start: -0.1
+        step: 1e-3
+        method: 'zero'
+        dropna: true
     profiles:
       ip:
         source: "AMC/PLASMA_CURRENT"
         imas: "summary.global_quantities.ip"
+        description: "Total plasma current (toroidal component). Positive sign means anti-clockwise when viewed from above."
         target_units: "A"
         dimensions:
           time:
+            imas: "summary.time"
+
       line_average_n_e:
+        source: "esm/density/nebar"
         imas: "summary.line_average.n_e.value"
-        source: "/esm/nebar"
+        description: "Line averaged electron density"
         dimensions:
           time:
+            imas: "summary.time"
+
       power_nbi:
-        source: "/ANB/SUM/POWER"
+        source: "anb/sum/power"
         target_units: "W"
         imas: "summary.heating_current_drive.power_nbi"
+        description: "Total NBI power coupled to the plasma"
         dimensions:
           time:
+            imas: "summary.time"
+
+      power_ohm:
+        source: "esm/power/pohm"
+        target_units: "W"
+        imas: "summary.global_quantities.power_ohm.value"
+        description: "Ohmic heating power"
+        dimensions:
+          time:
+            imas: "summary.time"
+
       neutron_rates_total:
-        source: "/ANU/FC/DETECTOR1/NEUTRONS_VAR"
+        source: "anu/fc/detector1/neutrons_var"
         imas: "summary.fusion.neutron_rates.total"
+        description: "Total neutron rate from all reactions"
         units: "cps"
         target_units: "Hz"
         dimensions:
           time:
+            imas: "summary.time"
+
       power_radiated:
+        source: "abm/prad"
         imas: "summary.global_quantities.power_radiated.value"
-        source: "/abm/prad"
         target_units: "W"
+        description: "Total radiated power"
         dimensions:
           time:
             imas: "summary.time"
+
       greenwald_density:
-        source: "/esm/nG"
+        source: "esm/density/ng"
+        units: "m^-3"
+        description: "Greenwald density limit"
         dimensions:
           time:
             imas: "summary.time"
+
       greenwald_fraction:
-        source: "/esm/fG"
+        source: "esm/density/fg"
+        units: "dimensionless"
         imas: "summary.global_quantities.greenwald_fraction.value"
+        description: "Line averaged density as a fraction of the Greenwald density limit" # MAST-U only; MAST publishes no equivalent ESM signal
         dimensions:
           time:
             imas: "summary.time"
-        
+
+  bolometer:
+    imas: "bolometer"
+    description: "Bolometer diagnostic: per-chord radiated signal from the MAST-U ABM core array."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-4
+        method: 'zero'
+        dropna: true
+    profiles:
+      power:
+        source: "abm/core/brightness"
+        imas: "bolometer.channel[:].power.data"
+        units: "W/m^2"
+        description: "Incident irradiance at each bolometer detector" # IMAS slot is typed W; MAST-U calibration produces W/m^2
+        dimension_order: ['bolometer_channel', 'time']
+        dimensions:
+          time:
+            imas: "bolometer.channel[:].power.time"
+          bolometer_channel:
+
+      power_radiated_total:
+        source: "abm/prad"
+        imas: "bolometer.power_radiated_total"
+        target_units: "W"
+        description: "Total radiated power integrated across the array"
+        dimensions:
+          time:
+            imas: "bolometer.time"
+
+      validity:
+        source: "abm/core/good"
+        imas: "bolometer.channel[:].validity"
+        description: "Per-channel status flag (0 = failed, 1 = OK in ABM convention)"
+        dimensions:
+          bolometer_channel:
+
+  interferometer:
+    imas: "interferometer"
+    description: "Interferometer diagnostic"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-5
+        method: 'zero'
+        dropna: true
+    profiles:
+      n_e_line:
+        source: "ane/density"
+        imas: "interferometer.channel[:].n_e_line.data"
+        units: "m^-2"
+        description: "Line integrated electron density"
+        dimensions:
+          time:
+            imas: "interferometer.channel[:].n_e_line.time"
+
+  controllers:
+    imas: "controllers"
+    description: "Plasma control system states, proxies, and feedback signals."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
+    profiles:
+      zip_proxy:
+        source: "xdc/zmanage/f/zip"
+        imas: "controllers.linear_controller[:].inputs.data"
+        units: "m*A"
+        description: "Z-position × Ip proxy" # used as input to the vertical stability controller. The linear_controller[:] index into which this lands refers to the Z stability controller.
+        dimensions:
+          time:
+            imas: "controllers.time"
+
+  gas_injection:
+    imas: "gas_injection"
+    description: "Gas injection by a system of pipes and valves."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
+    profiles:
+      valve_voltage:
+        imas: "gas_injection.valve[:].voltage.data"
+        units: "V"
+        description: "Measured piezo valve drive voltage"
+        source:
+          - name: "XDC/GAS/F"
+            channels:
+              - "xdc/gas/f/hfs_bot_b03"
+              - "xdc/gas/f/hfs_bot_b09"
+              - "xdc/gas/f/hfs_mid_l02"
+              - "xdc/gas/f/hfs_mid_l08"
+              - "xdc/gas/f/hfs_mid_u02"
+              - "xdc/gas/f/hfs_mid_u08"
+              - "xdc/gas/f/hfs_top_t03"
+              - "xdc/gas/f/hfs_top_t09"
+              - "xdc/gas/f/lfsd_bot_l0102"
+              - "xdc/gas/f/lfsd_bot_l0304"
+              - "xdc/gas/f/lfsd_bot_l0506"
+              - "xdc/gas/f/lfsd_bot_l0708"
+              - "xdc/gas/f/lfsd_bot_l0910"
+              - "xdc/gas/f/lfsd_bot_l1112"
+              - "xdc/gas/f/lfsd_top_u0102"
+              - "xdc/gas/f/lfsd_top_u0304"
+              - "xdc/gas/f/lfsd_top_u0506"
+              - "xdc/gas/f/lfsd_top_u0708"
+              - "xdc/gas/f/lfsd_top_u0910"
+              - "xdc/gas/f/lfsd_top_u1112"
+              - "xdc/gas/f/lfss_bot_l0112"
+              - "xdc/gas/f/lfss_bot_l0203"
+              - "xdc/gas/f/lfss_bot_l0405"
+              - "xdc/gas/f/lfss_bot_l0607"
+              - "xdc/gas/f/lfss_bot_l0809"
+              - "xdc/gas/f/lfss_bot_l1011"
+              - "xdc/gas/f/lfss_top_u0112"
+              - "xdc/gas/f/lfss_top_u0203"
+              - "xdc/gas/f/lfss_top_u0405"
+              - "xdc/gas/f/lfss_top_u0607"
+              - "xdc/gas/f/lfss_top_u0809"
+              - "xdc/gas/f/lfss_top_u1011"
+              - "xdc/gas/f/lfsv_bot_l03"
+              - "xdc/gas/f/lfsv_bot_l09"
+              - "xdc/gas/f/lfsv_top_u05"
+              - "xdc/gas/f/lfsv_top_u11"
+              - "xdc/gas/f/pfr_bot_b01"
+              - "xdc/gas/f/pfr_bot_b03"
+              - "xdc/gas/f/pfr_bot_b05"
+              - "xdc/gas/f/pfr_bot_b07"
+              - "xdc/gas/f/pfr_bot_b09"
+              - "xdc/gas/f/pfr_bot_b11"
+              - "xdc/gas/f/pfr_top_t01"
+              - "xdc/gas/f/pfr_top_t03"
+              - "xdc/gas/f/pfr_top_t05"
+              - "xdc/gas/f/pfr_top_t07"
+              - "xdc/gas/f/pfr_top_t09"
+              - "xdc/gas/f/pfr_top_t11"
+        dimensions:
+          valve_channel:
+          time:
+            imas: "gas_injection.valve[:].voltage.time"
+
+      valve_target_voltage:
+        imas: "gas_injection.valve[:].target_voltage.data"
+        units: "V"
+        description: "Requested piezo valve drive voltage"
+        source:
+          - name: "XDC/GAS/T"
+            channels:
+              - "xdc/gas/t/hfs_bot_b03"
+              - "xdc/gas/t/hfs_bot_b09"
+              - "xdc/gas/t/hfs_mid_l02"
+              - "xdc/gas/t/hfs_mid_l08"
+              - "xdc/gas/t/hfs_mid_u02"
+              - "xdc/gas/t/hfs_mid_u08"
+              - "xdc/gas/t/hfs_top_t03"
+              - "xdc/gas/t/hfs_top_t09"
+              - "xdc/gas/t/lfsd_bot_l0102"
+              - "xdc/gas/t/lfsd_bot_l0304"
+              - "xdc/gas/t/lfsd_bot_l0506"
+              - "xdc/gas/t/lfsd_bot_l0708"
+              - "xdc/gas/t/lfsd_bot_l0910"
+              - "xdc/gas/t/lfsd_bot_l1112"
+              - "xdc/gas/t/lfsd_top_u0102"
+              - "xdc/gas/t/lfsd_top_u0304"
+              - "xdc/gas/t/lfsd_top_u0506"
+              - "xdc/gas/t/lfsd_top_u0708"
+              - "xdc/gas/t/lfsd_top_u0910"
+              - "xdc/gas/t/lfsd_top_u1112"
+              - "xdc/gas/t/lfss_bot_l0112"
+              - "xdc/gas/t/lfss_bot_l0203"
+              - "xdc/gas/t/lfss_bot_l0405"
+              - "xdc/gas/t/lfss_bot_l0607"
+              - "xdc/gas/t/lfss_bot_l0809"
+              - "xdc/gas/t/lfss_bot_l1011"
+              - "xdc/gas/t/lfss_top_u0112"
+              - "xdc/gas/t/lfss_top_u0203"
+              - "xdc/gas/t/lfss_top_u0405"
+              - "xdc/gas/t/lfss_top_u0607"
+              - "xdc/gas/t/lfss_top_u0809"
+              - "xdc/gas/t/lfss_top_u1011"
+              - "xdc/gas/t/lfsv_bot_l03"
+              - "xdc/gas/t/lfsv_bot_l09"
+              - "xdc/gas/t/lfsv_top_u05"
+              - "xdc/gas/t/lfsv_top_u11"
+              - "xdc/gas/t/pfr_bot_b01"
+              - "xdc/gas/t/pfr_bot_b03"
+              - "xdc/gas/t/pfr_bot_b05"
+              - "xdc/gas/t/pfr_bot_b07"
+              - "xdc/gas/t/pfr_bot_b09"
+              - "xdc/gas/t/pfr_bot_b11"
+              - "xdc/gas/t/pfr_top_t01"
+              - "xdc/gas/t/pfr_top_t03"
+              - "xdc/gas/t/pfr_top_t05"
+              - "xdc/gas/t/pfr_top_t07"
+              - "xdc/gas/t/pfr_top_t09"
+              - "xdc/gas/t/pfr_top_t11"
+        dimensions:
+          target_valve_channel:
+          time:
+            imas: "gas_injection.valve[:].target_voltage.time"
 
   pf_active:
     imas: "pf_active"
+    description: "Description of the axisymmetric active poloidal field (PF)
+      coils and supplies; includes the limits of these systems; includes the
+      forces on them; does not include non-axisymmetric coil systems"
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-5
+        method: 'zero'
+        dropna: true
     profiles:
-      solenoid_current:
-        source: "/AMC/ROGEXT/P1"
-        dimensions:
-          time:
-            imas: "summary.time"
-
-      coils_current:
+      coil_current:
         imas: "pf_active.coil[:].current.data"
+        target_units: "A"
+        description: "Measured PF coil current"
         source:
-          - name: "AMC" 
+          - name: "AMC"
             channels:
-               - "/AMC/ROGEXT/P1"
-               - "/AMC/ROGEXT/P4L"
-               - "/AMC/ROGEXT/P4U"
-               - "/AMC/ROGEXT/P5L"
-               - "/AMC/ROGEXT/P5U"
-               - "/AMC/ROGEXT/P6L"
-               - "/AMC/ROGEXT/P6U"
-               - "/AMC/ROGEXT/PXL"
-               - "/AMC/ROGEXT/PXU"
-
+              - "/AMC/ROGEXT/P1"
+              - "/AMC/ROGEXT/P4L"
+              - "/AMC/ROGEXT/P4U"
+              - "/AMC/ROGEXT/P5L"
+              - "/AMC/ROGEXT/P5U"
+              - "/AMC/ROGEXT/P6L"
+              - "/AMC/ROGEXT/P6U"
+              - "/AMC/ROGEXT/PXL"
+              - "/AMC/ROGEXT/PXU"
         dimensions:
-          channel:
-          time: 
+          current_channel:
+          time:
             imas: "pf_active.coil[:].current.time"
 
       coil_voltage:
         imas: "pf_active.coil[:].voltage.data"
+        units: "V"
+        description: "PF coil drive voltage demanded by the plasma control system"
         source:
           - name: "XDC/PF"
             channels:
@@ -361,27 +1066,52 @@ datasets:
               - '/xdc/pf/f/pc'
               - '/xdc/pf/f/px'
         dimensions:
-          channel:
-          time: 
+          voltage_channel:
+          time:
             imas: "pf_active.coil[:].voltage.time"
-      
+
+  tf:
+    imas: "tf"
+    description: "Toroidal field coils"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-4
+        method: 'zero'
+        dropna: true
+    profiles:
+      coil_current:
+        source: "amc/rogext/tf"
+        imas: "tf.coil[:].current.data"
+        target_units: "A"
+        description: "TF feed current"
+        dimensions:
+          time:
+            imas: "tf.coil[:].current.time"
+
   magnetics:
     imas: "magnetics"
+    description: "Magnetic diagnostics for equilibrium identification and plasma shape control."
 
     interpolate:
       time:
-        step: 0.0002
+        start: -0.1
+        step: 2e-4
         method: 'zero'
+        dropna: true
 
       time_omaha:
-        step: 0.000001
+        start: -0.1
+        step: 1e-6
         method: 'zero'
+        dropna: true
 
     profiles:
-      ip: 
+      ip:
         imas: "magnetics.ip[:].data"
         source: "/AMC/PLASMA_CURRENT"
         target_units: "A"
+        description: "Plasma current measured by the Rogowski coils"
         dimensions:
           time:
             imas: "magnetics.time"
@@ -389,6 +1119,7 @@ datasets:
       b_field_pol_probe_field:
         imas: "magnetics.b_field_pol_probe[:].field.data"
         units: "T"
+        description: "Poloidal field pickup coil array" # MAST-U has a single pickup array, so this is not split per-array as it is on MAST
         source:
           - name: "AMB"
             channels:
@@ -605,6 +1336,7 @@ datasets:
       b_field_tor_probe_saddle_field:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         target_units: "T"
+        description: "Saddle coil array field"
         source:
           - name: "ASM/SAD/OUT"
             channels:
@@ -635,6 +1367,7 @@ datasets:
       b_field_tor_probe_omaha_voltage:
         imas: "magnetics.b_field_tor_probe[:].voltage.data"
         units: "V"
+        description: "High bandwidth saddle coil voltage from the OMAHA digitisers"
         source:
           - name: "XMO/OMAHA"
             channels:
@@ -663,10 +1396,11 @@ datasets:
           time_omaha:
             imas: "magnetics.b_field_tor_probe[:].voltage.time"
 
-
       flux_loop_flux:
         imas: "magnetics.flux_loop[:].flux.data"
-        source: 
+        units: "Wb"
+        description: "Poloidal flux measured by the flux loop array"
+        source:
           - name: "AMB_FL"
             channels:
               - "/AMB/FLUX/F_BL_01"
@@ -771,7 +1505,9 @@ datasets:
 
       flux_loop_voltage:
         imas: "magnetics.flux_loop[:].voltage.data"
-        source: 
+        units: "V"
+        description: "Loop voltage measured by the flux loop array" # MAST-U only; MAST does not digitise loop voltage per flux loop
+        source:
           - name: "AMB_LOOPV"
             channels:
               - "/AMB/LOOPV/LV_BL_01"
@@ -875,82 +1611,41 @@ datasets:
           time:
             imas: "magnetics.time"
 
-      # rogowski_coil_current:
-      #   imas: "magnetics.rogowski_coil[:].current.data"
-      #   target_units: "A"
-      #   source:
-      #     - name: "AMH/HALO"
-      #       channels:
-      #         - "/AMC/HALO/H_CC_L_01"
-      #         - "/AMC/HALO/H_CC_U_01"
-      #         - "/AMC/HALO/H_CC_U_02"
-      #         - "/AMC/HALO/H_D2L_01"
-      #         - "/AMC/HALO/H_D2L_02"
-      #         - "/AMC/HALO/H_D2L_03"
-      #         - "/AMC/HALO/H_D3L_01"
-      #         - "/AMC/HALO/H_D3L_02"
-      #         - "/AMC/HALO/H_D3L_03"
-      #         - "/AMC/HALO/H_D3L_04"
-      #         - "/AMC/HALO/H_D3L_05"
-      #         - "/AMC/HALO/H_D3L_06"
-      #         - "/AMC/HALO/H_D3U_01"
-      #         - "/AMC/HALO/H_D3U_02"
-      #         - "/AMC/HALO/H_D3U_03"
-      #         - "/AMC/HALO/H_D5L_01"
-      #         - "/AMC/HALO/H_D5L_02"
-      #         - "/AMC/HALO/H_D5L_03"
-      #         - "/AMC/HALO/H_D5L_04"
-      #         - "/AMC/HALO/H_D5L_05"
-      #         - "/AMC/HALO/H_D5L_06"
-      #         - "/AMC/HALO/H_D5U_01"
-      #         - "/AMC/HALO/H_D5U_02"
-      #         - "/AMC/HALO/H_D5U_03"
-      #         - "/AMC/HALO/H_D5U_04"
-      #         - "/AMC/HALO/H_DPL_01"
-      #         - "/AMC/HALO/H_DPL_02"
-      #         - "/AMC/HALO/H_DPL_03"
-      #         - "/AMC/HALO/H_DPL_04"
-      #         - "/AMC/HALO/H_DPU_01"
-      #         - "/AMC/HALO/H_DPU_02"
-      #         - "/AMC/HALO/H_P6L_01"
-      #         - "/AMC/HALO/H_P6L_02"
-      #         - "/AMC/HALO/H_P6L_03"
-      #         - "/AMC/HALO/H_P6L_04"
-      #         - "/AMC/HALO/H_P6U_01"
-      #         - "/AMC/HALO/H_P6U_02"
-      #         - "/AMC/HALO/H_P6U_03"
-      
-      #   dimensions:
-      #     rogowski_coil_channel:
-      #     time:
-      #       imas: "magnetics.time"
-
   spectrometer_visible:
+    imas: "spectrometer_visible"
+    description: "Spectrometer in visible light range diagnostic"
     interpolate:
-      time: 
+      time:
+        start: -0.01
         step: 2e-5
+        method: 'zero'
+        dropna: true
 
     profiles:
-      filter_spectrometer:
+      filter_spectrometer_dalpha_voltage:
         imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.data"
         units: "V"
+        description: "D-alpha filtered photomultiplier voltage"
         source:
           - name: "XIM_DA"
             channels:
               - "XIM/Da/HM10/R"
               - "XIM/Da/HM10/T"
+              - "XIM/Da/HU10/OSP"
         dimensions:
-          channel:
+          dalpha_channel:
           time:
             imas: "spectrometer_visible.channel[:].filter_spectrometer.photoelectric_voltage.time"
 
   thomson_scattering:
     imas: thomson_scattering
+    description: "Thomson scattering diagnostic"
     interpolate:
       time:
-        step: 0.005
+        start: 0 # diagnostic doesn't pre-trigger
+        step: 5e-3
         fill: 'none'
-        dropna: False
+        dropna: false
       major_radius:
         start: 0.3
         end: 1.5
@@ -961,56 +1656,68 @@ datasets:
     profiles:
       t_e_core:
         source: "ayc/t_e_core"
+        units: "eV"
+        description: "Core electron temperature"
         dimensions:
           time:
             source: "ayc/time"
+            imas: "thomson_scattering.channel[:].t_e.time"
 
       n_e_core:
         source: "ayc/n_e_core"
+        units: "1/m ** 3"
+        description: "Core electron density"
         dimensions:
           time:
             source: "ayc/time"
+            imas: "thomson_scattering.channel[:].n_e.time"
 
       t_e:
-        imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayc/t_e"
+        imas: "thomson_scattering.channel[:].t_e"
+        units: "eV"
+        description: "Electron temperature"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
-            imas: "thomson_scattering.channel[:].t_e.time"
             source: "ayc/time"
-          major_radius: 
+            imas: "thomson_scattering.channel[:].t_e.time"
+          major_radius:
             imas: "thomson_scattering.channel[:].position.r"
-            source: "ayc/r"
 
       n_e:
-        imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayc/n_e"
+        imas: "thomson_scattering.channel[:].n_e"
+        units: "1/m ** 3"
+        description: "Electron density"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
-            imas: "thomson_scattering.channel[:].n_e.time"
             source: "ayc/time"
-          major_radius: 
+            imas: "thomson_scattering.channel[:].n_e.time"
+          major_radius:
             imas: "thomson_scattering.channel[:].position.r"
-            source: "ayc/r"
 
       p_e:
         source: "ayc/p_e"
+        units: "Pa"
+        description: "Electron pressure"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "ayc/time"
-          major_radius: 
-            source: "ayc/r"
+          major_radius:
+            imas: "thomson_scattering.channel[:].position.r"
 
   thomson_scattering_divertor:
     imas: thomson_scattering
+    description: "Divertor Thomson scattering diagnostic" # MAST-U only; MAST has no divertor Thomson system
     interpolate:
       time:
-        step: 0.005
+        start: 0 # diagnostic doesn't pre-trigger
+        step: 5e-3
         fill: 'none'
-        dropna: False
+        dropna: false
       major_radius:
         start: 0.3
         end: 1.5
@@ -1019,106 +1726,118 @@ datasets:
         method: 'linear'
 
     profiles:
-      t_e_core:
-        source: "ayd/t_e_core"
-        dimensions:
-          time:
-            source: "ayd/time"
-
-      n_e_core:
-        source: "ayd/n_e_core"
-        dimensions:
-          time:
-            source: "ayd/time"
-
       t_e:
-        imas: "thomson_scattering.channel[:].t_e.data"
         source: "ayd/t_e"
+        imas: "thomson_scattering.channel[:].t_e"
+        units: "eV"
+        description: "Electron temperature"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
-            imas: "thomson_scattering.channel[:].t_e.time"
             source: "ayd/time"
-          major_radius: 
+            imas: "thomson_scattering.channel[:].t_e.time"
+          major_radius:
             imas: "thomson_scattering.channel[:].position.r"
-            source: "ayd/r"
 
       n_e:
-        imas: "thomson_scattering.channel[:].n_e.data"
         source: "ayd/n_e"
+        imas: "thomson_scattering.channel[:].n_e"
+        units: "1/m ** 3"
+        description: "Electron density"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
-            imas: "thomson_scattering.channel[:].n_e.time"
             source: "ayd/time"
-          major_radius: 
+            imas: "thomson_scattering.channel[:].n_e.time"
+          major_radius:
             imas: "thomson_scattering.channel[:].position.r"
-            source: "ayd/r"
 
       p_e:
         source: "ayd/p_e"
+        units: "Pa"
+        description: "Electron pressure"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "ayd/time"
-          major_radius: 
-            source: "ayd/r"
+          major_radius:
+            imas: "thomson_scattering.channel[:].position.r"
 
   charge_exchange:
     imas: charge_exchange
+    description: "Charge exchange spectroscopy diagnostic."
     interpolate:
       time:
-        step: 0.005
-        fill: 'none'
-        dropna: False
+        start: -0.1
+        step: 5e-3
+        method: 'zero'
+        dropna: true
       major_radius:
-        start: 0.3
-        end: 1.5
+        start: 0
+        end: 1.6
         step: 0.01
-        fill: 'none'
-        method: 'linear'
-
+        method: "linear"
     profiles:
       t_i_core:
-        source: "act/cel3/ss/t_i_core" 
+        source: "act/cel3/ss/t_i_core"
+        units: "eV"
+        description: "Core ion temperature" # MAST-U only; ACT on MAST publishes no core summary signal
         dimensions:
           time:
             source: "act/cel3/ss/time"
+            imas: "charge_exchange.time"
+
       v_i_core:
-        source: "act/cel3/ss/v_i_core" 
+        source: "act/cel3/ss/v_i_core"
+        units: "m/s"
+        description: "Core ion toroidal velocity" # MAST-U only
         dimensions:
           time:
             source: "act/cel3/ss/time"
-          
+            imas: "charge_exchange.time"
+
       t_i:
-        imas: "charge_exchange.channel[:].t_i_average.data"
-        source: "act/cel3/ss/pvb/c5291/temperature" 
+        source: "act/cel3/ss/pvb/c5291/temperature"
+        imas: "charge_exchange.channel[:].ion[:].t_i"
+        units: "eV"
+        description: "Ion temperature at the channel measurement point"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "act/cel3/ss/time"
-          
+            imas: "charge_exchange.time"
           major_radius:
             source: "/act/cel3/ss/major_radius"
+            imas: "charge_exchange.channel[:].position.r"
 
       v_i:
-        source: "act/cel3/ss/pvb/c5291/velocity" 
+        source: "act/cel3/ss/pvb/c5291/velocity"
+        units: "m/s"
+        description: "Ion toroidal velocity at the channel measurement point"
         dimension_order: ['major_radius', 'time']
         dimensions:
           time:
             source: "act/cel3/ss/time"
-          
+            imas: "charge_exchange.time"
           major_radius:
             source: "/act/cel3/ss/major_radius"
-            
+            imas: "charge_exchange.channel[:].position.r"
+
   soft_x_rays:
+    imas: "soft_x_rays"
+    description: "Soft X-rays tomography diagnostic"
     interpolate:
       time:
+        start: -0.1
         step: 2e-6
+        method: 'zero'
+        dropna: true
 
     profiles:
       horizontal_cam_lower:
-        source: 
+        units: "V"
+        description: "Lower horizontal soft x-ray camera"
+        source:
           - name: "XSX/HCAM/L"
             shot_range:
               shot_min: 44395
@@ -1196,12 +1915,14 @@ datasets:
               - '/XSX/HCAM/L/CH13/DATA'
               - '/XSX/HCAM/L/CH14/DATA'
         dimensions:
-          hcam_l_channel:
-          time: 
+          horizontal_cam_lower_channel:
+          time:
             imas: "soft_x_rays.time"
 
       horizontal_cam_upper:
-        source: 
+        units: "V"
+        description: "Upper horizontal soft x-ray camera"
+        source:
           - name: "XSX/HCAM/U"
             shot_range:
               shot_min: 44395
@@ -1224,8 +1945,8 @@ datasets:
 
           - name: "XSX/HCAM/U"
             shot_range:
-                    shot_min: 46353
-                    shot_max: 49476
+              shot_min: 46353
+              shot_max: 49476
             channels:
               - '/xsx/SAnx05-01/ch46'
               - '/xsx/SAnx05-01/ch45'
@@ -1242,7 +1963,7 @@ datasets:
               - '/xsx/SAnx05-01/ch34'
               - '/xsx/SAnx05-01/ch33'
 
-          - name: "XSX/HCAM/L"
+          - name: "XSX/HCAM/U"
             shot_range:
               shot_min: 49476
               shot_max: 49904
@@ -1283,21 +2004,54 @@ datasets:
               - '/XSX/HCAM/U/CH14/DATA'
 
         dimensions:
-          hcam_u_channel:
-          time: 
+          horizontal_cam_upper_channel:
+          time:
             imas: "soft_x_rays.time"
 
   camera_visible:
+    imas: "camera_visible"
+    description: "Camera in the visible light range."
     interpolate:
       time:
         step: 0.002
+        method: 'none'
     profiles:
-      camera_center:
+      camera_lower:
         source: "RBA"
         imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        description: "Raw image (unprocessed) (digital levels). First dimension : line index (horizontal axis). Second dimension: column index (vertical axis)."
         dimension_order: ['height_a', 'width_a', 'time']
         dimensions:
           time:
             imas: "camera_visible.channel[:].detector[:].frame[:].time"
-          width_a: null
-          height_a: null
+          height_a:
+          width_a:
+
+      camera_color:
+        source: "RGB"
+        imas: "camera_visible.channel[:].detector[:].frame[:].image_raw"
+        description: "Raw image (unprocessed) (digital levels). First dimension : line index (horizontal axis). Second dimension: column index (vertical axis)."
+        dimension_order: ['height_c', 'width_c', 'time']
+        dimensions:
+          time:
+            imas: "camera_visible.channel[:].detector[:].frame[:].time"
+          height_c:
+          width_c:
+
+  wall:
+    imas: "wall"
+    description: "Description of the torus wall and its interaction with the plasma"
+    profiles:
+      limiter_r:
+        source: "epm/input/limiter/rvalues"
+        description: "Major radius values of the limiter"
+        units: "m"
+        dimensions:
+          limiter_geometry_channel:
+
+      limiter_z:
+        source: "epm/input/limiter/zvalues"
+        description: "Vertical position values of the limiter"
+        units: "m"
+        dimensions:
+          limiter_geometry_channel:

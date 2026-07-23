@@ -1225,6 +1225,73 @@ datasets:
         dimensions:
           outer_upper_probe_channel:
 
+  mse:
+    imas: "mse"
+    description: "Motional Stark Effect (MSE) diagnostic (analysed AMS array): per-channel polarisation angle and derived magnetic field pitch angle, with measurement major radius, from the MAST MSE system."
+    interpolate:
+      time:
+        start: -0.1
+        step: 5e-4
+        method: 'zero'
+        dropna: true
+    profiles:
+      polarization_angle:
+        source: "AMS_GAMMA"
+        imas: "mse.channel[:].polarization_angle.data"
+        units: "rad"
+        description: "Measured polarisation angle gamma of the MSE emission for each channel"
+        dimension_order: ['mse_channel', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "mse.channel[:].polarization_angle.time"
+          mse_channel:
+            source: "AMS_CH"
+
+      polarization_angle_error:
+        source: "AMS_GAMMANOISE"
+        imas: "mse.channel[:].polarization_angle.data_error_upper"
+        units: "rad"
+        description: "Uncertainty in the measured MSE polarisation angle gamma"
+        dimension_order: ['mse_channel', 'time']
+        dimensions:
+          time:
+            units: 's'
+            imas: "mse.channel[:].polarization_angle.time"
+          mse_channel:
+            source: "AMS_CH"
+
+      pitch_angle:
+        source: "AMS_PITCHA"
+        units: "rad"
+        description: "Magnetic field pitch angle relative to the horizontal plane, derived from the MSE polarisation angle"
+        dimension_order: ['mse_channel', 'time']
+        dimensions:
+          time:
+            units: 's'
+          mse_channel:
+            source: "AMS_CH"
+
+      pitch_angle_error:
+        source: "AMS_PITCHANOISE"
+        units: "rad"
+        description: "Uncertainty in the magnetic field pitch angle"
+        dimension_order: ['mse_channel', 'time']
+        dimensions:
+          time:
+            units: 's'
+          mse_channel:
+            source: "AMS_CH"
+
+      position_r:
+        source: "AMS_RPOS"
+        imas: "mse.channel[:].active_spatial_resolution[:].centre.r"
+        units: "m"
+        description: "Major radius (R) of the MSE measurement location for each channel"
+        dimensions:
+          mse_channel:
+            source: "AMS_CH"
+
   controllers:
     imas: "controllers"
     description: "Plasma control system states, proxies, and feedback signals."

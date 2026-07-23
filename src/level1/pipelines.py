@@ -33,12 +33,18 @@ class Pipeline:
 
 
 class Pipelines:
+    pipelines: dict[str, Pipeline]
+
     @property
     def group_mapping_file(self):
         raise NotImplementedError()
 
     @property
     def dimension_mapping_file(self):
+        raise NotImplementedError()
+
+    @property
+    def license_file(self):
         raise NotImplementedError()
 
     def get(self, name: str) -> Pipeline:

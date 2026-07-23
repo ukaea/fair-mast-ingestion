@@ -92,7 +92,7 @@ class ParquetMetadataWriter:
 
             rank = len(item.shape)
             shape = ",".join(list(map(str, item.shape)))
-            dims = ",".join(list(item.sizes.keys()))
+            dims = ",".join(str(k) for k in item.sizes.keys())
 
             data = SignalMetadata(
                 name=name,
@@ -202,7 +202,7 @@ class MetadataWriter:
 
             rank = len(item.shape)
             shape = ",".join(list(map(str, item.shape)))
-            dims = ",".join(list(item.sizes.keys()))
+            dims = ",".join(str(k) for k in item.sizes.keys())
 
             data = SignalMetadata(
                 uuid=get_uuid(full_name, shot),

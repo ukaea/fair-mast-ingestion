@@ -26,8 +26,8 @@ class DatasetBuilder:
         self.writer = writer
         self.pipelines = pipelines
         self.loader = loader
-        self.include_datasets = include_datasets
-        self.exclude_datasets = exclude_datasets
+        self.include_datasets = include_datasets or []
+        self.exclude_datasets = exclude_datasets or []
         self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
         license_data = read_json_file(self.pipelines.license_file)
         self.license_name = license_data.get("name")
@@ -74,7 +74,9 @@ class DatasetBuilder:
                     f"Failed to ingest {group_name} for shot #{shot}; continuing with next source"
                 )
 
-    def load_datasets(self, shot, group_name: str) -> dict[str, xr.Dataset]:
+    def load_datasets(
+        self, shot, group_name: str
+    ) -> dict[str, xr.Dataset | xr.DataArray]:
         signal_infos = self.loader.list_signals(shot)
         signal_infos = [info for info in signal_infos if info.dataset == group_name]
 

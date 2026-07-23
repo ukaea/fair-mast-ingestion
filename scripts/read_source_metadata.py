@@ -8,7 +8,7 @@ import s3fs
 import zarr
 import zarr.storage
 from dask.distributed import Client, as_completed
-from dask_mpi import initialize
+from dask_mpi import initialize  # ty: ignore[unresolved-import]
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,7 +24,7 @@ class SourceMetaDataParser:
         shot = source_file.stem
         path = f"{self.bucket_path}/{shot}.zarr"
 
-        source_df = self.read_source_file(source_file)
+        source_df = self.read_source_file(str(source_file))
         if source_df is None:
             return shot
 
@@ -41,10 +41,10 @@ class SourceMetaDataParser:
             return None
         return pd.read_parquet(source_file)
 
-    def read_source(self, path: str) -> Optional[pd.DataFrame]:
+    def read_source(self, path: str) -> Optional[dict]:
         try:
-            store = zarr.storage.FSStore(path, fs=self.fs)
-            with zarr.open_consolidated(store) as f:
+            store = zarr.storage.FSStore(path, fs=self.fs)  # ty: ignore[unresolved-attribute]
+            with zarr.open_consolidated(store) as f:  # ty: ignore[invalid-context-manager]
                 metadata = dict(f.attrs)
         except Exception:
             return None
@@ -95,7 +95,7 @@ def main():
 
     path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
-    parser = SourceMetaDataParser(args.bucket_path, path, fs)
+    parser = SourceMetaDataParser(args.bucket_path, str(path), fs)
 
     tasks = []
     for source_file in source_files:

@@ -1,7 +1,7 @@
 import math
 import warnings
 from abc import ABC
-from typing import Union
+from typing import Any, Optional, Union, cast
 
 import numpy as np
 import scipy.signal
@@ -47,7 +47,7 @@ class BaseDatasetTransform(ABC):
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
 
@@ -61,7 +61,9 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         dimensions = self.dataset_params.profiles[signal_name].dimensions
         profile = self.interpolate_dimensions(
-            signal, dimensions, self.dataset_params.interpolate
+            cast(xr.Dataset, signal),
+            cast(dict[str, Dimension], dimensions),
+            self.dataset_params.interpolate,
         )
         return profile
 
@@ -110,7 +112,9 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            dataset = dataset.interp({dim_name: coords}, method=params.method)
+            dataset = dataset.interp(
+                {dim_name: coords}, method=cast(Any, params.method)
+            )
         return dataset
 
     @staticmethod
@@ -135,7 +139,7 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         self,
         dataset: xr.Dataset,
         dimensions: dict[str, Dimension],
-        interpolate_params: dict[str, InterpolationParams] = None,
+        interpolate_params: Optional[dict[str, InterpolationParams]] = None,
     ) -> xr.Dataset:
         if interpolate_params is None:
             return dataset
@@ -181,23 +185,26 @@ class FFTDecomposeTransform(BaseDatasetTransform):
         spec_name = f"{signal_name}_spectrogram"
         spectrum.attrs["name"] = spec_name
 
-        signal = xr.Dataset({spec_name: spectrum, angle_name: angles})
-        return signal
+        result = xr.Dataset({spec_name: spectrum, angle_name: angles})
+        return result
 
 class BackgroundSubtractionTransform(BaseDatasetTransform):
     def __init__(self, start: int, end: int):
         self.start = start
         self.end = end
 
-    def transform_array(self, data: xr.DataArray) -> xr.DataArray:
+    def transform_array(self, data: xr.DataArray) -> xr.DataArray:  # ty: ignore[invalid-method-override]
         # subtracts background calculated from mean of data points between given start and end
-        time_dim = next((dim for dim in data.dims if dim == "time" or dim.startswith("time_")), None)
+        time_dim = next(
+            (dim for dim in data.dims if dim == "time" or str(dim).startswith("time_")),
+            None,
+        )
         time_dim_str = str(time_dim)
         if not time_dim:
             logger.warning(f"Skipping background subtraction: No time dimension found in dataset {data.name}.")
             return data
         isel_kwargs = {time_dim: slice(self.start, self.end)}
-        background = data.isel(**isel_kwargs).mean(dim=time_dim_str)
+        background = data.isel(isel_kwargs).mean(dim=time_dim_str)
         return data - background
 
 transform_registry = Registry[BaseDatasetTransform]()

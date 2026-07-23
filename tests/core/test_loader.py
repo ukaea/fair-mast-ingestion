@@ -25,7 +25,8 @@ def test_load_uda():
 
 
 @pytest.mark.skipif(
-    not importlib.util.find_spec("jet"), reason="requires the Jet SAL library"
+    not importlib.util.find_spec("jet"),  # ty: ignore[possibly-missing-submodule]
+    reason="requires the Jet SAL library",
 )
 def test_load_sal():
     loader = SALLoader()

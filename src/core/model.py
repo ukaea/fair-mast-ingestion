@@ -107,26 +107,29 @@ class Mapping(BaseModel):
     license: Optional[License] = None
 
 
-def load_yaml(config_file: str) -> dict[str, Any]:
+def load_yaml(config_file: Union[str, Path]) -> dict[str, Any]:
     with Path(config_file).open("r") as f:
         config = yaml.load(f, yaml.FullLoader)
     return config
 
 
-def load_json(file_name: str):
+def load_json(file_name: Union[str, Path]):
     with Path(file_name).open("r") as f:
         data = json.load(f)
     return data
 
 
-def load_model(config_file: str) -> Mapping:
+def load_model(config_file: Union[str, Path]) -> Mapping:
     config = load_yaml(config_file)
     return Mapping.model_validate(config)
 
-def _coerce_channel(entry):
+def _coerce_channel(entry: Union[str, dict]) -> Channel:
     if isinstance(entry, str):
         return Channel(name=entry)
     if isinstance(entry, dict) and len(entry) == 1:
         name, config = next(iter(entry.items()))
-        return Channel(name=name, **(config or {}))
+        config = config or {}
+        if not isinstance(config, dict):
+            raise ValueError(f"Invalid channel entry: {entry!r}")
+        return Channel(name=str(name), **config)
     raise ValueError(f"Invalid channel entry: {entry!r}")

@@ -6,7 +6,7 @@ class Registry(Generic[T]):
     def __init__(self) -> None:
         self._plugins = {}
 
-    def register(self, name: str, cls: Type[T]) -> T:
+    def register(self, name: str, cls: Type[T]) -> None:
         self._plugins[name] = cls
 
     def create(self, name: str, *args, **kwargs) -> T:

@@ -45,7 +45,7 @@ def test_interpolation_aligns_grids_across_shots():
         facility="MAST", default_loader="uda",
         plasma_current="summary/ip", datasets={},
     )
-    transform = DatasetInterpolationTransform(None, mapping)
+    transform = DatasetInterpolationTransform(None, mapping)  # ty: ignore[invalid-argument-type]
     params = InterpolationParams(start=-0.1, step=2.5e-4, method="zero")
 
     t_a = np.arange(-0.05, 0.10, 1.5e-3)

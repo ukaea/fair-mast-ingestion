@@ -3,7 +3,7 @@ import json
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,7 @@ UNITS_MAPPING_FILE = "mappings/level1/units.json"
 
 class BaseTransform(ABC):
     @abstractmethod
-    def __call__(self, datasets: xr.Dataset) -> xr.Dataset:
+    def __call__(self, datasets: Any, /) -> Any:
         raise NotImplementedError("Method is not implemented.")
 
 
@@ -78,7 +78,7 @@ class DropZeroDimensions(BaseTransform):
     def __call__(self, dataset: xr.Dataset) -> Any:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
-                dataset = dataset.drop_vars(key)
+                dataset = dataset.drop_vars([key])
         dataset = dataset.compute()
         return dataset
 
@@ -181,7 +181,9 @@ class InterpolateAxis(BaseTransform):
         for k, v in dataset.data_vars.items():
             if self.axis_name in v.dims:
                 v = v.dropna(self.axis_name, how="all")
-                datasets[k] = v.interp({self.axis_name: coords}, method=self.method)
+                datasets[k] = v.interp(
+                    {self.axis_name: coords}, method=cast(Any, self.method)
+                )
             else:
                 datasets[k] = v
         dataset = xr.merge(datasets.values())
@@ -226,8 +228,8 @@ class TensoriseChannels(BaseTransform):
         return dataset
 
     def _update_attributes(
-        self, dataset: xr.Dataset, channels: list[xr.Dataset]
-    ) -> xr.Dataset:
+        self, dataset: xr.DataArray, channels: list[xr.DataArray]
+    ) -> xr.DataArray:
         attrs = channels[0].attrs
         channel_descriptions = [c.attrs.get("description", "") for c in channels]
         description = "\n".join(channel_descriptions)
@@ -325,7 +327,7 @@ class Level1UDAGeometryLoader(BaseTransform):
     PF and saddle coil geometry are stored as arrays and processed differently from other signals.
     """
 
-    def __init__(self, stem: str, name: str, path: str, shot: int):
+    def __init__(self, stem: str, name: str, path: str, shot: str):
         self.stem = stem
         self.name = name
         self.path = path

@@ -6,7 +6,7 @@ import typing as t
 from abc import ABC
 from enum import Enum
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, cast
 
 import fsspec
 import numpy as np
@@ -53,25 +53,25 @@ class SignalInfo(BaseModel):
 
 
 class BaseLoader(ABC):
-    def load(self, *args, **kwargs) -> xr.Dataset:
+    def load(self, *args, **kwargs) -> xr.Dataset | xr.DataArray:
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
     def list_datasets(self, shot: int) -> list[DatasetInfo]:
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
     def list_signals(self, shot: int) -> list[SignalInfo]:
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
 
 class SALLoader(BaseLoader):
     def __init__(self) -> None:
-        from jet.data import sal
+        from jet.data import sal  # ty: ignore[unresolved-import]
 
         self.sal = sal
 
@@ -151,7 +151,7 @@ class UDALoader(BaseLoader):
             sources = {info.name: info for info in infos}
             if "asx" in sources:
                 sources.pop("xsx")
-                infos = sources.values()
+                infos = list(sources.values())
 
         return infos
 
@@ -212,7 +212,9 @@ class UDALoader(BaseLoader):
     def load(self, shot_num: int, name: str, channels: Optional[list[str]] = None):
         try:
             if channels is not None:
-                dataset = self.load_channels(shot_num, name, channels)
+                dataset = self.load_channels(
+                    shot_num, name, cast(list[Channel], channels)
+                )
             elif name.strip("/").lower().startswith("r"):
                 dataset = self.load_image(shot_num, name)
             else:
@@ -224,13 +226,13 @@ class UDALoader(BaseLoader):
 
     def load_channels(self, shot_num: int, name: str, channels: list[Channel]):
         scales = {c.name: c.scale for c in channels}
-        channels = [c.name for c in channels]
-        
+        channel_names = [c.name for c in channels]
+
         signals = {}
 
         # Load channels, skipping an missing channels
         shape, dims, coords = None, None, None
-        for channel in channels:
+        for channel in channel_names:
             try:
                 signal = self.load_signal(shot_num, channel)
                 signals[channel] = signal
@@ -248,17 +250,17 @@ class UDALoader(BaseLoader):
             )
 
         # Fill any missing channels with NaN
-        for channel in channels:
+        for channel in channel_names:
             if channel not in signals:
                 signals[channel] = xr.DataArray(
-                    np.full(shape, np.nan), dims=dims, coords=coords
+                    np.full(cast(tuple[int, ...], shape), np.nan), dims=dims, coords=coords
                 )
 
         assert (
-            len(signals) == len(channels)
+            len(signals) == len(channel_names)
         ), "Number of channels must match number of signals loaded. Check mapping names for duplicates."
 
-        channel_values, channel_template = self._extract_channel_template(channels)
+        channel_values, channel_template = self._extract_channel_template(channel_names)
         channels_dim = xr.DataArray(data=channel_values, dims=["channels"])
         channels_dim.name = "channels"
         if channel_template is not None:
@@ -278,9 +280,8 @@ class UDALoader(BaseLoader):
             signal = signal.interp_like(first_signal, method="zero")
             signals[name] = signal
 
-        signals = [signals[channel] * scales[channel] for channel in channels]
-        signals = xr.concat(signals, dim=channels_dim)
-        return signals
+        scaled = [signals[channel] * scales[channel] for channel in channel_names]
+        return xr.concat(scaled, dim=channels_dim)
 
     def load_signal(self, shot_num: int, name: str) -> xr.Dataset | xr.DataArray:
         import pyuda
@@ -303,6 +304,10 @@ class UDALoader(BaseLoader):
                 raise MissingSourceError(
                     f'Could not load profile {name} for shot "{shot_num}". Encountered exception: {e}'
                 )
+
+        raise MissingSourceError(
+            f'Could not load profile {name} for shot "{shot_num}" after {max_attempts} attempts.'
+        )
 
     def _convert_signal_to_dataset(
         self, signal_name, signal

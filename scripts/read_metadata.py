@@ -24,12 +24,12 @@ class ShotMetadataParser:
 
     def __call__(self, shot: int):
         path = f"{self.bucket_path}/{shot}.zarr"
-        store = zarr.storage.FSStore(path, fs=self.fs)
-        writer = ParquetMetadataWriter(self.output_path, self.bucket_path)
+        store = zarr.storage.FSStore(path, fs=self.fs)  # ty: ignore[possibly-missing-submodule]
+        writer = ParquetMetadataWriter(str(self.output_path), self.bucket_path)
 
         try:
             logger.info(f"Processing shot {shot}")
-            with zarr.open_consolidated(store) as f:
+            with zarr.open_consolidated(store) as f:  # ty: ignore[invalid-context-manager]
                 for source in f.keys():
                     # try:
                     logger.debug(f"Writing metadata for {source} from shot {shot}")
@@ -71,9 +71,11 @@ def main():
     db_path = args.output_path
     db_path = Path(db_path).absolute()
 
-    metadata_parser = ShotMetadataParser(db_path, args.bucket_path, args.endpoint_url)
+    metadata_parser = ShotMetadataParser(
+        str(db_path), args.bucket_path, args.endpoint_url
+    )
     workflow_manager = WorkflowManager(metadata_parser)
-    workflow_manager.run_workflows(shots, n_workers=args.n_workers)
+    workflow_manager.run_workflows(list(shots), n_workers=args.n_workers)
 
 
 if __name__ == "__main__":

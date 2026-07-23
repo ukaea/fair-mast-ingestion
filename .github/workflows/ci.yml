@@ -34,4 +34,21 @@ jobs:
         run: pip install ruff
 
       - name: Run Ruff with relevent standards
-        run: ruff check --select E4,E7,E9,F,I 
+        run: ruff check --select E4,E7,E9,F,I
+
+  ty-type-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        run: pip install uv
+
+      # Non-blocking for now: the codebase has pre-existing type errors, so
+      # this reports diagnostics without failing the build. Remove
+      # continue-on-error once the backlog is cleared to make it a hard gate.
+      - name: Run ty
+        run: uvx ty check
+        continue-on-error: true 

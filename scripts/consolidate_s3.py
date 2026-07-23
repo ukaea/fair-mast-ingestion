@@ -13,7 +13,7 @@ from src.core.workflow_manager import WorkflowManager
 def consolidate(shot):
     """Consolidate the metadata for the given Zarr shot."""
     zarr.consolidate_metadata(shot)
-    with zarr.open(shot) as f:
+    with zarr.open(shot) as f:  # ty: ignore[invalid-context-manager]
         for source in f.keys():
             zarr.consolidate_metadata(f"{shot}/{source}")
 

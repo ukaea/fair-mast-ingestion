@@ -4,7 +4,7 @@ import pandas as pd
 import s3fs
 import xarray as xr
 from dask.distributed import Client, as_completed
-from dask_mpi import initialize
+from dask_mpi import initialize  # ty: ignore[unresolved-import]
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,7 +41,7 @@ def main():
     for i, task in enumerate(as_completed(tasks)):
         metadata = task.result()
         logging.info(f"Finished {metadata['url']} - {i+1}/{n} - {(i+1)/n*100:.2f}%")
-        shot_info : pd.DataFrame = shot_df.loc[metadata['shot_id'] == shot_df.shot_id].iloc[0]
+        shot_info = shot_df.loc[metadata['shot_id'] == shot_df.shot_id].iloc[0]
         shot_info = shot_info.to_dict()
         metadata.update(shot_info)
         metadatas.append(metadata)

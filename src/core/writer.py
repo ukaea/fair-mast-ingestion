@@ -18,14 +18,14 @@ warnings.filterwarnings(
 class NumpyEncoder(json.JSONEncoder):
     """Special json encoder for numpy types"""
 
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
+    def default(self, o):
+        if isinstance(o, np.integer):
+            return int(o)
+        elif isinstance(o, np.floating):
+            return float(o)
+        elif isinstance(o, np.ndarray):
+            return o.tolist()
+        return json.JSONEncoder.default(self, o)
 
 
 class DatasetWriter(ABC):
@@ -35,13 +35,13 @@ class DatasetWriter(ABC):
     @property
     def file_extension(self):
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
     @abstractmethod
-    def write(self, group_name: str, datasets: dict[str, xr.Dataset]):
+    def write(self, *args, **kwargs):
         raise NotImplementedError(
-            f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
+            f"Base method {self.__class__.__qualname__} for {self.__class__.__name__} not implemented."
         )
 
     def _convert_dict_attrs_to_json(self, dataset: xr.Dataset):
@@ -82,18 +82,17 @@ class ZarrDatasetWriter(DatasetWriter):
             self._write_multi_zarr(file_name, group_name, dataset)
 
     def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
-        file_name = self.output_path / file_name
+        path = self.output_path / file_name
         dataset.to_zarr(
-            file_name,
+            path,
             group=name,
             mode="w",
             consolidated=True,
         )
-        zarr.consolidate_metadata(file_name)
+        zarr.consolidate_metadata(path)
 
     def _write_multi_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
-        file_name = Path(file_name)
-        path = self.output_path / f"{file_name.stem}/{name}.zarr"
+        path = self.output_path / f"{Path(file_name).stem}/{name}.zarr"
         path.parent.mkdir(exist_ok=True, parents=True)
         dataset.to_zarr(path, mode="a", consolidated=True)
         zarr.consolidate_metadata(path)
@@ -133,9 +132,9 @@ class NetCDFDatasetWriter(DatasetWriter):
             self._write_multi_netcdf(file_name, group_name, dataset)
 
     def _write_single_netcdf(self, file_name: str, name: str, dataset: xr.Dataset):
-        file_name = self.output_path / file_name
+        path = self.output_path / file_name
         self.output_path.mkdir(exist_ok=True, parents=True)
-        dataset.to_netcdf(file_name, group=name, mode="a", engine="h5netcdf")
+        dataset.to_netcdf(path, group=name, mode="a", engine="h5netcdf")
 
     def _write_multi_netcdf(self, file_name: str, name: str, dataset: xr.Dataset):
         path = self.output_path / f"{file_name}/{name}.nc"

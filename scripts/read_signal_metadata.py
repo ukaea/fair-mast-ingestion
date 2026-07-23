@@ -9,7 +9,7 @@ import s3fs
 import zarr
 import zarr.storage
 from dask.distributed import Client, as_completed
-from dask_mpi import initialize
+from dask_mpi import initialize  # ty: ignore[unresolved-import]
 
 logging.basicConfig(level=logging.INFO)
 
@@ -67,10 +67,10 @@ class SignalMetaDataParser:
         return pd.read_parquet(source_file)
 
     def read_source(self, path: str) -> Optional[pd.DataFrame]:
-        store = zarr.storage.FSStore(path, fs=self.fs)
+        store = zarr.storage.FSStore(path, fs=self.fs)  # ty: ignore[unresolved-attribute]
         items = []
         try:
-            with zarr.open_consolidated(store) as f:
+            with zarr.open_consolidated(store) as f:  # ty: ignore[invalid-context-manager]
                 for key, value in f.items():
                     if "uuid" not in value.attrs:
                         metadata = dict(f.attrs)
@@ -132,7 +132,7 @@ def main():
 
     path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
-    parser = SignalMetaDataParser(args.bucket_path, path, fs)
+    parser = SignalMetaDataParser(args.bucket_path, str(path), fs)
 
     tasks = []
     for signal_file in source_files:

@@ -26,7 +26,7 @@ def running_mean(x, N=300):
     return (cumsum[N:] - cumsum[:-N]) / float(N)
 
 
-def trim_ip_range(dataset: xr.Dataset, delta_time: float) -> xr.Dataset:
+def trim_ip_range(dataset: xr.DataArray, delta_time: float) -> xr.DataArray:
     NN = 300
     NN_adapt = int(NN * delta_time / (2e-4))
 
@@ -58,22 +58,22 @@ def check_plasma_current(plasma_current: xr.DataArray, tdelta: float) -> bool:
 
 
 def load_mapping_file(mapping_file: str):
-    mapping_file = Path(mapping_file)
-    if not mapping_file.exists():
-        logger.error(f'No mapping file exists called "{mapping_file}"')
+    path = Path(mapping_file)
+    if not path.exists():
+        logger.error(f'No mapping file exists called "{path}"')
         sys.exit(-1)
 
-    mapping = load_model(mapping_file)
+    mapping = load_model(path)
     return mapping
 
 
 def load_config_file(config_file: str):
-    mapping_file = Path(config_file)
-    if not mapping_file.exists():
-        logger.error(f'No mapping file exists called "{mapping_file}"')
+    path = Path(config_file)
+    if not path.exists():
+        logger.error(f'No mapping file exists called "{path}"')
         sys.exit(-1)
 
-    mapping = load_config(mapping_file)
+    mapping = load_config(path)
     return mapping
 
 
@@ -84,7 +84,7 @@ def create_uuid(oid_name: str) -> str:
 def get_default_loader(config: ReaderConfig) -> BaseLoader:
     loader_type = config.type
     loader_params = config.options
-    loader = loader_registry.create(loader_type, **loader_params)
+    loader = loader_registry.create(loader_type, **(loader_params or {}))
     return loader
 
 
@@ -126,7 +126,7 @@ def process_shot(shot: int, **kwargs):
     if mapping_file.is_dir():
         mapping_file = mapping_file / f"{shot}.yml"
 
-    mapping = load_mapping_file(mapping_file)
+    mapping = load_mapping_file(str(mapping_file))
 
     config = load_config_file(args.config_file)
     if args.output_path is not None:
@@ -203,7 +203,7 @@ def main():
                 "Must provide both a minimum and maximum shot (--shot-min/--shot-max)"
             )
             sys.exit(-1)
-        shots = range(args.shot_min, args.shot_max)
+        shots = list(range(args.shot_min, args.shot_max))
     else:
         shots = [args.shot]
 

@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union, cast
 
 import numpy as np
 import xarray as xr
@@ -35,9 +35,9 @@ class DatasetReader:
         dataset = self.read_profiles(shot, name)
 
         if len(dataset) == 0:
-            return dataset
-        
-        dataset = self.apply_interpolation(dataset, name)
+            return cast(xr.Dataset, dataset)
+
+        dataset = self.apply_interpolation(cast(xr.Dataset, dataset), name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
         dataset = self.add_shot_dimension(dataset)
@@ -82,7 +82,7 @@ class DatasetReader:
         self.set_shot(shot)
 
         profile = self._mapping.datasets[dataset_name].profiles[profile_name]
-        source = self._get_source(profile.source)
+        source = self._get_source(cast(Union[Source, str], profile.source))
         dataset = self._loader.load(self._shot, source.name, source.channels)
         coordinates = {}
 
@@ -113,7 +113,9 @@ class DatasetReader:
                 all_zero = (coordinates[dim_name] == 0).all()
                 if all_nan or all_zero:
                     coordinates.pop(dim_name)
-        squeeze_dims = [d for d in dataset.dims if dataset.sizes[d] == 1 and "channel" not in d]
+        squeeze_dims = [
+            d for d in dataset.dims if dataset.sizes[d] == 1 and "channel" not in str(d)
+        ]
         dataset = dataset.squeeze(squeeze_dims)
         if len(dataset.shape) != len(dim_names):
                     raise MissingCoordinateError(
@@ -244,13 +246,13 @@ class DatasetReader:
 
         return item
 
-    def _convert_units(self, item: xr.DataArray, target_units: str):
+    def _convert_units(self, item: xr.DataArray, target_units: Optional[str]):
         if target_units is None:
             return item
 
         if "units" not in item.attrs:
             raise RuntimeError(
-                f"Cannot convert to target units {target_units} for shot {self.shot} and signal {item.name}. No units defined."
+                f"Cannot convert to target units {target_units} for shot {self._shot} and signal {item.name}. No units defined."
             )
 
         try:
@@ -269,8 +271,8 @@ class DatasetReader:
         return item
 
     def _create_dimension(self, dim_name: str, dimension: Dimension) -> xr.DataArray:
-        dim_source = self._get_source(dimension.source)
-        data = self._loader.load(self._shot, dim_source.name)
+        dim_source = self._get_source(cast(Union[Source, str], dimension.source))
+        data = cast(xr.DataArray, self._loader.load(self._shot, dim_source.name))
         data = data.squeeze()
 
         attrs = {}

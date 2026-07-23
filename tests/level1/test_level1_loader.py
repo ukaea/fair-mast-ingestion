@@ -5,7 +5,7 @@ import xarray as xr
 
 from src.core.load import UDALoader
 
-uda_available = not importlib.util.find_spec("pyuda")
+uda_available = not importlib.util.find_spec("pyuda")  # ty: ignore[possibly-missing-submodule]
 
 
 @pytest.mark.skip(reason="Pyuda client unavailable")

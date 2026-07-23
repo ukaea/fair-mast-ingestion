@@ -3,7 +3,7 @@ import multiprocessing as mp
 from functools import partial
 
 import pandas as pd
-import pycpf
+import pycpf  # ty: ignore[unresolved-import]
 import requests
 
 from src.core.log import logger
@@ -51,7 +51,7 @@ def main():
     shot_ids = range(args.shot_min, args.shot_max + 1)
 
     columns = pycpf.columns()
-    columns = pd.DataFrame(columns, columns=["name", "description"])
+    columns = pd.DataFrame(columns, columns=["name", "description"])  # ty: ignore[invalid-argument-type]
     columns.to_parquet(f"data/{name}_cpf_columns.parquet")
 
     pool = mp.Pool(16)

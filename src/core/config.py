@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import yaml
 from pydantic import BaseModel
@@ -27,7 +27,7 @@ class IngestionConfig(BaseModel):
     writer: WriterConfig
 
 
-def load_config(config_file: str) -> IngestionConfig:
+def load_config(config_file: Union[str, Path]) -> IngestionConfig:
     with Path(config_file).open("r") as handle:
         config = yaml.load(handle, yaml.FullLoader)
         config = IngestionConfig.model_validate(config)

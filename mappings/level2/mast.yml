@@ -966,6 +966,265 @@ datasets:
           time:
             imas: "interferometer.channel[:].n_e_line.time"
 
+  langmuir_probes:
+    imas: "langmuir_probes"
+    description: "Embedded divertor Langmuir probe diagnostic (analysed): per-probe ion saturation current density, electron temperature and density, floating potential and parallel heat flux at the inner lower, outer lower and outer upper strike-point targets, from the MAST ALP array."
+    interpolate:
+      time:
+        start: -0.1
+        step: 1e-3
+        method: 'zero'
+        dropna: true
+    profiles:
+      inner_lower_j_i_parallel:
+        source: "ALP_INNER_LO_JSAT"
+        imas: "langmuir_probes.embedded[:].j_i_parallel.data"
+        units: "A/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Ion saturation current density parallel to the magnetic field at the inner lower target"
+        dimension_order: ['inner_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_INNER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          inner_lower_probe_channel:
+
+      inner_lower_t_e:
+        source: "ALP_INNER_LO_TE"
+        imas: "langmuir_probes.embedded[:].t_e.data"
+        units: "eV"
+        description: "Electron temperature at the inner lower target"
+        dimension_order: ['inner_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_INNER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          inner_lower_probe_channel:
+
+      inner_lower_n_e:
+        source: "ALP_INNER_LO_DENSITY"
+        imas: "langmuir_probes.embedded[:].n_e.data"
+        units: "m^-3"
+        description: "Electron density at the inner lower target"
+        dimension_order: ['inner_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_INNER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          inner_lower_probe_channel:
+
+      inner_lower_v_floating:
+        source: "ALP_INNER_LO_VFLOAT"
+        imas: "langmuir_probes.embedded[:].v_floating.data"
+        units: "V"
+        description: "Floating potential at the inner lower target"
+        dimension_order: ['inner_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_INNER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          inner_lower_probe_channel:
+
+      inner_lower_heat_flux_parallel:
+        source: "ALP_INNER_LO_POWER"
+        imas: "langmuir_probes.embedded[:].heat_flux_parallel.data"
+        units: "W/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Parallel heat flux at the inner lower target"
+        dimension_order: ['inner_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_INNER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          inner_lower_probe_channel:
+
+      inner_lower_position_r:
+        source: "ALP_INNER_LO_R"
+        imas: "langmuir_probes.embedded[:].position.r"
+        units: "mm"
+        target_units: "m"
+        description: "Major radius (R) position of the probes at the inner lower target"
+        dimensions:
+          inner_lower_probe_channel:
+
+      inner_lower_position_z:
+        source: "ALP_INNER_LO_Z"
+        imas: "langmuir_probes.embedded[:].position.z"
+        units: "mm"
+        target_units: "m"
+        description: "Vertical (Z) position of the probes at the inner lower target"
+        dimensions:
+          inner_lower_probe_channel:
+
+      outer_lower_j_i_parallel:
+        source: "ALP_OUTER_LO_JSAT"
+        imas: "langmuir_probes.embedded[:].j_i_parallel.data"
+        units: "A/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Ion saturation current density parallel to the magnetic field at the outer lower target"
+        dimension_order: ['outer_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_lower_probe_channel:
+
+      outer_lower_t_e:
+        source: "ALP_OUTER_LO_TE"
+        imas: "langmuir_probes.embedded[:].t_e.data"
+        units: "eV"
+        description: "Electron temperature at the outer lower target"
+        dimension_order: ['outer_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_lower_probe_channel:
+
+      outer_lower_n_e:
+        source: "ALP_OUTER_LO_DENSITY"
+        imas: "langmuir_probes.embedded[:].n_e.data"
+        units: "m^-3"
+        description: "Electron density at the outer lower target"
+        dimension_order: ['outer_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_lower_probe_channel:
+
+      outer_lower_v_floating:
+        source: "ALP_OUTER_LO_VFLOAT"
+        imas: "langmuir_probes.embedded[:].v_floating.data"
+        units: "V"
+        description: "Floating potential at the outer lower target"
+        dimension_order: ['outer_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_lower_probe_channel:
+
+      outer_lower_heat_flux_parallel:
+        source: "ALP_OUTER_LO_POWER"
+        imas: "langmuir_probes.embedded[:].heat_flux_parallel.data"
+        units: "W/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Parallel heat flux at the outer lower target"
+        dimension_order: ['outer_lower_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_LO_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_lower_probe_channel:
+
+      outer_lower_position_r:
+        source: "ALP_OUTER_LO_R"
+        imas: "langmuir_probes.embedded[:].position.r"
+        units: "mm"
+        target_units: "m"
+        description: "Major radius (R) position of the probes at the outer lower target"
+        dimensions:
+          outer_lower_probe_channel:
+
+      outer_lower_position_z:
+        source: "ALP_OUTER_LO_Z"
+        imas: "langmuir_probes.embedded[:].position.z"
+        units: "mm"
+        target_units: "m"
+        description: "Vertical (Z) position of the probes at the outer lower target"
+        dimensions:
+          outer_lower_probe_channel:
+
+      outer_upper_j_i_parallel:
+        source: "ALP_OUTER_UP_JSAT"
+        imas: "langmuir_probes.embedded[:].j_i_parallel.data"
+        units: "A/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Ion saturation current density parallel to the magnetic field at the outer upper target"
+        dimension_order: ['outer_upper_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_UP_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_upper_probe_channel:
+
+      outer_upper_t_e:
+        source: "ALP_OUTER_UP_TE"
+        imas: "langmuir_probes.embedded[:].t_e.data"
+        units: "eV"
+        description: "Electron temperature at the outer upper target"
+        dimension_order: ['outer_upper_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_UP_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_upper_probe_channel:
+
+      outer_upper_n_e:
+        source: "ALP_OUTER_UP_DENSITY"
+        imas: "langmuir_probes.embedded[:].n_e.data"
+        units: "m^-3"
+        description: "Electron density at the outer upper target"
+        dimension_order: ['outer_upper_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_UP_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_upper_probe_channel:
+
+      outer_upper_v_floating:
+        source: "ALP_OUTER_UP_VFLOAT"
+        imas: "langmuir_probes.embedded[:].v_floating.data"
+        units: "V"
+        description: "Floating potential at the outer upper target"
+        dimension_order: ['outer_upper_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_UP_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_upper_probe_channel:
+
+      outer_upper_heat_flux_parallel:
+        source: "ALP_OUTER_UP_POWER"
+        imas: "langmuir_probes.embedded[:].heat_flux_parallel.data"
+        units: "W/m^2"  # raw MAST ALP calibration units are unverified; slot uses the IMAS-native unit
+        description: "Parallel heat flux at the outer upper target"
+        dimension_order: ['outer_upper_probe_channel', 'time']
+        dimensions:
+          time:
+            source: "ALP_OUTER_UP_TIME"
+            units: 's'
+            imas: "langmuir_probes.embedded[:].time"
+          outer_upper_probe_channel:
+
+      outer_upper_position_r:
+        source: "ALP_OUTER_UP_R"
+        imas: "langmuir_probes.embedded[:].position.r"
+        units: "mm"
+        target_units: "m"
+        description: "Major radius (R) position of the probes at the outer upper target"
+        dimensions:
+          outer_upper_probe_channel:
+
+      outer_upper_position_z:
+        source: "ALP_OUTER_UP_Z"
+        imas: "langmuir_probes.embedded[:].position.z"
+        units: "mm"
+        target_units: "m"
+        description: "Vertical (Z) position of the probes at the outer upper target"
+        dimensions:
+          outer_upper_probe_channel:
+
   controllers:
     imas: "controllers"
     description: "Plasma control system states, proxies, and feedback signals."

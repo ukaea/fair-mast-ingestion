@@ -33,6 +33,12 @@ datasets:
       n_x_points_z:
         method: "none"
         dropna: true
+      n_strike_points_r:
+        method: "none"
+        dropna: true
+      n_strike_points_z:
+        method: "none"
+        dropna: true
       profile_r:
         method: "none"
       psi_norm:
@@ -57,6 +63,21 @@ datasets:
             units: 's'
             imas: "equilibrium.time_slice[:].time"
           profile_r:
+            units: 'dimensionless'
+
+      q_psi:
+        source: "epm/output/fluxFunctionProfiles/q"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].profiles_1d.q"
+        description: "Safety factor on the normalised poloidal flux grid" # the profiles_1d grid; `q` above is the same quantity on the radial grid
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
             units: 'dimensionless'
 
       j_phi:
@@ -89,6 +110,66 @@ datasets:
           surface passing through the point of interest and a Z=constant plane.
           If the integration surface is flat, the surface normal vector is in
           the increasing vertical coordinate direction, Z, namely upwards."
+        dimension_order: ['z', 'major_radius', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          z:
+            source: "epm/output/profiles2D/z"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+
+      b_field_r:
+        source: "epm/output/profiles2D/Br"
+        units: 'T'
+        imas: "equilibrium.time_slice[:].profiles_2d[:].b_field_r"
+        description: "Radial component of the poloidal magnetic field"
+        dimension_order: ['z', 'major_radius', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          z:
+            source: "epm/output/profiles2D/z"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+
+      b_field_z:
+        source: "epm/output/profiles2D/Bz"
+        units: 'T'
+        imas: "equilibrium.time_slice[:].profiles_2d[:].b_field_z"
+        description: "Vertical component of the poloidal magnetic field"
+        dimension_order: ['z', 'major_radius', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          major_radius:
+            source: "epm/output/profiles2D/r"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.r"
+          z:
+            source: "epm/output/profiles2D/z"
+            units: 'm'
+            imas: "equilibrium.time_slice[:].coordinate_system.z"
+
+      b_field_tor:
+        source: "epm/output/profiles2D/Bphi"
+        units: 'T'
+        imas: "equilibrium.time_slice[:].profiles_2d[:].b_field_tor"
+        description: "Toroidal component of the magnetic field"
         dimension_order: ['z', 'major_radius', 'time']
         dimensions:
           time:
@@ -173,6 +254,81 @@ datasets:
             units: 's'
             imas: "equilibrium.time_slice[:].time"
           profile_r:
+            units: 'dimensionless'
+
+      psi_profile_1d:
+        source: "epm/output/fluxFunctionProfiles/poloidalFlux"
+        units: 'Wb/rad'
+        imas: "equilibrium.time_slice[:].profiles_1d.psi"
+        description: "Poloidal flux on the flux surface grid" # no CoCoS -2*pi factor applied, consistent with psi, psi_axis and psi_boundary
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      phi_profile_1d:
+        source: "epm/output/fluxFunctionProfiles/toroidalFlux"
+        units: 'Wb/rad'
+        imas: "equilibrium.time_slice[:].profiles_1d.phi"
+        description: "Toroidal flux on the flux surface grid" # no CoCoS +2*pi factor applied, consistent with the poloidal flux quantities
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      j_tor_1d:
+        source: "epm/output/fluxFunctionProfiles/Javrg"
+        units: 'A/m^2'
+        imas: "equilibrium.time_slice[:].profiles_1d.j_tor"
+        description: "Flux surface averaged toroidal current density"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      r_inboard:
+        source: "epm/output/fluxFunctionProfiles/rInboard"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_inboard"
+        description: "Radial coordinate of the flux surface on the inboard side, at the height of the magnetic axis"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
+            units: 'dimensionless'
+
+      r_outboard:
+        source: "epm/output/fluxFunctionProfiles/rOutboard"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].profiles_1d.r_outboard"
+        description: "Radial coordinate of the flux surface on the outboard side, at the height of the magnetic axis"
+        dimension_order: ['psi_norm', 'time']
+        dimensions:
+          time:
+            source: "epm/time"
+            units: 's'
+            imas: "equilibrium.time_slice[:].time"
+          psi_norm:
+            source: "epm/output/fluxFunctionProfiles/normalizedPoloidalFlux"
             units: 'dimensionless'
 
       area_psi:
@@ -288,6 +444,38 @@ datasets:
           time:
             imas: "equilibrium.time_slice[:].time"
 
+      strike_point_r:
+        source:
+          - name: "EPM_STRIKE_R"
+            channels:
+              - "epm/output/separatrixGeometry/dndXpoint1InnerStrikePointR"
+              - "epm/output/separatrixGeometry/dndXpoint1OuterStrikePointR"
+              - "epm/output/separatrixGeometry/dndXpoint2InnerStrikePointR"
+              - "epm/output/separatrixGeometry/dndXpoint2OuterStrikePointR"
+        imas: "equilibrium.time_slice[:].boundary.strike_point[:].r"
+        units: "m"
+        description: "Major radius of the plasma boundary strike points"
+        dimensions:
+          n_strike_points_r:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
+      strike_point_z:
+        source:
+          - name: "EPM_STRIKE_Z"
+            channels:
+              - "epm/output/separatrixGeometry/dndXpoint1InnerStrikePointZ"
+              - "epm/output/separatrixGeometry/dndXpoint1OuterStrikePointZ"
+              - "epm/output/separatrixGeometry/dndXpoint2InnerStrikePointZ"
+              - "epm/output/separatrixGeometry/dndXpoint2OuterStrikePointZ"
+        imas: "equilibrium.time_slice[:].boundary.strike_point[:].z"
+        units: "m"
+        description: "Height of the plasma boundary strike points"
+        dimensions:
+          n_strike_points_z:
+          time:
+            imas: "equilibrium.time_slice[:].time"
+
       minor_radius:
         source: "epm/output/separatrixGeometry/minorRadius"
         units: "m"
@@ -338,11 +526,21 @@ datasets:
             source: "epm/time"
             imas: "equilibrium.time_slice[:].time"
 
+      geometric_axis_r:
+        source: "epm/output/separatrixGeometry/rGeom" # UNVERIFIED: taken from the mastu-mapping draft; a previous pass through this file concluded EPM publishes no rGeom
+        units: 'm'
+        imas: "equilibrium.time_slice[:].boundary.geometric_axis.r"
+        description: "Major radius of the geometric axis of the plasma boundary"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
       geometric_axis_z:
         source: "epm/output/separatrixGeometry/zGeom"
         units: 'm'
         imas: "equilibrium.time_slice[:].boundary.geometric_axis.z"
-        description: "Height of the geometric axis of the plasma boundary" # EPM publishes no matching rGeom, so there is no geometric_axis_r on MAST-U
+        description: "Height of the geometric axis of the plasma boundary"
         dimensions:
           time:
             source: "epm/time"
@@ -422,6 +620,56 @@ datasets:
         units: 'm^2'
         imas: "equilibrium.time_slice[:].global_quantities.area"
         description: "Area of the poloidal cross section"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      volume:
+        source: "epm/output/globalParameters/plasmaVolume"
+        units: 'm^3'
+        imas: "equilibrium.time_slice[:].global_quantities.volume"
+        description: "Total plasma volume"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      energy_mhd:
+        source: "epm/output/globalParameters/plasmaEnergy"
+        units: 'J'
+        imas: "equilibrium.time_slice[:].global_quantities.energy_mhd"
+        description: "Plasma energy content = 3/2 * integral over plasma volume of the total perpendicular pressure"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      q_min:
+        source: "epm/output/globalParameters/qMin"
+        units: 'dimensionless'
+        imas: "equilibrium.time_slice[:].global_quantities.q_min.value"
+        description: "Minimum safety factor"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      current_centre_r:
+        source: "epm/output/globalParameters/currentCentroid/R"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].global_quantities.current_centre.r"
+        description: "Major radius of the current centre"
+        dimensions:
+          time:
+            source: "epm/time"
+            imas: "equilibrium.time_slice[:].time"
+
+      current_centre_z:
+        source: "epm/output/globalParameters/currentCentroid/Z"
+        units: 'm'
+        imas: "equilibrium.time_slice[:].global_quantities.current_centre.z"
+        description: "Height of the current centre"
         dimensions:
           time:
             source: "epm/time"
@@ -728,6 +976,37 @@ datasets:
         target_units: "m"
         imas: "pulse_schedule.position_control.magnetic_axis.z.reference.data"
         description: "Z position reference waveform" # on MAST-U this waveform is uploaded to the Z-controller FPGA at shot start
+        dimensions:
+          time:
+
+      vloop_reference:
+        source: "xdc/plasma/t/vloop_ref"
+        units: 'V'
+        imas: "pulse_schedule.flux_control.loop_voltage.reference"
+        description: "Loop voltage reference waveform"
+        dimensions:
+          time:
+
+      ohmic_blender_mode:
+        source: "xdc/plasma/t/ohmic_blender"
+        imas: "pulse_schedule.flux_control.mode"
+        description: "Ohmic blender control mode waveform"
+        dimensions:
+          time:
+
+      x_point_r_reference:
+        source: "xdc/shape/t/rx_ref"
+        units: 'm'
+        imas: "pulse_schedule.position_control.x_point[:].r.reference"
+        description: "X-point major radius reference waveform"
+        dimensions:
+          time:
+
+      x_point_z_reference:
+        source: "xdc/shape/t/zx_ref"
+        units: 'm'
+        imas: "pulse_schedule.position_control.x_point[:].z.reference"
+        description: "X-point height reference waveform"
         dimensions:
           time:
 
@@ -1039,6 +1318,22 @@ datasets:
         source:
           - name: "AMC"
             channels:
+              # D-family divertor coils
+              - "/AMC/ROGEXT/D1L"
+              - "/AMC/ROGEXT/D1U"
+              - "/AMC/ROGEXT/D2L"
+              - "/AMC/ROGEXT/D2U"
+              - "/AMC/ROGEXT/D3L"
+              - "/AMC/ROGEXT/D3U"
+              - "/AMC/ROGEXT/D5L"
+              - "/AMC/ROGEXT/D5U"
+              - "/AMC/ROGEXT/D6L"
+              - "/AMC/ROGEXT/D6U"
+              - "/AMC/ROGEXT/D7L"
+              - "/AMC/ROGEXT/D7U"
+              - "/AMC/ROGEXT/DPL"
+              - "/AMC/ROGEXT/DPU"
+              # P-family equilibrium coils
               - "/AMC/ROGEXT/P1"
               - "/AMC/ROGEXT/P4L"
               - "/AMC/ROGEXT/P4U"
@@ -1052,6 +1347,71 @@ datasets:
           current_channel:
           time:
             imas: "pf_active.coil[:].current.time"
+
+      efcc_current:
+        imas: "pf_active.coil[:].current.data"
+        target_units: "A"
+        description: "Error field correction coil currents"
+        source:
+          - name: "AMC_EFCC"
+            channels:
+              - "/AMC/ROGEXT/EFCC_NE"
+              - "/AMC/ROGEXT/EFCC_NW"
+              - "/AMC/ROGEXT/EFCC_SE"
+              - "/AMC/ROGEXT/EFCC_SW"
+        dimensions:
+          efcc_current_channel:
+          time:
+            imas: "pf_active.coil[:].current.time"
+
+      elm_coil_current:
+        imas: "pf_active.coil[:].current.data"
+        target_units: "A"
+        description: "ELM mitigation coil currents"
+        source:
+          - name: "AMC_ELM"
+            channels:
+              - "/AMC/ROGEXT/ELM_S01L"
+              - "/AMC/ROGEXT/ELM_S03L"
+              - "/AMC/ROGEXT/ELM_S03U"
+              - "/AMC/ROGEXT/ELM_S04L"
+              - "/AMC/ROGEXT/ELM_S06L"
+              - "/AMC/ROGEXT/ELM_S06U"
+              - "/AMC/ROGEXT/ELM_S07L"
+              - "/AMC/ROGEXT/ELM_S09L"
+              - "/AMC/ROGEXT/ELM_S09U"
+              - "/AMC/ROGEXT/ELM_S10L"
+              - "/AMC/ROGEXT/ELM_S12L"
+              - "/AMC/ROGEXT/ELM_S12U"
+        dimensions:
+          elm_coil_current_channel:
+          time:
+            imas: "pf_active.coil[:].current.time"
+
+      supply_voltage:
+        imas: "pf_active.supply[:].voltage.data"
+        units: "V"
+        description: "Output voltage measured at the PF coil power supplies"
+        source:
+          - name: "XCM"
+            channels:
+              - "/XCM/D1/VOUT"
+              - "/XCM/D2/VOUT"
+              - "/XCM/D3/VOUT"
+              - "/XCM/D5/VOUT"
+              - "/XCM/D6/VOUT"
+              - "/XCM/D7/VOUT"
+              - "/XCM/DP/VOUT"
+              - "/XCM/EFPS/VOLTS"
+              - "/XCM/MFPS/VOLTS"
+              - "/XCM/P1PS/VOLTS"
+              - "/XCM/PX/VOUT"
+              - "/XCM/RFPS/VOUT"
+              - "/XCM/SFPS/VOLTS"
+        dimensions:
+          supply_voltage_channel:
+          time:
+            imas: "pf_active.supply[:].voltage.time"
 
       coil_voltage:
         imas: "pf_active.coil[:].voltage.data"
@@ -1069,6 +1429,52 @@ datasets:
           voltage_channel:
           time:
             imas: "pf_active.coil[:].voltage.time"
+
+  pf_passive:
+    imas: "pf_passive"
+    description: "Description of the axisymmetric passive conductors, currents
+      flowing in them. Electromagnetic simulations are expected to use only this
+      IDS to describe passive conductors and their specific discretization, not
+      the component-related IDS (e.g. wall) which are used to store e.g. the
+      component machine description"
+    interpolate:
+      time:
+        start: -0.1
+        step: 2e-4
+        method: 'zero'
+        dropna: true
+    profiles:
+      case_current:
+        imas: "pf_passive.loop[:].current"
+        target_units: "A"
+        description: "Current induced in the PF coil cases" # MAST-U measures case currents directly; MAST instead has named passive structure loops
+        source:
+          - name: "AMC_CASECURR"
+            channels:
+              - "/AMC/CASECURR/D1L"
+              - "/AMC/CASECURR/D1U"
+              - "/AMC/CASECURR/D2L"
+              - "/AMC/CASECURR/D2U"
+              - "/AMC/CASECURR/D3L"
+              - "/AMC/CASECURR/D3U"
+              - "/AMC/CASECURR/D5L"
+              - "/AMC/CASECURR/D5U"
+              - "/AMC/CASECURR/D6L"
+              - "/AMC/CASECURR/D6U"
+              - "/AMC/CASECURR/D7L"
+              - "/AMC/CASECURR/D7U"
+              - "/AMC/CASECURR/DPL"
+              - "/AMC/CASECURR/DPU"
+              - "/AMC/CASECURR/P4L"
+              - "/AMC/CASECURR/P4U"
+              - "/AMC/CASECURR/P5L"
+              - "/AMC/CASECURR/P5U"
+              - "/AMC/CASECURR/P6L"
+              - "/AMC/CASECURR/P6U"
+        dimensions:
+          case_current_channel:
+          time:
+            imas: "pf_passive.time"
 
   tf:
     imas: "tf"
@@ -1611,6 +2017,68 @@ datasets:
           time:
             imas: "magnetics.time"
 
+      rogowski_coil_current:
+        imas: "magnetics.rogowski_coil[:].current.data"
+        target_units: "A"
+        description: "Halo current Rogowski coils"
+        source:
+          - name: "AMC_HALO"
+            channels:
+              - "/AMC/HALO/H_CC_L_01"
+              - "/AMC/HALO/H_CC_U_01"
+              - "/AMC/HALO/H_CC_U_02"
+              - "/AMC/HALO/H_D2L_01"
+              - "/AMC/HALO/H_D2L_02"
+              - "/AMC/HALO/H_D2L_03"
+              - "/AMC/HALO/H_D3L_01"
+              - "/AMC/HALO/H_D3L_02"
+              - "/AMC/HALO/H_D3L_03"
+              - "/AMC/HALO/H_D3L_04"
+              - "/AMC/HALO/H_D3L_05"
+              - "/AMC/HALO/H_D3L_06"
+              - "/AMC/HALO/H_D3U_01"
+              - "/AMC/HALO/H_D3U_02"
+              - "/AMC/HALO/H_D3U_03"
+              - "/AMC/HALO/H_D5L_01"
+              - "/AMC/HALO/H_D5L_02"
+              - "/AMC/HALO/H_D5L_03"
+              - "/AMC/HALO/H_D5L_04"
+              - "/AMC/HALO/H_D5L_05"
+              - "/AMC/HALO/H_D5L_06"
+              - "/AMC/HALO/H_D5U_01"
+              - "/AMC/HALO/H_D5U_02"
+              - "/AMC/HALO/H_D5U_03"
+              - "/AMC/HALO/H_D5U_04"
+              - "/AMC/HALO/H_DPL_01"
+              - "/AMC/HALO/H_DPL_02"
+              - "/AMC/HALO/H_DPL_03"
+              - "/AMC/HALO/H_DPL_04"
+              - "/AMC/HALO/H_DPU_01"
+              - "/AMC/HALO/H_DPU_02"
+              - "/AMC/HALO/H_P6L_01"
+              - "/AMC/HALO/H_P6L_02"
+              - "/AMC/HALO/H_P6L_03"
+              - "/AMC/HALO/H_P6L_04"
+              - "/AMC/HALO/H_P6U_01"
+              - "/AMC/HALO/H_P6U_02"
+              - "/AMC/HALO/H_P6U_03"
+        dimensions:
+          rogowski_coil_channel:
+          time:
+            imas: "magnetics.time"
+
+  mse:
+    imas: "mse"
+    description: "Motional Stark Effect diagnostic" # MAST-U only; no MSE mapping exists for MAST
+    profiles:
+      channel_r:
+        source: "ams/geometry/radius"
+        units: 'm'
+        imas: "mse.channel[:].active_spatial_resolution[:].centre.r"
+        description: "Major radius of the MSE channel viewing positions"
+        dimensions:
+          mse_channel:
+
   spectrometer_visible:
     imas: "spectrometer_visible"
     description: "Spectrometer in visible light range diagnostic"
@@ -1726,6 +2194,24 @@ datasets:
         method: 'linear'
 
     profiles:
+      t_e_core:
+        source: "ayd/t_e_core"
+        units: "eV"
+        description: "Core electron temperature"
+        dimensions:
+          time:
+            source: "ayd/time"
+            imas: "thomson_scattering.channel[:].t_e.time"
+
+      n_e_core:
+        source: "ayd/n_e_core"
+        units: "1/m ** 3"
+        description: "Core electron density"
+        dimensions:
+          time:
+            source: "ayd/time"
+            imas: "thomson_scattering.channel[:].n_e.time"
+
       t_e:
         source: "ayd/t_e"
         imas: "thomson_scattering.channel[:].t_e"

@@ -70,6 +70,8 @@ class BaseLoader(ABC):
 
 
 class SALLoader(BaseLoader):
+    DEFAULT_PPF_USER = "jetppf"
+
     def __init__(self) -> None:
         from jet.data import sal
 
@@ -81,23 +83,46 @@ class SALLoader(BaseLoader):
         except Exception as e:
             raise MissingProfileError(f"{e}, {type(e)}")
 
+    @classmethod
+    def _signal_path(cls, shot_num: int, name: str) -> str:
+        """Build a PPF signal path from a mapping source name.
+
+        Accepts either "<dda>/<dtype>", which resolves under the default
+        publishable user, or "<user>/<dda>/<dtype>" for data written by
+        another user (e.g. the "chain1" analysis chain).
+        """
+        parts = name.strip("/").split("/")
+        if len(parts) == 2:
+            parts = [cls.DEFAULT_PPF_USER] + parts
+        elif len(parts) != 3:
+            raise MissingSourceError(
+                f"Cannot parse PPF source '{name}': expected '<dda>/<dtype>' "
+                f"or '<user>/<dda>/<dtype>'."
+            )
+        return f"/pulse/{shot_num}/ppf/signal/{'/'.join(parts)}"
+
     def load_signal(self, shot_num: int, name: str) -> xr.DataArray:
-        signal = self.sal.get(f"/pulse/{shot_num}/ppf/signal/jetppf/{name}")
+        signal = self.sal.get(self._signal_path(shot_num, name))
 
         attrs = {}
         attrs["units"] = signal.units
         attrs["description"] = signal.description
 
-        coords = []
-        for dim in signal.dimensions:
-            coord = xr.DataArray(
-                data=dim.data, attrs=dict(units=dim.units, description=dim.description)
+        # Each dimension needs an explicit name, otherwise xarray labels them
+        # all "dim_0" and multi-dimensional signals cannot be constructed.
+        dims = []
+        coords = {}
+        for index, dim in enumerate(signal.dimensions):
+            dim_name = f"dim_{index}"
+            dims.append(dim_name)
+            coords[dim_name] = xr.DataArray(
+                data=dim.data,
+                dims=[dim_name],
+                attrs=dict(units=dim.units, description=dim.description),
             )
-            coords.append(coord)
 
-        data = xr.DataArray(data=signal.data, coords=coords, attrs=attrs)
+        data = xr.DataArray(data=signal.data, dims=dims, coords=coords, attrs=attrs)
         data.name = name
-        data.to_dataset()
         return data
 
 

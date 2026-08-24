@@ -1,5 +1,3 @@
-import importlib
-
 import pytest
 import xarray as xr
 
@@ -24,15 +22,24 @@ def test_load_uda():
     assert isinstance(signal, xr.DataArray)
 
 
-@pytest.mark.skipif(
-    not importlib.util.find_spec("jet"), reason="requires the Jet SAL library"
-)
+def try_sal():
+    try:
+        from sal.client import SALClient
+
+        client = SALClient(host="https://sal.jetdata.eu")
+        client.get("/pulse/87737/ppf/signal/jetppf/magn/ipla")
+        return False
+    except Exception:
+        return True
+
+
+@pytest.mark.skipif(try_sal(), reason="SAL client unavailable")
 def test_load_sal():
     loader = SALLoader()
     signal = loader.load(87737, "magn/ipla")
     assert isinstance(signal, xr.DataArray)
     assert signal.attrs["units"] == "Amps"
-    assert signal.dim_0.attrs["units"] == "Secs"
+    assert signal.time.attrs["units"] == "Secs"
 
 
 def test_load_zarr_remote():

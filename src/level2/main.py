@@ -148,14 +148,32 @@ def process_shot(shot: int, **kwargs):
                 )
 
                 reader = DatasetReader(mapping, loader, skip_geometry=args.skip_geometry)
-                dataset = reader.read_dataset(shot, group_name)
-                if len(dataset) == 0:
-                    continue
 
-                logger.info(
-                    f"Writing {group_name} for shot {shot} from {mapping.facility}"
-                )
-                writer.write(file_name, group_name, dataset)
+                if writer.supports_incremental_write:
+                    # Write profile-by-profile instead of building the whole
+                    # dataset group in memory first — large probe arrays
+                    # (e.g. mirnov coils on a fine time grid) otherwise all
+                    # get held simultaneously and can exhaust worker memory.
+                    wrote_any = False
+                    for batch in reader.iter_dataset(shot, group_name):
+                        if len(batch) == 0:
+                            continue
+                        logger.info(
+                            f"Writing {group_name} batch for shot {shot} from {mapping.facility}"
+                        )
+                        writer.write(file_name, group_name, batch, append=wrote_any)
+                        wrote_any = True
+                    if not wrote_any:
+                        continue
+                else:
+                    dataset = reader.read_dataset(shot, group_name)
+                    if len(dataset) == 0:
+                        continue
+
+                    logger.info(
+                        f"Writing {group_name} for shot {shot} from {mapping.facility}"
+                    )
+                    writer.write(file_name, group_name, dataset)
 
     if config.upload is not None:
         remote_file = f"{config.upload.base_path}/"

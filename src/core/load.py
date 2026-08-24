@@ -202,12 +202,7 @@ class UDALoader(BaseLoader):
         return infos
 
     def _get_client(self):
-        import pyuda
-
-        client = pyuda.Client()
-        client.set_property("get_meta", True)
-        client.set_property("timeout", 10)
-        return client
+        return _get_uda_client()
 
     def load(self, shot_num: int, name: str, channels: Optional[list[str]] = None):
         try:
@@ -296,8 +291,8 @@ class UDALoader(BaseLoader):
             except pyuda.ServerException as e:
                 # Check for SSL error specifically
                 if "SSL_ERROR_SSL" in str(e) and attempt < max_attempts - 1:
-                    # Wipe the internal client so _get_client() creates a new one
-                    self._client = None 
+                    # Wipe the cached client so _get_client() creates a new one
+                    _reset_uda_client()
                     time.sleep(1)
                     continue
                 raise MissingSourceError(
@@ -501,6 +496,27 @@ class UDALoader(BaseLoader):
             return channels, None
 
         return values, f"{prefix}{{channel}}{suffix}"
+
+
+_uda_client = None
+
+
+def _get_uda_client():
+    """Return a single pyuda.Client shared for the lifetime of this worker process."""
+    import pyuda
+
+    global _uda_client
+    if _uda_client is None:
+        _uda_client = pyuda.Client()
+        _uda_client.set_property("get_meta", True)
+        _uda_client.set_property("timeout", 10)
+    return _uda_client
+
+
+def _reset_uda_client():
+    """Drop the cached client so the next _get_uda_client() call creates a fresh one."""
+    global _uda_client
+    _uda_client = None
 
 
 _uda_loader = UDALoader()

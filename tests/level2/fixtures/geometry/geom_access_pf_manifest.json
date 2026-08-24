@@ -1,0 +1,9 @@
+{
+  "p2/p2_inner_upper/data/geom_elements": [
+    "centreR",
+    "centreZ",
+    "dR",
+    "dZ",
+    "effectiveTurnCount"
+  ]
+}

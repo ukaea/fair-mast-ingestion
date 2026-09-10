@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 
+import pandas as pd
+import pyarrow.parquet as pq
 from distributed import get_client
 
 from src.core.log import logger
@@ -62,12 +64,43 @@ def get_shot_list(args):
     return shot_list
 
 
+PARQUET_SUFFIXES = (".parquet", ".pq")
+
+
 def read_shot_file(shot_file: str) -> list[int]:
-    with open(shot_file) as f:
-        shot_nums = f.readlines()[1:]
-        shot_nums = map(lambda x: x.strip(), shot_nums)
-        shot_nums = list(sorted(map(int, shot_nums)))
+    """Read the list of shot numbers from a file.
+
+    The file can be a parquet file (a suffix of .parquet or .pq) or a delimited
+    text file such as a CSV. The shot numbers must be in the first column. A
+    header row is optional. Rows that do not contain a number are ignored.
+    """
+    path = Path(shot_file)
+    if not path.exists():
+        logger.error(f'No shot file exists called "{path}"')
+        sys.exit(-1)
+
+    if path.suffix.lower() in PARQUET_SUFFIXES:
+        values = _read_parquet_column(path)
+    else:
+        values = pd.read_csv(path, header=None, usecols=[0]).iloc[:, 0]
+
+    numbers = pd.to_numeric(values, errors="coerce")
+    skipped = int(numbers.isna().sum())
+    if skipped > 0:
+        logger.debug(f"Ignored {skipped} row(s) without a shot number in {path}")
+
+    shot_nums = sorted(int(number) for number in numbers.dropna())
+    if len(shot_nums) == 0:
+        logger.error(f'No shot numbers found in "{path}"')
+        sys.exit(-1)
+
     return shot_nums
+
+
+def _read_parquet_column(path: Path, index: int = 0) -> pd.Series:
+    """Read a single column of a parquet file by its position."""
+    name = pq.read_schema(path).names[index]
+    return pd.read_parquet(path, columns=[name])[name]
 
 
 def read_json_file(file_name: str):

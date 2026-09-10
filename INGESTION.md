@@ -95,11 +95,13 @@ python3 -m src.level2.main <mapping_file> [OPTIONS]
 | `--shot-min` | Minimum shot number (requires --shot-max) | None |
 | `--shot-max` | Maximum shot number (requires --shot-min) | None |
 | `--shots` | Space-separated list of specific shots | None |
+| `--shot-file` | CSV or parquet file of shots, one in each row of the first column | None |
 | `--dt` | Time delta for interpolation | 0.00025 |
 | `-i, --include-datasets` | Only process specified datasets | All |
 | `-e, --exclude-datasets` | Exclude specified datasets | None |
 | `-v, --verbose` | Enable debug logging | False |
 | `-o, --output-path` | Override output directory | From config |
+| `-f, --format` | Override output format (`zarr`, `netcdf` or `parquet`) | From config |
 | `-n, --n-workers` | Number of parallel workers | System default |
 | `--skip-geometry` | Omit geometry data from ingestion | False
 
@@ -122,6 +124,20 @@ python3 -m src.level2.main mappings/level2/mast.yml \
     --shots 11889 30359 12165 30377
 ```
 
+**Process the shots listed in a file:**
+
+The first column of the file must contain the shot numbers. A header row is
+optional and the other columns are ignored. The file can be a CSV or a parquet
+file.
+
+```bash
+python3 -m src.level2.main mappings/level2/mast.yml \
+    --shot-file campaign_shots/M9.csv
+
+python3 -m src.level2.main mappings/level2/mast.yml \
+    --shot-file shots_20260910.parquet
+```
+
 **Process with multiple workers:**
 ```bash
 python3 -m src.level2.main mappings/level2/mast.yml \
@@ -138,6 +154,12 @@ python3 -m src.level2.main mappings/level2/mast.yml \
 ```bash
 python3 -m src.level2.main mappings/level2/mast.yml \
     --shot 30350 -o /path/to/output
+```
+
+**Custom output format:**
+```bash
+python3 -m src.level2.main mappings/level2/mast.yml \
+    --shot 30350 -f netcdf
 ```
 
 ### Configuration Files

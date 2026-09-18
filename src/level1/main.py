@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from src.core.config import load_config
 from src.core.log import logger
@@ -23,8 +24,10 @@ def main():
     parser.add_argument("-c", "--config-file", type=str, default="./configs/level1.yml")
     parser.add_argument("-i", "--include-sources", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-sources", nargs="+", default=[])
-    parser.add_argument("--file_format", choices=["zarr", "nc", "h5"], default="zarr")
+    parser.add_argument("--file_format", choices=["zarr", "nc", "h5"], default="None")
     parser.add_argument("--facility", choices=["MAST", "MASTU"], default="MAST")
+    parser.add_argument("--uda-group-names", action="store_true",
+    )
 
     args = parser.parse_args()
     if args.verbose:
@@ -33,12 +36,22 @@ def main():
     shot_list = get_shot_list(args)
     config = load_config(args.config_file)
 
+    if args.file_format is not None:
+        writer_type = "zarr" if args.file_format == "zarr" else "netcdf"
+        config.writers = [w for w in config.writers if w.type == writer_type]
+        if len(config.writers) == 0:
+            logger.error(
+                f'No "{writer_type}" writer is configured in {args.config_file}'
+            )
+            sys.exit(-1)
+
     workflow = IngestionWorkflow(
         config=config,
         facility=args.facility,
         include_sources=args.include_sources,
         exclude_sources=args.exclude_sources,
         verbose=args.verbose,
+        use_uda_group_names=args.uda_group_names,
     )
 
     workflow_manager = WorkflowManager(workflow)

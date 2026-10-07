@@ -33,7 +33,7 @@ class BaseDatasetTransform(ABC):
             profile = self.transform_array(profile_name, profile)
             datasets[profile_name] = profile
         ds = xr.merge(datasets.values())
-        ds.attrs = dict() #clear unwanted attributes at dataset level
+        ds.attrs = dict()  # clear unwanted attributes at dataset level
         return ds
 
     def transform_dataset(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -42,7 +42,7 @@ class BaseDatasetTransform(ABC):
             dataset = self.transform_array(name, channel)
             transform_datasets[name] = dataset
         ds = xr.merge(transform_datasets.values())
-        ds.attrs = dict() #clear unwanted attributes at dataset level
+        ds.attrs = dict()  # clear unwanted attributes at dataset level
         return ds
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
@@ -52,9 +52,7 @@ class BaseDatasetTransform(ABC):
 
 
 class DatasetInterpolationTransform(BaseDatasetTransform):
-    def __init__(
-        self, dataset_params: DatasetInfo, mapping: Mapping
-    ):
+    def __init__(self, dataset_params: DatasetInfo, mapping: Mapping):
         self.mapping = mapping
         self.dataset_params = dataset_params
 
@@ -108,10 +106,39 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         coords = self._build_aligned_grid(
             params.start, params.end, params.step, end_was_explicit
         )
+        dataset = self._snap_float32_coord(dataset, dim_name, coords)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             dataset = dataset.interp({dim_name: coords}, method=params.method)
         return dataset
+
+    @staticmethod
+    def _snap_float32_coord(
+        dataset: xr.Dataset, dim_name: str, grid: np.ndarray
+    ) -> xr.Dataset:
+        """Convert a float32 coordinate to float64 and snap it to the grid.
+
+        A plain cast keeps the float32 rounding error (0.07 becomes
+        0.0700000003, and 0.05 can become 0.049999997). Zero-order-hold
+        interpolation then sees a sample as later than its own grid point and
+        drops it. A source time that is within 2 float32 steps of a grid point
+        is moved onto that grid point. Other times stay unchanged.
+        """
+        coord = dataset.coords[dim_name]
+        if coord.dtype != np.float32:
+            return dataset
+        times = coord.values.astype(np.float64)
+        idx = np.clip(np.searchsorted(grid, times), 1, len(grid) - 1)
+        if len(grid) > 1:
+            left, right = grid[idx - 1], grid[idx]
+            nearest = np.where(
+                np.abs(times - left) <= np.abs(right - times), left, right
+            )
+        else:
+            nearest = np.full_like(times, grid[0])
+        tol = 2 * np.spacing(np.abs(coord.values)).astype(np.float64)
+        times = np.where(np.abs(times - nearest) <= tol, nearest, times)
+        return dataset.assign_coords({dim_name: (coord.dims, times, coord.attrs)})
 
     @staticmethod
     def _build_aligned_grid(
@@ -129,7 +156,9 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         else:
             n = math.ceil(extent_in_bins - bin_float_tol)
         n = max(n, 0)
-        return start + np.arange(n + 1) * step
+        # Remove accumulated float error (e.g. -0.1 + 31 * 0.005 is not exactly
+        # 0.055), so grid points match decimal source times exactly.
+        return np.round(start + np.arange(n + 1) * step, 12)
 
     def interpolate_dimensions(
         self,
@@ -184,6 +213,7 @@ class FFTDecomposeTransform(BaseDatasetTransform):
         signal = xr.Dataset({spec_name: spectrum, angle_name: angles})
         return signal
 
+
 class BackgroundSubtractionTransform(BaseDatasetTransform):
     def __init__(self, start: int, end: int):
         self.start = start
@@ -191,14 +221,19 @@ class BackgroundSubtractionTransform(BaseDatasetTransform):
 
     def transform_array(self, data: xr.DataArray) -> xr.DataArray:
         # subtracts background calculated from mean of data points between given start and end
-        time_dim = next((dim for dim in data.dims if dim == "time" or dim.startswith("time_")), None)
+        time_dim = next(
+            (dim for dim in data.dims if dim == "time" or dim.startswith("time_")), None
+        )
         time_dim_str = str(time_dim)
         if not time_dim:
-            logger.warning(f"Skipping background subtraction: No time dimension found in dataset {data.name}.")
+            logger.warning(
+                f"Skipping background subtraction: No time dimension found in dataset {data.name}."
+            )
             return data
         isel_kwargs = {time_dim: slice(self.start, self.end)}
         background = data.isel(**isel_kwargs).mean(dim=time_dim_str)
         return data - background
+
 
 transform_registry = Registry[BaseDatasetTransform]()
 transform_registry.register("fftdecompose", FFTDecomposeTransform)

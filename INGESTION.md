@@ -95,13 +95,14 @@ python3 -m src.level2.main <mapping_file> [OPTIONS]
 | `--shot-min` | Minimum shot number (requires --shot-max) | None |
 | `--shot-max` | Maximum shot number (requires --shot-min) | None |
 | `--shots` | Space-separated list of specific shots | None |
-| `--dt` | Time delta for interpolation | 0.00025 |
 | `-i, --include-datasets` | Only process specified datasets | All |
 | `-e, --exclude-datasets` | Exclude specified datasets | None |
 | `-v, --verbose` | Enable debug logging | False |
 | `-o, --output-path` | Override output directory | From config |
 | `-n, --n-workers` | Number of parallel workers | System default |
 | `--skip-geometry` | Omit geometry data from ingestion | False
+
+Interpolation cadence is configured per dataset in the mapping file's `interpolate` section.
 
 ### Example Commands
 

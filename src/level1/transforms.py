@@ -230,10 +230,14 @@ class TensoriseChannels(BaseTransform):
     ) -> xr.Dataset:
         attrs = channels[0].attrs
         channel_descriptions = [c.attrs.get("description", "") for c in channels]
-        description = "\n".join(channel_descriptions)
+
+        non_empty = [d for d in channel_descriptions if d.strip()]
         attrs["name"] = self.stem
-        attrs["description"] = description
-        attrs["channel_descriptions"] = channel_descriptions
+        if non_empty:
+            attrs["description"] = "\n".join(non_empty)
+            attrs["channel_descriptions"] = channel_descriptions
+        else:
+            attrs.pop("channel_descriptions", None)
         attrs.pop("uda_name", "")
         attrs.pop("mds_name", "")
         dataset.attrs = attrs

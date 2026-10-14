@@ -22,12 +22,14 @@ class DatasetBuilder:
         pipelines: Pipelines,
         include_datasets: Optional[list[str]],
         exclude_datasets: Optional[list[str]],
+        use_uda_group_names: bool = False,
     ):
         self.writer = writer
         self.pipelines = pipelines
         self.loader = loader
         self.include_datasets = include_datasets
         self.exclude_datasets = exclude_datasets
+        self.use_uda_group_names = use_uda_group_names
         self.group_name_mapping = read_json_file(self.pipelines.group_mapping_file)
         license_data = read_json_file(self.pipelines.license_file)
         self.license_name = license_data.get("name")
@@ -191,7 +193,10 @@ class DatasetBuilder:
                 imas_name = mapping["imas"]
                 dataset.attrs["imas"] = imas_name
             dataset.attrs["uda_name"] = group_name
-            group_name = mapping["name"]
+            if self.use_uda_group_names:
+                dataset.attrs["mapped_name"] = mapping["name"]
+            else:
+                group_name = mapping["name"]
 
         return dataset, group_name
 

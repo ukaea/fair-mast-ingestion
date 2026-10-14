@@ -1,6 +1,9 @@
 facility: "JET"
 default_loader: "sal"
 plasma_current: "core_profiles/plasma_current"
+# Sources are PPF paths of the form "<dda>/<dtype>" (resolved under the
+# publishable "jetppf" user) or "<user>/<dda>/<dtype>" for data written by
+# another user, e.g. the "chain1" analysis chain.
 
 global_interpolate:
   params:
@@ -12,6 +15,8 @@ global_interpolate:
 
 datasets:
   equilibrium:
+    imas: "equilibrium"
+    description: "Equilibrium reconstruction from the CHAIN1 EFIT run."
     interpolate:
       time:
         method: "none"
@@ -24,26 +29,418 @@ datasets:
 
     profiles:
       normalized_beta:
-        source: "efit/btnd" 
-        units: "dimensionless"
+        source: "chain1/efit/btnd"
+        units: "percent*m*T/A"
         imas: "equilibrium.time_slice[:].global_quantities.beta_normal"
+        description: "Normalised beta, from the diamagnetic measurement"
         dimensions:
           time:
+            units: "s"
             imas: "equilibrium.time_slice[:].time"
+
       poloidal_beta:
-        source: "efit/btpd" 
+        source: "chain1/efit/btpd"
         units: "dimensionless"
         imas: "equilibrium.time_slice[:].global_quantities.beta_pol"
+        description: "Poloidal beta, from the diamagnetic measurement"
         dimensions:
           time:
+            units: "s"
             imas: "equilibrium.time_slice[:].time"
+
       toroidal_beta:
-        source: "efit/bttd" 
-        units: "dimensionless"
+        source: "chain1/efit/bttd"
+        units: "percent"
         imas: "equilibrium.time_slice[:].global_quantities.beta_tor"
+        description: "Toroidal beta, from the diamagnetic measurement"
         dimensions:
           time:
+            units: "s"
             imas: "equilibrium.time_slice[:].time"
+
+      q95:
+        source: "chain1/efit/q95"
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].global_quantities.q_95"
+        description: "Safety factor at the 95% normalised poloidal flux surface"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      magnetic_axis_r:
+        source: "chain1/efit/rmag"
+        units: "m"
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.r"
+        description: "Major radius of the magnetic axis"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      magnetic_axis_z:
+        source: "chain1/efit/zmag"
+        units: "m"
+        imas: "equilibrium.time_slice[:].global_quantities.magnetic_axis.z"
+        description: "Height of the magnetic axis"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_lower_r:
+        source: "chain1/efit/rxpl"
+        units: "m"
+        fill_value: 0  # 0 marks time slices with no lower X-point (limiter phases)
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
+        description: "Major radius of the lower X-point"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      x_point_lower_z:
+        source: "chain1/efit/zxpl"
+        units: "m"
+        fill_value: 0  # 0 marks time slices with no lower X-point (limiter phases)
+        imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
+        description: "Height of the lower X-point"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      minor_radius:
+        source: "chain1/efit/cr0"
+        units: "m"
+        imas: "equilibrium.time_slice[:].boundary.minor_radius"
+        description: "Minor radius of the plasma boundary, defined as (Rmax - Rmin) / 2"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      elongation:
+        source: "chain1/efit/elon"
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].boundary.elongation"
+        description: "Elongation of the plasma boundary"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      elongation_axis:
+        source: "chain1/efit/elax"
+        units: "dimensionless"
+        description: "Elongation of the flux surfaces at the magnetic axis"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_upper:
+        source: "chain1/efit/triu"
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].boundary.triangularity_upper"
+        description: "Upper triangularity of the plasma boundary"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      triangularity_lower:
+        source: "chain1/efit/tril"
+        units: "dimensionless"
+        imas: "equilibrium.time_slice[:].boundary.triangularity_lower"
+        description: "Lower triangularity of the plasma boundary"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+
+      b_field_pol_probe_measured:
+        source: "chain1/efit/bpme"
+        units: "T"
+        imas: "equilibrium.time_slice[:].constraints.b_field_pol_probe[:].measured"
+        description: "Measured poloidal field probe value used as a constraint in the reconstruction"
+        dimensions:
+          time:
+            units: "s"
+            imas: "equilibrium.time_slice[:].time"
+          b_field_pol_probe_channel:
+            units: "dimensionless"
+
+  magnetics:
+    imas: "magnetics"
+    description: "Magnetic diagnostic: plasma current, pick-up coils, flux loops
+      and their per-channel validity flags."
+    interpolate:
+      time:
+        method: "none"
+
+    profiles:
+      ip:
+        source: "magc/ipla"
+        units: "A"
+        imas: "magnetics.ip[:].data"
+        description: "Total plasma current (toroidal component)"
+        dimensions:
+          time:
+            units: "s"
+            imas: "magnetics.ip[:].time"
+
+      b_field_pol_probe:
+        source: "magc/bpme"
+        units: "T"
+        imas: "magnetics.b_field_pol_probe[:].field.data"
+        description: "Poloidal magnetic field measured by the pick-up coils"
+        dimensions:
+          time:
+            units: "s"
+            imas: "magnetics.b_field_pol_probe[:].field.time"
+          b_field_pol_probe_channel:
+            units: "dimensionless"
+
+      b_field_pol_probe_validity:
+        source: "msta/stbp"
+        units: "dimensionless"
+        imas: "magnetics.b_field_pol_probe[:].validity"
+        description: "Per-channel status flag for the poloidal field probes"
+        dimensions:
+          b_field_pol_probe_channel:
+            units: "dimensionless"
+
+      flux_loop:
+        source: "magc/flme"
+        units: "Wb/rad"
+        imas: "magnetics.flux_loop[:].flux.data"
+        description: "Poloidal flux measured by the flux loops"
+        dimensions:
+          time:
+            units: "s"
+            imas: "magnetics.flux_loop[:].flux.time"
+          flux_loop_channel:
+            units: "dimensionless"
+
+      flux_loop_validity:
+        source: "msta/stfl"
+        units: "dimensionless"
+        imas: "magnetics.flux_loop[:].validity"
+        description: "Per-channel status flag for the flux loops"
+        dimensions:
+          flux_loop_channel:
+            units: "dimensionless"
+
+      voltage_loop:
+        source: "magc/vl"
+        units: "V"
+        imas: "magnetics.flux_loop[:].voltage.data"
+        description: "Loop voltage measured by the voltage loops"
+        dimensions:
+          time:
+            units: "s"
+            imas: "magnetics.flux_loop[:].voltage.time"
+          voltage_loop_channel:
+            units: "dimensionless"
+
+      pf_circuit_current:
+        source: "magc/pfs"
+        units: "A"
+        description: "Measured current in the poloidal field circuits"
+        dimensions:
+          time:
+            units: "s"
+          pf_circuit_channel:
+            units: "dimensionless"
+
+  summary:
+    imas: "summary"
+    description: "Summary of global physics quantities for the pulse."
+    # NBI and ICRH are digitised on different time bases, so each keeps its
+    # own coordinate axis rather than being resampled onto a common grid.
+
+    profiles:
+      power_nbi:
+        source: "nbi/ptot"
+        units: "W"
+        imas: "summary.heating_current_drive.power_nbi"
+        description: "Total neutral beam injection power"
+        dimensions:
+          time_nbi:
+            units: "s"
+
+      power_ic:
+        source: "icrh/ptot"
+        units: "W"
+        imas: "summary.heating_current_drive.power_ic"
+        description: "Total ion cyclotron resonance heating power coupled to the plasma"
+        dimensions:
+          time_icrh:
+            units: "s"
+
+  interferometer:
+    imas: "interferometer"
+    description: "KG1V far-infrared interferometer: line-integrated electron
+      density along eight vertical and lateral chords."
+    # The eight KG1V channels are digitised on two time bases, one shared by
+    # chords 1-4 and one by chords 5-8. These coincide on some pulses but not
+    # others, so each group keeps its own coordinate axis.
+
+    profiles:
+      n_e_line_1:
+        source: "kg1v/lid1"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 1"
+        dimensions:
+          time_lid_1_4:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_2:
+        source: "kg1v/lid2"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 2"
+        dimensions:
+          time_lid_1_4:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_3:
+        source: "kg1v/lid3"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 3"
+        dimensions:
+          time_lid_1_4:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_4:
+        source: "kg1v/lid4"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 4"
+        dimensions:
+          time_lid_1_4:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_5:
+        source: "kg1v/lid5"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 5"
+        dimensions:
+          time_lid_5_8:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_6:
+        source: "kg1v/lid6"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 6"
+        dimensions:
+          time_lid_5_8:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_7:
+        source: "kg1v/lid7"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 7"
+        dimensions:
+          time_lid_5_8:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+      n_e_line_8:
+        source: "kg1v/lid8"
+        units: "m**-2"
+        imas: "interferometer.channel[:].n_e_line.data"
+        description: "Line-integrated electron density, KG1V channel 8"
+        dimensions:
+          time_lid_5_8:
+            units: "s"
+            imas: "interferometer.channel[:].n_e_line.time"
+
+  thomson_scattering:
+    imas: "thomson_scattering"
+    description: "High-resolution Thomson scattering (HRTS): electron density and
+      temperature profiles along the outboard midplane."
+    # The number of HRTS spatial points varies between pulses, so the radial
+    # coordinate is taken as measured rather than placed on a fixed grid.
+    interpolate:
+      time:
+        method: "none"
+      major_radius:
+        method: "none"
+
+    profiles:
+      n_e:
+        source: "hrts/ne"
+        units: "m**-3"
+        imas: "thomson_scattering.channel[:].n_e.data"
+        description: "Electron density profile"
+        dimensions:
+          time:
+            units: "s"
+            imas: "thomson_scattering.time"
+          major_radius:
+            units: "m"
+            imas: "thomson_scattering.channel[:].position.r"
+
+      t_e:
+        source: "hrts/te"
+        units: "eV"
+        imas: "thomson_scattering.channel[:].t_e.data"
+        description: "Electron temperature profile"
+        dimensions:
+          time:
+            units: "s"
+            imas: "thomson_scattering.time"
+          major_radius:
+            units: "m"
+            imas: "thomson_scattering.channel[:].position.r"
+
+  gas_injection:
+    imas: "gas_injection"
+    description: "Gas injection by a system of pipes and valves."
+    interpolate:
+      time:
+        method: "none"
+
+    profiles:
+      d2_flow_rate:
+        source: "gash/b32r"
+        units: "bar*l/s"
+        imas: "gas_injection.pipe[:].flow_rate.data"
+        description: "Deuterium gas flow rate through valve module B32" # not written for every pulse; the valves in use vary by campaign
+        dimensions:
+          time:
+            units: "s"
+            imas: "gas_injection.pipe[:].flow_rate.time"
+
+  spectrometer_visible:
+    imas: "spectrometer_visible"
+    description: "Edge visible spectroscopy (EDG7): D-alpha emission at the X-point."
+    interpolate:
+      time:
+        method: "none"
+
+    profiles:
+      d_alpha_flux_xpoint:
+        source: "edg7/flxt"
+        units: "1/s"
+        imas: "spectrometer_visible.channel[:].processed_line[:].intensity"
+        description: "Total X-point D-alpha photon flux"
+        dimensions:
+          time:
+            units: "s"
 
   core_profiles:
     imas: core_profiles

@@ -3,7 +3,7 @@ import importlib
 import pytest
 import xarray as xr
 
-from src.core.load import SALLoader, UDALoader, ZarrLoader
+from src.core.load import MissingSourceError, SALLoader, UDALoader, ZarrLoader
 
 
 def try_uda():
@@ -33,6 +33,23 @@ def test_load_sal():
     assert isinstance(signal, xr.DataArray)
     assert signal.attrs["units"] == "Amps"
     assert signal.dim_0.attrs["units"] == "Secs"
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        ("magn/ipla", "/pulse/87737/ppf/signal/jetppf/magn/ipla"),
+        ("chain1/efit/rxpl", "/pulse/87737/ppf/signal/chain1/efit/rxpl"),
+        ("/magn/ipla/", "/pulse/87737/ppf/signal/jetppf/magn/ipla"),
+    ],
+)
+def test_sal_signal_path(name, expected):
+    assert SALLoader._signal_path(87737, name) == expected
+
+
+def test_sal_signal_path_rejects_bad_source():
+    with pytest.raises(MissingSourceError):
+        SALLoader._signal_path(87737, "ipla")
 
 
 def test_load_zarr_remote():

@@ -7,7 +7,7 @@ numpy<2.3
 pandas
 pint
 pint_xarray
-pyarrow
+pyarrow<26
 pydantic
 rich
 s3fs

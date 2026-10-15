@@ -2,7 +2,7 @@ import numpy as np
 import xarray as xr
 
 from src.core.load import UDALoader
-from src.core.model import Mapping
+from src.core.model import DatasetInfo, Mapping, ProfileInfo
 from src.level2.reader import DatasetReader
 from src.level2.transforms import DatasetInterpolationTransform, InterpolationParams
 
@@ -58,3 +58,62 @@ def test_interpolation_aligns_grids_across_shots():
 
     n = min(len(a_out.time), len(b_out.time))
     assert np.allclose(a_out.time.values[:n], b_out.time.values[:n])
+
+
+def _hold(values, times, params):
+    mapping = Mapping(
+        facility="MAST", default_loader="uda",
+        plasma_current="summary/ip", datasets={},
+    )
+    transform = DatasetInterpolationTransform(None, mapping)
+    data = xr.DataArray(values, dims=["time"], coords={"time": times}, name="x")
+    return transform.interpolate_dimension(data, "time", params)
+
+
+def test_zero_hold_keeps_samples_on_grid_points_with_rounding_noise():
+    step = 1e-4
+    times = -0.1 + np.arange(1000) * step
+    # Rounding puts some samples just after their grid point
+    times = times + np.where(np.arange(1000) % 2 == 0, 1e-9, -1e-9)
+    params = InterpolationParams(start=-0.1, end=-0.1 + 999 * step, step=step, method="zero")
+
+    out = _hold(np.arange(1000.0), times, params)
+
+    assert np.array_equal(out.values, np.arange(1000.0))
+
+
+def test_zero_hold_keeps_last_sample_slightly_before_its_grid_point():
+    step = 1e-2
+    times = -0.1 + np.arange(10) * step
+    times[-1] -= 1e-9  # the last sample sits just before its grid point
+    params = InterpolationParams(start=-0.1, end=-0.1 + 9 * step, step=step, method="zero")
+
+    out = _hold(np.arange(10.0), times, params)
+
+    assert out.values[-1] == 9.0
+    assert np.unique(out.values).size == 10
+
+
+def test_native_step_comes_from_the_data():
+    mapping = Mapping(
+        facility="MAST", default_loader="uda", plasma_current="summary/ip",
+        datasets={}, tmax=0.5,
+    )
+    dataset_params = DatasetInfo(
+        profiles={
+            "a": ProfileInfo(source="a", dimensions={"time": None}),
+            "b": ProfileInfo(source="b", dimensions={"time": None}),
+        },
+        interpolate={"time": InterpolationParams(start=-0.1, step="native", method="zero")},
+    )
+    t_a = -0.09 + np.arange(60) * 0.01
+    t_b = -0.05 + np.arange(110) * 0.00626
+    profiles = {
+        "a": xr.DataArray(np.arange(60.0), dims=["time"], coords={"time": t_a}, name="a"),
+        "b": xr.DataArray(np.arange(110.0), dims=["time"], coords={"time": t_b}, name="b"),
+    }
+
+    out = DatasetInterpolationTransform(dataset_params, mapping).transform(profiles)
+
+    # One shared grid, at the faster of the two native steps
+    assert np.allclose(np.diff(out.time.values), 0.00626)

@@ -786,7 +786,11 @@ datasets:
                     "P5U/4", "P6U/1", "P6U/2", "P2L/1", "P2L/2", "P2L/3", "P2L/4", "P3L/1",
                     "P3L/2", "P3L/3", "P3L/4", "P4L/1", "P4L/2", "P4L/3", "P4L/4", "P5L/1",
                     "P5L/2", "P5L/3", "P5L/4", "P6L/1", "P6L/2"
-                    ]
+                    ],
+                    "cc04_warning": "CC04 (n_flux_loop index 3) is sign-reversed for shots
+                      25470-25793, with no established cause. It is blanked out in 
+                      magnetics.flux_loop_flux but kept here as it is what EFIT received. 
+                      Exclude index 3 yourself if you are using these values as measurements."
                 }
         imas: "equilibrium.time_slice[:].constraints.flux_loop[:].measured"
         units: "Wb"

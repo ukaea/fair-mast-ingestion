@@ -1,7 +1,7 @@
 import math
 import warnings
 from abc import ABC
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import scipy.signal
@@ -9,6 +9,7 @@ import xarray as xr
 
 from src.core.log import logger
 from src.core.model import (
+    NATIVE_STEP,
     DatasetInfo,
     Dimension,
     FillOptions,
@@ -18,6 +19,9 @@ from src.core.model import (
 from src.core.registry import Registry
 
 ProfileDict = dict[str, xr.DataArray]
+
+# Fraction of a grid step within which a sample counts as on the grid point
+ZERO_HOLD_TOLERANCE = 1e-3
 
 
 class BaseDatasetTransform(ABC):
@@ -57,13 +61,57 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
     ):
         self.mapping = mapping
         self.dataset_params = dataset_params
+        self._interpolate = None if dataset_params is None else dataset_params.interpolate
+
+    def transform(self, data: Union[ProfileDict, xr.Dataset]) -> xr.Dataset:
+        if isinstance(data, dict):
+            profiles = data
+        else:
+            profiles = {str(name): array for name, array in data.data_vars.items()}
+        self._interpolate = self._resolve_native_steps(profiles)
+        return super().transform(data)
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         dimensions = self.dataset_params.profiles[signal_name].dimensions
-        profile = self.interpolate_dimensions(
-            signal, dimensions, self.dataset_params.interpolate
-        )
+        profile = self.interpolate_dimensions(signal, dimensions, self._interpolate)
         return profile
+
+    def _resolve_native_steps(
+        self, profiles: ProfileDict
+    ) -> Optional[dict[str, InterpolationParams]]:
+        """Replace each `step: native` with the native step of the data.
+
+        All profiles in a dataset share one grid, so the step is the smallest
+        native step of the profiles that have the dimension.
+        """
+        interpolate = self.dataset_params.interpolate
+        if interpolate is None:
+            return None
+
+        resolved = {}
+        for dim_name, params in interpolate.items():
+            if params.step == NATIVE_STEP:
+                step = self._native_step(profiles, dim_name)
+                logger.debug(f"Native step for dimension '{dim_name}' is {step}")
+                params = params.model_copy(update={"step": step})
+            resolved[dim_name] = params
+        return resolved
+
+    @staticmethod
+    def _native_step(profiles: ProfileDict, dim_name: str) -> float:
+        steps = []
+        for profile in profiles.values():
+            if dim_name not in profile.dims or profile.sizes[dim_name] < 2:
+                continue
+            coord = profile[dim_name].values
+            # Mean step, so a grid with this step does not drift from the samples
+            steps.append(float(coord[-1] - coord[0]) / (coord.size - 1))
+        if not steps:
+            raise ValueError(
+                f"Cannot find the native step for dimension '{dim_name}': "
+                f"no profile has two or more points on it."
+            )
+        return min(steps)
 
     def interpolate_dimension(
         self, dataset: xr.Dataset, dim_name: str, params: InterpolationParams
@@ -104,13 +152,30 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
                 f"Dimension '{dim_name}' has no `step` in the dataset's "
                 f"`interpolate` block — cannot infer a default."
             )
+        if params.step == NATIVE_STEP:
+            raise ValueError(
+                f"Dimension '{dim_name}' has `step: native`, which only "
+                f"`transform` can resolve from the data."
+            )
 
         coords = self._build_aligned_grid(
             params.start, params.end, params.step, end_was_explicit
         )
+        query = coords
+        if params.method == "zero":
+            # UDA timebases are often float32, so a sample on a grid point can
+            # read as slightly after it. Without a tolerance the hold then takes
+            # the previous sample, which duplicates one sample and drops the next.
+            tolerance = params.step * ZERO_HOLD_TOLERANCE
+            query = coords + tolerance
+            # The same applies to the last sample, but interp gives NaN past the
+            # end of the data, so clip grid points on the last sample onto it.
+            last = dataset.coords[dim_name].values.max()
+            query = np.where(coords <= last + tolerance, np.minimum(query, last), query)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            dataset = dataset.interp({dim_name: coords}, method=params.method)
+            dataset = dataset.interp({dim_name: query}, method=params.method)
+        dataset = dataset.assign_coords({dim_name: coords})
         return dataset
 
     @staticmethod

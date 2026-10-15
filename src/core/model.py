@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 import yaml
 from pydantic import BaseModel, Field, field_validator
@@ -14,10 +14,14 @@ class FillOptions(str, Enum):
     NONE = "none"
 
 
+NATIVE_STEP = "native"
+
+
 class InterpolationParams(BaseModel):
     start: Optional[float] = None
     end: Optional[float] = None
-    step: Optional[float] = None
+    # "native" takes the step from the data, for diagnostics whose rate changes between shots
+    step: Optional[Union[float, Literal["native"]]] = None
     method: Optional[str] = "zero"
     fill: Optional[FillOptions] = None
     dropna: Optional[bool] = None

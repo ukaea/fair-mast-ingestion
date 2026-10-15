@@ -21,7 +21,7 @@ datasets:
         method: "none"
       major_radius:
         start: 0.06
-        step: 0.03
+        step: 0.0303125 # native EFIT grid: 65 points from 0.06 to 2.0 m
         end: 2.0
         method: "linear"
       n_boundary_coords:
@@ -950,7 +950,7 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 5e-5
+        step: 2e-4 # fastest native XDC reference rate (5 kHz; older shots 2 kHz)
         method: 'zero'
         dropna: true
     profiles:
@@ -1100,7 +1100,7 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 5e-4
+        step: 1e-4 # native abm rate (10 kHz)
         method: 'zero'
         dropna: true
     profiles:
@@ -1440,7 +1440,7 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 2e-4
+        step: 0.0006133612 # native AMC/AMB rate (1630.36 Hz)
         method: 'zero'
         dropna: true
     profiles:
@@ -1482,7 +1482,7 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 2e-4
+        step: 0.0006133612 # native AMC/AMB rate (1630.36 Hz)
         method: 'zero'
         dropna: true
     profiles:
@@ -1502,13 +1502,13 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 2e-4
+        step: 0.0006133612 # native AMC/AMB rate (1630.36 Hz)
         method: 'zero'
         dropna: true
 
       time_omaha:
         start: -0.1
-        step: 1e-6
+        step: 5e-6 # native OMAHA rate (200 kHz)
         method: 'zero'
         dropna: true
 
@@ -2085,7 +2085,7 @@ datasets:
     interpolate:
       time:
         start: -0.01
-        step: 2e-5
+        step: 1e-5 # native XIM D-alpha rate (100 kHz)
         method: 'zero'
         dropna: true
 
@@ -2259,12 +2259,12 @@ datasets:
     interpolate:
       time:
         start: -0.1
-        step: 5e-3
+        step: native # CX rate changes between shots: 5 ms, 6.27 ms (from ~48877) and 10 ms (from ~51650)
         method: 'zero'
         dropna: true
       major_radius:
-        start: 0
-        end: 1.6
+        start: 0.7 # CX chords cover 0.74 to 1.45 m with ~1.1 cm spacing
+        end: 1.5
         step: 0.01
         method: "linear"
     profiles:

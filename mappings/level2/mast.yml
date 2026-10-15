@@ -4018,7 +4018,7 @@ datasets:
         description: "Experimental measurement of poloidal magnetic flux obtained from flux loops"
         source:
           # CC04 is kept only up to 25365, the last shot where it agrees with the
-          # other centre column loops. See the note on the second entry below.
+          # other centre column loops.
           - name: "AMB_FL"
             shot_range:
               shot_min: 1

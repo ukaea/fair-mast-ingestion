@@ -2111,7 +2111,8 @@ datasets:
     interpolate:
       time:
         start: 0 # diagnostic doesn't pre-trigger
-        step: 5e-3
+        step: 0.0066666667 # native 150 Hz laser rate
+        method: 'zero' # causal: each grid point holds the last sample at or before it
         fill: 'none'
         dropna: false
       major_radius:
@@ -2151,6 +2152,7 @@ datasets:
             source: "ayc/time"
             imas: "thomson_scattering.channel[:].t_e.time"
           major_radius:
+            source: "ayc/r"
             imas: "thomson_scattering.channel[:].position.r"
 
       n_e:
@@ -2164,6 +2166,7 @@ datasets:
             source: "ayc/time"
             imas: "thomson_scattering.channel[:].n_e.time"
           major_radius:
+            source: "ayc/r"
             imas: "thomson_scattering.channel[:].position.r"
 
       p_e:
@@ -2175,6 +2178,7 @@ datasets:
           time:
             source: "ayc/time"
           major_radius:
+            source: "ayc/r"
             imas: "thomson_scattering.channel[:].position.r"
 
   thomson_scattering_divertor:
@@ -2183,15 +2187,12 @@ datasets:
     interpolate:
       time:
         start: 0 # diagnostic doesn't pre-trigger
-        step: 5e-3
+        step: 0.0333333333 # native 30 Hz laser rate
+        method: 'zero' # causal: each grid point holds the last sample at or before it
         fill: 'none'
         dropna: false
       major_radius:
-        start: 0.3
-        end: 1.5
-        step: 0.01
-        fill: 'none'
-        method: 'linear'
+        method: "none" # keep the native polychromator positions; ~4 cm spacing is too coarse for a 1 cm grid
 
     profiles:
       t_e_core:
@@ -2223,6 +2224,7 @@ datasets:
             source: "ayd/time"
             imas: "thomson_scattering.channel[:].t_e.time"
           major_radius:
+            source: "ayd/r"
             imas: "thomson_scattering.channel[:].position.r"
 
       n_e:
@@ -2236,6 +2238,7 @@ datasets:
             source: "ayd/time"
             imas: "thomson_scattering.channel[:].n_e.time"
           major_radius:
+            source: "ayd/r"
             imas: "thomson_scattering.channel[:].position.r"
 
       p_e:
@@ -2247,6 +2250,7 @@ datasets:
           time:
             source: "ayd/time"
           major_radius:
+            source: "ayd/r"
             imas: "thomson_scattering.channel[:].position.r"
 
   charge_exchange:

@@ -117,3 +117,50 @@ def test_native_step_comes_from_the_data():
 
     # One shared grid, at the faster of the two native steps
     assert np.allclose(np.diff(out.time.values), 0.00626)
+
+
+def _native_time_transform():
+    mapping = Mapping(
+        facility="MAST", default_loader="uda", plasma_current="summary/ip",
+        datasets={},
+    )
+    dataset_params = DatasetInfo(
+        profiles={
+            "t_e": ProfileInfo(source="t_e", dimensions={"time": None}),
+            "n_e": ProfileInfo(source="n_e", dimensions={"time": None}),
+        },
+        interpolate={"time": InterpolationParams(method="none")},
+    )
+    return DatasetInterpolationTransform(dataset_params, mapping)
+
+
+def _profile(name, times):
+    return xr.DataArray(
+        np.arange(times.size, dtype=float), dims=["time"],
+        coords={"time": times}, name=name,
+    )
+
+
+def test_native_time_aligns_floating_point_differences():
+    # Jittered laser times, read with rounding noise for one of the profiles
+    times = 0.1 + np.arange(50) * 6.67e-3
+    times += np.random.default_rng(0).uniform(-1e-3, 1e-3, times.size)
+    noisy = times + np.random.default_rng(1).uniform(-1e-12, 1e-12, times.size)
+    profiles = {"t_e": _profile("t_e", times), "n_e": _profile("n_e", noisy)}
+
+    out = _native_time_transform().transform(profiles)
+
+    assert np.array_equal(out.time.values, times)
+    assert out.t_e.notnull().all() and out.n_e.notnull().all()
+    assert np.array_equal(out.n_e.values, np.arange(times.size))
+
+
+def test_native_time_keeps_samples_that_are_not_shared():
+    times = 0.1 + np.arange(50) * 6.67e-3
+    extra = np.append(times, times[-1] + 6.67e-3)
+    profiles = {"t_e": _profile("t_e", times), "n_e": _profile("n_e", extra)}
+
+    out = _native_time_transform().transform(profiles)
+
+    assert np.array_equal(out.time.values, extra)
+    assert out.t_e.isel(time=-1).isnull() and out.n_e.notnull().all()

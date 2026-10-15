@@ -402,16 +402,11 @@ def test_equilibrium_radial_grid_is_native_efit_grid(reader):
     assert np.allclose(dataset.major_radius.values, EFIT_R)
 
 
-def test_charge_exchange_radial_grid_covers_chords(reader):
+def test_charge_exchange_keeps_native_chord_radii(reader):
     dataset = _read(reader, "charge_exchange")
-    radius = dataset.major_radius.values
 
-    assert radius.min() <= CX_R.min()
-    assert radius.max() >= CX_R.max()
-    assert np.diff(radius).max() <= np.diff(CX_R).min()
-    # Most of the grid has data, so it is not padded far past the chords
-    has_data = dataset.t_i.notnull().any("time").values
-    assert has_data.mean() > 0.8
+    assert np.allclose(dataset.major_radius.values, CX_R)
+    assert dataset.t_i.notnull().any("time").all()
 
 
 @pytest.mark.parametrize("era", CX_ERAS)

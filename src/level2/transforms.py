@@ -69,7 +69,70 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         else:
             profiles = {str(name): array for name, array in data.data_vars.items()}
         self._interpolate = self._resolve_native_steps(profiles)
+        if isinstance(data, dict):
+            data = self._align_native_coords(data)
         return super().transform(data)
+
+    def _align_native_coords(self, profiles: ProfileDict) -> ProfileDict:
+        """Put the profiles on one shared axis for each dimension not interpolated.
+
+        Profiles can read the same samples with small floating point differences.
+        The merge then keeps the near-equal values as different points, and each
+        profile has NaN at the points of the other profiles.
+        """
+        if self._interpolate is None:
+            return profiles
+        for dim_name, params in self._interpolate.items():
+            if params.method == "none":
+                profiles = self._snap_to_shared_axis(profiles, dim_name)
+        return profiles
+
+    @staticmethod
+    def _snap_to_shared_axis(profiles: ProfileDict, dim_name: str) -> ProfileDict:
+        coords = {
+            name: profile[dim_name]
+            for name, profile in profiles.items()
+            if dim_name in profile.coords
+            and profile[dim_name].ndim == 1
+            and profile.sizes[dim_name] > 0
+            and np.issubdtype(profile[dim_name].dtype, np.number)
+        }
+        if not coords:
+            return profiles
+
+        # The profile with the most points sets the shared axis
+        longest = max(coords.values(), key=lambda c: c.size)
+        shared = np.sort(longest.values.astype(float))
+        steps = np.diff(shared)
+        steps = steps[steps > 0]
+        if steps.size == 0:
+            return profiles
+        tolerance = float(np.median(steps)) * ZERO_HOLD_TOLERANCE
+
+        aligned = dict(profiles)
+        for name, coord in coords.items():
+            values = coord.values.astype(float)
+            index = np.clip(np.searchsorted(shared, values), 1, shared.size - 1)
+            left, right = shared[index - 1], shared[index]
+            nearest = np.where(values - left <= right - values, left, right)
+            snapped = np.where(np.abs(nearest - values) <= tolerance, nearest, values)
+            if np.unique(snapped).size != snapped.size:
+                logger.warning(
+                    f"Cannot align '{dim_name}' of profile '{name}': two points "
+                    f"are within {tolerance} of the same shared point."
+                )
+                continue
+            if not np.array_equal(snapped, values):
+                logger.debug(
+                    f"Aligned '{dim_name}' of profile '{name}' by up to "
+                    f"{np.abs(snapped - values).max()}"
+                )
+                aligned[name] = profiles[name].assign_coords(
+                    {dim_name: coord.copy(data=snapped)}
+                )
+            # Points that match no shared point join the shared axis
+            shared = np.union1d(shared, snapped)
+        return aligned
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         dimensions = self.dataset_params.profiles[signal_name].dimensions

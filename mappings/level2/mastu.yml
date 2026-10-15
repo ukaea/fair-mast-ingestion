@@ -20,10 +20,7 @@ datasets:
       z:
         method: "none"
       major_radius:
-        start: 0.06
-        step: 0.0303125 # native EFIT grid: 65 points from 0.06 to 2.0 m
-        end: 2.0
-        method: "linear"
+        method: "none" # keep the native EFIT grid
       n_boundary_coords:
         method: "none"
         dropna: true
@@ -2110,17 +2107,10 @@ datasets:
     description: "Thomson scattering diagnostic"
     interpolate:
       time:
-        start: 0 # diagnostic doesn't pre-trigger
-        step: 0.0066666667 # native 150 Hz laser rate
-        method: 'zero' # causal: each grid point holds the last sample at or before it
-        fill: 'none'
+        method: "none" # keep the native laser times; the laser interval jitters in some shots (5.6 to 8.0 ms in 53000), so a regular grid drops samples
         dropna: false
       major_radius:
-        start: 0.3
-        end: 1.5
-        step: 0.01
-        fill: 'none'
-        method: 'linear'
+        method: "none" # keep the native polychromator positions; linear interpolation onto a grid flattens single-channel peaks
 
     profiles:
       t_e_core:
@@ -2186,10 +2176,7 @@ datasets:
     description: "Divertor Thomson scattering diagnostic" # MAST-U only; MAST has no divertor Thomson system
     interpolate:
       time:
-        start: 0 # diagnostic doesn't pre-trigger
-        step: 0.0333333333 # native 30 Hz laser rate
-        method: 'zero' # causal: each grid point holds the last sample at or before it
-        fill: 'none'
+        method: "none" # keep the native laser times; the laser interval jitters in some shots (5.6 to 8.0 ms in 53000), so a regular grid drops samples
         dropna: false
       major_radius:
         method: "none" # keep the native polychromator positions; ~4 cm spacing is too coarse for a 1 cm grid
@@ -2263,10 +2250,7 @@ datasets:
         method: 'zero'
         dropna: true
       major_radius:
-        start: 0.7 # CX chords cover 0.74 to 1.45 m with ~1.1 cm spacing
-        end: 1.5
-        step: 0.01
-        method: "linear"
+        method: "none" # keep the native chord positions; linear interpolation onto a grid flattens single-chord peaks
     profiles:
       t_i_core:
         source: "act/cel3/ss/t_i_core"

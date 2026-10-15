@@ -43,3 +43,7 @@ exclude = [".venv", "notebooks"]
 UDA_HOST = "uda2.mast.l"
 UDA_META_PLUGINNAME = "MASTU_DB"
 UDA_METANEW_PLUGINNAME = "MAST_DB"
+[tool.pytest.ini_options]
+markers = [
+    "integration: compares level 2 output with the UDA server; skipped on CI",
+]

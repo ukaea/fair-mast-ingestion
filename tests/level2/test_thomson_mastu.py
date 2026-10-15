@@ -7,8 +7,8 @@ signals copy the layout of MAST-U shot 52625:
 - ayd (divertor): 12 polychromators (IDs 201-212) with radius decreasing with
   channel index, 30 Hz, first laser at 0.19 ms.
 
-Each laser sample sits slightly after a grid point, which is the case that
-makes a non-causal or misaligned time hold visible.
+The core laser times have jitter, as in shots such as 53000, so a regular
+time grid cannot hold every sample.
 """
 
 from pathlib import Path
@@ -91,7 +91,8 @@ def _profile_signals(source, time, ids, radius):
 
 class FakeUDAClient:
     def __init__(self):
-        core_time = CORE_T0 + np.arange(CORE_N_TIME) / CORE_RATE
+        jitter = np.random.default_rng(0).uniform(-1e-3, 1e-3, CORE_N_TIME)
+        core_time = CORE_T0 + np.arange(CORE_N_TIME) / CORE_RATE + jitter
         div_time = DIV_T0 + np.arange(DIV_N_TIME) / DIV_RATE
         time_dim = [_dim("Time", core_time, "s")]
 
@@ -131,10 +132,6 @@ def reader(fake_client):
     return DatasetReader(mapping, UDALoader(), skip_geometry=True)
 
 
-def _last_sample_at_or_before(raw_time, out_time):
-    return np.searchsorted(raw_time, out_time, side="right") - 1
-
-
 @pytest.mark.parametrize(
     "dataset_name, radius",
     [("thomson_scattering", CORE_R), ("thomson_scattering_divertor", DIV_R)],
@@ -146,57 +143,55 @@ def test_profile_major_radius_is_position_not_channel_id(reader, dataset_name, r
     assert profile.major_radius.attrs["units"] == "m"
 
 
-def test_core_profiles_have_data_after_radial_regrid(reader):
-    dataset = reader.read_dataset(SHOT, "thomson_scattering")
+@pytest.mark.parametrize(
+    "dataset_name, ids, radius",
+    [
+        ("thomson_scattering", CORE_IDS, CORE_R),
+        ("thomson_scattering_divertor", DIV_IDS, DIV_R),
+    ],
+)
+def test_keeps_native_channel_radii(reader, dataset_name, ids, radius):
+    dataset = reader.read_dataset(SHOT, dataset_name)
+
+    assert dataset.sizes["major_radius"] == ids.size
+    assert np.allclose(dataset.major_radius.values, np.sort(radius))
+    for name in ["t_e", "n_e", "p_e"]:
+        assert dataset[name].notnull().any(), f"{name} is all NaN"
+
+
+@pytest.mark.parametrize(
+    "dataset_name, raw_time_name",
+    [
+        ("thomson_scattering", "core_time"),
+        ("thomson_scattering_divertor", "div_time"),
+    ],
+)
+def test_keeps_native_laser_times(reader, fake_client, dataset_name, raw_time_name):
+    dataset = reader.read_dataset(SHOT, dataset_name)
+
+    assert np.array_equal(dataset.time.values, getattr(fake_client, raw_time_name))
+
+
+@pytest.mark.parametrize(
+    "dataset_name, source, radius",
+    [
+        ("thomson_scattering", "ayc", CORE_R),
+        ("thomson_scattering_divertor", "ayd", DIV_R),
+    ],
+)
+def test_profiles_match_raw_samples(reader, fake_client, dataset_name, source, radius):
+    dataset = reader.read_dataset(SHOT, dataset_name)
+    order = np.argsort(radius)
 
     for name in ["t_e", "n_e", "p_e"]:
-        has_data = dataset[name].notnull().any("time")
-        assert has_data.any(), f"{name} is all NaN after regridding"
-
-        radius_with_data = dataset.major_radius.values[has_data.values]
-        assert radius_with_data.min() >= CORE_R.min()
-        assert radius_with_data.max() <= CORE_R.max()
+        raw = fake_client.signals[f"{source}/{name}"].data[:, order]
+        out = dataset[name].transpose("time", "major_radius").values
+        assert np.array_equal(out, raw), name
 
 
-def test_divertor_keeps_native_channel_radii(reader):
-    dataset = reader.read_dataset(SHOT, "thomson_scattering_divertor")
+def test_core_summary_matches_raw_samples(reader, fake_client):
+    dataset = reader.read_dataset(SHOT, "thomson_scattering")
 
-    assert dataset.sizes["major_radius"] == DIV_IDS.size
-    assert np.allclose(dataset.major_radius.values, np.sort(DIV_R))
-
-
-@pytest.mark.parametrize(
-    "dataset_name, rate",
-    [("thomson_scattering", CORE_RATE), ("thomson_scattering_divertor", DIV_RATE)],
-)
-def test_time_step_matches_laser_rate(reader, dataset_name, rate):
-    dataset = reader.read_dataset(SHOT, dataset_name)
-
-    assert np.allclose(np.diff(dataset.time.values), 1 / rate)
-
-
-@pytest.mark.parametrize(
-    "dataset_name, variable",
-    [("thomson_scattering", "t_e_core"), ("thomson_scattering_divertor", "t_e")],
-)
-def test_time_hold_is_causal(reader, fake_client, dataset_name, variable):
-    dataset = reader.read_dataset(SHOT, dataset_name)
-    if dataset_name == "thomson_scattering":
-        raw_time = fake_client.core_time
-        raw = fake_client.signals["ayc/t_e_core"].data
-    else:
-        raw_time = fake_client.div_time
-        order = np.argsort(DIV_R)
-        raw = fake_client.signals["ayd/t_e"].data[:, order]
-
-    out_time = dataset.time.values
-    out = dataset[variable].transpose("time", ...).values
-    index = _last_sample_at_or_before(raw_time, out_time)
-    held = (index >= 0) & (out_time <= raw_time[-1])
-
-    # Each output holds the last sample taken at or before its own time
-    assert np.array_equal(out[held], raw[index[held]])
-    # No sample is reported before it was taken
-    assert np.isnan(out[index < 0]).all()
-    # Each sample is used at most once, so no sample is duplicated
-    assert np.unique(index[held]).size == held.sum()
+    assert np.array_equal(
+        dataset.t_e_core.values, fake_client.signals["ayc/t_e_core"].data
+    )

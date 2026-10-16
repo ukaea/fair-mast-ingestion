@@ -16,8 +16,9 @@ from src.core.load import (
 from src.core.log import logger
 from src.core.model import Mapping, load_model
 from src.core.upload import UploadS3
+from src.core.utils import read_shot_file
 from src.core.workflow_manager import WorkflowManager
-from src.core.writer import dataset_writer_registry
+from src.core.writer import DatasetWriterNames, dataset_writer_registry
 from src.level2.reader import DatasetReader
 
 
@@ -131,6 +132,8 @@ def process_shot(shot: int, **kwargs):
     config = load_config_file(args.config_file)
     if args.output_path is not None:
         config.writer.options["output_path"] = args.output_path
+    if args.file_format is not None:
+        config.writer.type = args.file_format
 
     writer = dataset_writer_registry.create(config.writer.type, **config.writer.options)
 
@@ -182,12 +185,26 @@ def main():
     parser.add_argument("--shot-min", type=int, default=None)
     parser.add_argument("--shot-max", type=int, default=None)
     parser.add_argument("--shots", nargs='+', type=int, default=None)
+    parser.add_argument(
+        "--shot-file",
+        type=str,
+        default=None,
+        help="CSV or parquet file listing the shots to process in its first column.",
+    )
     parser.add_argument("--dt", type=float, default=0.00025)
     parser.add_argument("-i", "--include-datasets", nargs="+", default=[])
     parser.add_argument("-e", "--exclude-datasets", nargs="+", default=[])
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--force-ip-check", action="store_true")
     parser.add_argument("-o", "--output-path", type=str, default=None)
+    parser.add_argument(
+        "-f",
+        "--format",
+        dest="file_format",
+        choices=[name.value for name in DatasetWriterNames],
+        default=None,
+        help="Output file format. This overrides the writer type in the config file.",
+    )
     parser.add_argument("-n", "--n-workers", type=int, default=None)
     parser.add_argument("--skip-geometry", action="store_true")
     args = parser.parse_args()
@@ -195,12 +212,15 @@ def main():
     if args.verbose:
         logger.setLevel("DEBUG")
 
-    if args.shots is not None:
-       shots = [int(s) for s in args.shots]
+    if args.shot_file is not None:
+        shots = read_shot_file(args.shot_file)
+    elif args.shots is not None:
+        shots = [int(s) for s in args.shots]
     elif args.shot is None:
         if args.shot_min is None or args.shot_max is None:
             logger.error(
-                "Must provide both a minimum and maximum shot (--shot-min/--shot-max)"
+                "Must provide one of --shot, --shots, --shot-file or "
+                "--shot-min/--shot-max"
             )
             sys.exit(-1)
         shots = range(args.shot_min, args.shot_max)

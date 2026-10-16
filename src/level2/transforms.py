@@ -32,9 +32,35 @@ class BaseDatasetTransform(ABC):
         for profile_name, profile in profiles.items():
             profile = self.transform_array(profile_name, profile)
             datasets[profile_name] = profile
+        datasets = self._unify_shared_axes(datasets)
         ds = xr.merge(datasets.values())
         ds.attrs = dict()  # clear unwanted attributes at dataset level
         return ds
+
+    def _unify_shared_axes(self, profiles: ProfileDict, ulps: int = 256) -> ProfileDict:
+        """Snap sibling profiles' axes onto the longest one before merging.
+
+        UDA builds each signal's axis separately, so two signals covering the
+        same samples disagree in the last bits and `xr.merge` unions them into a
+        half-NaN axis.
+        """
+        profiles = dict(profiles)
+        for dim in {dim for array in profiles.values() for dim in array.dims}:
+            members = [
+                name
+                for name, array in profiles.items()
+                if dim in array.coords and array.coords[dim].dtype.kind == "f"
+            ]
+            if len(members) < 2:
+                continue
+            ref = max((profiles[n].coords[dim].values for n in members), key=len)
+            for name in members:
+                # ponytail: equal-length axes only; others still outer-join.
+                if profiles[name].coords[dim].shape == ref.shape:
+                    profiles[name] = self._snap_coord_to_grid(
+                        profiles[name], dim, ref, ulps
+                    )
+        return profiles
 
     def transform_dataset(self, dataset: xr.Dataset) -> xr.Dataset:
         transform_datasets = {}
@@ -49,6 +75,38 @@ class BaseDatasetTransform(ABC):
         raise NotImplementedError(
             f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
         )
+
+    @staticmethod
+    def _snap_coord_to_grid(
+        dataset: xr.Dataset, dim_name: str, grid: np.ndarray, ulps: int = 2
+    ) -> xr.Dataset:
+        """Convert a float coordinate to float64 and snap it to the grid.
+
+        A plain cast keeps the rounding error (0.07 becomes 0.0700000003), and
+        zero-order-hold interpolation then drops the sample as later than its
+        own grid point. A time within `ulps` of its nearest grid point is moved
+        onto it. `grid` is an interpolation grid, or a sibling profile's axis.
+
+        The tolerance is measured at the axis reach, not per sample: axes are
+        built as start + n * step, so the error follows the magnitude of that
+        arithmetic. Using the local |t| collapsed the tolerance to ~1e-16 beside
+        a zero crossing, where the real error is still ~1e-8.
+        """
+        coord = dataset.coords[dim_name]
+        if coord.dtype.kind != "f":
+            return dataset
+        times = coord.values.astype(np.float64)
+        tol = float(ulps * np.spacing(np.abs(coord.values).max()))
+        idx = np.clip(np.searchsorted(grid, times), 1, len(grid) - 1)
+        if len(grid) > 1:
+            left, right = grid[idx - 1], grid[idx]
+            nearest = np.where(
+                np.abs(times - left) <= np.abs(right - times), left, right
+            )
+        else:
+            nearest = np.full_like(times, grid[0])
+        times = np.where(np.abs(times - nearest) <= tol, nearest, times)
+        return dataset.assign_coords({dim_name: (coord.dims, times, coord.attrs)})
 
 
 class DatasetInterpolationTransform(BaseDatasetTransform):
@@ -106,39 +164,11 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         coords = self._build_aligned_grid(
             params.start, params.end, params.step, end_was_explicit
         )
-        dataset = self._snap_float32_coord(dataset, dim_name, coords)
+        dataset = self._snap_coord_to_grid(dataset, dim_name, coords)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             dataset = dataset.interp({dim_name: coords}, method=params.method)
         return dataset
-
-    @staticmethod
-    def _snap_float32_coord(
-        dataset: xr.Dataset, dim_name: str, grid: np.ndarray
-    ) -> xr.Dataset:
-        """Convert a float32 coordinate to float64 and snap it to the grid.
-
-        A plain cast keeps the float32 rounding error (0.07 becomes
-        0.0700000003, and 0.05 can become 0.049999997). Zero-order-hold
-        interpolation then sees a sample as later than its own grid point and
-        drops it. A source time that is within 2 float32 steps of a grid point
-        is moved onto that grid point. Other times stay unchanged.
-        """
-        coord = dataset.coords[dim_name]
-        if coord.dtype != np.float32:
-            return dataset
-        times = coord.values.astype(np.float64)
-        idx = np.clip(np.searchsorted(grid, times), 1, len(grid) - 1)
-        if len(grid) > 1:
-            left, right = grid[idx - 1], grid[idx]
-            nearest = np.where(
-                np.abs(times - left) <= np.abs(right - times), left, right
-            )
-        else:
-            nearest = np.full_like(times, grid[0])
-        tol = 2 * np.spacing(np.abs(coord.values)).astype(np.float64)
-        times = np.where(np.abs(times - nearest) <= tol, nearest, times)
-        return dataset.assign_coords({dim_name: (coord.dims, times, coord.attrs)})
 
     @staticmethod
     def _build_aligned_grid(

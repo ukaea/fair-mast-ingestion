@@ -1,8 +1,10 @@
 import numpy as np
+import pint  # noqa: F401  registers the .pint accessor the reader uses
+import pint_xarray  # noqa: F401
 import xarray as xr
 
 from src.core.load import UDALoader
-from src.core.model import Mapping
+from src.core.model import DatasetInfo, Dimension, Mapping, ProfileInfo
 from src.level2.reader import DatasetReader
 from src.level2.transforms import DatasetInterpolationTransform, InterpolationParams
 
@@ -90,3 +92,91 @@ def test_interpolation_zero_order_hold_keeps_float32_time_samples():
     out = transform.interpolate_dimension(ds, "time", params)
 
     assert out.x.values.tolist() == [0, 1, 2, 3, 4, 5, 6]
+
+
+# Thomson-shaped fixtures: two signals, same pulses, two float32 axes.
+
+N_PULSES = 145
+PULSE_PERIOD = np.float32(4.1666e-3)
+N_CHANNELS = 130
+
+
+def _profile_axis():
+    """start + n * step."""
+    i = np.arange(1, N_PULSES + 1, dtype=np.float32)
+    return (PULSE_PERIOD * i).astype(np.float32)
+
+
+def _core_axis():
+    """The same instants accumulated, so the rounding differs."""
+    return np.cumsum(np.full(N_PULSES, PULSE_PERIOD, dtype=np.float32)).astype(
+        np.float32
+    )
+
+
+def _thomson_mapping():
+    radius = Dimension(source="AYC_R")
+    return Mapping(
+        facility="MAST",
+        default_loader="uda",
+        plasma_current="summary/ip",
+        datasets={
+            "thomson_scattering": DatasetInfo(
+                # no `time` block: Thomson is not time-interpolated
+                interpolate={
+                    "major_radius": InterpolationParams(
+                        start=0.3, end=1.49, step=0.01, method="linear", fill="none"
+                    )
+                },
+                profiles={
+                    "t_e": ProfileInfo(
+                        source="AYC_TE",
+                        dimensions={"time": None, "major_radius": radius},
+                        dimension_order=["major_radius", "time"],
+                    ),
+                    "t_e_core": ProfileInfo(
+                        source="AYC_TE_CORE", dimensions={"time": None}
+                    ),
+                },
+            )
+        },
+    )
+
+
+def _fake_uda_load(shot, name, channels=None):
+    radius = np.linspace(0.234, 1.517, N_CHANNELS, dtype=np.float32)
+    if name == "AYC_TE_CORE":
+        return xr.DataArray(
+            np.ones(N_PULSES),
+            dims=["time"],
+            coords={"time": _core_axis()},
+            attrs={"units": "eV"},
+        )
+    if name == "AYC_TE":
+        return xr.DataArray(
+            np.ones((N_PULSES, N_CHANNELS)),
+            dims=["time", "radial_index"],
+            coords={"time": _profile_axis(), "radial_index": radius},
+            attrs={"units": "eV"},
+        )
+    if name == "AYC_R":
+        return xr.DataArray(
+            np.tile(radius, (N_PULSES, 1)),
+            dims=["time", "radial_index"],
+            coords={"time": _profile_axis(), "radial_index": radius},
+            attrs={"units": "m"},
+        )
+    raise AssertionError(f"unexpected signal {name}")
+
+
+def test_read_dataset_merges_divergent_float32_axes_onto_one(mocker):
+    assert (_profile_axis() != _core_axis()).sum() > 100, "fixture must disagree"
+    mocker.patch("src.core.load.UDALoader.load", side_effect=_fake_uda_load)
+
+    reader = DatasetReader(_thomson_mapping(), UDALoader(), skip_geometry=True)
+    ds = reader.read_dataset(30421, "thomson_scattering")
+
+    assert ds.sizes["time"] == N_PULSES  # was 283, the union of both axes
+    assert ds.sizes["major_radius"] == 120
+    assert not ds.t_e.isnull().all(dim="major_radius").any()
+    assert not ds.t_e_core.isnull().any()

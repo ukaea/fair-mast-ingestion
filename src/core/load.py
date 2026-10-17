@@ -224,6 +224,7 @@ class UDALoader(BaseLoader):
 
     def load_channels(self, shot_num: int, name: str, channels: list[Channel]):
         scales = {c.name: c.scale for c in channels}
+        masks = {c.name: c.mask for c in channels}
         channels = [c.name for c in channels]
         
         signals = {}
@@ -278,7 +279,12 @@ class UDALoader(BaseLoader):
             signal = signal.interp_like(first_signal, method="zero")
             signals[name] = signal
 
-        signals = [signals[channel] * scales[channel] for channel in channels]
+        signals = [
+            xr.full_like(signals[channel], np.nan, dtype=float)
+            if masks[channel]
+            else signals[channel] * scales[channel]
+            for channel in channels
+        ]
         signals = xr.concat(signals, dim=channels_dim)
         return signals
 

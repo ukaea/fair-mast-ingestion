@@ -36,6 +36,7 @@ class BackgroundCorrection(BaseModel):
 class Channel(BaseModel):
     name: str
     scale: float = 1.0
+    mask: bool = False
 
 
 class Source(BaseModel):

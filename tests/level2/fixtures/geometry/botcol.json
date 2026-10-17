@@ -1,0 +1,1 @@
+{"units": "SI units: degrees, m", "dimensions": "singleDim=1", "children": [{"name_": "botcol", "version": "0.0", "phi_cut": NaN, "centreR": 0.23537670075893402, "centreZ": -2.0250000953674316, "dR": 0.04714220017194748, "dZ": 0.30000001192092896, "shapeAngle1": 0.0, "shapeAngle2": 295.3243408203125, "resistance": 7.266355514526367, "resistanceUnits": "mOhms"}]}

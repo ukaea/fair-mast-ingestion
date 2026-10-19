@@ -37,12 +37,14 @@ class BaseDatasetTransform(ABC):
         ds.attrs = dict()  # clear unwanted attributes at dataset level
         return ds
 
-    def _unify_shared_axes(self, profiles: ProfileDict, ulps: int = 256) -> ProfileDict:
+    def _unify_shared_axes(self, profiles: ProfileDict) -> ProfileDict:
         """Snap sibling profiles' axes onto the longest one before merging.
 
         UDA builds each signal's axis separately, so two signals covering the
         same samples disagree in the last bits and `xr.merge` unions them into a
-        half-NaN axis.
+        half-NaN axis. Samples the reference does not have are left alone and
+        still outer-join, so a sibling genuinely missing a pulse merges with a
+        NaN on that row rather than doubling the axis.
         """
         profiles = dict(profiles)
         for dim in {dim for array in profiles.values() for dim in array.dims}:
@@ -54,13 +56,26 @@ class BaseDatasetTransform(ABC):
             if len(members) < 2:
                 continue
             ref = max((profiles[n].coords[dim].values for n in members), key=len)
+            ref = np.sort(np.asarray(ref, dtype=np.float64))
             for name in members:
-                # ponytail: equal-length axes only; others still outer-join.
-                if profiles[name].coords[dim].shape == ref.shape:
-                    profiles[name] = self._snap_coord_to_grid(
-                        profiles[name], dim, ref, ulps
-                    )
+                if self._same_sampling(profiles[name].coords[dim].values, ref):
+                    profiles[name] = self._snap_coord_to_grid(profiles[name], dim, ref)
         return profiles
+
+    @staticmethod
+    def _same_sampling(times: np.ndarray, ref: np.ndarray, rtol: float = 0.01) -> bool:
+        """Were these two axes sampled at the same rate?
+
+        The precondition for "these are the same instants, rounded differently".
+        Without it, two axes genuinely sampled at different rates have labels
+        that fall close enough to snap together, which would claim two separate
+        measurements happened at one instant.
+        """
+        a, b = np.diff(np.sort(np.asarray(times, dtype=np.float64))), np.diff(ref)
+        a, b = a[a > 0], b[b > 0]
+        if not a.size or not b.size:
+            return False
+        return abs(np.median(a) - np.median(b)) <= rtol * np.median(b)
 
     def transform_dataset(self, dataset: xr.Dataset) -> xr.Dataset:
         transform_datasets = {}
@@ -78,33 +93,37 @@ class BaseDatasetTransform(ABC):
 
     @staticmethod
     def _snap_coord_to_grid(
-        dataset: xr.Dataset, dim_name: str, grid: np.ndarray, ulps: int = 2
+        dataset: xr.Dataset, dim_name: str, grid: np.ndarray, frac: float = 0.25
     ) -> xr.Dataset:
         """Convert a float coordinate to float64 and snap it to the grid.
 
         A plain cast keeps the rounding error (0.07 becomes 0.0700000003), and
         zero-order-hold interpolation then drops the sample as later than its
-        own grid point. A time within `ulps` of its nearest grid point is moved
-        onto it. `grid` is an interpolation grid, or a sibling profile's axis.
+        own grid point. A time within `frac` of a step of its nearest grid point
+        is moved onto it. `grid` is an interpolation grid, or a sibling axis.
 
-        The tolerance is measured at the axis reach, not per sample: axes are
-        built as start + n * step, so the error follows the magnitude of that
-        arithmetic. Using the local |t| collapsed the tolerance to ~1e-16 beside
-        a zero crossing, where the real error is still ~1e-8.
+        The tolerance is a fraction of a step, not of float precision. UDA
+        computes axes rather than storing them, so two renderings of the same
+        instants sit whole arithmetic routes apart.
         """
         coord = dataset.coords[dim_name]
         if coord.dtype.kind != "f":
             return dataset
+        grid = np.asarray(grid, dtype=np.float64)
+        if grid.size < 2:
+            return dataset
+
         times = coord.values.astype(np.float64)
-        tol = float(ulps * np.spacing(np.abs(coord.values).max()))
-        idx = np.clip(np.searchsorted(grid, times), 1, len(grid) - 1)
-        if len(grid) > 1:
-            left, right = grid[idx - 1], grid[idx]
-            nearest = np.where(
-                np.abs(times - left) <= np.abs(right - times), left, right
-            )
-        else:
-            nearest = np.full_like(times, grid[0])
+        spacings = [float(np.diff(grid).min())]
+        own = np.diff(np.sort(times))
+        own = own[own > 0]
+        if own.size:
+            spacings.append(float(own.min()))
+        tol = frac * min(spacings)
+
+        idx = np.clip(np.searchsorted(grid, times), 1, grid.size - 1)
+        left, right = grid[idx - 1], grid[idx]
+        nearest = np.where(np.abs(times - left) <= np.abs(right - times), left, right)
         times = np.where(np.abs(times - nearest) <= tol, nearest, times)
         return dataset.assign_coords({dim_name: (coord.dims, times, coord.attrs)})
 

@@ -110,3 +110,37 @@ def test_merge_keeps_every_pulse_in_burst_mode():
     assert merged.sizes["time"] == np.unique(stepwise).size
     assert not merged.a.isnull().any()
     assert not merged.b.isnull().any()
+
+
+def test_merge_pads_a_sibling_missing_a_pulse_with_nan():
+    # Same sampling, one pulse absent: align onto the reference and leave a NaN
+    # on the missing row, rather than doubling the axis.
+    period = np.float32(4.1666e-3)
+    full = (period * np.arange(1, 146, dtype=np.float32)).astype(np.float32)
+    short = np.delete(
+        np.cumsum(np.full(145, period, dtype=np.float32)).astype(np.float32), 70
+    )
+
+    merged = _merge(_profiles(t_e=full, t_e_core=short))
+
+    assert merged.sizes["time"] == 145
+    assert int(merged.t_e_core.isnull().sum()) == 1
+    assert not merged.t_e.isnull().any()
+
+
+def test_merge_ignores_axes_sampled_at_a_different_rate():
+    # Different rates mean different instants, however close some labels fall.
+    merged = _merge(_profiles(x=np.linspace(0, 1, 10), y=np.linspace(0, 1, 20)))
+
+    assert merged.sizes["time"] == 28
+
+
+def test_snap_will_not_collapse_a_source_finer_than_the_grid():
+    source = np.round(-0.1 + np.arange(2001) * 5e-5, 12)
+    coarse = np.round(-0.1 + np.arange(101) * 1e-3, 12)
+
+    out = DatasetInterpolationTransform._snap_coord_to_grid(
+        _series(source), "time", coarse
+    )
+
+    assert np.unique(out.time.values).size == source.size

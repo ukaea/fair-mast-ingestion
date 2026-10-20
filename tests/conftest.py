@@ -1,8 +1,69 @@
+import functools
+import os
+import tomllib
+from pathlib import Path
+
 import numpy as np
 import pytest
 import xarray as xr
 
 from src.core.model import DatasetInfo, Mapping, ProfileInfo
+
+REFERENCE_SHOT = 30421
+
+
+def _apply_pytest_env():
+    """Set the UDA variables from pyproject, so pytest-env is optional.
+
+    `[tool.pytest_env]` only takes effect when pytest-env is installed, which it
+    is in CI but often not locally. Reading it here keeps one source of truth
+    and lets the UDA-marked tests run from a laptop on the VPN.
+    """
+    pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    try:
+        env = tomllib.loads(pyproject.read_text()).get("tool", {}).get("pytest_env", {})
+    except (OSError, tomllib.TOMLDecodeError):
+        return
+    for key, value in env.items():
+        os.environ.setdefault(key, str(value))
+
+
+_apply_pytest_env()
+
+
+@functools.lru_cache(maxsize=1)
+def uda_available() -> bool:
+    """Is a UDA server reachable? Checked once, lazily, never at import time."""
+    if os.environ.get("CI"):
+        return False
+    try:
+        import pyuda
+
+        pyuda.Client().get("ip", REFERENCE_SHOT)
+        return True
+    except Exception:
+        return False
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "uda: needs a live UDA connection; skipped in CI and off the VPN",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    if uda_available():
+        return
+    skip = pytest.mark.skip(reason="no UDA connection (set CI= and join the VPN)")
+    for item in items:
+        if "uda" in item.keywords:
+            item.add_marker(skip)
+
+
+@pytest.fixture(scope="session")
+def reference_shot() -> int:
+    return REFERENCE_SHOT
 
 
 @pytest.fixture

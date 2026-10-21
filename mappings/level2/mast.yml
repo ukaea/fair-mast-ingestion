@@ -2920,7 +2920,7 @@ datasets:
         source:
           - name: "AMC" 
             channels:
-             - "AMC_SOL CURRENT" 
+             - "AMC_SOL CURRENT" : { scale: 0.5} # Solenoid scaled by 0.5 to account for the way it was wired.
              - "AMC_P2IL FEED CURRENT" : { scale: 12} # Feed current is in kA/turn. Each channel needs to be scaled by the number of turns in the coil to get the actual current in A.
              - "AMC_P2IU FEED CURRENT" : { scale: 12}
              - "AMC_P2OL FEED CURRENT": { scale: 8}
@@ -2931,8 +2931,8 @@ datasets:
              - "AMC_P4U FEED CURRENT": { scale: 23}
              - "AMC_P5L FEED CURRENT": { scale: 23}
              - "AMC_P5U FEED CURRENT": { scale: 23}
-             - "AMC_P6L CURRENT" 
-             - "AMC_P6U CURRENT"
+             - "AMC_P6L CURRENT" : { scale: 4}
+             - "AMC_P6U CURRENT" : { scale: 4}
         dimensions:
           current_channel:
           time: 

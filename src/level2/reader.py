@@ -254,7 +254,7 @@ class DatasetReader:
 
         if "units" not in item.attrs:
             raise RuntimeError(
-                f"Cannot convert to target units {target_units} for shot {self.shot} and signal {item.name}. No units defined."
+                f"Cannot convert to target units {target_units} for shot {self._shot} and signal {item.name}. No units defined."
             )
 
         try:

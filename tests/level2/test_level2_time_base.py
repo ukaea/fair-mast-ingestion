@@ -11,6 +11,20 @@ import pint  # noqa: F401  registers the .pint accessor the reader uses
 import pint_xarray  # noqa: F401
 import pytest
 import xarray as xr
+from fake_signals import (
+    N_PULSES,
+    PULSE_PERIOD,
+    axis_accumulated,
+    axis_multiplied,
+    axis_offset,
+    axis_rendered,
+    divergence,
+    empty_time_rows,
+    expected_rate_band,
+    thomson_loader,
+    time_axis_is_sound,
+    true_times,
+)
 
 from src.core.load import UDALoader
 from src.core.model import (
@@ -22,21 +36,6 @@ from src.core.model import (
 )
 from src.level2.reader import DatasetReader
 from src.level2.transforms import DatasetInterpolationTransform
-
-from fake_signals import (
-    N_PULSES,
-    axis_rendered,
-    PULSE_PERIOD,
-    empty_time_rows,
-    expected_rate_band,
-    time_axis_is_sound,
-    axis_accumulated,
-    axis_multiplied,
-    axis_offset,
-    divergence,
-    thomson_loader,
-    true_times,
-)
 
 
 def _mapping() -> Mapping:

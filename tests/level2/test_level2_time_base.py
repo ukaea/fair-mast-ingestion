@@ -288,6 +288,16 @@ def test_native_step_one_row_per_sample():
     )
 
 
+def test_native_grid_even():
+    """A native grid is not rounded to 12 decimals: 10 MHz OMAHA had 1e-5 jitter."""
+    axis = -0.1 + np.arange(200000) * 9.999999998305014e-08
+
+    ds = _native({"omaha": _profile(axis, "omaha")})
+
+    steps = np.diff(ds.time.values)
+    assert np.ptp(steps) < 1e-9 * steps.mean()
+
+
 def test_native_step_fastest_profile():
     """The fastest profile sets the grid; the slower one is held, not lost."""
     fast = axis_multiplied(-0.1 + np.arange(4000) * 2e-5)

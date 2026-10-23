@@ -356,9 +356,14 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         else:
             n = math.ceil(extent_in_bins - bin_float_tol)
         n = max(n, 0)
+        grid = start + np.arange(n + 1) * step
+        if round(start, 12) != start or round(step, 12) != step:
+            # A native step (e.g. 1.0000000114e-6) is not decimal. Rounding
+            # its grid only adds jitter of up to 1e-12 s.
+            return grid
         # Remove accumulated float error (e.g. -0.1 + 31 * 0.005 is not exactly
         # 0.055), so grid points match decimal source times exactly.
-        return np.round(start + np.arange(n + 1) * step, 12)
+        return np.round(grid, 12)
 
     def interpolate_dimensions(
         self,

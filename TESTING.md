@@ -33,6 +33,7 @@ plugin happens to be installed.
 | `tests/level2/fake_signals.py` | **synthetic signals carrying UDA's real defects** |
 | `tests/level2/test_level2_time_base.py` | time-axis correctness, runs in CI |
 | `tests/level2/test_level2_time_base_uda.py` | the same claims against live UDA |
+| `tests/level2/test_level2_resampling_uda.py` | every group compared with its UDA samples, M5 to M9 |
 | `tests/level2/test_reader.py` | reader behaviour |
 | `tests/level2/test_model.py` | mapping files parse |
 
@@ -125,6 +126,42 @@ Grouped as they appear in `test_level2_time_base.py`:
 - **Data quality.** Axis soundness, completeness, row count against the sampling
   rate, no value attributed to the wrong sample, and idempotence.
 - **The reader path.** The whole of `read_dataset` driven over mocked UDA.
+- **Grid ends.** The last sample is kept when it is not on the grid. A float32
+  last time does not add an empty row. A profile with no samples after the grid
+  start is skipped, and the other profiles in the group are kept.
+- **Float32 even axes.** An even float32 axis is rebuilt in float64 before the
+  snap. Without this, AMM at 4999.2 Hz on the 5 kHz grid loses samples where the
+  phase drift crosses the snap tolerance. An axis with a gap is not rebuilt.
+- **Native step.** `step: native` gives one row for each sample of the fastest
+  profile, at its sample time. A slower profile is held, not lost.
+
+## Comparing every group with UDA
+
+`test_level2_resampling_uda.py` reads each resampled group for one shot in each
+of the campaigns M5 to M9 (12698, 16146, 24600, 27880, 30421). The groups
+`magnetics`, `soft_x_rays` and `spectrometer_visible` are read for M5, M7 and M9
+only, because each takes minutes per shot. Then the test compares the output
+with the UDA samples:
+
+- **Values.** Each published row must be the UDA sample in force at that grid
+  time. The oracle is a plain zero-order hold that the test calculates itself.
+  There are no exceptions.
+- **Loss.** Each UDA sample in the grid window must appear in a row. The cases
+  where the grid is coarser than the native rate are in `KNOWN_LOSS`, with the
+  measured rate. Only `summary` is in it: its 1 kHz grid is intentional. If a
+  listed case does not lose samples, the test fails, so you must remove the
+  entry. Diagnostics whose rate changes between campaigns use `step: native`,
+  so the oracle gets the step from the published grid.
+- **Bolometer.** One row for each ABM sample, at the ABM time, with the same value.
+- **Radial axes.** A published radius must be a measured radius. Thomson
+  scattering, CXRS and EFIT keep their native radii (`method: none`). Linear
+  interpolation onto a fixed grid flattened single-channel peaks, and cut the
+  Thomson channels outside 0.3 m to 1.49 m.
+- **Empty profiles.** Shots where UDA gives a profile with no samples after the
+  grid start (EFIT `-999` placeholders, `XDC/GAS/T` on 26399) must still give
+  the rest of the group.
+
+A full run takes about 30 minutes on the VPN.
 
 ## Checking a test actually tests something
 

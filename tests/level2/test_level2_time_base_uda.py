@@ -123,6 +123,8 @@ def test_native_samples_on_grid(mapping, loader):
 
     ds = _read(mapping, loader, shot, "pf_active")
     grid = np.round(ds.time.values.astype(np.float64), 12)
+    # XDC starts at -2 s; only the samples in the grid window can have a row
+    tn = tn[(tn >= grid[0] - step / 2) & (tn <= grid[-1] + step / 2)]
     wanted = np.round(np.round(tn / step) * step, 12)
     common = np.intersect1d(wanted, grid)
 

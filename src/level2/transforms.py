@@ -1,14 +1,16 @@
 import math
 import warnings
 from abc import ABC
-from typing import Union
+from typing import Optional, TypeVar, Union
 
 import numpy as np
 import scipy.signal
 import xarray as xr
 
+from src.core.load import MissingProfileError
 from src.core.log import logger
 from src.core.model import (
+    NATIVE_STEP,
     DatasetInfo,
     Dimension,
     FillOptions,
@@ -18,6 +20,7 @@ from src.core.model import (
 from src.core.registry import Registry
 
 ProfileDict = dict[str, xr.DataArray]
+Xarray = TypeVar("Xarray", xr.Dataset, xr.DataArray)
 
 
 class BaseDatasetTransform(ABC):
@@ -30,7 +33,12 @@ class BaseDatasetTransform(ABC):
     def transform_dict(self, profiles: ProfileDict) -> xr.Dataset:
         datasets = {}
         for profile_name, profile in profiles.items():
-            profile = self.transform_array(profile_name, profile)
+            try:
+                profile = self.transform_array(profile_name, profile)
+            except MissingProfileError as e:
+                # One empty profile must not take the rest of the group with it.
+                logger.warning(f"Skipping profile {profile_name}: {e}")
+                continue
             datasets[profile_name] = profile
         datasets = self._unify_shared_axes(datasets)
         ds = xr.merge(datasets.values())
@@ -56,7 +64,7 @@ class BaseDatasetTransform(ABC):
             if len(members) < 2:
                 continue
             ref = max((profiles[n].coords[dim].values for n in members), key=len)
-            ref = np.sort(np.asarray(ref, dtype=np.float64))
+            ref = np.sort(self._float64_axis(ref))
             for name in members:
                 if self._same_sampling(profiles[name].coords[dim].values, ref):
                     profiles[name] = self._snap_coord_to_grid(profiles[name], dim, ref)
@@ -113,7 +121,7 @@ class BaseDatasetTransform(ABC):
         if grid.size < 2:
             return dataset
 
-        times = coord.values.astype(np.float64)
+        times = BaseDatasetTransform._float64_axis(coord.values)
         spacings = [float(np.diff(grid).min())]
         own = np.diff(np.sort(times))
         own = own[own > 0]
@@ -127,18 +135,112 @@ class BaseDatasetTransform(ABC):
         times = np.where(np.abs(times - nearest) <= tol, nearest, times)
         return dataset.assign_coords({dim_name: (coord.dims, times, coord.attrs)})
 
+    @staticmethod
+    def _float64_axis(values: np.ndarray, ulps: float = 4) -> np.ndarray:
+        """Convert an axis to float64, and rebuild a float32 even axis exactly.
+
+        UDA gives many axes as float32 renderings of `t0 + k * dt`. Each label
+        is then up to one float32 step from its true time. At 1 MHz and above
+        that is a large fraction of a sample, and where the native rate is near
+        the grid step, the snap tolerance cannot tell the jitter from the true
+        phase, so samples are lost. If the float32 axis is within `ulps` float32
+        steps of an even axis between its end points, the even axis is used.
+        """
+        times = np.asarray(values, dtype=np.float64)
+        if np.asarray(values).dtype != np.float32 or times.size < 3:
+            return times
+        even = np.linspace(times[0], times[-1], times.size)
+        tol = ulps * float(np.spacing(np.float32(np.abs(times).max())))
+        if np.abs(times - even).max() <= tol:
+            return even
+        return times
+
 
 class DatasetInterpolationTransform(BaseDatasetTransform):
     def __init__(self, dataset_params: DatasetInfo, mapping: Mapping):
         self.mapping = mapping
         self.dataset_params = dataset_params
+        self._interpolate = (
+            None if dataset_params is None else dataset_params.interpolate
+        )
+
+    def transform(self, data: Union[ProfileDict, xr.Dataset]) -> xr.Dataset:
+        if isinstance(data, dict):
+            profiles = data
+        else:
+            profiles = {str(name): array for name, array in data.data_vars.items()}
+        self._interpolate = self._resolve_native_steps(profiles)
+        return super().transform(data)
 
     def transform_array(self, signal_name: str, signal: xr.DataArray):
         dimensions = self.dataset_params.profiles[signal_name].dimensions
-        profile = self.interpolate_dimensions(
-            signal, dimensions, self.dataset_params.interpolate
-        )
+        profile = self.interpolate_dimensions(signal, dimensions, self._interpolate)
         return profile
+
+    def _resolve_native_steps(
+        self, profiles: ProfileDict
+    ) -> Optional[dict[str, InterpolationParams]]:
+        """Replace each `step: native` with the native step of the data.
+
+        All profiles in a dataset share one grid, so the profile with the
+        smallest native step sets it. The grid start moves forward onto a
+        sample time of that profile, so each of its samples has its own row.
+        """
+        interpolate = self.dataset_params.interpolate
+        if interpolate is None:
+            return None
+
+        resolved = {}
+        for dim_name, params in interpolate.items():
+            if params.step == NATIVE_STEP:
+                start = (
+                    params.start
+                    if params.start is not None
+                    else self.mapping.default_start
+                )
+                grid = self._native_grid(profiles, dim_name, start)
+                if grid is not None:
+                    step, start = grid
+                    logger.debug(f"Native grid for '{dim_name}': {start} + k * {step}")
+                    params = params.model_copy(update={"step": step, "start": start})
+            resolved[dim_name] = params
+        return resolved
+
+    @classmethod
+    def _native_grid(
+        cls, profiles: ProfileDict, dim_name: str, start: Optional[float]
+    ) -> Optional[tuple[float, Optional[float]]]:
+        """The smallest native step on a dimension, and the grid start for it.
+
+        None if no profile has two or more increasing points on the dimension,
+        e.g. a shot before the diagnostic was installed.
+        """
+        best = None
+        for profile in profiles.values():
+            if dim_name not in profile.dims or profile.sizes[dim_name] < 2:
+                continue
+            times = cls._float64_axis(profile[dim_name].values)
+            if not np.all(np.diff(times) > 0):
+                continue
+            # The mean step of an even axis. The median of a float32 axis is
+            # quantised (10 kHz reads as 9998 Hz), so the grid would drift.
+            step = (times[-1] - times[0]) / (times.size - 1)
+            even = np.abs(times - np.linspace(times[0], times[-1], times.size))
+            if even.max() > 0.25 * step:
+                # Gaps or bursts: the mean is not a step that occurs
+                step = float(np.median(np.diff(times)))
+            if best is None or step < best[0]:
+                best = (float(step), float(times[0]))
+        if best is None:
+            return None
+        step, first = best
+        if start is None:
+            return step, None
+        # The first sample time at or after `start`, extended back if the
+        # data starts later than the grid. A sample within the snap tolerance
+        # before `start` counts as on it (float32 -0.1 is -0.1000000015).
+        k = math.ceil((start - first) / step - 0.25)
+        return step, first + k * step
 
     def interpolate_dimension(
         self, dataset: xr.Dataset, dim_name: str, params: InterpolationParams
@@ -151,6 +253,15 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
                 params.end = float(self.mapping.tmax)
             else:
                 params.end = float(dataset.coords[dim_name].values.max())
+            start = (
+                params.start if params.start is not None else self.mapping.default_start
+            )
+            if start is not None and params.end < start:
+                # e.g. EFIT writes [-1000, -999] for a quantity it did not compute
+                raise MissingProfileError(
+                    f"No samples on '{dim_name}' after the grid start {start} "
+                    f"(last sample at {params.end})"
+                )
 
         if params.fill == FillOptions.FFILL:
             dataset = dataset.ffill(dim=dim_name)
@@ -179,15 +290,55 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
                 f"Dimension '{dim_name}' has no `step` in the dataset's "
                 f"`interpolate` block — cannot infer a default."
             )
+        if params.step == NATIVE_STEP:
+            # `transform` resolves it, unless no profile has two samples on it
+            raise MissingProfileError(
+                f"No native step for '{dim_name}': no profile in the dataset "
+                f"has two or more increasing samples on it"
+            )
 
         coords = self._build_aligned_grid(
             params.start, params.end, params.step, end_was_explicit
         )
-        dataset = self._snap_coord_to_grid(dataset, dim_name, coords)
+        source = self._snap_coord_to_grid(dataset, dim_name, coords)
+        if not end_was_explicit and self.mapping.tmax is None:
+            # The grid was sized from the unsnapped last time. A float32 last
+            # time a little after its grid point adds a point that has no data.
+            last = source[dim_name].values.max()
+            coords = coords[: np.searchsorted(coords, last) + 1]
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            dataset = dataset.interp({dim_name: coords}, method=params.method)
+            dataset = source.interp({dim_name: coords}, method=params.method)
+        if params.method == "zero":
+            dataset = self._hold_last_sample(source, dataset, dim_name, params.step)
         return dataset
+
+    @staticmethod
+    def _hold_last_sample(
+        source: Xarray, resampled: Xarray, dim_name: str, step: float
+    ) -> Xarray:
+        """Hold the last sample at the grid point that follows it.
+
+        The grid ends up to one step after the last sample, but the zero-order
+        hold gives NaN after the last sample. Without this, the last sample of
+        every signal that is not on the grid is lost.
+        """
+        times = source[dim_name].values
+        if times.size == 0:
+            return resampled
+        last = int(np.argmax(times))
+        grid = resampled[dim_name].values
+        tail = np.flatnonzero((grid > times[last]) & (grid < times[last] + step))
+        if tail.size == 0:
+            return resampled
+        held = source.isel({dim_name: last}, drop=True)
+        if isinstance(resampled, xr.DataArray):
+            resampled.loc[{dim_name: grid[tail]}] = held
+            return resampled
+        for name, array in resampled.data_vars.items():
+            if dim_name in array.dims:
+                array.loc[{dim_name: grid[tail]}] = held[name]
+        return resampled
 
     @staticmethod
     def _build_aligned_grid(
@@ -205,9 +356,14 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         else:
             n = math.ceil(extent_in_bins - bin_float_tol)
         n = max(n, 0)
+        grid = start + np.arange(n + 1) * step
+        if round(start, 12) != start or round(step, 12) != step:
+            # A native step (e.g. 1.0000000114e-6) is not decimal. Rounding
+            # its grid only adds jitter of up to 1e-12 s.
+            return grid
         # Remove accumulated float error (e.g. -0.1 + 31 * 0.005 is not exactly
         # 0.055), so grid points match decimal source times exactly.
-        return np.round(start + np.arange(n + 1) * step, 12)
+        return np.round(grid, 12)
 
     def interpolate_dimensions(
         self,

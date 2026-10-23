@@ -4071,7 +4071,13 @@ datasets:
         imas: "magnetics.b_field_tor_probe[:].field.data"
         target_units: "T"
         source:
+          # UDA's ASM analysis flips M02, M08 and M012 on every shot. That was correct
+          # while those coils were wired backwards, but the wiring was repaired around
+          # shot 24782 and the flip was never removed
           - name: "ASM/SAD/OUT"
+            shot_range:
+              shot_min: 1
+              shot_max: 24781
             channels:
               - "ASM_SAD/M01"
               - "ASM_SAD/M02"
@@ -4085,6 +4091,24 @@ datasets:
               - "ASM_SAD/M010"
               - "ASM_SAD/M011"
               - "ASM_SAD/M012"
+          - name: "ASM/SAD/OUT"
+            shot_range:
+              shot_min: 24782
+              shot_max: 30473
+            channels:
+            # M02, M08 and M012 are published here with the sign corrected (multiplied by -1) relative to UDA's ASM_SAD
+              - "ASM_SAD/M01"
+              - "ASM_SAD/M02": { scale: -1 }
+              - "ASM_SAD/M03"
+              - "ASM_SAD/M04"
+              - "ASM_SAD/M05"
+              - "ASM_SAD/M06"
+              - "ASM_SAD/M07"
+              - "ASM_SAD/M08": { scale: -1 }
+              - "ASM_SAD/M09"
+              - "ASM_SAD/M010"
+              - "ASM_SAD/M011"
+              - "ASM_SAD/M012": { scale: -1 }
         dimensions:
           b_field_tor_probe_saddle_field_channel:
           time_saddle:
@@ -4114,9 +4138,10 @@ datasets:
               - "XMB/SAD/OUT/M10"
               - "XMB/SAD/OUT/M11"
               - "XMB/SAD/OUT/M12"
+          # 24782-27619: wiring repaired, coils read true. Nothing to correct.
           - name: "XMB/SAD/OUT"
             shot_range:
-              shot_min: 11708
+              shot_min: 24782
               shot_max: 27619
             background_correction:
               tmin: 0
@@ -4131,9 +4156,31 @@ datasets:
               - "XMB_SAD/OUT/M07"
               - "XMB_SAD/OUT/M08"
               - "XMB_SAD/OUT/M09"
-              - "XMB_SAD/OUT/M10"
-              - "XMB_SAD/OUT/M11"
-              - "XMB_SAD/OUT/M12"
+              - "XMB_SAD/OUT/M010"
+              - "XMB_SAD/OUT/M011"
+              - "XMB_SAD/OUT/M012"
+          # Up to 24781 the M02, M08 and M012 coils were physically wired backwards,
+          # so UDA's voltages are reversed for them. 
+          - name: "XMB/SAD/OUT"
+            shot_range:
+              shot_min: 11708
+              shot_max: 24781
+            background_correction:
+              tmin: 0
+              tmax: 10
+            channels:
+              - "XMB_SAD/OUT/M01"
+              - "XMB_SAD/OUT/M02": { scale: -1 }
+              - "XMB_SAD/OUT/M03"
+              - "XMB_SAD/OUT/M04"
+              - "XMB_SAD/OUT/M05"
+              - "XMB_SAD/OUT/M06"
+              - "XMB_SAD/OUT/M07"
+              - "XMB_SAD/OUT/M08": { scale: -1 }
+              - "XMB_SAD/OUT/M09"
+              - "XMB_SAD/OUT/M010"
+              - "XMB_SAD/OUT/M011"
+              - "XMB_SAD/OUT/M012": { scale: -1 }
         dimensions:
           b_field_tor_probe_saddle_voltage_channel:
           time_saddle:

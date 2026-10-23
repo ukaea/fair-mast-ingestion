@@ -2916,23 +2916,39 @@ datasets:
     profiles:
       coil_current:
         imas: "pf_active.coil[:].current.data"
-        target_units: "A"
+        units: "kA/turn" # Feed currents are per turn. Multiply by the number of turns in the coil to get the total current.
         source:
           - name: "AMC" 
+            attributes: {
+              "turns": {
+                "AMC_P2IL FEED CURRENT": 12,
+                "AMC_P2IU FEED CURRENT": 12,
+                "AMC_P2OL FEED CURRENT": 8,
+                "AMC_P2OU FEED CURRENT": 8,
+                "AMC_P3L FEED CURRENT": 8,
+                "AMC_P3U FEED CURRENT": 8,
+                "AMC_P4L FEED CURRENT": 23,
+                "AMC_P4U FEED CURRENT": 23,
+                "AMC_P5L FEED CURRENT": 23,
+                "AMC_P5U FEED CURRENT": 23,
+                "AMC_P6L CURRENT": 4,
+                "AMC_P6U CURRENT": 4
+              }
+            }
             channels:
              - "AMC_SOL CURRENT" : { scale: 0.5} # Solenoid scaled by 0.5 to account for the way it was wired.
-             - "AMC_P2IL FEED CURRENT" : { scale: 12} # Feed current is in kA/turn. Each channel needs to be scaled by the number of turns in the coil to get the actual current in A.
-             - "AMC_P2IU FEED CURRENT" : { scale: 12}
-             - "AMC_P2OL FEED CURRENT": { scale: 8}
-             - "AMC_P2OU FEED CURRENT": { scale: 8}
-             - "AMC_P3L FEED CURRENT": { scale: 8}
-             - "AMC_P3U FEED CURRENT" : { scale: 8}
-             - "AMC_P4L FEED CURRENT": { scale: 23}
-             - "AMC_P4U FEED CURRENT": { scale: 23}
-             - "AMC_P5L FEED CURRENT": { scale: 23}
-             - "AMC_P5U FEED CURRENT": { scale: 23}
-             - "AMC_P6L CURRENT" : { scale: 4}
-             - "AMC_P6U CURRENT" : { scale: 4}
+             - "AMC_P2IL FEED CURRENT"
+             - "AMC_P2IU FEED CURRENT"
+             - "AMC_P2OL FEED CURRENT"
+             - "AMC_P2OU FEED CURRENT"
+             - "AMC_P3L FEED CURRENT"
+             - "AMC_P3U FEED CURRENT"
+             - "AMC_P4L FEED CURRENT"
+             - "AMC_P4U FEED CURRENT"
+             - "AMC_P5L FEED CURRENT"
+             - "AMC_P5U FEED CURRENT"
+             - "AMC_P6L CURRENT"
+             - "AMC_P6U CURRENT"
         dimensions:
           current_channel:
           time: 

@@ -26,7 +26,7 @@ from fake_signals import (
     true_times,
 )
 
-from src.core.load import UDALoader
+from src.core.load import MissingProfileError, UDALoader
 from src.core.model import (
     DatasetInfo,
     Dimension,
@@ -185,6 +185,188 @@ def test_source_finer_than_grid():
     )
 
     assert np.unique(out.time.values).size == source.size
+
+
+def test_last_sample_held():
+    """The grid ends after an off-grid last sample; that point must hold it."""
+    axis = -0.1 + np.arange(11) * 1e-3 + 3e-4
+    params = InterpolationParams(start=-0.1, step=1e-3, method="zero")
+
+    out = _transform().interpolate_dimension(_series(axis), "time", params)
+
+    assert out.x.values[-1] == 10
+
+
+def test_grid_ends_at_last_sample():
+    """A float32 last time just after its grid point must not add a row.
+
+    ABM in UDA ends at 2.89960003 s; the grid used to get a point at 2.9 s.
+    """
+    n = 7500
+    axis = axis_multiplied(-0.1 + np.arange(n) * 4e-4)
+    assert float(axis[-1]) > 2.8996, "fixture must overshoot its grid point"
+    params = InterpolationParams(start=-0.1, step=4e-4, method="zero")
+
+    out = _transform().interpolate_dimension(_series(axis), "time", params)
+
+    assert out.sizes["time"] == n
+    assert np.array_equal(out.x.values, np.arange(n, dtype=float))
+
+
+def test_float32_rate_near_grid():
+    """AMM after 24600 is 4999.2 Hz in float32 on the 5 kHz grid.
+
+    The float32 jitter is about one tenth of the phase drift per sample, so
+    the quarter-step snap moved neighbouring samples onto one grid point:
+    7 of 20502 samples were lost on 27880.
+    """
+    step = 2e-4
+    axis = axis_multiplied(-1.9999 + np.arange(30000) * 2.00033e-4)
+    params = InterpolationParams(start=-0.1, step=step, method="zero")
+
+    out = _transform().interpolate_dimension(_series(axis), "time", params)
+
+    rows = out.x.values[~np.isnan(out.x.values)].astype(int)
+    inside = axis[(axis >= -0.1) & (axis <= out.time.values[-1])]
+    assert np.unique(rows).size == inside.size
+
+
+def test_float32_axis_rebuilt():
+    t = -0.1 + np.arange(10000) * 1e-6
+    raw = axis_multiplied(t)
+    rebuilt = DatasetInterpolationTransform._float64_axis(raw)
+
+    # The end points keep their float32 error, but the jitter between is gone
+    assert np.abs(rebuilt - t).max() <= np.spacing(np.float32(0.1))
+    assert np.ptp(np.diff(raw.astype(np.float64))) > 1e-9
+    assert np.ptp(np.diff(rebuilt)) < 1e-15
+
+
+def test_float32_uneven_axis_kept():
+    """Only an even axis is rebuilt. A gap must stay where it is."""
+    t = np.delete(-0.1 + np.arange(10000) * 1e-6, 5000).astype(np.float32)
+
+    kept = DatasetInterpolationTransform._float64_axis(t)
+
+    assert np.array_equal(kept, t.astype(np.float64))
+
+
+def _native(profiles, start=-0.1):
+    params = DatasetInfo(
+        interpolate={
+            "time": InterpolationParams(start=start, step="native", method="zero")
+        },
+        profiles={
+            name: ProfileInfo(source=name, dimensions={"time": None})
+            for name in profiles
+        },
+    )
+    return _transform(params).transform(profiles)
+
+
+def _profile(axis, name):
+    return xr.DataArray(
+        np.arange(axis.size, dtype=float),
+        dims=["time"],
+        coords={"time": axis},
+        name=name,
+    )
+
+
+def test_native_step_one_row_per_sample():
+    """ANE is 66.7 kHz in M5; the fixed 50 kHz grid dropped one sample in four."""
+    dt = 1 / 66675
+    axis = axis_multiplied(-0.1003 + np.arange(40000) * dt)
+
+    ds = _native({"n_e_line": _profile(axis, "n_e_line")})
+
+    inside = axis[axis >= -0.1 - 0.25 * dt].astype(np.float64)
+    assert ds.sizes["time"] == inside.size
+    assert np.abs(ds.time.values - inside).max() < 1e-7
+    assert np.array_equal(
+        ds.n_e_line.values, np.arange(axis.size - inside.size, axis.size)
+    )
+
+
+def test_native_step_fastest_profile():
+    """The fastest profile sets the grid; the slower one is held, not lost."""
+    fast = axis_multiplied(-0.1 + np.arange(4000) * 2e-5)
+    slow = axis_multiplied(-0.1 + np.arange(40) * 2e-3)
+
+    ds = _native({"fast": _profile(fast, "fast"), "slow": _profile(slow, "slow")})
+
+    assert ds.sizes["time"] == fast.size
+    assert np.unique(ds.slow.dropna("time").values).size == slow.size
+
+
+def test_native_step_start_on_first_sample():
+    """A float32 -0.1 is -0.1000000015, before the start; it is the first row."""
+    axis = axis_multiplied(-0.1 + np.arange(100) * 4e-4)
+    assert float(axis[0]) < -0.1
+
+    ds = _native({"x": _profile(axis, "x")})
+
+    assert ds.x.values[0] == 0
+
+
+def test_native_step_without_samples_skips_profile():
+    """OMAHA has one sample, or none, before M7; the rest of magnetics stays."""
+    params = DatasetInfo(
+        interpolate={
+            "time": InterpolationParams(start=-0.1, step=2e-4, method="zero"),
+            "time_omaha": InterpolationParams(start=-0.1, step="native"),
+        },
+        profiles={
+            "ip": ProfileInfo(source="ip", dimensions={"time": None}),
+            "omaha": ProfileInfo(source="omaha", dimensions={"time_omaha": None}),
+        },
+    )
+    profiles = {
+        "ip": _profile(np.round(-0.1 + np.arange(50) * 2e-4, 12), "ip"),
+        "omaha": xr.DataArray(
+            [1.0], dims=["time_omaha"], coords={"time_omaha": [0.0]}, name="omaha"
+        ),
+    }
+
+    ds = _transform(params).transform(profiles)
+
+    assert list(ds.data_vars) == ["ip"]
+    assert ds.sizes["time"] == 50
+
+
+def test_native_step_needs_transform():
+    params = InterpolationParams(start=-0.1, step="native")
+
+    with pytest.raises(MissingProfileError, match="native"):
+        _transform().interpolate_dimension(_series(np.arange(5.0)), "time", params)
+
+
+def test_profile_before_start_skipped():
+    """EFIT writes [-1000, -999] for quantities it did not compute.
+
+    That one profile used to raise, and the whole group was lost for the shot.
+    """
+    good = np.round(-0.1 + np.arange(20) * 5e-3, 12)
+    profiles = {
+        "good": xr.DataArray(
+            np.ones(20), dims=["time"], coords={"time": good}, name="good"
+        ),
+        "empty": xr.DataArray(
+            np.ones(2), dims=["time"], coords={"time": [-1000.0, -999.0]}, name="empty"
+        ),
+    }
+    params = DatasetInfo(
+        interpolate={"time": InterpolationParams(start=-0.1, step=5e-3)},
+        profiles={
+            name: ProfileInfo(source=name, dimensions={"time": None})
+            for name in profiles
+        },
+    )
+
+    ds = _transform(params).transform_dict(profiles)
+
+    assert list(ds.data_vars) == ["good"]
+    assert ds.sizes["time"] == 20
 
 
 # --- sampling rate: are we matching the right samples together? ---------------
@@ -377,9 +559,9 @@ def test_no_value_shift():
     out = _transform().interpolate_dimension(_series(axis, values), "time", params)
     held = out.x.values[: len(grid)]
 
-    assert not np.array_equal(
-        held[1:], values[:-1]
-    ), "every value shifted by one sample"
+    assert not np.array_equal(held[1:], values[:-1]), (
+        "every value shifted by one sample"
+    )
     assert np.array_equal(held, values)
 
 

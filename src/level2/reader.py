@@ -36,8 +36,39 @@ class DatasetReader:
 
         if len(dataset) == 0:
             return dataset
-        
+
         dataset = self.apply_interpolation(dataset, name)
+        dataset = self.apply_transforms(dataset, name)
+        dataset = self.apply_attributes(dataset, name)
+        dataset = self.add_shot_dimension(dataset)
+        return dataset
+
+    def iter_dataset(self, shot: int, name: str, batch_size: int = 1):
+        """Like read_dataset, but yields fully processed batches of a few
+        profiles at a time instead of building the whole dataset group in
+        memory before it can be written. Large probe arrays (e.g. mirnov
+        coils interpolated onto a fine time grid) otherwise all get held
+        in memory simultaneously, which is what was causing worker OOMs.
+        """
+        self.set_shot(shot)
+        dataset_def = self._mapping.datasets[name]
+
+        batch: dict[str, xr.DataArray] = {}
+        for profile_name, profile_info in dataset_def.profiles.items():
+            profile = self._read_one_profile(shot, name, profile_name, profile_info)
+            if profile is None:
+                continue
+
+            batch[profile_name] = profile
+            if len(batch) >= batch_size:
+                yield self._finish_batch(batch, name)
+                batch = {}
+
+        if batch:
+            yield self._finish_batch(batch, name)
+
+    def _finish_batch(self, profiles: dict[str, xr.DataArray], name: str) -> xr.Dataset:
+        dataset = self.apply_interpolation(profiles, name)
         dataset = self.apply_transforms(dataset, name)
         dataset = self.apply_attributes(dataset, name)
         dataset = self.add_shot_dimension(dataset)
@@ -50,31 +81,38 @@ class DatasetReader:
 
         profiles = {}
         for profile_name, profile_info in dataset.profiles.items():
-            try:
-                if profile_info.geometry and self._skip_geometry: 
-                    logger.debug(f"Skipping geometry profile {profile_name}")
-                    continue
-
-                if profile_info.geometry:
-                    logger.debug(f"Create profile {profile_name}")
-                    profile = self.read_geometry(profile_info, profile_name)
-                    logger.debug(f"Loaded profile {profile_name}")
-                else:
-                    logger.debug(f"Create profile {profile_name}")
-                    profile = self.read_profile(shot, dataset_name, profile_name)
-                    logger.debug(f"Loaded profile {profile_name}")
-                    
+            profile = self._read_one_profile(shot, dataset_name, profile_name, profile_info)
+            if profile is not None:
                 profiles[profile_name] = profile
-            except MissingSourceError as e:
-                logger.warning(e)
-                continue
-            except MissingProfileError as e:
-                logger.warning(e)
-                continue
-            except MissingCoordinateError as e:
-                logger.warning(e)
-                continue
         return profiles
+
+    def _read_one_profile(
+        self, shot: int, dataset_name: str, profile_name: str, profile_info
+    ) -> Union[xr.DataArray, None]:
+        try:
+            if profile_info.geometry and self._skip_geometry:
+                logger.debug(f"Skipping geometry profile {profile_name}")
+                return None
+
+            if profile_info.geometry:
+                logger.debug(f"Create profile {profile_name}")
+                profile = self.read_geometry(profile_info, profile_name)
+                logger.debug(f"Loaded profile {profile_name}")
+            else:
+                logger.debug(f"Create profile {profile_name}")
+                profile = self.read_profile(shot, dataset_name, profile_name)
+                logger.debug(f"Loaded profile {profile_name}")
+
+            return profile
+        except MissingSourceError as e:
+            logger.warning(e)
+            return None
+        except MissingProfileError as e:
+            logger.warning(e)
+            return None
+        except MissingCoordinateError as e:
+            logger.warning(e)
+            return None
 
     def read_profile(
         self, shot: int, dataset_name: str, profile_name: str

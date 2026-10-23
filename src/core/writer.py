@@ -29,6 +29,12 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 class DatasetWriter(ABC):
+    #: Whether this writer can be called multiple times for the same
+    #: (file_name, group_name) to add more variables incrementally,
+    #: instead of requiring the whole group's dataset to be built in
+    #: memory and written in a single call.
+    supports_incremental_write: bool = False
+
     def __init__(self, output_path: str, **kwargs):
         self.output_path = Path(output_path)
 
@@ -39,7 +45,13 @@ class DatasetWriter(ABC):
         )
 
     @abstractmethod
-    def write(self, group_name: str, datasets: dict[str, xr.Dataset]):
+    def write(
+        self,
+        file_name: str,
+        group_name: str,
+        dataset: xr.Dataset,
+        append: bool = False,
+    ):
         raise NotImplementedError(
             f"Base method {self.__qualname__} for {self.__class__.__name__} not implemented."
         )
@@ -62,6 +74,8 @@ class DatasetWriter(ABC):
 
 
 class ZarrDatasetWriter(DatasetWriter):
+    supports_incremental_write = True
+
     def __init__(
         self, output_path: str, mode: str = "single", zarr_version: int = 2, **kwargs
     ):
@@ -73,25 +87,35 @@ class ZarrDatasetWriter(DatasetWriter):
     def file_extension(self):
         return "zarr"
 
-    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+    def write(
+        self,
+        file_name: str,
+        group_name: str,
+        dataset: xr.Dataset,
+        append: bool = False,
+    ):
         self._convert_dict_attrs_to_json(dataset)
         self._convert_fixed_strings_to_vlen(dataset)
         if self.mode == "single":
-            self._write_single_zarr(file_name, group_name, dataset)
+            self._write_single_zarr(file_name, group_name, dataset, append)
         else:
-            self._write_multi_zarr(file_name, group_name, dataset)
+            self._write_multi_zarr(file_name, group_name, dataset, append)
 
-    def _write_single_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
+    def _write_single_zarr(
+        self, file_name: str, name: str, dataset: xr.Dataset, append: bool = False
+    ):
         file_name = self.output_path / file_name
         dataset.to_zarr(
             file_name,
             group=name,
-            mode="w",
+            mode="a" if append else "w",
             consolidated=True,
         )
         zarr.consolidate_metadata(file_name)
 
-    def _write_multi_zarr(self, file_name: str, name: str, dataset: xr.Dataset):
+    def _write_multi_zarr(
+        self, file_name: str, name: str, dataset: xr.Dataset, append: bool = False
+    ):
         file_name = Path(file_name)
         path = self.output_path / f"{file_name.stem}/{name}.zarr"
         path.parent.mkdir(exist_ok=True, parents=True)
@@ -107,7 +131,17 @@ class ParquetDatasetWriter(DatasetWriter):
     def file_extension(self):
         return "parquet"
 
-    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+    def write(
+        self,
+        file_name: str,
+        group_name: str,
+        dataset: xr.Dataset,
+        append: bool = False,
+    ):
+        if append:
+            raise NotImplementedError(
+                "ParquetDatasetWriter does not support incremental/append writes"
+            )
         df = dataset.to_dataframe()
         path = self.output_path / f"{Path(file_name).stem}/{group_name}.parquet"
         path.parent.mkdir(exist_ok=True, parents=True)
@@ -115,6 +149,8 @@ class ParquetDatasetWriter(DatasetWriter):
 
 
 class NetCDFDatasetWriter(DatasetWriter):
+    supports_incremental_write = True
+
     def __init__(self, output_path: str, mode: str = "single", **kwargs):
         super().__init__(output_path)
         self.mode = mode
@@ -123,7 +159,13 @@ class NetCDFDatasetWriter(DatasetWriter):
     def file_extension(self):
         return "nc"
 
-    def write(self, file_name: str, group_name: str, dataset: xr.Dataset):
+    def write(
+        self,
+        file_name: str,
+        group_name: str,
+        dataset: xr.Dataset,
+        append: bool = False,
+    ):
         self._convert_dict_attrs_to_json(dataset)
         self._convert_fixed_strings_to_vlen(dataset)
 

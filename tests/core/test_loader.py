@@ -1,9 +1,11 @@
 import importlib
 
+import numpy as np
 import pytest
 import xarray as xr
 
 from src.core.load import SALLoader, UDALoader, ZarrLoader
+from src.core.model import Channel, Source
 
 
 def try_uda():
@@ -60,3 +62,33 @@ def test_extract_channel_template(channels, expected_values, expected_template):
     values, template = UDALoader._extract_channel_template(channels)
     assert values == expected_values
     assert template == expected_template
+
+
+def test_mask_channel(mocker, sample_dataarray):
+    """A masked channel keeps its place on the axis but holds no data."""
+    mocker.patch("src.core.load.UDALoader.load_signal", return_value=sample_dataarray)
+    channels = [
+        Channel(name="AMB_FL/CC03"),
+        Channel(name="AMB_FL/CC04", scale=-1, mask=True),
+        Channel(name="AMB_FL/CC05", scale=3),
+    ]
+
+    signal = UDALoader().load_channels(30420, "AMB_FL", channels)
+
+    assert list(signal.coords["channels"].values) == ["CC03", "CC04", "CC05"]
+    assert np.isnan(signal.isel(channels=1)).all()
+    assert (signal.isel(channels=0) == sample_dataarray).all()
+    assert (signal.isel(channels=2) == sample_dataarray * 3).all()
+
+
+@pytest.mark.parametrize(
+    "channels, expected_masks",
+    [
+        (["AMB_FL/CC03", "AMB_FL/CC04"], [False, False]),
+        (["AMB_FL/CC03", {"AMB_FL/CC04": {"mask": True}}], [False, True]),
+        ([{"AMB_FL/CC04": {"scale": -1}}], [False]),
+    ],
+)
+def test_channel_mask_parsing(channels, expected_masks):
+    source = Source(name="AMB_FL", channels=channels)
+    assert [c.mask for c in source.channels] == expected_masks

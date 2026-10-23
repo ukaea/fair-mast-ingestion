@@ -4017,10 +4017,35 @@ datasets:
         imas: "magnetics.flux_loop[:].flux.data"
         description: "Experimental measurement of poloidal magnetic flux obtained from flux loops"
         source:
+          # CC04 is kept only up to 25365, the last shot where it agrees with the
+          # other centre column loops.
           - name: "AMB_FL"
+            shot_range:
+              shot_min: 1
+              shot_max: 25365
             channels:
              - "AMB_FL/CC03"
              - "AMB_FL/CC04"
+             - "AMB_FL/CC05"
+             - "AMB_FL/CC07"
+             - "AMB_FL/CC09"
+             - "AMB_FL/P3U/1"
+             - "AMB_FL/P3U/4"
+             - "AMB_FL/P4U/4"
+             - "AMB_FL/P5U/1"
+             - "AMB_FL/P3L/4"
+             - "AMB_FL/P4L/1"
+             - "AMB_FL/P4L/4"
+             - "AMB_FL/P5L/1"
+             - "AMB_FL/P5L/4"
+             - "AMB_FL/P6L/1"
+          - name: "AMB_FL"
+            shot_range:
+              shot_min: 25366
+              shot_max: 30473
+            channels:
+             - "AMB_FL/CC03"
+             - "AMB_FL/CC04": { mask: true }
              - "AMB_FL/CC05"
              - "AMB_FL/CC07"
              - "AMB_FL/CC09"

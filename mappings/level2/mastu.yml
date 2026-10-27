@@ -274,6 +274,29 @@ datasets:
         units: "m^-2"
         scale: 1e21
 
+      coils_current:
+        imas: "pulse_schedule.pf_active.coil[:].current.reference"
+        source:
+          - name: "XDC/SYSTEM/S"
+            channels:
+              # Approved reference waveforms for the PF and divertor coil currents
+              - "/XDC/SYSTEM/S/APPROVED_D1_REF"
+              - "/XDC/SYSTEM/S/APPROVED_D2_REF"
+              - "/XDC/SYSTEM/S/APPROVED_D3_REF"
+              - "/XDC/SYSTEM/S/APPROVED_D5_REF"
+              - "/XDC/SYSTEM/S/APPROVED_D6_REF"
+              - "/XDC/SYSTEM/S/APPROVED_D7_REF"
+              - "/XDC/SYSTEM/S/APPROVED_DP_REF"
+              - "/XDC/SYSTEM/S/APPROVED_P1_REF"
+              - "/XDC/SYSTEM/S/APPROVED_P4_REF"
+              - "/XDC/SYSTEM/S/APPROVED_P5_REF"
+              - "/XDC/SYSTEM/S/APPROVED_PX_REF"
+        target_units: "A"
+        dimensions:
+          coils_channel:
+          time:
+            imas: "pulse_schedule.pf_active.time"
+
   summary:
     imas: "summary"
     profiles:
@@ -324,12 +347,6 @@ datasets:
   pf_active:
     imas: "pf_active"
     profiles:
-      solenoid_current:
-        source: "/AMC/ROGEXT/P1"
-        dimensions:
-          time:
-            imas: "summary.time"
-
       coils_current:
         imas: "pf_active.coil[:].current.data"
         source:
@@ -364,7 +381,61 @@ datasets:
           channel:
           time: 
             imas: "pf_active.coil[:].voltage.time"
-      
+
+      coils_xdc_current:
+        imas: "pf_active.coil[:].current.data"
+        source:
+          - name: "XDC/AI/CPU1"
+            channels:
+              # Coil currents measured by the plasma control system. The lower
+              # coil of each pair is measured, because the pair is in series.
+              - "/xdc/ai/cpu1/rogext_p1"
+              - "/xdc/ai/cpu1/rogext_d1L"
+              - "/xdc/ai/cpu1/rogext_d2L"
+              - "/xdc/ai/cpu1/rogext_d3L"
+              - "/xdc/ai/cpu1/rogext_p4L"
+              - "/xdc/ai/cpu1/rogext_d5L"
+              - "/xdc/ai/cpu1/rogext_p5L"
+              - "/xdc/ai/cpu1/rogext_d6L"
+              - "/xdc/ai/cpu1/rogext_d7L"
+              - "/xdc/ai/cpu1/rogext_p6L"
+              - "/xdc/ai/cpu1/rogext_dpL"
+              - "/xdc/ai/cpu1/rogext_pxL"
+        target_units: "A"
+        dimensions:
+          coils_xdc_channel:
+          time:
+            imas: "pf_active.coil[:].current.time"
+
+      supply_current:
+        imas: "pf_active.supply[:].current.data"
+        source: "/xcm/lvps/dc_link_i"
+        target_units: "A"
+        description: "Current in the DC link of the coil power supply."
+        dimensions:
+          time:
+            imas: "pf_active.supply[:].current.time"
+
+      supply_voltage:
+        imas: "pf_active.supply[:].voltage.data"
+        source: "/xcm/lvps/dc_link_v"
+        target_units: "V"
+        description: "Voltage across the DC link of the coil power supply."
+        dimensions:
+          time:
+            imas: "pf_active.supply[:].voltage.time"
+
+  tf:
+    imas: "tf"
+    profiles:
+      coil_current:
+        imas: "tf.coil[:].current.data"
+        source: "/xdc/ai/cpu1/rogext_TF"
+        target_units: "A"
+        dimensions:
+          time:
+            imas: "tf.coil[:].current.time"
+
   magnetics:
     imas: "magnetics"
 

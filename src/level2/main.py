@@ -100,15 +100,24 @@ def set_mapping_time_bounds(
     plasma_current = reader.read_profile(shot, dataset_name, signal_name)
 
     if plasma_current is None:
+        if force:
+            logger.warning(
+                f"Cannot load Plasma Current for shot {shot}, continuing without "
+                "time bounds due to --force-ip-check"
+            )
+            return
         raise RuntimeError("Cannot load Plasma Current")
 
     if not check_plasma_current(plasma_current, tdelta):
         if force:
+            # Do not trim to the plasma: a shot without plasma has no range to
+            # trim to, and trim_ip_range would index past the end of the signal.
             logger.warning(
-                f"Ip check failed for shot {shot}, continuing anyway due to --force-ip-check"
+                f"Ip check failed for shot {shot}, continuing without time bounds "
+                "due to --force-ip-check"
             )
-        else:
-            raise RuntimeError(f"No Plasma Current for shot {shot}")
+            return
+        raise RuntimeError(f"No Plasma Current for shot {shot}")
 
     plasma_current = trim_ip_range(plasma_current, tdelta)
     mapping.tmax = float(plasma_current.time.values.max())

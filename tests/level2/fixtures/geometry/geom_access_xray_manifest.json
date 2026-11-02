@@ -1,0 +1,15 @@
+{
+  "tangential/data/": [
+    "impact_parameter"
+  ],
+  "tangential/data/origin": [
+    "r",
+    "z",
+    "theta"
+  ],
+  "tangential/data/endpoint": [
+    "r",
+    "z",
+    "theta"
+  ]
+}

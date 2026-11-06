@@ -97,7 +97,12 @@ def set_mapping_time_bounds(
 
     dataset_name, signal_name = mapping.plasma_current.split("/")
     reader = DatasetReader(mapping, loader)
-    plasma_current = reader.read_profile(shot, dataset_name, signal_name)
+    try:
+        plasma_current = reader.read_profile(shot, dataset_name, signal_name)
+    except Exception:
+        if not force:
+            raise
+        plasma_current = None
 
     if plasma_current is None:
         if force:
@@ -159,15 +164,25 @@ def process_shot(shot: int, **kwargs):
                     f"Processing {group_name} for shot {shot} from {mapping.facility}"
                 )
 
-                reader = DatasetReader(mapping, loader, skip_geometry=args.skip_geometry)
-                dataset = reader.read_dataset(shot, group_name)
-                if len(dataset) == 0:
-                    continue
+                # A failure in one group must not stop the other groups. For
+                # example, a shot without plasma has no equilibrium.
+                try:
+                    reader = DatasetReader(
+                        mapping, loader, skip_geometry=args.skip_geometry
+                    )
+                    dataset = reader.read_dataset(shot, group_name)
+                    if len(dataset) == 0:
+                        continue
 
-                logger.info(
-                    f"Writing {group_name} for shot {shot} from {mapping.facility}"
-                )
-                writer.write(file_name, group_name, dataset)
+                    logger.info(
+                        f"Writing {group_name} for shot {shot} from {mapping.facility}"
+                    )
+                    writer.write(file_name, group_name, dataset)
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to process {group_name} for shot {shot}: {e}"
+                    )
+                    logger.debug("Exception information", exc_info=True)
 
     if config.upload is not None:
         remote_file = f"{config.upload.base_path}/"

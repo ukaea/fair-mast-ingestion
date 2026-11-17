@@ -20,6 +20,7 @@ the diagnostic measured.
 
 import functools
 
+import fsspec
 import numpy as np
 import pint  # noqa: F401  registers the .pint accessor the reader uses
 import pint_xarray  # noqa: F401
@@ -101,6 +102,9 @@ def _true_times(values):
     Snapping raw float32 times loses samples where the native rate is near the
     grid step (AMM at 4999.2 Hz on 5 kHz), so the oracle would be wrong. Where
     the axis is within 4 float32 steps of an even axis, the even axis is used.
+
+    This repeats `_float64_axis`, so it cannot catch a bug there. The
+    independent check is `test_every_efit_solution_published`.
     """
     times = np.asarray(values, dtype=np.float64)
     if np.asarray(values).dtype != np.float32 or times.size < 3:
@@ -114,7 +118,7 @@ def _held(native, dim, grid):
     """Which native sample a zero-order hold puts at each grid point.
 
     An independent oracle for the resampler: the last sample at or before each
-    grid point, where "at" allows the same quarter-step snap the code uses.
+    grid point, where "at" allows 4 float32 steps at the largest time.
     -1 marks a grid point with no sample: before the first, or after the
     first grid point at or after the last (later rows come from siblings).
     """
@@ -124,6 +128,7 @@ def _held(native, dim, grid):
     steps = np.diff(times)
     steps = steps[steps > 0]
     tol = 0.25 * min(step, steps.min() if steps.size else step)
+    tol = min(tol, 4 * float(np.spacing(np.float32(np.abs(times).max()))))
     index = np.searchsorted(times, grid + tol, side="right") - 1
     end = np.searchsorted(grid, times[-1] - tol)
     index[end + 1 :] = -1
@@ -227,6 +232,59 @@ def test_bolometer_on_time(mapping, era):
         assert grid.size == times.size, f"{name}: one row per UDA sample"
         assert np.abs(grid - times).max() < 1e-6, f"{name}: rows at UDA times"
         assert np.array_equal(_rows(out, "time"), _rows(native, "time"), equal_nan=True)
+
+
+# --- an independent record of what EFIT produced ------------------------------
+
+LEVEL1_S3 = dict(anon=True, endpoint_url="https://s3.echo.stfc.ac.uk")
+
+
+def _level1_efit(shot):
+    store = fsspec.get_mapper(f"s3://mast/level1/shots/{shot}.zarr/efm", **LEVEL1_S3)
+    return xr.open_zarr(store)[["psirz", "all_times"]].load()
+
+
+def missing_efit_solutions(efm: xr.Dataset, psi: xr.DataArray) -> list[float]:
+    """EFIT times whose level 1 solution is not in the level 2 row at that time.
+
+    Uses none of the level 2 time code. EFIT times sit on 5 ms steps, so a
+    solution's row is the nearest grid time, and the check compares values.
+    """
+    psi = _plain(psi).transpose("time", "z", "major_radius")
+    grid = psi.time.values.astype(np.float64)
+    # `profile_z`/`profile_r` on later shots, `z`/`r` on earlier ones
+    z, r = (next(d for d in efm.psirz.dims if d.endswith(s)) for s in "zr")
+    solutions = efm.psirz.sel(
+        {z: psi.z.values, r: psi.major_radius.values}, method="nearest"
+    ).transpose(..., z, r)
+    missing = []
+    for t, solution in zip(efm.all_times.values.astype(np.float64), solutions.values):
+        if not np.isfinite(solution).any() or not grid[0] <= t <= grid[-1]:
+            continue
+        row = psi.values[np.abs(grid - t).argmin()]
+        if not np.allclose(row, solution, rtol=1e-6, equal_nan=True):
+            missing.append(t)
+    return missing
+
+
+EFIT_SHOTS = {**ERAS, "M9-30471": 30471}
+
+
+@pytest.mark.parametrize("era", list(EFIT_SHOTS))
+def test_every_efit_solution_published(era):
+    """Each solution level 1 holds is in its own level 2 row.
+
+    Independent of `_true_times` and the snap. With the snap disabled it finds
+    11 to 27 missing solutions per shot.
+    """
+    shot = EFIT_SHOTS[era]
+    _, published = _read(shot, "equilibrium")
+    if "psi" not in published:
+        pytest.skip(f"no equilibrium/psi for shot {shot}")
+
+    missing = missing_efit_solutions(_level1_efit(shot), published.psi)
+
+    assert missing == [], f"EFIT solutions not in their own row: {missing}"
 
 
 # --- radial axes --------------------------------------------------------------

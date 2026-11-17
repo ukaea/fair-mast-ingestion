@@ -1,10 +1,9 @@
-"""Synthetic signals that carry UDA's time-base defects, for use in CI.
+"""Synthetic signals that carry the archive's time-base defects, for use in CI.
 
-UDA computes time axes as ``start + n * step`` rather than storing them, so two
-signals describing the same instants can be rendered by different arithmetic
-routes and disagree in the last bits. These builders reproduce that mechanism
-without a UDA connection, so the resampling and merge behaviour can be tested
-anywhere.
+Two signals describing the same instants can carry different time axes, from
+float32 storage or from how the analysis codes wrote them. These builders
+reproduce that without a UDA connection, so the resampling and merge behaviour
+can be tested anywhere.
 
 Nothing here is a fixture: they are plain functions so a test can state exactly
 which defect it is exercising.
@@ -47,19 +46,17 @@ def axis_multiplied(times, dtype=np.float32):
     return (np.asarray(times[0], dtype) + i * np.asarray(step, dtype)).astype(dtype)
 
 
-# Measured from UDA: AYC_TE and AYC_TE_CORE disagree by 61-65 float32 steps of
-# the axis reach on every divergent shot sampled (3.67e-06..3.87e-06 s over
-# n=122..149). The disagreement is a rendering difference and does NOT grow with
-# sample count -- correlation with n is +0.21. Model it that way, or a fixture
-# built for a 20 kHz shot invents an error UDA never produces.
+# AYC_TE and AYC_TE_CORE differ by up to 3.87e-06 s (61-65 float32 steps of the
+# axis reach). AYC_TE has the measured laser times; AYC_TE_CORE was written as
+# an even axis. The offset is fixed per YAG laser, so it does not grow with
+# sample count. Burst-mode shots do not diverge.
 OBSERVED_ULPS = 65
 
 
 def axis_rendered(times, ulps=OBSERVED_ULPS, dtype=np.float32, seed=0):
-    """The same instants rendered by UDA's other route, as measured.
+    """The same instants, offset by up to `ulps` float32 steps of the axis reach.
 
-    Offsets each label by up to `ulps` float32 steps of the axis reach, which is
-    what the real AYC pair does, rather than compounding per sample.
+    The same size as the real AYC offsets, without compounding per sample.
     """
     rng = np.random.default_rng(seed)
     times = np.asarray(times, dtype=np.float64)
@@ -71,7 +68,7 @@ def axis_rendered(times, ulps=OBSERVED_ULPS, dtype=np.float32, seed=0):
 def axis_accumulated(times, dtype=np.float32):
     """A pessimistic worst case: the same instants summed step by step.
 
-    Error compounds with sample count, which real UDA does not do. Kept for
+    Error compounds with sample count, which the archive does not do. Kept for
     stress tests; use `axis_rendered` when modelling the archive.
     """
     times = np.asarray(times, dtype=np.float64)
@@ -126,8 +123,8 @@ def radius_signal(times, n_radii=N_RADII):
 def thomson_loader(divergent=True, drop_pulse=None):
     """A fake ``UDALoader.load`` for the Thomson group.
 
-    ``divergent`` renders the core and profile axes by the two different routes,
-    the way UDA does. ``drop_pulse`` removes one pulse from the core signal, to
+    ``divergent`` gives the core and profile signals different axes for the
+    same pulses. ``drop_pulse`` removes one pulse from the core signal, to
     exercise a sibling that is genuinely missing a sample.
     """
     t = true_times()

@@ -1,9 +1,9 @@
 """Does level 2 resampling preserve the samples the source actually took?
 
 These are our own correctness checks. They do not need UDA: the time-base
-defects UDA produces are reproduced synthetically in `fake_signals`, so CI can
-run every one of them. The defect itself is UDA's problem and is reported
-separately; what is tested here is that our resampling and merge survive it.
+defects in the archive are reproduced synthetically in `fake_signals`, so CI can
+run every one of them. What is tested here is that our resampling and merge
+survive them.
 """
 
 import numpy as np
@@ -28,6 +28,7 @@ from fake_signals import (
 
 from src.core.load import MissingProfileError, UDALoader
 from src.core.model import (
+    Channel,
     DatasetInfo,
     Dimension,
     InterpolationParams,
@@ -133,12 +134,12 @@ def test_fixture_float64_off_grid():
     "dtype,build",
     [
         (np.float32, axis_multiplied),
-        (np.float32, axis_accumulated),
         (np.float64, lambda t: axis_offset(t)),
         (np.float64, lambda t: np.asarray(t, dtype=np.float64)),
     ],
-    ids=["f32-multiplied", "f32-accumulated", "f64-offset", "f64-exact"],
+    ids=["f32-multiplied", "f64-offset", "f64-exact"],
 )
+# No `axis_accumulated` case: its ~200 float32 step error is not in the archive.
 def test_sample_survives_resampling(dtype, build):
     """The core claim: resampling must not lose or misplace a real sample."""
     step = 2.5e-4
@@ -187,6 +188,17 @@ def test_source_finer_than_grid():
     assert np.unique(out.time.values).size == source.size
 
 
+def test_row_never_holds_later_sample():
+    """The 5 ms row must not hold the 6 ms sample, as a quarter-step snap did."""
+    params = InterpolationParams(start=0.0, step=5e-3, method="zero")
+
+    out = _transform().interpolate_dimension(
+        _series([0.0, 0.006, 0.011], [0.0, 6.0, 11.0]), "time", params
+    )
+
+    assert out.x.values.tolist() == [0.0, 0.0, 6.0, 11.0]
+
+
 def test_last_sample_held():
     """The grid ends after an off-grid last sample; that point must hold it."""
     axis = -0.1 + np.arange(11) * 1e-3 + 3e-4
@@ -219,6 +231,7 @@ def test_float32_rate_near_grid():
     The float32 jitter is about one tenth of the phase drift per sample, so
     the quarter-step snap moved neighbouring samples onto one grid point:
     7 of 20502 samples were lost on 27880.
+    The grid start holds the last sample before it.
     """
     step = 2e-4
     axis = axis_multiplied(-1.9999 + np.arange(30000) * 2.00033e-4)
@@ -228,7 +241,8 @@ def test_float32_rate_near_grid():
 
     rows = out.x.values[~np.isnan(out.x.values)].astype(int)
     inside = axis[(axis >= -0.1) & (axis <= out.time.values[-1])]
-    assert np.unique(rows).size == inside.size
+    first = int(np.searchsorted(axis, -0.1))
+    assert np.array_equal(np.unique(rows), np.arange(first - 1, first + inside.size))
 
 
 def test_float32_axis_rebuilt():
@@ -423,6 +437,29 @@ def test_merge_aligns_siblings():
     assert not merged.t_e_core.isnull().any()
 
 
+def test_merge_keeps_measured_times():
+    """The merged axis is the 2-D profile's measured times, in either mapping order."""
+    t = true_times()
+    measured = axis_rendered(t).astype(np.float64)
+    even = np.linspace(measured[0], measured[-1], t.size)
+    core = xr.DataArray(
+        np.ones(t.size), dims=["time"], coords={"time": even}, name="t_e_core"
+    )
+    profile = xr.DataArray(
+        np.ones((t.size, 3)),
+        dims=["time", "major_radius"],
+        coords={"time": measured},
+        name="t_e",
+    )
+    assert not np.array_equal(even, measured)
+
+    for order in (["t_e_core", "t_e"], ["t_e", "t_e_core"]):
+        profiles = {name: {"t_e_core": core, "t_e": profile}[name] for name in order}
+        merged = _transform()._unify_shared_axes(profiles)
+        for array in merged.values():
+            np.testing.assert_array_equal(array.time.values, measured)
+
+
 def test_merge_pads_missing_pulse():
     t = true_times()
     short = np.delete(axis_accumulated(t), 70)
@@ -483,6 +520,52 @@ def test_thomson_dropped_pulse(mocker, reference_shot):
 
     assert ds.sizes["time"] == N_PULSES
     assert int(ds.t_e_core.isnull().sum()) == 1
+
+
+def test_float32_duplicates_kept(mocker):
+    """At 10 MHz near 1 s float32 gives neighbours one label; none may be dropped."""
+    n = 200_000
+    axis = (0.99 + np.arange(n) * 1e-7).astype(np.float32)
+    assert np.unique(axis).size < n, "fixture must have duplicate labels"
+    mocker.patch(
+        "src.core.load.UDALoader.load",
+        return_value=xr.DataArray(np.arange(n, dtype=float), dims=["t"], coords={"t": axis}),
+    )
+
+    mapping = _mapping().model_copy(
+        update={
+            "datasets": {
+                "d": DatasetInfo(
+                    profiles={"x": ProfileInfo(source="SIG", dimensions={"time": None})}
+                )
+            }
+        }
+    )
+
+    out = DatasetReader(mapping, UDALoader()).read_profile(1, "d", "x")
+
+    assert out.sizes["time"] == n
+    assert np.array_equal(out.values, np.arange(n, dtype=float))
+
+
+def test_channels_one_step_late(mocker):
+    """A channel whose float32 axis is one step late is not held a sample late."""
+    n = 1000
+    first = (0.5 + np.arange(n) * 1e-3).astype(np.float32)
+    late = np.nextafter(first, np.float32(np.inf))
+    axes = {"CH1": first, "CH2": late}
+    mocker.patch(
+        "src.core.load.UDALoader.load_signal",
+        side_effect=lambda shot, name: xr.DataArray(
+            np.arange(n, dtype=float), dims=["time"], coords={"time": axes[name]}
+        ),
+    )
+
+    out = UDALoader().load_channels(
+        1, "SIG", [Channel(name="CH1"), Channel(name="CH2")]
+    )
+
+    assert np.array_equal(out.isel(channels=1).values, np.arange(n, dtype=float))
 
 
 def test_thomson_noop_when_aligned(mocker, reference_shot):
@@ -606,10 +689,10 @@ def test_merge_at_every_rate(rate_hz):
     """Every rate MAST Thomson has actually run at, over a realistic shot.
 
     Axes span 0.6 s, so the divergence is the one a full shot produces. The
-    tolerance is a quarter of the sampling period, so it shrinks as the rate
+    sibling tolerance is a quarter of the sampling period, so it shrinks as the rate
     climbs -- at 20 kHz it is 1.25e-05 s against a 3.9e-06 s divergence, a
-    margin of 3.2x. That holds because UDA's divergence is a fixed ~65 float32
-    steps of the axis reach and does not grow with sample count.
+    margin of 3.2x. That holds because the measured divergence is at most ~65
+    float32 steps of the axis reach and does not grow with sample count.
     """
     period = 1 / rate_hz
     n = int(0.6 / period) + 1

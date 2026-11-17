@@ -87,13 +87,16 @@ def _time_axis(signal):
 
 
 def test_axes_still_diverge(loader, reference_shot):
-    """The defect the synthetic fixtures imitate is still present upstream."""
+    """The reference shot still has the divergence the fixtures imitate.
+
+    Burst-mode shots such as 24623 and 30310 do not diverge.
+    """
     core = _time_axis(loader.load(reference_shot, "AYC_TE_CORE"))
     profile = _time_axis(loader.load(reference_shot, "AYC_TE"))
 
     assert core.size == profile.size == EXPECTED_PULSES
     differing = int((core != profile).sum())
-    assert differing > 100, "if this drops to 0, UDA has changed its axis build"
+    assert differing > 100, "the reference shot's stored axes have changed"
     deviation = np.abs(core.astype(float) - profile.astype(float)).max()
     assert 1e-7 < deviation < 1e-5
 

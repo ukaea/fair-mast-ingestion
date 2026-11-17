@@ -46,13 +46,13 @@ class BaseDatasetTransform(ABC):
         return ds
 
     def _unify_shared_axes(self, profiles: ProfileDict) -> ProfileDict:
-        """Snap sibling profiles' axes onto the longest one before merging.
+        """Snap sibling profiles' axes onto one reference axis before merging.
 
-        UDA builds each signal's axis separately, so two signals covering the
-        same samples disagree in the last bits and `xr.merge` unions them into a
-        half-NaN axis. Samples the reference does not have are left alone and
-        still outer-join, so a sibling genuinely missing a pulse merges with a
-        NaN on that row rather than doubling the axis.
+        Siblings can carry different times for the same samples (`AYC_TE` has
+        the measured laser times, `AYC_TE_CORE` an even approximation), and
+        `xr.merge` would union them into a half-NaN axis. The reference is the
+        longest axis, then the one with the most dimensions, which keeps the
+        measured times. A sibling missing a sample still gets one NaN row.
         """
         profiles = dict(profiles)
         for dim in {dim for array in profiles.values() for dim in array.dims}:
@@ -63,8 +63,8 @@ class BaseDatasetTransform(ABC):
             ]
             if len(members) < 2:
                 continue
-            ref = max((profiles[n].coords[dim].values for n in members), key=len)
-            ref = np.sort(self._float64_axis(ref))
+            ref = max(members, key=lambda n: (profiles[n].sizes[dim], profiles[n].ndim))
+            ref = np.sort(self._float64_axis(profiles[ref].coords[dim].values))
             for name in members:
                 if self._same_sampling(profiles[name].coords[dim].values, ref):
                     profiles[name] = self._snap_coord_to_grid(profiles[name], dim, ref)
@@ -101,18 +101,21 @@ class BaseDatasetTransform(ABC):
 
     @staticmethod
     def _snap_coord_to_grid(
-        dataset: xr.Dataset, dim_name: str, grid: np.ndarray, frac: float = 0.25
+        dataset: xr.Dataset,
+        dim_name: str,
+        grid: np.ndarray,
+        frac: float = 0.25,
+        ulps: Optional[float] = None,
     ) -> xr.Dataset:
         """Convert a float coordinate to float64 and snap it to the grid.
 
         A plain cast keeps the rounding error (0.07 becomes 0.0700000003), and
         zero-order-hold interpolation then drops the sample as later than its
-        own grid point. A time within `frac` of a step of its nearest grid point
-        is moved onto it. `grid` is an interpolation grid, or a sibling axis.
+        own grid point. A time near its grid point is moved onto it.
 
-        The tolerance is a fraction of a step, not of float precision. UDA
-        computes axes rather than storing them, so two renderings of the same
-        instants sit whole arithmetic routes apart.
+        The tolerance is `frac` of a step, for sibling axes that differ by
+        microseconds. For an interpolation grid, pass `ulps` to limit it to
+        float32 rounding, so no row holds a sample taken after the row's time.
         """
         coord = dataset.coords[dim_name]
         if coord.dtype.kind != "f":
@@ -128,6 +131,9 @@ class BaseDatasetTransform(ABC):
         if own.size:
             spacings.append(float(own.min()))
         tol = frac * min(spacings)
+        if ulps is not None:
+            reach = np.float32(np.abs(times).max())
+            tol = min(tol, ulps * float(np.spacing(reach)))
 
         idx = np.clip(np.searchsorted(grid, times), 1, grid.size - 1)
         left, right = grid[idx - 1], grid[idx]
@@ -300,7 +306,7 @@ class DatasetInterpolationTransform(BaseDatasetTransform):
         coords = self._build_aligned_grid(
             params.start, params.end, params.step, end_was_explicit
         )
-        source = self._snap_coord_to_grid(dataset, dim_name, coords)
+        source = self._snap_coord_to_grid(dataset, dim_name, coords, ulps=4)
         if not end_was_explicit and self.mapping.tmax is None:
             # The grid was sized from the unsnapped last time. A float32 last
             # time a little after its grid point adds a point that has no data.

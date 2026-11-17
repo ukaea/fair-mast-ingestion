@@ -151,6 +151,15 @@ class DatasetReader:
         item *= profile.scale
         item = self._parse_units(item)
         item = self._convert_units(item, profile.target_units)
+        for dim in item.dims:
+            if dim not in item.coords or item[dim].dtype.kind != "f":
+                continue
+            values = item[dim].values
+            if np.unique(values).size < values.size:
+                # Above ~10 MHz float32 gives neighbouring samples one label,
+                # and drop_duplicates would delete them. Rebuild an even axis.
+                times = DatasetInterpolationTransform._float64_axis(values)
+                item = item.assign_coords({dim: (dim, times, item[dim].attrs)})
         item = item.sortby([name for name in dim_names if "channel" not in name])
         item = item.drop_duplicates(dim=...)
 
@@ -254,7 +263,7 @@ class DatasetReader:
 
         if "units" not in item.attrs:
             raise RuntimeError(
-                f"Cannot convert to target units {target_units} for shot {self.shot} and signal {item.name}. No units defined."
+                f"Cannot convert to target units {target_units} for shot {self._shot} and signal {item.name}. No units defined."
             )
 
         try:

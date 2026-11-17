@@ -74,3 +74,16 @@ aws_secret_access_key=<secret-key>
 ## Running Ingestion
 
 See `INGESTION.md`.
+
+
+## Running Tests
+
+```bash
+pytest tests/          # everything; UDA-backed tests skip without a connection
+CI=1 pytest tests/     # exactly what GitHub runs
+```
+
+See `TESTING.md` for how the suite is arranged, how to write a test that needs
+diagnostic data without a UDA connection, and how to check a test is really
+testing something.
+

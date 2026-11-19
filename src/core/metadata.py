@@ -103,10 +103,10 @@ class ParquetMetadataWriter:
                 shape=shape,
                 dimensions=dims,
                 rank=rank,
-                units=dataset.attrs.get("units", ""),
-                description=dataset.attrs.get("description", ""),
-                quality=dataset.attrs.get("quality", "Not Checked"),
-                imas=dataset.attrs.get("imas", ""),
+                units=item.attrs.get("units", ""),
+                description=item.attrs.get("description", ""),
+                quality=item.attrs.get("quality", "Not Checked"),
+                imas=item.attrs.get("imas", ""),
             )
             datas.append(data.model_dump())
 

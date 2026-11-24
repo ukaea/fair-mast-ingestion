@@ -230,7 +230,7 @@ class UDALoader(BaseLoader):
         signals = {}
 
         # Load channels, skipping an missing channels
-        shape, dims, coords = None, None, None
+        shape, dims, coords, attrs = None, None, None, None
         for channel in channels:
             try:
                 signal = self.load_signal(shot_num, channel)
@@ -239,6 +239,7 @@ class UDALoader(BaseLoader):
                     shape = signal.shape
                     dims = list(signal.sizes.keys())
                     coords = signal.coords
+                    attrs = signal.attrs  # carry units into placeholder
             except MissingSourceError:
                 continue
 
@@ -252,7 +253,7 @@ class UDALoader(BaseLoader):
         for channel in channels:
             if channel not in signals:
                 signals[channel] = xr.DataArray(
-                    np.full(shape, np.nan), dims=dims, coords=coords
+                    np.full(shape, np.nan), dims=dims, coords=coords, attrs=attrs
                 )
 
         assert (

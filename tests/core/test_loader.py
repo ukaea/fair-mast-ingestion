@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from src.core.load import SALLoader, UDALoader, ZarrLoader
+from src.core.load import MissingSourceError, SALLoader, UDALoader, ZarrLoader
 from src.core.model import Channel, Source
 
 
@@ -79,6 +79,25 @@ def test_mask_channel(mocker, sample_dataarray):
     assert np.isnan(signal.isel(channels=1)).all()
     assert (signal.isel(channels=0) == sample_dataarray).all()
     assert (signal.isel(channels=2) == sample_dataarray * 3).all()
+
+
+def test_missing_first_channel_keeps_units(mocker):
+    """A missing first channel must not drop the units (AMM_P2LARM1 on 13105)."""
+
+    def load_signal(shot, name):
+        if name == "AMM_P2LARM1":
+            raise MissingSourceError(name)
+        return xr.DataArray(
+            np.ones(3), dims=["time"], coords={"time": [0.0, 1.0, 2.0]}, attrs={"units": "kA"}
+        )
+
+    mocker.patch("src.core.load.UDALoader.load_signal", side_effect=load_signal)
+    channels = [Channel(name="AMM_P2LARM1"), Channel(name="AMM_P2LARM2")]
+
+    signal = UDALoader().load_channels(13105, "AMM_P2LARM", channels)
+
+    assert signal.attrs["units"] == "kA"
+    assert signal.isel(channels=0).isnull().all()
 
 
 @pytest.mark.parametrize(

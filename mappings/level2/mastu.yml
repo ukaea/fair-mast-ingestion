@@ -109,7 +109,7 @@ datasets:
             channels:
               - "epm/output/separatrixGeometry/dndXpoint1R" 
               - "epm/output/separatrixGeometry/dndXpoint2R" 
-        units: "dimensionless"
+        units: "m"
         dimensions:
           n_x_points:
           time:
@@ -122,7 +122,7 @@ datasets:
             channels:
               - "epm/output/separatrixGeometry/dndXpoint1Z" 
               - "epm/output/separatrixGeometry/dndXpoint2Z" 
-        units: "dimensionless"
+        units: "m"
         dimensions:
           n_x_points:
           time:

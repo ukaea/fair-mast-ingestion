@@ -234,7 +234,7 @@ datasets:
               - EFM_XPOINT1_R(C)
               - EFM_XPOINT2_R(C)
         imas: "equilibrium.time_slice[:].boundary.x_point[:].r"
-        units: "dimensionless"
+        units: "m"
         fill_value: -999
         dimensions:
           n_x_points_r:
@@ -248,7 +248,7 @@ datasets:
               - EFM_XPOINT1_Z(C)
               - EFM_XPOINT2_Z(C)
         imas: "equilibrium.time_slice[:].boundary.x_point[:].z"
-        units: "dimensionless"
+        units: "m"
         fill_value: -999
         dimensions:
           n_x_points_z:

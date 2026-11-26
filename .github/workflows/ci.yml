@@ -12,7 +12,7 @@ jobs:
       run: |
         sudo apt update && sudo apt install -y libopenmpi-dev
         pip install uv
-        uv venv venv
+        uv venv --python 3.12.6 venv  # match the README, not the runner's python3
         source venv/bin/activate
         uv pip install -r requirements.txt
         uv pip install --upgrade --force-reinstall "numpy<2.0"

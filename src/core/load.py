@@ -267,6 +267,9 @@ class UDALoader(BaseLoader):
             channels_dim.attrs["name"] = channel_template
 
         # Sometimes channels have inconsistent binning, harmonise them here.
+        # Local import: transforms imports this module.
+        from src.level2.transforms import BaseDatasetTransform
+
         first_signal = None
         for name, signal in signals.items():
             if first_signal is None:
@@ -277,6 +280,12 @@ class UDALoader(BaseLoader):
                 for dim_name, new_dim_name in zip(signal.dims, first_signal.dims)
             }
             signal = signal.rename(dim_map)
+            # A channel one float32 step late would otherwise be held a sample late
+            for dim in first_signal.dims:
+                if dim in signal.coords and dim in first_signal.coords:
+                    signal = BaseDatasetTransform._snap_coord_to_grid(
+                        signal, dim, first_signal[dim].values, ulps=4
+                    )
             signal = signal.interp_like(first_signal, method="zero")
             signals[name] = signal
 
